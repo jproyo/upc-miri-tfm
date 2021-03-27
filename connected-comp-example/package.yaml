@@ -1,0 +1,20 @@
+name:                connected-comp-example
+version:             0.1.0.0
+#synopsis:
+#description:
+homepage:            https://github.com/jproyo/connected-comp-example#readme
+license:             BSD3
+author:               Juan Pablo Royo Sales
+maintainer:          juanpablo.royo@gmail.com
+copyright:            Copyright (C) 2021 Juan Pablo Royo Sales
+category:            Data,Data Flow,Pipes
+extra-source-files:
+- README.md
+
+dependencies:
+  - base >= 4.7 && < 5
+
+executables:
+  connected-comp-example:
+    source-dirs:      src
+    main:             Main.hs
