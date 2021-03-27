@@ -1,0 +1,30 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 98b47b53525764b8d8f9d89bb8b6d9379a3f49515408e920a3b8ff87ce5cd2fb
+
+name:           bt-graph-dp
+version:        0.1.0.0
+category:       Data,Data Flow,Pipes
+homepage:       https://github.com/jproyo/bt-graph-dp#readme
+author:         Juan Pablo Royo Sales
+maintainer:     juanpablo.royo@gmail.com
+copyright:      Copyright (C) 2021 Juan Pablo Royo Sales
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+executable bt-graph-dp
+  main-is: Main.hs
+  other-modules:
+      Paths_bt_graph_dp
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
