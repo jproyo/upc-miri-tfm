@@ -1,0 +1,30 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 6c2217341fe89f9479b7aa4a111f699eda58a61a738fcb174b15f3782195e3cf
+
+name:           connected-comp-example
+version:        0.1.0.0
+category:       Data,Data Flow,Pipes
+homepage:       https://github.com/jproyo/connected-comp-example#readme
+author:         Juan Pablo Royo Sales
+maintainer:     juanpablo.royo@gmail.com
+copyright:      Copyright (C) 2021 Juan Pablo Royo Sales
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+executable connected-comp-example
+  main-is: Main.hs
+  other-modules:
+      Paths_connected_comp_example
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
