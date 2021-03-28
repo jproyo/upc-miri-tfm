@@ -4,17 +4,65 @@ version:             0.1.0.0
 #description:
 homepage:            https://github.com/jproyo/connected-comp-example#readme
 license:             BSD3
-author:               Juan Pablo Royo Sales
+author:              Juan Pablo Royo Sales
 maintainer:          juanpablo.royo@gmail.com
-copyright:            Copyright (C) 2021 Juan Pablo Royo Sales
+copyright:           Copyright (C) 2021 Juan Pablo Royo Sales
 category:            Data,Data Flow,Pipes
+
 extra-source-files:
 - README.md
 
+ghc-options:
+  - -O3
+  - -Wall
+  - -Werror
+  - -fno-warn-partial-type-signatures
+  - -fconstraint-solver-iterations=0
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wredundant-constraints
+  - -Wno-unused-top-binds
+  - -fno-warn-deprecations # allow undefined
+  - -fno-warn-orphans
+
+default-extensions:
+  - ConstraintKinds
+  - DataKinds
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveLift
+  - DerivingStrategies
+  - DerivingVia
+  - EmptyCase
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MultiParamTypeClasses
+  - MultiWayIf
+  - NoImplicitPrelude
+  - OverloadedStrings
+  - PackageImports
+  - PartialTypeSignatures
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeOperators
+  - TypeFamilies
+
 dependencies:
   - base >= 4.7 && < 5
+  - relude
+  - streamly
 
 executables:
-  connected-comp-example:
+  conn-comp:
     source-dirs:      src
     main:             Main.hs
