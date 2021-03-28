@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6c2217341fe89f9479b7aa4a111f699eda58a61a738fcb174b15f3782195e3cf
+-- hash: 82bdd5db86bd0b4c133558fed6bb24528ab9815ed1db61c53992ce539bf7e2b0
 
 name:           connected-comp-example
 version:        0.1.0.0
@@ -19,12 +19,16 @@ build-type:     Simple
 extra-source-files:
     README.md
 
-executable connected-comp-example
+executable conn-comp
   main-is: Main.hs
   other-modules:
       Paths_connected_comp_example
   hs-source-dirs:
       src
+  default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
+  ghc-options: -O3 -Wall -Werror -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans
   build-depends:
       base >=4.7 && <5
+    , relude
+    , streamly
   default-language: Haskell2010
