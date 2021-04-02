@@ -3,8 +3,7 @@ module Main where
 import Streamly
 import Streamly.Internal.Data.Stream.StreamK as SD
 import Streamly.Prelude as S
-import Relude as R
-import System.IO (hSetBuffering, BufferMode(LineBuffering))
+import Relude
 import Control.Concurrent
 
 

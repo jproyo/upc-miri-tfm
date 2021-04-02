@@ -42,6 +42,7 @@ packages:
 #
 extra-deps: 
 - streamly-0.7.3@sha256:5c528f670e7313a71971bae465fa04db5f7016471a3edb88eb53c272539970b9,28284
+- relude-1.0.0.1@sha256:35bcdaf14018e79f11e712b0e2314c1aac79976f28f4adc179985457493557d5,11569
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
