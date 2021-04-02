@@ -4,12 +4,12 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 82bdd5db86bd0b4c133558fed6bb24528ab9815ed1db61c53992ce539bf7e2b0
+-- hash: 861d592885cf43c1d0e9ea49f7b76970e33a4fd7702731767457681979fa5865
 
-name:           connected-comp-example
+name:           connected-comp
 version:        0.1.0.0
 category:       Data,Data Flow,Pipes
-homepage:       https://github.com/jproyo/connected-comp-example#readme
+homepage:       https://github.com/jproyo/upc-miri-tfm/connected-comp#readme
 author:         Juan Pablo Royo Sales
 maintainer:     juanpablo.royo@gmail.com
 copyright:      Copyright (C) 2021 Juan Pablo Royo Sales
@@ -22,7 +22,7 @@ extra-source-files:
 executable conn-comp
   main-is: Main.hs
   other-modules:
-      Paths_connected_comp_example
+      Paths_connected_comp
   hs-source-dirs:
       src
   default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies

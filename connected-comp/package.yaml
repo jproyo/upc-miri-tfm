@@ -1,8 +1,8 @@
-name:                connected-comp-example
+name:                connected-comp
 version:             0.1.0.0
 #synopsis:
 #description:
-homepage:            https://github.com/jproyo/connected-comp-example#readme
+homepage:            https://github.com/jproyo/upc-miri-tfm/connected-comp#readme
 license:             BSD3
 author:              Juan Pablo Royo Sales
 maintainer:          juanpablo.royo@gmail.com
