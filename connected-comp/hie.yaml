@@ -1,0 +1,7 @@
+cradle:
+  stack:
+    - path: "./src/Main.hs"
+      component: "connected-comp:exe:conn-comp"
+
+    - path: "./src/Paths_connected_comp.hs"
+      component: "connected-comp:exe:conn-comp"

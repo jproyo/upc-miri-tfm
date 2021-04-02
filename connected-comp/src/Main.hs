@@ -2,7 +2,6 @@ module Main where
 
 import Streamly
 import Streamly.Internal.Data.Stream.StreamK as SD
---import Streamly.Internal.Prelude as SI
 import Streamly.Prelude as S
 import Relude as R
 import System.IO (hSetBuffering, BufferMode(LineBuffering))
@@ -33,10 +32,10 @@ filterGenerator :: IsStream s => s IO Integer -> s IO Integer
 filterGenerator s = SD.foldlS (\b a -> if even a then b |& newFilter a else b) s s
 
 newFilter :: IsStream s => Integer -> s IO Integer -> s IO Integer
-newFilter y = S.mapM (filtering y)
+newFilter = S.mapM . filtering
 
 --filtering :: (Eq b, Num b, Show b) => b -> b -> IO b
-filtering :: (Eq b, Num b) => b -> b -> IO b
+filtering :: Integer -> Integer -> IO Integer
 filtering y x = do 
   if x == 2 then threadDelay 1000000 else pure ()
   -- tid <- myThreadId
