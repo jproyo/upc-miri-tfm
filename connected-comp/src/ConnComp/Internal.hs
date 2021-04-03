@@ -32,7 +32,7 @@ input = do
 parseEdges :: (IsStream t, MonadFail m, MonadAsync m) => t m String -> t m (Edge Integer)
 parseEdges = S.mapM toEdge
 
-generator :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m Edge Integer
+generator :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m (Edge Integer, ConnectedComponents Integer)
 generator = SD.foldrS generateFilter nil . S.map (identity &&& toConnectedComp)
 
 generateFilter :: (IsStream t, MonadAsync m)
