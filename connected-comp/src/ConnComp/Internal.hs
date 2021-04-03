@@ -2,6 +2,7 @@ module ConnComp.Internal
   ( runDPConnectedComp
   ) where
 
+import           Control.Concurrent
 import           Control.Monad.Catch
 import           Data.ConnComp
 import           Relude                                            as R
@@ -31,21 +32,29 @@ input = do
 parseEdges :: (IsStream t, MonadFail m, MonadAsync m) => t m String -> t m (Edge Integer)
 parseEdges = S.mapM toEdge
 
-generator :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m (Edge Integer, ConnectedComponents Integer)
+generator :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m Edge Integer
 generator = SD.foldrS generateFilter nil . S.map (identity &&& toConnectedComp)
 
 generateFilter :: (IsStream t, MonadAsync m)
                => (Edge Integer, ConnectedComponents Integer)
                -> t m (Edge Integer, ConnectedComponents Integer)
                -> t m (Edge Integer, ConnectedComponents Integer)
-generateFilter headElem prevStream =
-  let filterInstance = newFilter headElem in S.yield headElem <> prevStream |& filterInstance
+generateFilter headElem prevStream = S.yield headElem <> prevStream |& newFilter headElem
 
 newFilter :: (IsStream t, MonadAsync m)
           => (Edge Integer, ConnectedComponents Integer)
           -> t m (Edge Integer, ConnectedComponents Integer)
           -> t m (Edge Integer, ConnectedComponents Integer)
-newFilter = S.map . filtering
+newFilter c = S.map (filtering c) . S.mapM
+  (\a ->
+    liftIO myThreadId
+      >>= liftIO
+      .   R.putStrLn
+      .   mappend (show a)
+      .   mappend (" - Filter " <> show c <> " - ")
+      .   show
+      >>  return a
+  )
 
 filtering :: (Edge Integer, ConnectedComponents Integer)
           -> (Edge Integer, ConnectedComponents Integer)
