@@ -59,12 +59,25 @@ default-extensions:
 
 dependencies:
   - base >= 4.7 && < 5
+  - containers
   - exceptions
   - relude >= 1.0.0.0
   - streamly
   - trifecta
 
+library:
+  source-dirs: src
+  exposed-modules:
+    - ConnComp
+
 executables:
   conn-comp:
-    source-dirs:      src
+    source-dirs:      app
     main:             Main.hs
+    dependencies:
+      - connected-comp
+    ghc-options:
+      - -threaded
+      - -O3
+      - -rtsopts
+      - -with-rtsopts=-N
