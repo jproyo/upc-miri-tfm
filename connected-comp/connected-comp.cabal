@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b9ae15c3ebdf3ab27e1bf2c7aa12773ef04c6e9c319d77bd0f2c07e63f40a267
+-- hash: 4b28bb483f00b1944d48ef695283e072944965f7411264c74f7fd7737ea878d8
 
 name:           connected-comp
 version:        0.1.0.0
@@ -29,6 +29,8 @@ executable conn-comp
   ghc-options: -O3 -Wall -Werror -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans
   build-depends:
       base >=4.7 && <5
+    , exceptions
     , relude >=1.0.0.0
     , streamly
+    , trifecta
   default-language: Haskell2010
