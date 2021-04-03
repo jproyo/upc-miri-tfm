@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4b28bb483f00b1944d48ef695283e072944965f7411264c74f7fd7737ea878d8
+-- hash: e35b8bf6430822e15def748d2d4100ac69758f4ace23b0ba8366872ed9cd934e
 
 name:           connected-comp
 version:        0.1.0.0
@@ -19,9 +19,12 @@ build-type:     Simple
 extra-source-files:
     README.md
 
-executable conn-comp
-  main-is: Main.hs
+library
+  exposed-modules:
+      ConnComp
   other-modules:
+      ConnComp.Internal
+      Data.ConnComp
       Paths_connected_comp
   hs-source-dirs:
       src
@@ -29,6 +32,25 @@ executable conn-comp
   ghc-options: -O3 -Wall -Werror -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans
   build-depends:
       base >=4.7 && <5
+    , containers
+    , exceptions
+    , relude >=1.0.0.0
+    , streamly
+    , trifecta
+  default-language: Haskell2010
+
+executable conn-comp
+  main-is: Main.hs
+  other-modules:
+      Paths_connected_comp
+  hs-source-dirs:
+      app
+  default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
+  ghc-options: -O3 -Wall -Werror -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans -threaded -O3 -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , connected-comp
+    , containers
     , exceptions
     , relude >=1.0.0.0
     , streamly
