@@ -22,7 +22,7 @@ ghc-options:
   - -Wincomplete-uni-patterns
   - -Wredundant-constraints
   - -Wno-unused-top-binds
-  - -fno-warn-deprecations # allow undefined
+  - -fno-warn-deprecations
   - -fno-warn-orphans
 
 default-extensions:
