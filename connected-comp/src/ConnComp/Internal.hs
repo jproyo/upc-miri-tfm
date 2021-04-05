@@ -46,16 +46,27 @@ input = do
 parseEdges :: (IsStream t, MonadAsync m) => t m String -> t m (Edge Integer)
 parseEdges = S.mapM toEdge
 
-generator :: (IsStream t, MonadAsync m)
+
+
+generator :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m (ConnectedComponents Integer)
+generator = SD.foldrS generateFilter nil
+
+generateFilter :: (IsStream t, MonadAsync m) => Edge Integer -> t m (Edge Integer) -> t m (ConnectedComponents Integer)
+generateFilter headElem prevStream = S.yield headElem <> prevStream |& generator' headElem
+
+-- Check https://github.com/composewell/streamly/blob/9b98f41c6b47ddb641503ab7485ae8e41f70979e/src/Streamly/Internal/Data/Stream/IsStream/Expand.hs#L472
+
+
+generator' :: (IsStream t, MonadAsync m)
           => t m (Edge Integer)
           -> t m (Either (Edge Integer) (ConnectedComponents Integer))
-generator =
+generator' =
   SE.iterateSmapMWith ahead
                       newFilter
                       (pure (mempty :: ConnectedComponents Integer))
     . S.map Left
 
-newFilter :: (IsStream t, MonadAsync m)
+newFilter' :: (IsStream t, MonadAsync m)
           => ConnectedComponents Integer
           -> Either (Edge Integer) (ConnectedComponents Integer)
           -> m
@@ -67,7 +78,7 @@ newFilter :: (IsStream t, MonadAsync m)
                        (ConnectedComponents Integer)
                    )
                )
-newFilter cc st@(Left edge)
+newFilter' cc st@(Left edge)
   | edge `includedIncident` cc || DC.null cc
   = let newCC = edge `addToConnectedComp` cc
     in  return (newCC, S.yield st)
