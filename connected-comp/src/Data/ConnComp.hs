@@ -1,25 +1,35 @@
 module Data.ConnComp
-  ( Edge
+  ( Edge(..)
   , ConnectedComponents
   , toEdge
   , toConnectedComp
   , isIncident
   , addToConnectedComp
+  , includedIncident
+  , Data.ConnComp.null
+  , StreamState(..)
   ) where
 
+import           Control.Exception.Base
+import           Control.Monad.Catch
 import qualified Data.Set                                          as S
 import           Relude
 import           Text.Trifecta
 import           Text.Trifecta.Parser                              as P
 
 newtype Edge a = Edge (a, a)
-  deriving (Functor, Show, Eq)
+  deriving (Functor, Show, Eq, Ord)
 
 newtype ConnectedComponents a = ConnectedComponents (Set a)
   deriving newtype (Monoid, Semigroup, Show, Eq)
 
-toEdge :: (MonadIO m, MonadFail m) => String -> m (Edge Integer)
-toEdge = foldResult (fail . show) pure . toEdge'
+
+data StreamState a = ByPass (Edge a)
+                   | Computed (ConnectedComponents a)
+                   deriving Show
+
+toEdge :: (MonadIO m, MonadThrow m) => String -> m (Edge Integer)
+toEdge = foldResult (const $ throwM FixIOException) pure . toEdge'
 
 toEdge' :: String -> Text.Trifecta.Result (Edge Integer)
 toEdge' = P.parseString parseEdge mempty
@@ -36,3 +46,8 @@ addToConnectedComp (Edge (a, b)) (ConnectedComponents set) = ConnectedComponents
 isIncident :: Eq a => Edge a -> Edge a -> Bool
 isIncident (Edge (a, b)) (Edge (c, d)) = a == c || b == c || a == d || b == d
 
+includedIncident :: Eq a => Edge a -> ConnectedComponents a -> Bool
+includedIncident (Edge (a, b)) (ConnectedComponents set) = getAny $ foldMap (\e -> Any (a == e || b == e)) set
+
+null :: ConnectedComponents a -> Bool
+null (ConnectedComponents s) = S.null s

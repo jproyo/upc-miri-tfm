@@ -41,8 +41,10 @@ packages:
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
 extra-deps: 
-- streamly-0.7.3@sha256:5c528f670e7313a71971bae465fa04db5f7016471a3edb88eb53c272539970b9,28284
 - relude-1.0.0.1@sha256:35bcdaf14018e79f11e712b0e2314c1aac79976f28f4adc179985457493557d5,11569
+
+- github: composewell/streamly
+  commit: 833ad1f591b305cda89f467053c5843378a4e59c
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
