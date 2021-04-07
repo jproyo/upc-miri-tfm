@@ -11,6 +11,7 @@ import qualified Streamly.FileSystem.Handle                        as FH
 import qualified Streamly.Internal.Data.Array.Foreign.Type         as ST
 import qualified Streamly.Internal.Data.Fold                       as FL
 import qualified Streamly.Internal.Data.Stream.IsStream.Expand     as SE
+import qualified Streamly.Internal.Data.Stream.IsStream.Common     as SC
 import           Streamly.Internal.Data.Stream.StreamK             as SD
 import qualified Streamly.Internal.Data.Unfold                     as FU
 import qualified Streamly.Internal.FileSystem.File                 as F
@@ -19,7 +20,7 @@ import           Streamly.Prelude                                  as S
 
 
 runDPConnectedComp :: (IsStream t, MonadIO (t m), MonadAsync m, MonadCatch m) =>  t m ()
-runDPConnectedComp =  input |& generator'' |& S.mapM print -- output
+runDPConnectedComp =  input |& newGo |& S.mapM print -- output
 
 input :: (IsStream t, MonadIO (t m), MonadThrow m, MonadAsync m, MonadCatch m) => t m (Edge Integer)
 input = do
@@ -48,7 +49,13 @@ generatorFilter' e@(Edge (a, _)) st = S.yield a <> st |& generatorFilter' e
 -- generator = generator'' . SD.foldrS generatorFilter nil 
 
 newGo :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m (ConnectedComponents Integer)
-newGo = SD.foldrS generator'' nil
+newGo = SC.scanlMAfter' accumIfIncident (pure mempty) return
+
+accumIfIncident :: MonadAsync m 
+                => ConnectedComponents Integer
+                -> Edge Integer
+                -> m (ConnectedComponents Integer)
+accumIfIncident b a = if a `includedIncident` b || DC.null b then return $ a `addToConnectedComp` b else return b
 
 generatorFilter :: (IsStream t, MonadAsync m) => Edge Integer -> t m (Edge Integer) -> t m (Edge Integer)
 generatorFilter headElem prevStream = S.yield headElem <> prevStream |& S.map id
@@ -58,6 +65,14 @@ generator'' = S.foldMany (FL.mkFoldl (\b a-> if a `includedIncident` b || DC.nul
 --generator'' :: (IsStream t, Monad (t m), MonadAsync m) => SerialT (t m) (Edge Integer) -> t m [ConnectedComponents Integer]
 -- generator'' :: (IsStream t, Monad (t m)) => SerialT (t m) (Edge Integer) -> t m [ConnectedComponents Integer]
 -- generator'' = S.fold (many (FL.mkFoldl (\b a-> if a `includedIncident` b || DC.null b then a `addToConnectedComp` b else b) mempty))
+
+{-- 
+let f = FL.mkFoldl (\b a-> if not $ a `R.elem` b then a : b else b) mempty
+let t = FL.transform (Pipe.map identity) f
+S.drain $ S.mapM print $ S.foldMany t $ Internal.transform (Pipe.map identity) $ S.enumerateFromTo 1 10
+
+--}
+
 
 generator' :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m (ConnectedComponents Integer)
 generator' = SE.concatSmapMWith parallel newFilter' (pure mempty)
