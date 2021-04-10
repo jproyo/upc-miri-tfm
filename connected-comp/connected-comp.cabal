@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 59dace1ecaecee50b397bd71aa17a9ec7bfb48d8a3baa73efe06e6693447c65f
+-- hash: 3799db470147a75efca363d5633eee3681a009136599b2fe238452afb8361e60
 
 name:           connected-comp
 version:        0.1.0.0
@@ -25,18 +25,19 @@ library
   other-modules:
       ConnComp.Internal
       Data.ConnComp
-      Stream
       Paths_connected_comp
   hs-source-dirs:
       src
   default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
   ghc-options: -O3 -Wall -Werror -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans
   build-depends:
-      base >=4.7 && <5
+      async
+    , base >=4.7 && <5
+    , bytestring
     , containers
     , exceptions
     , relude >=1.0.0.0
-    , streamly
+    , stm
     , trifecta
   default-language: Haskell2010
 
@@ -49,11 +50,13 @@ executable conn-comp
   default-extensions: ConstraintKinds DataKinds DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
   ghc-options: -O3 -Wall -Werror -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans -threaded -O3 -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      async
+    , base >=4.7 && <5
+    , bytestring
     , connected-comp
     , containers
     , exceptions
     , relude >=1.0.0.0
-    , streamly
+    , stm
     , trifecta
   default-language: Haskell2010

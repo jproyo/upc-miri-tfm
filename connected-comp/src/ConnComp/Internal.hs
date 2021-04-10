@@ -1,98 +1,55 @@
+{-# LANGUAGE  BlockArguments #-}
 module ConnComp.Internal
   ( runDPConnectedComp
   ) where
 
---import           Control.Concurrent
-import           Control.Monad.Catch
-import           Data.ConnComp                                     as DC
+--import           Control.Monad.Catch
+import Control.Concurrent.Async
+import Data.ByteString as B
+import Control.Concurrent.STM.TChan as TC
+--import           Data.ConnComp                                     as DC
 import           Relude                                            as R
-import           Streamly
-import qualified Streamly.FileSystem.Handle                        as FH
-import qualified Streamly.Internal.Data.Array.Foreign.Type         as ST
-import qualified Streamly.Internal.Data.Fold                       as FL
-import qualified Streamly.Internal.Data.Stream.IsStream.Expand     as SE
-import qualified Streamly.Internal.Data.Stream.IsStream.Common     as SC
-import           Streamly.Internal.Data.Stream.StreamK             as SD
-import qualified Streamly.Internal.Data.Unfold                     as FU
-import qualified Streamly.Internal.FileSystem.File                 as F
-import qualified Streamly.Internal.Unicode.Stream                  as US
-import           Streamly.Prelude                                  as S
+import GHC.IO.Handle
 
 
-runDPConnectedComp :: (IsStream t, MonadIO (t m), MonadAsync m, MonadCatch m) =>  t m ()
-runDPConnectedComp =  input |& newGo |& S.mapM print -- output
+runParallelDP :: Handle -> IO ()
+runParallelDP h = do
+  (input, a) <- fromInput h
+  b <- toOutput input
+  mapM_ wait [a,b]
 
-input :: (IsStream t, MonadIO (t m), MonadThrow m, MonadAsync m, MonadCatch m) => t m (Edge Integer)
-input = do
+runDPConnectedComp :: IO ()
+runDPConnectedComp = do
   file <- maybe (liftIO $ fail "Error no parameter found") return . R.viaNonEmpty R.head =<< liftIO getArgs
-  F.withFile file ReadMode $ \h ->
-    S.unfold FH.readChunksWithBufferOf (256 * 1024, h)
-      & SD.concatMap ST.toStream
-      & US.decodeUtf8
-      & US.lines FL.toList
-      & parseEdges
-
-parseEdges :: (IsStream t, MonadAsync m) => t m String -> t m (Edge Integer)
-parseEdges = S.mapM toEdge
-
--- generator :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m Integer
--- generator s = SD.foldrS (generatorFilter' s) nil s
-
-g :: FU.Unfold IO a b
-g = undefined
---g = FU.mkUnfold (a -> m (Step a b))
-
-generatorFilter' :: (IsStream t, MonadAsync m) => Edge Integer -> t m Integer -> t m Integer
-generatorFilter' e@(Edge (a, _)) st = S.yield a <> st |& generatorFilter' e
-
--- generator :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m (ConnectedComponents Integer)
--- generator = generator'' . SD.foldrS generatorFilter nil 
-
-newGo :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m (ConnectedComponents Integer)
-newGo = SC.scanlMAfter' accumIfIncident (pure mempty) return
-
-accumIfIncident :: MonadAsync m 
-                => ConnectedComponents Integer
-                -> Edge Integer
-                -> m (ConnectedComponents Integer)
-accumIfIncident b a = if a `includedIncident` b || DC.null b then return $ a `addToConnectedComp` b else return b
-
-generatorFilter :: (IsStream t, MonadAsync m) => Edge Integer -> t m (Edge Integer) -> t m (Edge Integer)
-generatorFilter headElem prevStream = S.yield headElem <> prevStream |& S.map id
-
-generator'' :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m (ConnectedComponents Integer)
-generator'' = S.foldMany (FL.mkFoldl (\b a-> if a `includedIncident` b || DC.null b then a `addToConnectedComp` b else b) mempty)
---generator'' :: (IsStream t, Monad (t m), MonadAsync m) => SerialT (t m) (Edge Integer) -> t m [ConnectedComponents Integer]
--- generator'' :: (IsStream t, Monad (t m)) => SerialT (t m) (Edge Integer) -> t m [ConnectedComponents Integer]
--- generator'' = S.fold (many (FL.mkFoldl (\b a-> if a `includedIncident` b || DC.null b then a `addToConnectedComp` b else b) mempty))
-
-{-- 
-let f = FL.mkFoldl (\b a-> if not $ a `R.elem` b then a : b else b) mempty
-let t = FL.transform (Pipe.map identity) f
-S.drain $ S.mapM print $ S.foldMany t $ Internal.transform (Pipe.map identity) $ S.enumerateFromTo 1 10
-
---}
+  R.withFile file ReadMode runParallelDP
 
 
-generator' :: (IsStream t, MonadAsync m) => t m (Edge Integer) -> t m (ConnectedComponents Integer)
-generator' = SE.concatSmapMWith parallel newFilter' (pure mempty)
-
-newFilter' :: (IsStream t, MonadAsync m)
-           => ConnectedComponents Integer
-           -> Edge Integer
-           -> m (ConnectedComponents Integer, t m (ConnectedComponents Integer))
-newFilter' xs edge
-  | edge `includedIncident` xs
-  = let newCC = edge `addToConnectedComp` xs in traceThreads edge >> return (newCC, S.yield newCC)
-  | otherwise
-  = traceThreads edge >> return (xs, S.yield xs)
+toOutput :: TChan ByteString -> IO (Async ())
+toOutput inCh =
+  async $ loop inCh 
+  where 
+    loop ic = do 
+      whenM (atomically $ isEmptyTChan ic) $ return ()
+      atomically (readTChan ic) >>= print
+      loop ic
 
 
---traceThreads :: (MonadIO m, Show b) => b -> m ()
-traceThreads :: Applicative f => a -> f ()
-traceThreads a = void $ pure a-- liftIO (myThreadId >>= R.putStrLn . mappend (show a) . show)
+fromInput :: Handle -> IO (TChan ByteString, Async ())
+fromInput h = do
+  inputChannel <- newTChanIO
+  a <- async $ loop h inputChannel
+  return (inputChannel, a)
+ where
+  loop h' inCh = do
+    let bol = getAny <$> foldMapM (fmap Any) [hIsClosed h, R.hIsEOF h]
+    whenM bol $ return ()
+    whenM (not <$> bol) $ do
+      x <- hGetSome h' (1024 * 256)
+      atomically $ writeTChan inCh x
+      loop h' inCh
+        
 
 
-output :: (IsStream t, MonadAsync m) => t m (ConnectedComponents Integer) -> t m ()
-output = S.mapM print
+  
+
 

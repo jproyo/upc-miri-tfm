@@ -4,11 +4,9 @@ module ConnComp
 
 import           ConnComp.Internal
 import           Relude
-import           Streamly
-import           Streamly.Prelude                                  as S
 
 
 dpConnectedComponents :: IO ()
-dpConnectedComponents = S.drain $ aheadly runDPConnectedComp
+dpConnectedComponents = runDPConnectedComp
 
 
