@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e35b8bf6430822e15def748d2d4100ac69758f4ace23b0ba8366872ed9cd934e
+-- hash: 59dace1ecaecee50b397bd71aa17a9ec7bfb48d8a3baa73efe06e6693447c65f
 
 name:           connected-comp
 version:        0.1.0.0
@@ -25,6 +25,7 @@ library
   other-modules:
       ConnComp.Internal
       Data.ConnComp
+      Stream
       Paths_connected_comp
   hs-source-dirs:
       src
