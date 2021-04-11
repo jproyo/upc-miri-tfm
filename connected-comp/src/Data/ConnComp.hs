@@ -28,11 +28,11 @@ data StreamState a = ByPass (Edge a)
                    | Computed (ConnectedComponents a)
                    deriving Show
 
-toEdge :: (MonadIO m, MonadThrow m) => String -> m (Edge Integer)
+toEdge :: (MonadIO m, MonadThrow m) => String -> m [Edge Integer]
 toEdge = foldResult (const $ throwM FixIOException) pure . toEdge'
 
-toEdge' :: String -> Text.Trifecta.Result (Edge Integer)
-toEdge' = P.parseString parseEdge mempty
+toEdge' :: String -> Text.Trifecta.Result [Edge Integer]
+toEdge' = P.parseString (many parseEdge) mempty
 
 parseEdge :: Parser (Edge Integer)
 parseEdge = fmap Edge . (,) <$> (integer <* whiteSpace) <*> integer
