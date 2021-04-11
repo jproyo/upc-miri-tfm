@@ -26,11 +26,11 @@ runParallelDP h = do
 generator :: DP.Stream (Edge Integer) -> DP.Channel (ConnectedComponents Integer) -> IO [DP.Stream (Edge Integer)]
 generator chn outChn = loop chn []
  where
-  loop c xs = do
-    e <- DP.pull c
-    case e of
-      Nothing -> DP.end' outChn >> return xs
-      Just v  -> do
+  loop c xs = maybe (finishGenerator xs) (createNewFilter c xs) =<< DP.pull c
+  
+  finishGenerator xs = DP.end' outChn >> return xs
+  
+  createNewFilter c xs v = do
         newInput <- newTQueueIO
         s        <- DP.Stream newInput <$> async (newFilter (toConnectedComp v) c newInput outChn)
         loop s (s : xs)
@@ -40,17 +40,17 @@ newFilter :: ConnectedComponents Integer
           -> DP.Channel (Edge Integer)
           -> DP.Channel (ConnectedComponents Integer)
           -> IO ()
-newFilter conn inCh toInCh outCh = do
-  e <- DP.pull inCh
-  case e of
-    Nothing -> conn --> outCh >> DP.end' toInCh >> return ()
-    Just v  -> if v `includedIncident` conn
-      then do
-        let newList = v `addToConnectedComp` conn
-        newFilter newList inCh toInCh outCh
-      else do
-        v --> toInCh
-        newFilter conn inCh toInCh outCh
+newFilter conn inCh toInCh outCh = maybe finishFilter processElem =<< DP.pull inCh
+
+ where
+  finishFilter = conn --> outCh >> DP.end' toInCh >> return ()
+
+  processElem v
+    | v `includedIncident` conn = do
+      let newList = v `addToConnectedComp` conn
+      newFilter newList inCh toInCh outCh
+    | otherwise = v --> toInCh >> newFilter conn inCh toInCh outCh
+
 
 
 runDPConnectedComp :: IO ()
