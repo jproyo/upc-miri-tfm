@@ -28,6 +28,7 @@ ghc-options:
 default-extensions:
   - ConstraintKinds
   - DataKinds
+  - DeriveAnyClass
   - DeriveFunctor
   - DeriveGeneric
   - DeriveLift
