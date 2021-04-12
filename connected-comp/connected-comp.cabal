@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 277e4219ae469099235d0d19a383c2fe63c6eaa84d1f273ffedc1fdf7bfd121d
+-- hash: 3997aa1990446aa0893e71127860fe1e2ed94a652324a805bc9a881dfe93c3b9
 
 name:           connected-comp
 version:        0.1.0.0
@@ -36,10 +36,11 @@ library
     , base >=4.7 && <5
     , bytestring
     , containers
+    , deque
     , exceptions
     , relude >=1.0.0.0
-    , stm
     , trifecta
+    , unagi-chan
   default-language: Haskell2010
 
 executable conn-comp
@@ -56,8 +57,9 @@ executable conn-comp
     , bytestring
     , connected-comp
     , containers
+    , deque
     , exceptions
     , relude >=1.0.0.0
-    , stm
     , trifecta
+    , unagi-chan
   default-language: Haskell2010
