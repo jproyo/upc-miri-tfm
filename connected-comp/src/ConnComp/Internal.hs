@@ -4,7 +4,8 @@ module ConnComp.Internal
   ) where
 
 import           Control.Concurrent.Async
-import           Control.Concurrent.STM.TQueue                     as TC
+--import           Control.Concurrent.STM.TQueue                     as TC
+import Control.Concurrent.Chan.Unagi as TC
 import           Data.ByteString                                   as B
 import           Data.ConnComp                                     as DC
 import qualified Dynamic.Pipeline                                  as DP
@@ -18,7 +19,7 @@ runParallelDP :: Handle -> IO ()
 runParallelDP h = do
   sInput     <- fromInput h -- Input 
   parseInput <- sInput |>> parseEdges
-  out        <- newTQueueIO 
+  out        <- newChan 
   as         <- generator parseInput out -- Generator
   final      <- DP.mapM (R.putStrLn . show) out -- Output
   DP.processStreams (DP.trigger sInput : DP.trigger parseInput : final : R.map DP.trigger as)
@@ -31,7 +32,7 @@ generator chn outChn = loop chn []
   finishGenerator xs = DP.end' outChn >> return xs
 
   createNewFilter c xs v = do
-    newInput <- newTQueueIO
+    newInput <- newChan
     s        <- DP.Stream newInput <$> async (newFilter (toConnectedComp v) c newInput outChn)
     loop s (s : xs)
 

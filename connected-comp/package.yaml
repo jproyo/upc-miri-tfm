@@ -63,9 +63,10 @@ dependencies:
   - async
   - bytestring
   - containers
+  - deque
   - exceptions
   - relude >= 1.0.0.0
-  - stm
+  - unagi-chan
   - trifecta
 
 library:
