@@ -1,8 +1,7 @@
 module Dynamic.Pipeline where
 
 import           Control.Concurrent.Async
---import           Control.Concurrent.STM.TQueue                     as TC
-import Control.Concurrent.Chan.Unagi
+import           Control.Concurrent.Chan.Unagi
 import           Relude                                                                                        hiding ( map
                                                                                                                       , mapM
                                                                                                                       , traverse
@@ -10,65 +9,81 @@ import           Relude                                                         
 
 type Channel a = (InChan (Maybe a), OutChan (Maybe a))
 
-data Stream a = Stream
-  { channel :: Channel a
-  , trigger :: Async ()
+data Stream a b = Stream
+  { inChannel  :: Channel a
+  , outChannel :: Channel b
+  , trigger    :: Async ()
   }
 
 class AsyncWait f where
     toAsync :: f -> Async ()
 
-instance AsyncWait (Stream a) where
+instance AsyncWait (Stream a b) where
   toAsync = trigger
-
-end :: Stream a -> IO ()
-end = end' . channel
 
 end' :: Channel a -> IO ()
 end' = flip writeChan Nothing . fst
 
-(>->) :: a -> Stream a -> IO ()
-(>->) e = (e -->) . channel
+endIn :: Stream a b -> IO ()
+endIn = end' . inChannel
 
-(-->) :: a -> Channel a -> IO ()
-(-->) e s = writeChan (fst s) (Just e)
+endOut :: Stream a b -> IO ()
+endOut = end' . outChannel
 
-pull :: Stream a -> IO (Maybe a)
-pull = pull' . channel
+push' :: a -> Channel a -> IO ()
+push' e s = writeChan (fst s) (Just e)
+
+pushOut :: b -> Stream a b -> IO ()
+pushOut e = push' e . outChannel
+
+pushIn :: a -> Stream a b -> IO ()
+pushIn e = push' e . inChannel
 
 pull' :: Channel a -> IO (Maybe a)
 pull' = readChan . snd
 
-(|>>) :: Foldable f => Stream a -> (a -> IO (f b)) -> IO (Stream b)
+pullIn :: Stream a b -> IO (Maybe a)
+pullIn = pull' . inChannel
+
+pullOut :: Stream a b -> IO (Maybe b)
+pullOut = pull' . outChannel
+
+(|>>) :: Foldable f => Stream a b -> (a -> IO (f c)) -> IO (Stream c b)
 (|>>) inp f = do
   newC' <- newChan
-  Stream newC' <$> async (loop newC')
+  newO' <- newChan
+  end' newO'
+  Stream newC' newO' <$> async (loop newC')
  where
-  loop newCh = pull inp >>= loopUntilDone newCh (loopE newCh) loop
+  loop newCh = pullIn inp >>= loopUntilDone newCh (loopE newCh) loop
 
   loopE newCh a = do
     newVal <- f a
-    void $ foldMapM (--> newCh) newVal
+    void $ foldMapM (`push'` newCh) newVal
 
 loopUntilDone :: Channel b -> (a -> IO ()) -> (Channel b -> IO ()) -> Maybe a -> IO ()
 loopUntilDone ch f loop = maybe (end' ch) ((>> loop ch) . f)
 
 -- Generate Stream base on a seed function `f`
-unfoldM :: IO b -> IO Bool -> IO (Stream b)
+unfoldM :: IO a -> IO Bool -> IO (Stream a b)
 unfoldM f stop = do
-  newCh <- newChan
-  Stream newCh <$> async (loop newCh)
-  where loop newCh = ifM stop (end' newCh) (f >>= (--> newCh) >> loop newCh)
+  newCh  <- newChan
+  newCh' <- newChan
+  end' newCh'
+  Stream newCh newCh' <$> async (loop newCh)
+  where loop newCh = ifM stop (end' newCh) (f >>= (`push'` newCh) >> loop newCh)
 
 
-mapM :: (a -> IO b) -> Channel a -> IO (Async ())
+mapM :: (b -> IO c) -> Stream a b -> IO (Async ())
 mapM f inCh = async loop
  where
   loop = do
-    e <- pull' inCh
+    e <- pullOut inCh
     maybe (pure ()) (\a -> f a >> loop) e
 
 
 processStreams :: [Async ()] -> IO ()
 processStreams = mapConcurrently_ wait
 
+newStream :: IO (Async ()) -> IO (Stream a b)
+newStream as = Stream <$> newChan <*> newChan <*> as
