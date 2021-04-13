@@ -8,6 +8,8 @@ module Data.ConnComp
   , includedIncident
   , Data.ConnComp.null
   , StreamState(..)
+  , union
+  , intersect
   ) where
 
 import           Control.Exception.Base
@@ -51,3 +53,9 @@ includedIncident (Edge (a, b)) (ConnectedComponents set) = getAny $ foldMap (\e 
 
 null :: ConnectedComponents a -> Bool
 null (ConnectedComponents s) = S.null s
+
+intersect :: Ord a => ConnectedComponents a -> ConnectedComponents a -> Bool
+intersect (ConnectedComponents s1) (ConnectedComponents s2) = not $ S.null $ S.intersection s1 s2 
+
+union :: Ord a => ConnectedComponents a -> ConnectedComponents a -> ConnectedComponents a
+union (ConnectedComponents s1) (ConnectedComponents s2) = ConnectedComponents (S.union s1 s2)
