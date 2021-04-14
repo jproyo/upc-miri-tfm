@@ -8,3 +8,6 @@ cradle:
 
     - path: "./app/Paths_connected_comp.hs"
       component: "connected-comp:exe:conn-comp"
+
+    - path: "./test"
+      component: "connected-comp:test:conn-comp-tests"

@@ -1,9 +1,12 @@
 module ConnComp.Internal
   ( runDPConnectedComp
+  , runParallelDP
+  , runParallelDP'
+  , DP.fromByteString
   ) where
 
 import           Control.Concurrent.Async
-import           Control.Concurrent.Chan.Unagi                     as TC
+import           Control.Concurrent.Chan                  as TC
 import           Data.ByteString                                   as B
 import           Data.ConnComp                                     as DC
 import qualified Dynamic.Pipeline                                  as DP
@@ -20,7 +23,16 @@ runParallelDP h = do
   parseInput <- sInput |>> parseEdges
   (out, as)  <- generator parseInput
   final      <- DP.mapM (R.putStrLn . show) out -- Output
-  DP.processStreams (DP.trigger sInput : DP.trigger parseInput : final : R.map DP.trigger as)
+  DP.processStreams (DP.trigger sInput : DP.trigger parseInput : final : DP.trigger out : R.map DP.trigger as)
+
+runParallelDP' :: DP.Stream ByteString (ConnectedComponents Integer) -> IO [ConnectedComponents Integer]
+runParallelDP' sInput = do
+  parseInput <- sInput |>> parseEdges
+  (out, as)  <- generator parseInput
+  result     <- DP.fold out
+  DP.processStreams (DP.trigger sInput : DP.trigger parseInput : DP.trigger out : R.map DP.trigger as)
+  return result
+
 
 generator :: ConnCompDP -> IO (ConnCompDP, [ConnCompDP])
 generator chn = loop (chn, [])
@@ -78,7 +90,4 @@ parseEdges = toEdge . decodeUtf8
 
 fromInput :: Handle -> IO (DP.Stream ByteString (ConnectedComponents Integer))
 fromInput h = DP.unfoldM (B.hGetNonBlocking h (1024 * 256)) (R.hIsEOF h)
-
-
-
 

@@ -1,13 +1,14 @@
 module Dynamic.Pipeline where
 
 import           Control.Concurrent.Async
-import           Control.Concurrent.Chan.Unagi
+import          Control.Concurrent.Chan
+--import           Control.Concurrent.Chan.Unagi
 import           Relude                                                                                        hiding ( map
                                                                                                                       , mapM
                                                                                                                       , traverse
                                                                                                                       )
 
-type Channel a = (InChan (Maybe a), OutChan (Maybe a))
+type Channel a = Chan (Maybe a)
 
 data Stream a b = Stream
   { inChannel  :: Channel a
@@ -22,7 +23,7 @@ instance AsyncWait (Stream a b) where
   toAsync = trigger
 
 end' :: Channel a -> IO ()
-end' = flip writeChan Nothing . fst
+end' = flip writeChan Nothing
 
 endIn :: Stream a b -> IO ()
 endIn = end' . inChannel
@@ -31,7 +32,7 @@ endOut :: Stream a b -> IO ()
 endOut = end' . outChannel
 
 push' :: a -> Channel a -> IO ()
-push' e s = writeChan (fst s) (Just e)
+push' e = flip writeChan (Just e)
 
 pushOut :: b -> Stream a b -> IO ()
 pushOut e = push' e . outChannel
@@ -40,7 +41,7 @@ pushIn :: a -> Stream a b -> IO ()
 pushIn e = push' e . inChannel
 
 pull' :: Channel a -> IO (Maybe a)
-pull' = readChan . snd
+pull' = readChan
 
 pullIn :: Stream a b -> IO (Maybe a)
 pullIn = pull' . inChannel
@@ -77,13 +78,19 @@ unfoldM f stop = do
 mapM :: (b -> IO c) -> Stream a b -> IO (Async ())
 mapM f inCh = async loop
  where
-  loop = do
-    e <- pullOut inCh
-    maybe (pure ()) (\a -> f a >> loop) e
+  loop = maybe (pure ()) (\a -> f a >> loop) =<< pullOut inCh
+
+fold :: Stream a b -> IO [b]
+fold s = loop []
+ where
+  loop xs = maybe (pure xs) (loop . (:xs)) =<< pullOut s
 
 
 processStreams :: [Async ()] -> IO ()
-processStreams = mapConcurrently_ wait
+processStreams = mapConcurrently_ wait 
 
 newStream :: IO (Async ()) -> IO (Stream a b)
 newStream as = Stream <$> newChan <*> newChan <*> as
+
+fromByteString :: ByteString -> IO (Stream ByteString b)
+fromByteString bs = newStream (async $ pure ()) >>= \s -> pushIn bs s >> endIn s >> return s

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3997aa1990446aa0893e71127860fe1e2ed94a652324a805bc9a881dfe93c3b9
+-- hash: 0e707e05c7c6dcf80aa9589d7866edeedefdebb8d710a1a270c7ceaef6b1a75e
 
 name:           connected-comp
 version:        0.1.0.0
@@ -59,6 +59,38 @@ executable conn-comp
     , containers
     , deque
     , exceptions
+    , relude >=1.0.0.0
+    , trifecta
+    , unagi-chan
+  default-language: Haskell2010
+
+test-suite conn-comp-tests
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      ConnComp.ConnCompSpec
+      Paths_connected_comp
+  hs-source-dirs:
+      test
+  default-extensions: ConstraintKinds DataKinds DeriveAnyClass DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
+  ghc-options: -O3 -Wall -Werror -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans -threaded -O2 -rtsopts -with-rtsopts=-N -Wno-unused-local-binds -Wno-unused-matches
+  build-tool-depends:
+      hspec-discover:hspec-discover
+  build-depends:
+      HUnit
+    , QuickCheck
+    , async
+    , base >=4.7 && <5
+    , bytestring
+    , connected-comp
+    , containers
+    , deque
+    , exceptions
+    , hspec ==2.*
+    , hspec-expectations
+    , quickcheck-arbitrary-adt
+    , quickcheck-instances
+    , quickcheck-text
     , relude >=1.0.0.0
     , trifecta
     , unagi-chan
