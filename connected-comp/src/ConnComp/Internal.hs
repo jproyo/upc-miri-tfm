@@ -6,7 +6,7 @@ module ConnComp.Internal
   ) where
 
 import           Control.Concurrent.Async
-import           Control.Concurrent.Chan                  as TC
+import           Control.Concurrent.Chan.Unagi.NoBlocking          as TC
 import           Data.ByteString                                   as B
 import           Data.ConnComp                                     as DC
 import qualified Dynamic.Pipeline                                  as DP
