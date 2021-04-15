@@ -1,14 +1,15 @@
 module Dynamic.Pipeline where
 
+import qualified Control.Concurrent as CC
 import           Control.Concurrent.Async
-import          Control.Concurrent.Chan
---import           Control.Concurrent.Chan.Unagi
+import           Control.Concurrent.Chan.Unagi.NoBlocking                                                      hiding ( Stream
+                                                                                                                      )
 import           Relude                                                                                        hiding ( map
                                                                                                                       , mapM
                                                                                                                       , traverse
                                                                                                                       )
 
-type Channel a = Chan (Maybe a)
+type Channel a = (InChan (Maybe a), OutChan (Maybe a))
 
 data Stream a b = Stream
   { inChannel  :: Channel a
@@ -23,7 +24,7 @@ instance AsyncWait (Stream a b) where
   toAsync = trigger
 
 end' :: Channel a -> IO ()
-end' = flip writeChan Nothing
+end' = flip writeChan Nothing . fst
 
 endIn :: Stream a b -> IO ()
 endIn = end' . inChannel
@@ -32,7 +33,7 @@ endOut :: Stream a b -> IO ()
 endOut = end' . outChannel
 
 push' :: a -> Channel a -> IO ()
-push' e = flip writeChan (Just e)
+push' e = flip writeChan (Just e) . fst
 
 pushOut :: b -> Stream a b -> IO ()
 pushOut e = push' e . outChannel
@@ -41,7 +42,7 @@ pushIn :: a -> Stream a b -> IO ()
 pushIn e = push' e . inChannel
 
 pull' :: Channel a -> IO (Maybe a)
-pull' = readChan
+pull' = readChan (CC.threadDelay 100) . snd
 
 pullIn :: Stream a b -> IO (Maybe a)
 pullIn = pull' . inChannel
@@ -49,7 +50,7 @@ pullIn = pull' . inChannel
 pullOut :: Stream a b -> IO (Maybe b)
 pullOut = pull' . outChannel
 
-(|>>) :: Foldable f => Stream a b -> (a -> IO (f c)) -> IO (Stream c b)
+(|>>) :: Stream a b -> (a -> IO [c]) -> IO (Stream c b)
 (|>>) inp f = do
   newC' <- newChan
   newO' <- newChan
@@ -58,9 +59,7 @@ pullOut = pull' . outChannel
  where
   loop newCh = pullIn inp >>= loopUntilDone newCh (loopE newCh) loop
 
-  loopE newCh a = do
-    newVal <- f a
-    void $ foldMapM (`push'` newCh) newVal
+  loopE (inC, _) a = writeList2Chan inC . fmap Just =<< f a
 
 loopUntilDone :: Channel b -> (a -> IO ()) -> (Channel b -> IO ()) -> Maybe a -> IO ()
 loopUntilDone ch f loop = maybe (end' ch) ((>> loop ch) . f)
@@ -76,18 +75,14 @@ unfoldM f stop = do
 
 
 mapM :: (b -> IO c) -> Stream a b -> IO (Async ())
-mapM f inCh = async loop
- where
-  loop = maybe (pure ()) (\a -> f a >> loop) =<< pullOut inCh
+mapM f inCh = async loop where loop = maybe (pure ()) (\a -> f a >> loop) =<< pullOut inCh
 
 fold :: Stream a b -> IO [b]
-fold s = loop []
- where
-  loop xs = maybe (pure xs) (loop . (:xs)) =<< pullOut s
+fold s = loop [] where loop xs = maybe (pure xs) (loop . (: xs)) =<< pullOut s
 
 
 processStreams :: [Async ()] -> IO ()
-processStreams = mapConcurrently_ wait 
+processStreams = mapConcurrently_ wait
 
 newStream :: IO (Async ()) -> IO (Stream a b)
 newStream as = Stream <$> newChan <*> newChan <*> as

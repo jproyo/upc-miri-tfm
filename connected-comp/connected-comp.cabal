@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0e707e05c7c6dcf80aa9589d7866edeedefdebb8d710a1a270c7ceaef6b1a75e
+-- hash: e20e1aa669ab22f69296e9f74ac09018627d9ad1157c4e049a29cc04c47fa399
 
 name:           connected-comp
 version:        0.1.0.0
@@ -69,6 +69,7 @@ test-suite conn-comp-tests
   main-is: Spec.hs
   other-modules:
       ConnComp.ConnCompSpec
+      Data.ConnCompFixture
       Paths_connected_comp
   hs-source-dirs:
       test

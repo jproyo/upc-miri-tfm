@@ -7,7 +7,6 @@ module Data.ConnComp
   , addToConnectedComp
   , includedIncident
   , Data.ConnComp.null
-  , StreamState(..)
   , union
   , intersect
   ) where
@@ -24,11 +23,6 @@ newtype Edge a = Edge (a, a)
 
 newtype ConnectedComponents a = ConnectedComponents (Set a)
   deriving newtype (Monoid, Semigroup, Show, Eq)
-
-
-data StreamState a = ByPass (Edge a)
-                   | Computed (ConnectedComponents a)
-                   deriving Show
 
 toEdge :: (MonadIO m, MonadThrow m) => String -> m [Edge Integer]
 toEdge = foldResult (const $ throwM FixIOException) pure . toEdge'
