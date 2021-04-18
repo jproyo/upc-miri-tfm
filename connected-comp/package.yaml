@@ -13,9 +13,7 @@ extra-source-files:
 - README.md
 
 ghc-options:
-  - -O3
   - -Wall
-  - -Werror
   - -fno-warn-partial-type-signatures
   - -fconstraint-solver-iterations=0
   - -Wincomplete-record-updates
@@ -63,7 +61,6 @@ dependencies:
   - async
   - bytestring
   - containers
-  - deque
   - exceptions
   - relude >= 1.0.0.0
   - unagi-chan
@@ -73,6 +70,9 @@ library:
   source-dirs: src
   exposed-modules:
     - ConnComp
+  when:
+    - condition: false
+      other-modules: Paths_connected_comp
 
 executables:
   conn-comp:
@@ -104,11 +104,6 @@ tests:
     dependencies:
       - connected-comp
       - hspec == 2.*
-      - hspec-expectations
-      - HUnit
       - QuickCheck
-      - quickcheck-instances
-      - quickcheck-arbitrary-adt
-      - quickcheck-text
       - relude >= 1.0.0.0
       

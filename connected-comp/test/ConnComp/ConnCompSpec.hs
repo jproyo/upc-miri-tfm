@@ -40,9 +40,10 @@ spec = describe "Prestablished examples" $ do
     $ modifyMaxSuccess (const 1000)
     $ it "Retrieves the correct number of connected components"
     $ property
-    $ \Graph{..} -> do 
+    $ forAll arbitraryGraphs 
+    $ \(Graph{..}, amount) -> do 
       result <- liftIO $ runParallelWithExample $ toEdgesByteString _gEdges
-      length result `shouldBe` _gAmountConnComp
+      length result `shouldBe` amount
 
 
 runParallelWithExample :: ByteString -> IO [ConnectedComponents Integer]
