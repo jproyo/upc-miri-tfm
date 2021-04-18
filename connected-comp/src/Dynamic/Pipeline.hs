@@ -9,6 +9,11 @@ import           Relude                                                         
                                                                                                                       , traverse
                                                                                                                       )
 
+class Monad m => DynamicPipeline a m | a -> m where
+  input :: Stream a b 
+  generator :: Stream a b
+  output :: Stream a b
+
 type Channel a = (InChan (Maybe a), OutChan (Maybe a))
 
 data Stream a b = Stream
