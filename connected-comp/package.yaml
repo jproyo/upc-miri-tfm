@@ -1,8 +1,8 @@
-name:                connected-comp-example
+name:                connected-comp
 version:             0.1.0.0
 #synopsis:
 #description:
-homepage:            https://github.com/jproyo/connected-comp-example#readme
+homepage:            https://github.com/jproyo/upc-miri-tfm/connected-comp#readme
 license:             BSD3
 author:              Juan Pablo Royo Sales
 maintainer:          juanpablo.royo@gmail.com
@@ -13,21 +13,20 @@ extra-source-files:
 - README.md
 
 ghc-options:
-  - -O3
   - -Wall
-  - -Werror
   - -fno-warn-partial-type-signatures
   - -fconstraint-solver-iterations=0
   - -Wincomplete-record-updates
   - -Wincomplete-uni-patterns
   - -Wredundant-constraints
   - -Wno-unused-top-binds
-  - -fno-warn-deprecations # allow undefined
+  - -fno-warn-deprecations
   - -fno-warn-orphans
 
 default-extensions:
   - ConstraintKinds
   - DataKinds
+  - DeriveAnyClass
   - DeriveFunctor
   - DeriveGeneric
   - DeriveLift
@@ -59,10 +58,52 @@ default-extensions:
 
 dependencies:
   - base >= 4.7 && < 5
-  - relude
-  - streamly
+  - async
+  - bytestring
+  - containers
+  - exceptions
+  - relude >= 1.0.0.0
+  - unagi-chan
+  - trifecta
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - ConnComp
+  when:
+    - condition: false
+      other-modules: Paths_connected_comp
 
 executables:
   conn-comp:
-    source-dirs:      src
+    source-dirs:      app
     main:             Main.hs
+    dependencies:
+      - connected-comp
+    ghc-options:
+      - -threaded
+      - -O3
+      - -rtsopts
+      - -with-rtsopts=-N
+
+tests:
+  conn-comp-tests:
+    main: Spec.hs
+    source-dirs:
+      - test
+    build-tools:
+      - hspec-discover
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+      # TODO remove no warnings
+      - -Wno-unused-local-binds
+      - -Wno-unused-matches
+    dependencies:
+      - connected-comp
+      - hspec == 2.*
+      - QuickCheck
+      - relude >= 1.0.0.0
+      
