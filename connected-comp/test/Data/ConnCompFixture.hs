@@ -7,9 +7,8 @@ import           Relude
 import           Test.QuickCheck
 
 
-data Graph = Graph
-  { _gAmountConnComp :: Int
-  , _gEdges          :: [Set (Edge Integer)]
+newtype Graph = Graph
+  { _gEdges          :: [Set (Edge Integer)]
   } deriving (Show)
 
 instance Arbitrary (Edge Integer) where
@@ -18,11 +17,13 @@ instance Arbitrary (Edge Integer) where
     v2 <- (getPositive <$> arbitrary) `suchThat` (/= v1)
     return $ Edge (v1, v2)
 
-instance Arbitrary Graph where
-    arbitrary = do 
-        _gAmountConnComp <- choose (1,10)
-        _gEdges          <- genConnComp _gAmountConnComp
-        return Graph{..}
+arbitraryGraphs :: Gen (Graph, Int)
+arbitraryGraphs = do
+  amount <- choose (1,10)
+  (,amount) <$> genGraph amount
+
+genGraph :: Int -> Gen Graph
+genGraph = fmap Graph . genConnComp
 
 genConnComp :: Int -> Gen [Set (Edge Integer)]
 genConnComp amount = foldlM combine [] [1..amount]
@@ -62,4 +63,4 @@ toEdgesByteString :: [S.Set (Edge Integer)] -> ByteString
 toEdgesByteString = foldMap toEdgesByteString'
 
 toEdgesByteString' :: S.Set (Edge Integer) -> ByteString 
-toEdgesByteString' = S.foldr (\(Edge (a, b)) bs -> bs <> show a <> " " <> show b <> " \n ") ""
+toEdgesByteString' = S.foldr (\(Edge (a, b)) bs -> bs <> show a <> " " <> show b <> " \n") ""
