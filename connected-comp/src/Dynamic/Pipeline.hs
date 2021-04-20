@@ -55,6 +55,12 @@ pullIn = pull' . inChannel
 pullOut :: Stream a b -> IO (Maybe b)
 pullOut = pull' . outChannel
 
+{-# INLINE foldrS #-}
+foldrS :: (Stream a b -> a -> IO (Stream a b)) -> Stream a b -> IO (Stream a b)
+foldrS = loop
+ where
+  loop fio c = maybe (return c) (loop fio <=< fio c) =<< pullIn c
+
 {-# INLINE (|>>) #-}
 (|>>) :: Stream a b -> (a -> IO [c]) -> IO (Stream c b)
 (|>>) inp f = do
@@ -85,10 +91,10 @@ mapM :: (b -> IO c) -> Stream a b -> IO ()
 mapM f inCh = async loop >>= wait
   where loop = maybe (pure ()) (\a -> f a >> loop) =<< pullOut inCh
 
-{-# INLINE fold #-}
-fold :: Stream a b -> IO [b]
-fold s = async (loop []) >>= wait
-  where loop xs = maybe (pure xs) (loop . (: xs)) =<< pullOut s
+{-# INLINE foldMap #-}
+foldMap :: Monoid m => (b -> m) -> Stream a b -> IO m
+foldMap m s = async (loop mempty) >>= wait
+  where loop xs = maybe (pure xs) (loop . mappend xs . m) =<< pullOut s
 
 {-# INLINE newStream #-}
 newStream :: IO (Async ()) -> IO (Stream a b)
