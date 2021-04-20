@@ -9,24 +9,15 @@ import           Relude                                                         
                                                                                                                       , traverse
                                                                                                                       )
 
-class Monad m => DynamicPipeline a m | a -> m where
-  input :: Stream a b 
-  generator :: Stream a b
-  output :: Stream a b
-
 type Channel a = (InChan (Maybe a), OutChan (Maybe a))
 
 data Stream a b = Stream
   { inChannel  :: Channel a
   , outChannel :: Channel b
-  , trigger    :: Async ()
+  , process    :: Async ()
   }
 
-class AsyncWait f where
-    toAsync :: f -> Async ()
-
-instance AsyncWait (Stream a b) where
-  toAsync = trigger
+type DynamicPipeline = StateT (Async ())
 
 {-# INLINE end' #-}
 end' :: Channel a -> IO ()
@@ -90,16 +81,14 @@ unfoldM f stop = do
   where loop newCh = ifM stop (end' newCh) (f >>= (`push'` newCh) >> loop newCh)
 
 {-# INLINE mapM #-}
-mapM :: (b -> IO c) -> Stream a b -> IO (Async ())
-mapM f inCh = async loop where loop = maybe (pure ()) (\a -> f a >> loop) =<< pullOut inCh
+mapM :: (b -> IO c) -> Stream a b -> IO ()
+mapM f inCh = async loop >>= wait
+  where loop = maybe (pure ()) (\a -> f a >> loop) =<< pullOut inCh
 
 {-# INLINE fold #-}
 fold :: Stream a b -> IO [b]
-fold s = loop [] where loop xs = maybe (pure xs) (loop . (: xs)) =<< pullOut s
-
-{-# INLINE processStreams #-}
-processStreams :: [Async ()] -> IO ()
-processStreams = mapConcurrently_ wait
+fold s = async (loop []) >>= wait
+  where loop xs = maybe (pure xs) (loop . (: xs)) =<< pullOut s
 
 {-# INLINE newStream #-}
 newStream :: IO (Async ()) -> IO (Stream a b)
