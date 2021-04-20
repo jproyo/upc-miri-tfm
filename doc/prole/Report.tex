@@ -1,0 +1,80 @@
+\documentclass[twoside]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage[pdfencoding=auto]{hyperref}
+\usepackage[nottoc]{tocbibind}
+\usepackage[cache=false]{minted}
+\usemintedstyle{default}
+\newminted{haskell}{frame=lines,framerule=2pt}
+\newminted{R}{frame=lines,framerule=2pt}
+\graphicspath{{./images/}}
+
+\tikzstyle{bag} = [align=center]
+
+\title{A Haskell implementation of Dynamic Pipeline Paradigm to find Connected Components of a Graph}
+\author{
+\begin{tabular}{c c}       
+      Juan Pablo Royo Sales & Edelmira Pasarella\\ 
+      \small{Universitat Politècnica de Catalunya} & \small{Computer Science Department}\\
+      \small{Barcelona - Spain} & \small{Universitat Politècnica de Catalunya}\\ 
+      \small{\texttt{juan.pablo.royo@estudiantat.upc.edu}} & \small{Barcelona - Spain}\\ 
+      \small{} & \small{\texttt{edelmira@cs.upc.edu}}\\
+\end{tabular}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LO]{J. P. Royo Sales}
+\fancyhead[RE,RO]{\thepage}
+\fancyhead[LE]{Dynamic Pipeline on Haskell}
+\fancyfoot[L,C]{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\newtheorem{hyp}{Hypothesis}
+\date{}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+\textit{Dynamic Pipeline Paradigm} has been defined in order to solve problems where the data is heterogeneous 
+and in motion. Taking advantage on pipelining stage parallelization, this paradigm allows to dynamically adapt 
+stage computations according to the input. It has been shown in the definition of this computational model that any
+implementation attempt of the Paradigm requires fast and flexible parallelization techniques as well as tools that 
+are suitable with the notion of Computation as a First Class Citizen. In this work we implement \textit{Dynamic Pipeline Paradigm}
+using \texttt{Haskell} for \textit{Finding Connected Components of a Graph} as a primary example problem. We show different results 
+and how \texttt{Haskell} behaves on that context showing that it is a suitable Language for implementing \textit{Dynamic Pipeline Paradigm} 
+not only because its strong theoretical foundations which provides a strong manipulations of Computations as primary entities, but also because it has a powerful 
+Set of Tools for writing multithreading and parallel computations with optimal performance.
+\end{abstract}
+      
+\section{Introduction}
+lorem ipsum asometakfjdaslfjlkafjlasdfalk
+\section{Bi-Triangle Counting}
+\section{Dynamic Pipeline}
+\section{Haskell Implementation and Techniques}
+\section{Implementation}
+\section{Experiments and Discussion}
+\section{Future Work}
+\section{Conclusions}
+
+\nocite{*}
+\bibliographystyle{alpha}
+\bibliography{Report}
+
+\appendix
+
+\end{document}
+
