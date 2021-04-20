@@ -21,31 +21,27 @@ runParallelDP :: Handle -> IO ()
 runParallelDP h = do
   sInput     <- fromInput h -- Input 
   parseInput <- sInput |>> parseEdges
-  (out, as)  <- generator parseInput
-  final      <- DP.mapM (R.putStrLn . show) out -- Output
-  DP.processStreams (DP.trigger sInput : DP.trigger parseInput : final : DP.trigger out : R.map DP.trigger as)
+  out        <- generator parseInput
+  DP.mapM (R.putStrLn . show) out -- Output
 
 runParallelDP' :: DP.Stream ByteString (ConnectedComponents Integer) -> IO [ConnectedComponents Integer]
 runParallelDP' sInput = do
   parseInput <- sInput |>> parseEdges
-  (out, as)  <- generator parseInput
-  result     <- DP.fold out
-  DP.processStreams (DP.trigger sInput : DP.trigger parseInput : DP.trigger out : R.map DP.trigger as)
-  return result
+  out        <- generator parseInput
+  DP.fold out
 
 
-generator :: ConnCompDP -> IO (ConnCompDP, [ConnCompDP])
-generator chn = loop (chn, [])
+generator :: ConnCompDP -> IO ConnCompDP
+generator = loop
  where
-  loop (c, xs) = maybe (finishGenerator c xs) (createNewFilter c xs) =<< DP.pullIn c
+  loop c = maybe (finishGenerator c) (createNewFilter c) =<< DP.pullIn c
 
-  finishGenerator c xs = return (c, xs)
+  finishGenerator = return
 
-  createNewFilter c xs v = do
+  createNewFilter c v = do
     newInput  <- newChan
     newOutput <- newChan
-    s         <- DP.Stream newInput newOutput <$> async (newFilter (toConnectedComp v) c newInput newOutput)
-    loop (s, s : xs)
+    loop . DP.Stream newInput newOutput =<< async (newFilter (toConnectedComp v) c newInput newOutput)
 
 newFilter :: ConnectedComponents Integer
           -> ConnCompDP
