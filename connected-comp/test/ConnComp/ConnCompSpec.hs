@@ -23,6 +23,7 @@ spec = describe "Prestablished examples" $ do
     it "Example 2 CC - 2 Filter" $ do
       let input = "1 2\n 2 3\n 3 4\n 4 5\n 5 6\n 7 8\n 8 9\n 9 10\n"
       result <- liftIO $ runParallelWithExample input
+      liftIO $ print result
       length result `shouldBe` 2
     it "Example 1 CC - 2 Filter" $ do
       let input = "1 2\n 1 3\n 1 4\n 1 5\n 5 2\n 5 3\n"
