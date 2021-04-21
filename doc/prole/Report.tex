@@ -1,4 +1,4 @@
-\documentclass[twoside]{article}
+\documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -13,15 +13,25 @@
 \usepackage{color}
 \usepackage{caption}
 \usepackage{longtable}
-\usepackage[pdfencoding=auto]{hyperref}
 \usepackage[nottoc]{tocbibind}
 \usepackage[cache=false]{minted}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{glossaries}
 \usemintedstyle{default}
 \newminted{haskell}{frame=lines,framerule=2pt}
 \newminted{R}{frame=lines,framerule=2pt}
 \graphicspath{{./images/}}
 
 \tikzstyle{bag} = [align=center]
+
+\makeglossaries
+
+\newacronym{dp}{DP}{Dynamic Pipeline Paradigm}
+\newacronym{bfs}{BFS}{Breadth-First Search}
+\newacronym{dfs}{DFS}{Depth-First Search}
+\newacronym{wcc}{WCC}{Weak Connected Components}
+\newacronym{haskell}{Haskell}{Haskell Programming Language}
+\newacronym{fp}{FP}{Functional Programming}
 
 \title{A Haskell implementation of Dynamic Pipeline Paradigm to find Connected Components of a Graph}
 \author{
@@ -36,10 +46,10 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[LO]{J. P. Royo Sales}
-\fancyhead[RE,RO]{\thepage}
-\fancyhead[LE]{Dynamic Pipeline on Haskell}
+\fancyhead[L]{Dynamic Pipeline on Haskell}
+\fancyhead[R]{\thepage}
 \fancyfoot[L,C]{}
+\setlength{\headheight}{15pt}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 \newtheorem{hyp}{Hypothesis}
@@ -59,18 +69,42 @@ and how \texttt{Haskell} behaves on that context showing that it is a suitable L
 not only because its strong theoretical foundations which provides a strong manipulations of Computations as primary entities, but also because it has a powerful 
 Set of Tools for writing multithreading and parallel computations with optimal performance.
 \end{abstract}
-      
-\section{Introduction}
-lorem ipsum asometakfjdaslfjlkafjlasdfalk
-\section{Bi-Triangle Counting}
-\section{Dynamic Pipeline}
-\section{Haskell Implementation and Techniques}
-\section{Implementation}
-\section{Experiments and Discussion}
-\section{Future Work}
-\section{Conclusions}
 
-\nocite{*}
+\section{Introduction}
+\textit{\acrfull{dp}} has been defined in~\cite{dp_def} along side with some examples problems that are suitable to be solved with this Computational Model.
+One of those problems is \textit{Finding Connected Components of an Undirected Graph}, which is known as a \textbf{\acrfull{wcc}} problem. 
+Given an Undirected Graph $G = (V, E)$, we can find \acrshort{wcc} of $G$ in $O(V + E)$ using \textit{\acrfull{dfs}} or \textit{\acrfull{bfs}} algorithm~\cite{CormenLeisersonEtAl09}. 
+Although this problem can be solved in linear complexity time, when we are manipulating real Graphs, which are usually big, it would be better to have a more suitable Computational Model where this can be done with
+optimal performance. \acrshort{dp} with its \textit{Parallelization Pipeline model} improve that performance on Big Graphs for finding \acrshort{wcc}.
+One of the biggest challenge of \acrshort{dp} is to find a proper Set of Tools and Language which can take advantage from both: Fast Parallel processing and Strong theoretical foundations that manage computations as First Class Citizens. 
+On that sense we conduct with this work an implementation of \acrshort{dp} for solving \acrshort{wcc} with \acrfull{haskell} showing that both aspects are covered.
+
+\textbf{Objective:} We show that \acrshort{haskell} it is a suitable Language for implementing \acrshort{dp} working with the problem of \acrshort{wcc}, in order to further create an Abstraction Library or Framework
+to solve other Problems with \acrshort{dp} in \acrshort{haskell}.
+In that sense we show the techniques and tools used on the language to achieve the desired goal as well as the measurements taken to empirically show how this solution behave in terms of performance and parallelization.
+
+\textbf{Contributions:} We start to create and define an abstraction of \acrshort{dp} in \acrshort{haskell} which is going to allow use this new tool set for solving other computational problems that fits with this Computational Model.
+
+\section{DP for finding Connected Components}
+\textbf{Here we should put the Pseudo Code of DP Connected Components}
+
+\section{Haskell Implementation}
+
+\section{Experiments and Discussion}
+fdasfd
+
+\section{Future Work}
+dfads
+
+\section{Conclusions}
+dfasfda
+
+\clearpage
+
+\printglossary[type=\acronymtype]
+
+\printglossary
+
 \bibliographystyle{alpha}
 \bibliography{Report}
 
