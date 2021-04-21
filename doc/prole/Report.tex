@@ -14,8 +14,9 @@
 \usepackage{caption}
 \usepackage{longtable}
 \usepackage[nottoc]{tocbibind}
-\usepackage[cache=false]{minted}
+\usepackage[cache=false,section]{minted}
 \usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[ruled]{algorithm2e}
 \usepackage{glossaries}
 \usemintedstyle{default}
 \newminted{haskell}{frame=lines,framerule=2pt}
@@ -33,7 +34,7 @@
 \newacronym{haskell}{Haskell}{Haskell Programming Language}
 \newacronym{fp}{FP}{Functional Programming}
 
-\title{A Haskell implementation of Dynamic Pipeline Paradigm to find Connected Components of a Graph}
+\title{Towards a Haskell Abstraction of Dynamic Pipeline Paradigm}
 \author{
 \begin{tabular}{c c}       
       Juan Pablo Royo Sales & Edelmira Pasarella\\ 
@@ -89,6 +90,30 @@ In that sense we show the techniques and tools used on the language to achieve t
 \textbf{Here we should put the Pseudo Code of DP Connected Components}
 
 \section{Haskell Implementation}
+In this section we are going to show all the implementation details for building a \acrshort{dp} Abstraction in \acrshort{haskell} solving \acrshort{wcc} problem.
+There are two main components in \acrshort{dp} model which requires a careful choice to succeed in the implementation of the model: Parallelization to support Pipeline Parallel processing without penalizing global computation and Channels to link and communicate 
+the different stages of the pipeline. We can argue that another special components is the dynamic generation of the computations or \textit{Filters}, but choosing a \acrfull{fp} Language like \acrshort{haskell} allow us to represent
+that for free with \textit{Anamorphism} and \textit{Catamorphisms}~\cite{lenses}.
+
+\subsection{Parallelization}
+One of the most important components on this implementation is the selection of \textbf{Concurrency Library} to support an intensive load on parallelism. A direct guess to achieve this
+could be to use \textit{Monad Par} based on this work~\cite{monad_par}, but we have discarded that since we want to achieve Parallelism at Thread level and not to Spark level, due to the nature
+of \acrshort{dp} where the approach of the model is Pipeline Parallelism and not Data Parallelism. The next obvious choice is to use \mintinline{haskell}{forkIO :: IO () -> IO ThreadId} from \mintinline{bash}{base}
+module, but that would imply to handle all the threads lifecycle, terminations and errors in a custom manner. We choose \textbf{async}\footnote{https://hackage.haskell.org/package/async} 
+library which allow us to spawn asynchronous computations~\cite{parallel_book} on \acrshort{haskell}.
+
+\subsection{Channels}
+The other 
+
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\normalfont,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={3-3,9-11,17}]{haskell}
+    fn = undefined
+    \end{minted}
+    \caption{Extracted from source code code/Script.R}
+    \label{src:haskell:1}
+\end{listing}
+
 
 \section{Experiments and Discussion}
 fdasfd

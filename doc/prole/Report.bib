@@ -26,6 +26,48 @@
   year = 2009
 }
 
+@article{monad_par,
+  author = {Marlow, Simon and Newton, Ryan and Peyton Jones, Simon},
+  title = {A Monad for Deterministic Parallelism},
+  year = {2011},
+  issue_date = {December 2011},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {46},
+  number = {12},
+  issn = {0362-1340},
+  url = {https://doi.org/10.1145/2096148.2034685},
+  doi = {10.1145/2096148.2034685},
+  abstract = {We present a new programming model for deterministic parallel computation in a pure functional language. The model is monadic and has explicit granularity, but allows dynamic construction of dataflow networks that are scheduled at runtime, while remaining deterministic and pure. The implementation is based on monadic concurrency, which has until now only been used to simulate concurrency in functional languages, rather than to provide parallelism. We present the API with its semantics, and argue that parallel execution is deterministic. Furthermore, we present a complete work-stealing scheduler implemented as a Haskell library, and we show that it performs at least as well as the existing parallel programming models in Haskell.},
+  journal = {SIGPLAN Not.},
+  month = sep,
+  pages = {71–82},
+  numpages = {12},
+  keywords = {haskell, parallel}
+}
+
+@InCollection{parallel_book,
+   author = {Simon Marlow},
+   title = {Parallel and Concurrent Programming in {H}askell},
+   booktitle = {CEFP 2011},
+   year = {2012},
+   url = {http://simonmar.github.io/bib/papers/par-tutorial-cefp-2012.pdf},
+   pages = {339--401},
+   volume = {7241},
+   series = {LNCS},
+   editor = {V. Zs\'ok and Z. Horv\'ath and R. Plasmeijer}
+}
+
+@inproceedings{lenses,
+  author = {Meijer, Erik and Fokkinga, Maarten and Paterson, Ross},
+  year = {2000},
+  month = {04},
+  pages = {},
+  title = {Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire},
+  volume = {523},
+  isbn = {978-3-540-54396-1},
+  doi = {10.1007/3540543961_7}
+}
 
 @Misc{github,
   author = {GitHub Inc.},
