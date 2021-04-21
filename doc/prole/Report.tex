@@ -86,14 +86,14 @@ In that sense we show the techniques and tools used on the language to achieve t
 
 \textbf{Contributions:} We start to create and define an abstraction of \acrshort{dp} in \acrshort{haskell} which is going to allow use this new tool set for solving other computational problems that fits with this Computational Model.
 
-\section{DP for finding Connected Components}
+\section{Connected Components of Graph using DP}
 \textbf{Here we should put the Pseudo Code of DP Connected Components}
 
-\section{Haskell Implementation}
+\section{DP for finding WCC on Haskell: Implementation}
 In this section we are going to show all the implementation details for building a \acrshort{dp} Abstraction in \acrshort{haskell} solving \acrshort{wcc} problem.
 There are two main components in \acrshort{dp} model which requires a careful choice to succeed in the implementation of the model: Parallelization to support Pipeline Parallel processing without penalizing global computation and Channels to link and communicate 
 the different stages of the pipeline. We can argue that another special components is the dynamic generation of the computations or \textit{Filters}, but choosing a \acrfull{fp} Language like \acrshort{haskell} allow us to represent
-that for free with \textit{Anamorphism} and \textit{Catamorphisms}~\cite{lenses}.
+that for free with \textit{Anamorphisms} and \textit{Catamorphisms}~\cite{lenses}.
 
 \subsection{Parallelization}
 One of the most important components on this implementation is the selection of \textbf{Concurrency Library} to support an intensive load on parallelism. A direct guess to achieve this
@@ -102,18 +102,225 @@ of \acrshort{dp} where the approach of the model is Pipeline Parallelism and not
 module, but that would imply to handle all the threads lifecycle, terminations and errors in a custom manner. We choose \textbf{async}\footnote{https://hackage.haskell.org/package/async} 
 library which allow us to spawn asynchronous computations~\cite{parallel_book} on \acrshort{haskell}.
 
-\subsection{Channels}
-The other 
+\subsection{Channels}\label{section:channels}
+The other important component in \acrshort{dp} model are \textit{Channels}. In this case we implement Channels using \textbf{unagi-chan}\footnote{https://hackage.haskell.org/package/unagi-chan} library which among other things
+it has the following characteristics compare with other approaches:
 
+\begin{itemize}
+  \item \mintinline{haskell}{MVar} Channel with \textbf{no} use of \mintinline{haskell}{STM}: This allows to avoid internal locking for concurrent access. In this case
+  we can use this advantage because in \acrshort{dp} model, one specific \textit{Pipeline Stage} which is running in a separated thread can only access to its \textit{Inputs/Outputs} channels for \textit{Reading/Writing} accordingly 
+  and those operations are not concurrently share by other Threads (\textit{Stages}) for the same Channels.  
+  \item \textbf{Non-Blocking} Channels: This library contains blocking and non-blocking Channels for reading and this is a key aspect to gain performance and speed up on the implementation.
+  \item Optimized for $x86$ Architectures with use of low-level \textit{fetch-and-add} instructions.
+  \item $100x$ faster on Benchmarking compare with \mintinline{haskell}{STM} and default base \mintinline{haskell}{Chan} implementations.
+\end{itemize}
+
+\subsection{Property Based Testing}
+In order to test some properties of our implementation we use \textit{QuickCheck}~\cite{quickcheck} for the generation of Arbitrary Graphs with Arbitrary number of Connected Components, which are processed
+by our algorithm later to prove that the same amount of \acrshort{wcc} are calculated as well.
+
+\subsection{DP Connected Components Implementation}
+
+\textbf{Principal Algorithm of DP:}
+The following is the principal algorithm which represents the \textit{Monadic} computation of the principal \textit{Stages} that 
+compose \acrshort{dp} model: \textit{Input, Generator and Output}. 
 
 \begin{listing}[H]
-\begin{minted}[fontsize=\normalfont,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={3-3,9-11,17}]{haskell}
-    fn = undefined
-    \end{minted}
-    \caption{Extracted from source code code/Script.R}
-    \label{src:haskell:1}
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={2,11}]{haskell}
+
+runParallelDP :: Handle -> IO ()
+runParallelDP h = input h >>= generator >>= output
+
+input :: Handle -> IO (DP.Stream (Edge Integer) (ConnectedComponents Integer))
+input h = fromInput h >>= (|>> parseEdges)
+
+output :: ConnCompDP -> IO ()
+output = DP.mapM (R.putStrLn . show)
+
+fromInput :: Handle -> IO (DP.Stream ByteString (ConnectedComponents Integer))
+fromInput h = DP.unfoldM (B.hGetNonBlocking h (1024 * 256)) (R.hIsEOF h)
+
+parseEdges :: ByteString -> IO [Edge Integer]
+parseEdges = toEdge . decodeUtf8
+
+\end{minted}
+\caption{Main algorithm \acrshort{dp} for \acrshort{wcc}}
+\label{src:haskell:1}
 \end{listing}
 
+We can appreciate in the line 11~\ref{src:haskell:1} the use of the \mintinline{haskell}{unfoldM} which has been defined in the Abstraction \acrshort{haskell} Library.
+It can be seen that the implementation of the problem in \acrshort{haskell} matches almost identically to the formal definition of \acrshort{dp} model.
+It is important to notice that the input is being read in \textbf{non-blocking} mode and by batches of bytes allowing the streaming computation as long as the edges arrives to the 
+\textit{Generator} or the first \textit{Filter} Stages\footnote{The format of the input file for the case of this example is a plain format where each line contains an Edge of the Graph in and both vertices are separated by a blank space.}.
+
+\textbf{Generator:}
+The \textit{Generator} is the Computation in the Pipeline which is responsible to know when to interpose a new \textit{Filter} in front of the Pipe.
+In the case of \acrshort{wcc} a new \textit{Filter} is created on each new Edge that arrives to the \textit{Generator}.
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={2,11}]{haskell}
+generator :: ConnCompDP -> IO ConnCompDP
+generator = DP.foldrS createNewFilter
+  where
+    createNewFilter c v = do
+      newInput  <- newChan
+      newOutput <- newChan
+      DP.Stream newInput newOutput 
+            <$> async (newFilter (toConnectedComp v) c newInput newOutput)
+  
+  \end{minted}
+  \caption{Generator \acrshort{dp} for \acrshort{wcc}}
+  \label{src:haskell:2}
+\end{listing}
+
+As we can appreciate here, the highlighted line 2 shows the use of the \acrshort{haskell} Abstraction which is a \textit{Catamorphism} which at the same time is reducing the \textit{Stream}
+it is creating the \textit{Stages} in the middle of the Pipe. We are going to describe later this \textbf{combinator}.
+
+\textbf{Filters:}
+In this case the algorithm is not as succinct as the previous because here is where the 2-step calculation takes place. As we have explained before each \textit{Filter} contains 2 sequential 
+computations which are called \mintinline{haskell}{actor1} and \mintinline{haskell}{actor2}. The first one is responsible for gathering Connected Components based on the first Edge from wich 
+this \textit{Filter} was created for, and the second \textit{Actor} is responsible for Union its own calculated Connected Components with others that are coming from the downstream.
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={16-20,33-36}]{haskell}
+newFilter :: ConnectedComponents Integer
+          -> ConnCompDP
+          -> DP.Channel (Edge Integer)
+          -> DP.Channel (ConnectedComponents Integer)
+          -> IO ()
+newFilter conn inCh toInCh outCh = actor1 conn inCh toInCh >>= actor2 inCh toInCh outCh
+
+actor1 :: ConnectedComponents Integer 
+       -> ConnCompDP 
+      -> DP.Channel (Edge Integer) 
+      -> IO (ConnectedComponents Integer)
+actor1 conn inCh toInCh = maybe finishActor doActor =<< DP.pullIn inCh
+where
+  finishActor = DP.end' toInCh >> return conn
+
+  doActor v
+    | v `includedIncident` conn = do
+      let newList = v `addToConnectedComp` conn
+      actor1 newList inCh toInCh
+    | otherwise = v `DP.push'` toInCh >> actor1 conn inCh toInCh
+
+
+actor2 :: ConnCompDP
+      -> DP.Channel (Edge Integer)
+      -> DP.Channel (ConnectedComponents Integer)
+      -> ConnectedComponents Integer
+      -> IO ()
+actor2 inCh toInCh outCh conn = maybe finishActor doActor =<< DP.pullOut inCh
+
+where
+  finishActor = conn `DP.push'` outCh >> DP.end' outCh
+
+  doActor cc 
+    | conn `intersect` cc = let newCC = conn `union` cc 
+                             in actor2 inCh toInCh outCh newCC
+    | otherwise           = cc `DP.push'` outCh >> actor2 inCh toInCh outCh conn
+\end{minted}
+\caption{Generator \acrshort{dp} for \acrshort{wcc}}
+\label{src:haskell:3}
+\end{listing}
+
+As we can see here the, the algorithm for managing the Sets and do the \textit{Intersection} and \textit{Union} are not optimal
+\footnote{The propose of the present work is to present the implementation of \acrshort{dp} with \acrshort{haskell} but not working in the most optimal calculation of \acrshort{wcc}} and are base
+on \mintinline{haskell}{Data.Set} module provided by \textbf{containers}\footnote{https://hackage.haskell.org/package/containers} library.
+
+\section{DP Haskell Abstraction: An approximation}
+This is a first approximation to a more robust library that we are working for building \acrshort{dp} Algorithms using \acrshort{haskell}
+\footnote{This first version of the abstraction is under construction and it will probably differ by the time of the Conference presentation}.
+As we have stated before~\ref{section:channels}, we use \mintinline{haskell}{Control.Concurrent.Chan.Unagi.NoBlocking} Channels. 
+This is similar to the \textbf{Type} definition of channels that we can find here~\cite{parallel_book}, where the channels is a combination of an Input, where 
+we can read-only and an Output where we can write only, avoiding as much as possible race conditions and concurrency issues.
+On top of that we are defining a \mintinline{haskell}{Stream a b} Type which contains an Input \mintinline{haskell}{Channel a} and an Output \mintinline{haskell}{Channel b} 
+plus a computation which process that streaming from Input to Output. That computation is a \mintinline{haskell}{process :: Async ()}.
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={}]{haskell}  
+type Channel a = (InChan (Maybe a), OutChan (Maybe a))
+
+data Stream a b = Stream
+  { inChannel  :: Channel a
+  , outChannel :: Channel b
+  , process    :: Async ()
+  }
+
+\end{minted}
+\caption{\acrshort{dp} \acrshort{haskell} Abstraction}
+\label{src:haskell:4}
+\end{listing}
+
+We define several combinators that are helpful to manipulate those \mintinline{haskell}{Stream a b} types and build the \acrshort{dp}
+
+\begin{table}[H]
+  \begin{tabular}{|l|l|}
+   \hline
+   Function :: Type & Description\\
+   \hline
+   \mintinline{haskell}{endIn :: Stream a b -> IO ()} & Mark the EOF of the Input Channel \\
+   \hline
+   \mintinline{haskell}{endOut :: Stream a b -> IO ()} & Mark the EOF of the Output Channel \\
+   \hline
+   \mintinline{haskell}{pushOut :: b -> Stream a b -> IO ()} & Write value \mintinline{haskell}{b} into Output Channel \\
+   \hline
+   \mintinline{haskell}{pushIn :: a -> Stream a b -> IO ()} & Write value \mintinline{haskell}{a} into Input Channel \\
+   \hline
+   \mintinline{haskell}{pullIn :: Stream a b -> IO (Maybe b)} & Read possible value \mintinline{haskell}{b} from Output Channel \\
+   \hline
+   \mintinline{haskell}{pullOut :: Stream a b -> IO (Maybe a)} & Read possible value \mintinline{haskell}{a} from Input Channel \\
+   \hline
+  \end{tabular}
+ \caption{Main combinators}
+ \label{table:1}
+ \end{table}
+ 
+Apart from this combinators there are some specials one that requires more explanation because they are use on main \acrshort{dp} algorithm
+like \mintinline{haskell}{foldrS} or \mintinline{haskell}{unfoldM}.
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={}]{haskell}    
+
+{-# INLINE foldrS #-}
+foldrS :: (Stream a b -> a -> IO (Stream a b)) -> Stream a b -> IO (Stream a b)
+foldrS = loop
+ where
+  loop fio c = maybe (return c) (loop fio <=< fio c) =<< pullIn c
+
+-- Generate Stream base on a seed function `f`
+{-# INLINE unfoldM #-}
+unfoldM :: IO a -> IO Bool -> IO (Stream a b)
+unfoldM f stop = do
+  newCh  <- newChan
+  newCh' <- newChan
+  end' newCh'
+  Stream newCh newCh' <$> async (loop newCh)
+  where loop newCh = ifM stop (end' newCh) (f >>= (`push'` newCh) >> loop newCh)
+
+{-# INLINE mapM #-}
+mapM :: (b -> IO c) -> Stream a b -> IO ()
+mapM f inCh = async loop >>= wait
+  where loop = maybe (pure ()) (\a -> f a >> loop) =<< pullOut inCh
+
+{-# INLINE foldMap #-}
+foldMap :: Monoid m => (b -> m) -> Stream a b -> IO m
+foldMap m s = async (loop mempty) >>= wait
+  where loop xs = maybe (pure xs) (loop . mappend xs . m) =<< pullOut s
+
+\end{minted}
+\caption{\acrshort{dp} \acrshort{haskell} Abstraction}
+\label{src:haskell:5}
+\end{listing}
+
+It can be seen the powerful expressiveness of \acrshort{haskell} Language that we can define \mintinline{haskell}{foldrS} in one line. This combinator
+allow us to generate on demand new filters as long as the values are arriving to the generator, which is known as a \textit{Catamorphism}.
+
+In the case of \mintinline{haskell}{unfoldM} which is its counterpart, an \textit{Anamorphism}, it is a little more complex because a \mintinline{haskell}{Stream a b} 
+requires an \mintinline{haskell}{Async ()} computation as a part of the structure and we need to generate that as long as our seed function do not stop with \mintinline{haskell}{IO Bool} computation.
+
+\mintinline{haskell}{mapM} and \mintinline{haskell}{foldMap} are specialization for \mintinline{haskell}{Stream a b} where \mintinline{haskell}{pullOut} is used for mapping or folding
+the consumer part of the \textit{Stream}.
 
 \section{Experiments and Discussion}
 fdasfd
