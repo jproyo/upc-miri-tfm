@@ -18,18 +18,19 @@ import           Relude                                            as R
 type ConnCompDP = DP.Stream (Edge Integer) (ConnectedComponents Integer)
 
 runParallelDP :: Handle -> IO ()
-runParallelDP h = do
-  sInput     <- fromInput h -- Input 
-  parseInput <- sInput |>> parseEdges
-  out        <- generator parseInput
-  DP.mapM (R.putStrLn . show) out -- Output
+runParallelDP h = input h >>= generator >>= output
+
+input :: Handle -> IO (DP.Stream (Edge Integer) (ConnectedComponents Integer))
+input h = fromInput h >>= (|>> parseEdges)
+
+output :: ConnCompDP -> IO ()
+output = DP.mapM (R.putStrLn . show)
 
 runParallelDP' :: DP.Stream ByteString (ConnectedComponents Integer) -> IO [ConnectedComponents Integer]
 runParallelDP' sInput = do
   parseInput <- sInput |>> parseEdges
   out        <- generator parseInput
-  DP.foldMap (:[]) out
-
+  DP.foldMap (: []) out
 
 generator :: ConnCompDP -> IO ConnCompDP
 generator = DP.foldrS createNewFilter
@@ -74,7 +75,7 @@ actor2 inCh toInCh outCh conn = maybe finishActor doActor =<< DP.pullOut inCh
 
 runDPConnectedComp :: IO ()
 runDPConnectedComp = do
-  file <- maybe (liftIO $ fail "Error no parameter found") return . R.viaNonEmpty R.head =<< liftIO getArgs
+  file <- maybe (fail "Error no parameter found") return . R.viaNonEmpty R.head =<< getArgs
   R.withFile file ReadMode runParallelDP
 
 parseEdges :: ByteString -> IO [Edge Integer]

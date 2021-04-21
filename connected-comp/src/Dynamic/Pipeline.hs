@@ -17,8 +17,6 @@ data Stream a b = Stream
   , process    :: Async ()
   }
 
-type DynamicPipeline = StateT (Async ())
-
 {-# INLINE end' #-}
 end' :: Channel a -> IO ()
 end' = flip writeChan Nothing . fst
