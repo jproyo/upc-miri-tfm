@@ -65,5 +65,5 @@ addVertices (Edge (a, b)) set = b `S.insert` (a `S.insert` set)
 existsOn :: Ord a => Edge a -> Set a -> Bool
 existsOn (Edge (a, b)) set = a `S.member` set || b `S.member` set
 
-toEdgesByteString :: S.Set (Edge Integer) -> ByteString
-toEdgesByteString = S.foldr (\(Edge (a, b)) bs -> bs <> show a <> " " <> show b <> " \n") ""
+toEdgesText :: S.Set (Edge Integer) -> Text
+toEdgesText = S.foldr (\(Edge (a, b)) bs -> bs <> show a <> " " <> show b <> " \n") ""
