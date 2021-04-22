@@ -20,3 +20,4 @@ g_google <- read_graph("../data/web-Google.txt", format=c("edgelist"))
 length(decompose(g_google, mode = c("weak")))
 end_time <- Sys.time()
 end_time - start_time
+
