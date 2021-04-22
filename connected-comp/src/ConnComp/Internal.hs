@@ -2,7 +2,7 @@ module ConnComp.Internal
   ( runDPConnectedComp
   , runParallelDP
   , runParallelDP'
-  , DP.fromByteString
+  , DP.fromText
   ) where
 
 import           Control.Concurrent.Async
@@ -15,18 +15,18 @@ import           Dynamic.Pipeline                                               
 import           Relude                                            as R
 
 
-type ConnCompDP = DP.Stream (Edge Integer) (ConnectedComponents Integer)
+type ConnCompDP = DP.Stream Edge ConnectedComponents
 
 runParallelDP :: Handle -> IO ()
 runParallelDP h = input h >>= generator >>= output
 
-input :: Handle -> IO (DP.Stream (Edge Integer) (ConnectedComponents Integer))
+input :: Handle -> IO (DP.Stream Edge ConnectedComponents)
 input h = fromInput h >>= (|>> parseEdges)
 
 output :: ConnCompDP -> IO ()
 output = DP.mapM (R.putStrLn . show)
 
-runParallelDP' :: DP.Stream ByteString (ConnectedComponents Integer) -> IO [ConnectedComponents Integer]
+runParallelDP' :: DP.Stream ByteString ConnectedComponents -> IO [ConnectedComponents]
 runParallelDP' sInput = do
   parseInput <- sInput |>> parseEdges
   out        <- generator parseInput
@@ -40,14 +40,14 @@ generator = DP.foldrS createNewFilter
     newOutput <- newChan
     DP.Stream newInput newOutput <$> async (newFilter (toConnectedComp v) c newInput newOutput)
 
-newFilter :: ConnectedComponents Integer
+newFilter :: ConnectedComponents
           -> ConnCompDP
-          -> DP.Channel (Edge Integer)
-          -> DP.Channel (ConnectedComponents Integer)
+          -> DP.Channel Edge
+          -> DP.Channel ConnectedComponents
           -> IO ()
 newFilter conn inCh toInCh outCh = actor1 conn inCh toInCh >>= actor2 inCh toInCh outCh
 
-actor1 :: ConnectedComponents Integer -> ConnCompDP -> DP.Channel (Edge Integer) -> IO (ConnectedComponents Integer)
+actor1 :: ConnectedComponents -> ConnCompDP -> DP.Channel Edge -> IO ConnectedComponents
 actor1 conn inCh toInCh = maybe finishActor doActor =<< DP.pullIn inCh
  where
   finishActor = DP.end' toInCh >> return conn
@@ -60,9 +60,9 @@ actor1 conn inCh toInCh = maybe finishActor doActor =<< DP.pullIn inCh
 
 
 actor2 :: ConnCompDP
-       -> DP.Channel (Edge Integer)
-       -> DP.Channel (ConnectedComponents Integer)
-       -> ConnectedComponents Integer
+       -> DP.Channel Edge
+       -> DP.Channel ConnectedComponents
+       -> ConnectedComponents
        -> IO ()
 actor2 inCh toInCh outCh conn = maybe finishActor doActor =<< DP.pullOut inCh
 
@@ -78,9 +78,9 @@ runDPConnectedComp = do
   file <- maybe (fail "Error no parameter found") return . R.viaNonEmpty R.head =<< getArgs
   R.withFile file ReadMode runParallelDP
 
-parseEdges :: ByteString -> IO [Edge Integer]
+parseEdges :: ByteString -> IO Edge
 parseEdges = toEdge . decodeUtf8
 
-fromInput :: Handle -> IO (DP.Stream ByteString (ConnectedComponents Integer))
-fromInput h = DP.unfoldM (B.hGetNonBlocking h (1024 * 256)) (R.hIsEOF h)
+fromInput :: Handle -> IO (DP.Stream ByteString ConnectedComponents)
+fromInput h = DP.unfoldM (B.hGetLine h) (R.hIsEOF h)
 

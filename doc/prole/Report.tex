@@ -136,16 +136,16 @@ compose \acrshort{dp} model: \textit{Input, Generator and Output}.
 runParallelDP :: Handle -> IO ()
 runParallelDP h = input h >>= generator >>= output
 
-input :: Handle -> IO (DP.Stream (Edge Integer) (ConnectedComponents Integer))
+input :: Handle -> IO (DP.Stream Edge ConnectedComponents)
 input h = fromInput h >>= (|>> parseEdges)
 
 output :: ConnCompDP -> IO ()
 output = DP.mapM (R.putStrLn . show)
 
-fromInput :: Handle -> IO (DP.Stream ByteString (ConnectedComponents Integer))
-fromInput h = DP.unfoldM (B.hGetNonBlocking h (1024 * 256)) (R.hIsEOF h)
+fromInput :: Handle -> IO (DP.Stream ByteString ConnectedComponents)
+fromInput h = DP.unfoldM (B.hGetLine h) (R.hIsEOF h)
 
-parseEdges :: ByteString -> IO [Edge Integer]
+parseEdges :: ByteString -> IO [Edge]
 parseEdges = toEdge . decodeUtf8
 
 \end{minted}
@@ -188,17 +188,17 @@ this \textit{Filter} was created for, and the second \textit{Actor} is responsib
 
 \begin{listing}[H]
 \begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={16-20,33-36}]{haskell}
-newFilter :: ConnectedComponents Integer
+newFilter :: ConnectedComponents
           -> ConnCompDP
-          -> DP.Channel (Edge Integer)
-          -> DP.Channel (ConnectedComponents Integer)
+          -> DP.Channel Edge
+          -> DP.Channel ConnectedComponents
           -> IO ()
 newFilter conn inCh toInCh outCh = actor1 conn inCh toInCh >>= actor2 inCh toInCh outCh
 
-actor1 :: ConnectedComponents Integer 
+actor1 :: ConnectedComponents 
        -> ConnCompDP 
-      -> DP.Channel (Edge Integer) 
-      -> IO (ConnectedComponents Integer)
+      -> DP.Channel Edge
+      -> IO ConnectedComponents
 actor1 conn inCh toInCh = maybe finishActor doActor =<< DP.pullIn inCh
 where
   finishActor = DP.end' toInCh >> return conn
@@ -211,9 +211,9 @@ where
 
 
 actor2 :: ConnCompDP
-      -> DP.Channel (Edge Integer)
-      -> DP.Channel (ConnectedComponents Integer)
-      -> ConnectedComponents Integer
+      -> DP.Channel Edge 
+      -> DP.Channel ConnectedComponents 
+      -> ConnectedComponents
       -> IO ()
 actor2 inCh toInCh outCh conn = maybe finishActor doActor =<< DP.pullOut inCh
 
@@ -329,6 +329,13 @@ the consumer part of the \textit{Stream}.
 
 \section{Experiments and Discussion}
 fdasfd
+
+https://snap.stanford.edu/data/com-DBLP.html
+https://snap.stanford.edu/data/email-Enron.html
+https://snap.stanford.edu/data/ca-AstroPh.html
+
+
+
 
 \section{Future Work}
 dfads
