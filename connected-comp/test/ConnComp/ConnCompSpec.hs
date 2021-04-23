@@ -42,9 +42,9 @@ spec = describe "Prestablished examples" $ do
     $ property
     $ forAll arbitraryGraphs 
     $ \(Graph{..}, amount) -> do 
-      result <- liftIO $ runParallelWithExample $ toEdgesByteString _gEdges
+      result <- liftIO $ runParallelWithExample $ toEdgesText _gEdges
       length result `shouldBe` amount
 
 
-runParallelWithExample :: ByteString -> IO [ConnectedComponents Integer]
-runParallelWithExample s = CC.fromByteString s >>= CC.runParallelDP'
+runParallelWithExample :: Text -> IO [ConnectedComponents]
+runParallelWithExample s = CC.fromText s >>= CC.runParallelDP'

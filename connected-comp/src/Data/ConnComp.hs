@@ -13,43 +13,46 @@ module Data.ConnComp
 
 import           Control.Exception.Base
 import           Control.Monad.Catch
-import qualified Data.Set                                          as S
+import qualified Data.IntSet                                          as S
 import           Relude
 import           Text.Trifecta
 import           Text.Trifecta.Parser                              as P
 
-newtype Edge a = Edge (a, a)
-  deriving (Functor, Show, Eq, Ord)
+newtype Edge = Edge (Int, Int)
+  deriving (Show, Eq, Ord)
 
-newtype ConnectedComponents a = ConnectedComponents (Set a)
+newtype ConnectedComponents = ConnectedComponents IntSet
   deriving newtype (Monoid, Semigroup, Show, Eq)
 
-toEdge :: (MonadIO m, MonadThrow m) => String -> m [Edge Integer]
+toEdge :: (MonadIO m, MonadThrow m) => String -> m Edge
 toEdge = foldResult (const $ throwM FixIOException) pure . toEdge'
 
-toEdge' :: String -> Text.Trifecta.Result [Edge Integer]
-toEdge' = P.parseString (many parseEdge) mempty
+toEdge' :: String -> Text.Trifecta.Result Edge
+toEdge' = P.parseString parseEdge mempty
 
-parseEdge :: Parser (Edge Integer)
-parseEdge = fmap Edge . (,) <$> (integer <* whiteSpace) <*> integer
+parseInt :: Parser Int
+parseInt = fromInteger <$> integer 
 
-toConnectedComp :: Ord a => Edge a -> ConnectedComponents a
+parseEdge :: Parser Edge
+parseEdge = fmap Edge . (,) <$> (whiteSpace *> parseInt <* whiteSpace) <*> parseInt
+
+toConnectedComp :: Edge -> ConnectedComponents
 toConnectedComp (Edge (a, b)) = ConnectedComponents (a `S.insert` S.singleton b)
 
-addToConnectedComp :: Ord a => Edge a -> ConnectedComponents a -> ConnectedComponents a
+addToConnectedComp :: Edge -> ConnectedComponents -> ConnectedComponents
 addToConnectedComp (Edge (a, b)) (ConnectedComponents set) = ConnectedComponents $ a `S.insert` (b `S.insert` set)
 
-isIncident :: Eq a => Edge a -> Edge a -> Bool
+isIncident :: Edge -> Edge -> Bool
 isIncident (Edge (a, b)) (Edge (c, d)) = a == c || b == c || a == d || b == d
 
-includedIncident :: Eq a => Edge a -> ConnectedComponents a -> Bool
-includedIncident (Edge (a, b)) (ConnectedComponents set) = getAny $ foldMap (\e -> Any (a == e || b == e)) set
+includedIncident :: Edge -> ConnectedComponents -> Bool
+includedIncident (Edge (a, b)) (ConnectedComponents set) = S.member a set || S.member b set
 
-null :: ConnectedComponents a -> Bool
+null :: ConnectedComponents -> Bool
 null (ConnectedComponents s) = S.null s
 
-intersect :: Ord a => ConnectedComponents a -> ConnectedComponents a -> Bool
-intersect (ConnectedComponents s1) (ConnectedComponents s2) = not $ S.null $ S.intersection s1 s2 
+intersect :: ConnectedComponents -> ConnectedComponents -> Bool
+intersect (ConnectedComponents s1) (ConnectedComponents s2) = not $ S.disjoint s1 s2 
 
-union :: Ord a => ConnectedComponents a -> ConnectedComponents a -> ConnectedComponents a
+union :: ConnectedComponents -> ConnectedComponents -> ConnectedComponents
 union (ConnectedComponents s1) (ConnectedComponents s2) = ConnectedComponents (S.union s1 s2)
