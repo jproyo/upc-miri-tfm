@@ -11,17 +11,6 @@ packages:
       sha256: ead687d39d06c841de36fc214402ad4389e8837284485cfe52d975f51b274e81
   original:
     hackage: relude-1.0.0.1@sha256:35bcdaf14018e79f11e712b0e2314c1aac79976f28f4adc179985457493557d5,11569
-- completed:
-    size: 762513
-    url: https://github.com/composewell/streamly/archive/833ad1f591b305cda89f467053c5843378a4e59c.tar.gz
-    name: streamly
-    version: 0.7.2
-    sha256: fb8c9507cb65a2a38d0df7cefd242968679220ea69bfbe217156c8036ae58368
-    pantry-tree:
-      size: 20549
-      sha256: 66b195d1c584667534be7c305bd99f08cbc849ede5c3fce428b7f1853b3ac8f3
-  original:
-    url: https://github.com/composewell/streamly/archive/833ad1f591b305cda89f467053c5843378a4e59c.tar.gz
 snapshots:
 - completed:
     size: 565720
