@@ -24,7 +24,7 @@ input :: Handle -> IO (DP.Stream Edge ConnectedComponents)
 input h = fromInput h >>= (|>> parseEdges)
 
 output :: ConnCompDP -> IO ()
-output = DP.mapM (R.putStrLn . show)
+output = (print . getSum) <=< DP.foldMap (const $ Sum (1::Int))
 
 runParallelDP' :: DP.Stream ByteString ConnectedComponents -> IO [ConnectedComponents]
 runParallelDP' sInput = do
@@ -40,11 +40,7 @@ generator = DP.foldrS createNewFilter
     newOutput <- newChan
     DP.Stream newInput newOutput <$> async (newFilter (toConnectedComp v) c newInput newOutput)
 
-newFilter :: ConnectedComponents
-          -> ConnCompDP
-          -> DP.Channel Edge
-          -> DP.Channel ConnectedComponents
-          -> IO ()
+newFilter :: ConnectedComponents -> ConnCompDP -> DP.Channel Edge -> DP.Channel ConnectedComponents -> IO ()
 newFilter conn inCh toInCh outCh = actor1 conn inCh toInCh >>= actor2 inCh toInCh outCh
 
 actor1 :: ConnectedComponents -> ConnCompDP -> DP.Channel Edge -> IO ConnectedComponents
@@ -52,31 +48,22 @@ actor1 conn inCh toInCh = maybe finishActor doActor =<< DP.pullIn inCh
  where
   finishActor = DP.end' toInCh >> return conn
 
-  doActor v
-    | v `includedIncident` conn = do
-      let newList = v `addToConnectedComp` conn
-      actor1 newList inCh toInCh
-    | otherwise = v `DP.push'` toInCh >> actor1 conn inCh toInCh
+  doActor v | toConnectedComp v `intersect` conn = actor1 (toConnectedComp v <> conn) inCh toInCh
+            | otherwise                          = v `DP.push'` toInCh >> actor1 conn inCh toInCh
 
 
-actor2 :: ConnCompDP
-       -> DP.Channel Edge
-       -> DP.Channel ConnectedComponents
-       -> ConnectedComponents
-       -> IO ()
+actor2 :: ConnCompDP -> DP.Channel Edge -> DP.Channel ConnectedComponents -> ConnectedComponents -> IO ()
 actor2 inCh toInCh outCh conn = maybe finishActor doActor =<< DP.pullOut inCh
 
  where
   finishActor = conn `DP.push'` outCh >> DP.end' outCh
 
-  doActor cc | conn `intersect` cc = let newCC = conn `union` cc in actor2 inCh toInCh outCh newCC
+  doActor cc | conn `intersect` cc = actor2 inCh toInCh outCh (conn <> cc)
              | otherwise           = cc `DP.push'` outCh >> actor2 inCh toInCh outCh conn
 
 
-runDPConnectedComp :: IO ()
-runDPConnectedComp = do
-  file <- maybe (fail "Error no parameter found") return . R.viaNonEmpty R.head =<< getArgs
-  R.withFile file ReadMode runParallelDP
+runDPConnectedComp :: FilePath -> IO ()
+runDPConnectedComp file = R.withFile file ReadMode runParallelDP
 
 parseEdges :: ByteString -> IO Edge
 parseEdges = toEdge . decodeUtf8

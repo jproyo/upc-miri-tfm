@@ -7,7 +7,6 @@ module Data.ConnComp
   , addToConnectedComp
   , includedIncident
   , Data.ConnComp.null
-  , union
   , intersect
   ) where
 
@@ -52,7 +51,5 @@ null :: ConnectedComponents -> Bool
 null (ConnectedComponents s) = S.null s
 
 intersect :: ConnectedComponents -> ConnectedComponents -> Bool
-intersect (ConnectedComponents s1) (ConnectedComponents s2) = not $ S.disjoint s1 s2 
+intersect (ConnectedComponents s1) (ConnectedComponents s2) = not $ S.null $ S.intersection s1 s2 
 
-union :: ConnectedComponents -> ConnectedComponents -> ConnectedComponents
-union (ConnectedComponents s1) (ConnectedComponents s2) = ConnectedComponents (S.union s1 s2)
