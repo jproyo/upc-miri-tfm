@@ -76,10 +76,35 @@ library:
 
 executables:
   conn-comp:
-    source-dirs:      app
+    source-dirs:      app/DP
     main:             Main.hs
     dependencies:
       - connected-comp
+    ghc-options:
+      - -threaded
+      - -O3
+      - -rtsopts
+      - -with-rtsopts=-N
+
+  compare-graph:
+    source-dirs:      app/Compare
+    main:             Main.hs
+    dependencies:
+      - connected-comp
+    ghc-options:
+      - -threaded
+      - -O3
+      - -rtsopts
+      - -with-rtsopts=-N
+
+  benchmark:
+    source-dirs:      app/Benchmark
+    main:             Main.hs
+    dependencies:
+      - connected-comp
+      - criterion
+      - directory
+      - time
     ghc-options:
       - -threaded
       - -O3
