@@ -88,6 +88,9 @@ unfoldM f stop = do
 mapM :: (b -> IO c) -> Stream a b -> IO ()
 mapM f inCh = async loop >>= wait where loop = maybe (pure ()) (\a -> f a >> loop) =<< pullOut inCh
 
+mapCount :: (Int -> IO ()) -> Int -> Stream a b -> IO ()
+mapCount f i inCh = async (loop i) >>= wait where loop c = maybe (pure ()) (\_ -> f c >> loop (c+1)) =<< pullOut inCh
+
 {-# INLINE foldMap #-}
 foldMap :: Monoid m => (b -> m) -> Stream a b -> IO m
 foldMap m s = async (loop mempty) >>= wait where loop xs = maybe (pure xs) (loop . mappend xs . m) =<< pullOut s

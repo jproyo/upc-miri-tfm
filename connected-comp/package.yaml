@@ -65,6 +65,7 @@ dependencies:
   - relude >= 1.0.0.0
   - unagi-chan
   - trifecta
+  - time
 
 library:
   source-dirs: src

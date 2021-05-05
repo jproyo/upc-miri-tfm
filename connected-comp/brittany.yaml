@@ -68,15 +68,15 @@ conf_layout:
     tag: AltChooserBoundedSearch
     contents: 3
   lconfig_allowSingleLineExportList: false
-  lconfig_importColumn: 120
+  lconfig_importColumn: 50
   lconfig_hangingTypeSignature: true
-  lconfig_importAsColumn: 70
-  lconfig_alignmentLimit: 80
+  lconfig_importAsColumn: 50
+  lconfig_alignmentLimit: 30
   lconfig_allowHangingQuasiQuotes: true
   lconfig_indentListSpecial: true
   lconfig_indentAmount: 2
   lconfig_alignmentBreakOnMultiline: true
-  lconfig_cols: 120
+  lconfig_cols: 80
   lconfig_indentPolicy: IndentPolicyFree
   lconfig_indentWhereSpecial: true
   lconfig_columnAlignMode:

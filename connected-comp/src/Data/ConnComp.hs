@@ -8,6 +8,7 @@ module Data.ConnComp
   , includedIncident
   , Data.ConnComp.null
   , intersect
+  , member
   ) where
 
 import           Control.Exception.Base
@@ -37,6 +38,9 @@ parseEdge = fmap Edge . (,) <$> (whiteSpace *> parseInt <* whiteSpace) <*> parse
 
 toConnectedComp :: Edge -> ConnectedComponents
 toConnectedComp (Edge (a, b)) = ConnectedComponents (a `S.insert` S.singleton b)
+
+member :: Int -> ConnectedComponents -> Bool 
+member x (ConnectedComponents cc) = x `S.member`cc
 
 addToConnectedComp :: Edge -> ConnectedComponents -> ConnectedComponents
 addToConnectedComp (Edge (a, b)) (ConnectedComponents set) = ConnectedComponents $ a `S.insert` (b `S.insert` set)
