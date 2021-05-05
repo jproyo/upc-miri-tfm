@@ -6,13 +6,14 @@ module ConnComp.Internal
   ) where
 
 import           Control.Concurrent.Async
-import           Control.Concurrent.Chan.Unagi.NoBlocking          as TC
-import           Data.ByteString                                   as B
-import           Data.ConnComp                                     as DC
-import qualified Dynamic.Pipeline                                  as DP
-import           Dynamic.Pipeline                                                                                     ( (|>>)
-                                                                                                                      )
-import           Relude                                            as R
+import           Control.Concurrent.Chan.Unagi.NoBlocking
+                                               as TC
+import           Data.ByteString               as B
+import           Data.ConnComp                 as DC
+import qualified Dynamic.Pipeline              as DP
+import           Dynamic.Pipeline               ( (|>>) )
+import           Relude                        as R
+import           Utils.Trace
 
 
 type ConnCompDP = DP.Stream Edge ConnectedComponents
@@ -24,9 +25,15 @@ input :: Handle -> IO (DP.Stream Edge ConnectedComponents)
 input h = fromInput h >>= (|>> parseEdges)
 
 output :: ConnCompDP -> IO ()
-output = (print . getSum) <=< DP.foldMap (const $ Sum (1::Int))
+--output = (print . getSum) <=< DP.foldMap (const $ Sum (1::Int))
+output cc = do
+  putBSLn "test,approach,answer,time"
+  now <- nanoSecs
+  DP.mapCount (printNext now) 1 cc
+  where printNext now c = printCC "DP-WCC" c now =<< nanoSecs
 
-runParallelDP' :: DP.Stream ByteString ConnectedComponents -> IO [ConnectedComponents]
+runParallelDP' :: DP.Stream ByteString ConnectedComponents
+               -> IO [ConnectedComponents]
 runParallelDP' sInput = do
   parseInput <- sInput |>> parseEdges
   out        <- generator parseInput
@@ -36,30 +43,45 @@ generator :: ConnCompDP -> IO ConnCompDP
 generator = DP.foldrS createNewFilter
  where
   createNewFilter c v = do
-    newInput  <- newChan
-    newOutput <- newChan
-    DP.Stream newInput newOutput <$> async (newFilter (toConnectedComp v) c newInput newOutput)
+    newInput  <- TC.newChan
+    newOutput <- TC.newChan
+    DP.Stream newInput newOutput
+      <$> async (newFilter (toConnectedComp v) c newInput newOutput)
 
-newFilter :: ConnectedComponents -> ConnCompDP -> DP.Channel Edge -> DP.Channel ConnectedComponents -> IO ()
-newFilter conn inCh toInCh outCh = actor1 conn inCh toInCh >>= actor2 inCh toInCh outCh
+newFilter :: ConnectedComponents
+          -> ConnCompDP
+          -> DP.Channel Edge
+          -> DP.Channel ConnectedComponents
+          -> IO ()
+newFilter conn inCh toInCh outCh =
+  actor1 conn inCh toInCh >>= actor2 inCh toInCh outCh
 
-actor1 :: ConnectedComponents -> ConnCompDP -> DP.Channel Edge -> IO ConnectedComponents
+actor1 :: ConnectedComponents
+       -> ConnCompDP
+       -> DP.Channel Edge
+       -> IO ConnectedComponents
 actor1 conn inCh toInCh = maybe finishActor doActor =<< DP.pullIn inCh
  where
   finishActor = DP.end' toInCh >> return conn
 
-  doActor v | toConnectedComp v `intersect` conn = actor1 (toConnectedComp v <> conn) inCh toInCh
-            | otherwise                          = v `DP.push'` toInCh >> actor1 conn inCh toInCh
+  doActor v
+    | toConnectedComp v `intersect` conn = actor1 (toConnectedComp v <> conn)
+                                                  inCh
+                                                  toInCh
+    | otherwise = v `DP.push'` toInCh >> actor1 conn inCh toInCh
 
-
-actor2 :: ConnCompDP -> DP.Channel Edge -> DP.Channel ConnectedComponents -> ConnectedComponents -> IO ()
+actor2 :: ConnCompDP
+       -> DP.Channel Edge
+       -> DP.Channel ConnectedComponents
+       -> ConnectedComponents
+       -> IO ()
 actor2 inCh toInCh outCh conn = maybe finishActor doActor =<< DP.pullOut inCh
 
  where
   finishActor = conn `DP.push'` outCh >> DP.end' outCh
 
   doActor cc | conn `intersect` cc = actor2 inCh toInCh outCh (conn <> cc)
-             | otherwise           = cc `DP.push'` outCh >> actor2 inCh toInCh outCh conn
+             | otherwise = cc `DP.push'` outCh >> actor2 inCh toInCh outCh conn
 
 
 runDPConnectedComp :: FilePath -> IO ()

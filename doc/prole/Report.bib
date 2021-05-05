@@ -1,6 +1,6 @@
-@conference{dp_def,
-  author = {Zoltán, C. and [et al.]},
-  booktitle = {Jornadas sobre Programación y Lenguajes. "Actas de las XIX Jornadas de Programación y Lenguajes (PROLE 2019): Cáceres, septiembre de 2019},
+@conference{dpdef,
+  author = {Zoltán, C. and et al},
+  booktitle = {Jornadas sobre Programación y Lenguajes. Actas de las XIX Jornadas de Programación y Lenguajes (PROLE 2019): Cáceres, septiembre de 2019},
   address = {San Sebastián, Guipúzcoa: Sociedad de Ingeniería de Software y Tecnologías de Desarrollo de Software (SISTEDES)},
   year = {2019},
   pages = {1-11},
@@ -14,9 +14,6 @@
   biburl = {https://www.bibsonomy.org/bibtex/28b6e267f62d8e23bbb127307ff7a4a0f/flint63},
   comment = {1st edition 1990 Paperback},
   edition = 3,
-  file = {eBook:2009/CormenLeisersonEtAl09.pdf:PDF;MIT Press Product Page:https\://mitpress.mit.edu/books/introduction-algorithms-third-edition:URL;Amazon Search inside:http\://www.amazon.de/gp/reader/0262033844/:URL},
-  interhash = {a5e3e9cb3fe0f62575df69d504e53809},
-  intrahash = {8b6e267f62d8e23bbb127307ff7a4a0f},
   isbn = {978-0-262-03384-8},
   keywords = {01841 105 algorithm book mitpress shelf theory},
   owner = {flint},
@@ -26,7 +23,7 @@
   year = 2009
 }
 
-@article{monad_par,
+@article{monadpar,
   author = {Marlow, Simon and Newton, Ryan and Peyton Jones, Simon},
   title = {A Monad for Deterministic Parallelism},
   year = {2011},
@@ -38,7 +35,6 @@
   issn = {0362-1340},
   url = {https://doi.org/10.1145/2096148.2034685},
   doi = {10.1145/2096148.2034685},
-  abstract = {We present a new programming model for deterministic parallel computation in a pure functional language. The model is monadic and has explicit granularity, but allows dynamic construction of dataflow networks that are scheduled at runtime, while remaining deterministic and pure. The implementation is based on monadic concurrency, which has until now only been used to simulate concurrency in functional languages, rather than to provide parallelism. We present the API with its semantics, and argue that parallel execution is deterministic. Furthermore, we present a complete work-stealing scheduler implemented as a Haskell library, and we show that it performs at least as well as the existing parallel programming models in Haskell.},
   journal = {SIGPLAN Not.},
   month = sep,
   pages = {71–82},
@@ -46,7 +42,7 @@
   keywords = {haskell, parallel}
 }
 
-@InCollection{parallel_book,
+@InCollection{parallelbook,
    author = {Simon Marlow},
    title = {Parallel and Concurrent Programming in {H}askell},
    booktitle = {CEFP 2011},
@@ -55,6 +51,7 @@
    pages = {339--401},
    volume = {7241},
    series = {LNCS},
+   publisher = {O'Reilly Media, Inc.},
    editor = {V. Zs\'ok and Z. Horv\'ath and R. Plasmeijer}
 }
 
@@ -64,9 +61,10 @@
   month = {04},
   pages = {},
   title = {Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire},
+  journal = {Proceedings of the 5th ACM Conference on Functional Programming Languages and Computer Architecture},
   volume = {523},
   isbn = {978-3-540-54396-1},
-  doi = {10.1007/3540543961_7}
+  doi = {10.1007/3540543961\_7}
 }
 
 @article{quickcheck,
@@ -80,21 +78,56 @@
   doi = {10.1145/1988042.1988046}
 }
 
-@misc{net_astro,
+@inproceedings{monads,
+    author = {Wadler, Philip},
+    title = {Monads for Functional Programming},
+    year = {1995},
+    isbn = {3540594515},
+    publisher = {Springer-Verlag},
+    address = {Berlin, Heidelberg},
+    booktitle = {Advanced Functional Programming, First International Spring School on Advanced Functional Programming Techniques-Tutorial Text},
+    pages = {24–52},
+    numpages = {29}
+}
+
+@article{monadlaws,
+   title={What we talk about when we talk about monads},
+   volume={2},
+   ISSN={2473-7321},
+   url={http://dx.doi.org/10.22152/programming-journal.org/2018/2/12},
+   DOI={10.22152/programming-journal.org/2018/2/12},
+   number={3},
+   journal={The Art, Science, and Engineering of Programming},
+   publisher={Aspect-Oriented Software Association (AOSA)},
+   author={Petricek, Tomas},
+   year={2018},
+   month={Mar}
+}
+
+@incollection{curryhoward,
+	booktitle = {To H. B. Curry: Essays on Combinatory Logic, Lambda Calculus, and Formalism},
+	title = {The Formulae-as-Types Notion of Construction},
+	year = {1980},
+	editor = {Haskell Curry and Hindley B. and Seldin J. Roger and P. Jonathan},
+	author = {William Alvin Howard},
+	publisher = {Academic Press}
+}
+
+@misc{netastro,
   author       = {J. Leskovec, J. Kleinberg and C. Faloutsos},
   title        = {SNAP Datasets: Stanford Large Network Dataset Collection},
   howpublished = {https://snap.stanford.edu/data/ca-AstroPh.html},
   year         = 2007
 }
 
-@misc{net_enron,
+@misc{netenron,
   author       = {William Cohen},
   title        = {SNAP Datasets: Stanford Large Network Dataset Collection},
   howpublished = {https://snap.stanford.edu/data/email-Enron.html},
   year         = 2004
 }
 
-@misc{net_web_google,
+@misc{netwebgoogle,
   author       = {Google Inc.},
   title        = {SNAP Datasets: Stanford Large Network Dataset Collection},
   howpublished = {https://snap.stanford.edu/data/web-Google.html},
