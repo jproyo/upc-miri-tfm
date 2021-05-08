@@ -5,6 +5,7 @@ module ConnComp.Internal
   , DP.fromText
   ) where
 
+import           Control.Concurrent
 import           Control.Concurrent.Async
 import           Control.Concurrent.Chan.Unagi.NoBlocking
                                                as TC
@@ -19,41 +20,49 @@ import           Utils.Trace
 type ConnCompDP = DP.Stream Edge ConnectedComponents
 
 runParallelDP :: Handle -> IO ()
-runParallelDP h = input h >>= generator >>= output
+runParallelDP h = do
+  now <- nanoSecs
+  input h >>= generator now >>= output now
 
 input :: Handle -> IO (DP.Stream Edge ConnectedComponents)
 input h = fromInput h >>= (|>> parseEdges)
 
-output :: ConnCompDP -> IO ()
+output :: Double -> ConnCompDP -> IO ()
 --output = (print . getSum) <=< DP.foldMap (const $ Sum (1::Int))
-output cc = do
+output now cc = do
   putBSLn "test,approach,answer,time"
-  now <- nanoSecs
-  DP.mapCount (printNext now) 1 cc
-  where printNext now c = printCC "DP-WCC" c now =<< nanoSecs
+  DP.mapCount printNext 1 cc
+  where 
+    printNext c = do 
+      td <- myThreadId
+      printCC ("DP-WCC-"<>show td) c now =<< nanoSecs
 
 runParallelDP' :: DP.Stream ByteString ConnectedComponents
                -> IO [ConnectedComponents]
 runParallelDP' sInput = do
+  now <- nanoSecs 
   parseInput <- sInput |>> parseEdges
-  out        <- generator parseInput
+  out        <- generator now parseInput
   DP.foldMap (: []) out
 
-generator :: ConnCompDP -> IO ConnCompDP
-generator = DP.foldrS createNewFilter
+generator :: Double -> ConnCompDP -> IO ConnCompDP
+generator now = DP.foldrS createNewFilter
  where
   createNewFilter c v = do
     newInput  <- TC.newChan
     newOutput <- TC.newChan
     DP.Stream newInput newOutput
-      <$> async (newFilter (toConnectedComp v) c newInput newOutput)
+      <$> async (newFilter now (toConnectedComp v) c newInput newOutput)
 
-newFilter :: ConnectedComponents
+newFilter :: Double -> ConnectedComponents
           -> ConnCompDP
           -> DP.Channel Edge
           -> DP.Channel ConnectedComponents
           -> IO ()
-newFilter conn inCh toInCh outCh =
+newFilter _ conn inCh toInCh outCh = --do
+  -- tid <- myThreadId
+  -- nano <- nanoSecs 
+  -- putLBSLn $ "[" <> show tid <> "] - Time: "<> showFullPrecision (nano - now) <> " - Executing action for conn " <> show conn 
   actor1 conn inCh toInCh >>= actor2 inCh toInCh outCh
 
 actor1 :: ConnectedComponents

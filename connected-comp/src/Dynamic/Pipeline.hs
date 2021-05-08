@@ -45,7 +45,7 @@ pushIn e = push' e . inChannel
 
 {-# INLINE pull' #-}
 pull' :: Channel a -> IO (Maybe a)
-pull' = readChan (CC.threadDelay 100) . snd
+pull' = readChan (CC.threadDelay 10) . snd
 
 {-# INLINE pullIn #-}
 pullIn :: Stream a b -> IO (Maybe a)
@@ -57,7 +57,9 @@ pullOut = pull' . outChannel
 
 {-# INLINE foldrS #-}
 foldrS :: (Stream a b -> a -> IO (Stream a b)) -> Stream a b -> IO (Stream a b)
-foldrS = loop where loop fio c = maybe (return c) (loop fio <=< fio c) =<< pullIn c
+foldrS = loop
+  where 
+    loop fio c = maybe (return c) (loop fio <=< fio c) =<< pullIn c
 
 {-# INLINE (|>>) #-}
 (|>>) :: Stream a b -> (a -> IO c) -> IO (Stream c b)
@@ -89,7 +91,7 @@ mapM :: (b -> IO c) -> Stream a b -> IO ()
 mapM f inCh = async loop >>= wait where loop = maybe (pure ()) (\a -> f a >> loop) =<< pullOut inCh
 
 mapCount :: (Int -> IO ()) -> Int -> Stream a b -> IO ()
-mapCount f i inCh = async (loop i) >>= wait where loop c = maybe (pure ()) (\_ -> f c >> loop (c+1)) =<< pullOut inCh
+mapCount f i inCh = async (loop i) >>= wait where loop c = maybe (pure ()) (const $ f c >> loop (c+1)) =<< pullOut inCh
 
 {-# INLINE foldMap #-}
 foldMap :: Monoid m => (b -> m) -> Stream a b -> IO m
