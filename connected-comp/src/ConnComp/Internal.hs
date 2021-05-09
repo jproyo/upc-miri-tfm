@@ -5,7 +5,7 @@ module ConnComp.Internal
   , DP.fromText
   ) where
 
-import           Control.Concurrent
+-- import           Control.Concurrent
 import           Control.Concurrent.Async
 import           Control.Concurrent.Chan.Unagi.NoBlocking
                                                as TC
@@ -33,9 +33,7 @@ output now cc = do
   putBSLn "test,approach,answer,time"
   DP.mapCount printNext 1 cc
   where 
-    printNext c = do 
-      td <- myThreadId
-      printCC ("DP-WCC-"<>show td) c now =<< nanoSecs
+    printNext c = printCC "DP-WCC" c now =<< nanoSecs 
 
 runParallelDP' :: DP.Stream ByteString ConnectedComponents
                -> IO [ConnectedComponents]
