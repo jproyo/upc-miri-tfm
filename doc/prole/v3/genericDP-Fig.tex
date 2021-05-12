@@ -1,0 +1,55 @@
+%%% Generic DP
+\tikzset{input/.style={shape=rectangle, minimum size=8mm}}
+\tikzset{ionode/.style={shape=rectangle, draw=blue!50, fill=blue!5, very thick, minimum size=8mm, drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{ionode/.style={shape= rectangle, draw=blue!50, fill=blue!5, very thick, minimum size=8mm,drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{gennode/.style={shape= rectangle, draw=gray!50, fill=gray!5, very thick, minimum size=8mm, drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{filternode/.style={shape=rectangle, draw=cyan!50, fill=cyan!30, very thick, minimum size=8mm,drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{paramnode/.style={shape=rectangle, draw=cyan!50, fill=white, very thick, minimum size=8mm, 
+drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{edge/.style = {->,> = latex}}
+\tikzstyle{ioedge} = [thick, decoration={markings,mark=at position
+   1 with {\arrow[semithick]{open triangle 60}}},
+   double distance=1.4pt, shorten >= 5.5pt,
+   preaction = {decorate},
+   postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
+
+\begin{figure}[!hb]
+ \centering
+\begin{subfigure}[b]{0.8\textwidth}
+ \centering
+ \begin{tikzpicture}
+%Nodes
+\node[ionode]      (in)                              {$\iwcc$};
+\node[gennode]   (gen)                [right=of in] {$\gwcc$};
+\node[ionode]      (out)                 [right=of gen] {$\owcc$};
+\node[paramnode]  (filter)                [above= 0.2mm of gen] {$\fwcc$};
+%Lines
+\draw[ultra thick,->] (in)to (gen);
+\draw[ultra thick,->] (gen) to (out);
+\end{tikzpicture}
+\caption{Initial configuration of a Dynamic Pipeline.  An initial DP consists of three stages represented here by squares. The Input ($\iwcc$), the Generator ($\gwcc$) together its parameter ($\fwcc$) and the Output ($\owcc$). Arrows correspond to channels connecting the stages.}
+\label{fig:initialDP}
+\end{subfigure}
+%
+\begin{subfigure}[b]{0.8\textwidth}
+ \centering
+\begin{tikzpicture}
+%Nodes
+\node[ionode]      (in)                              {$\iwcc$};
+\node[filternode]  (filter1)               [right=of in] {$\fwcc$};
+\node[filternode]  (filter2)               [right=of filter1] {$\fwcc$};
+\node[gennode]   (gen)                 [right=of filter2] {$\gwcc$};
+\node[paramnode]  (param)          [above= 0.2mm of gen] {$\fwcc$};
+\node[ionode]      (out)                  [right=of gen] {$\owcc$};
+%Lines
+\draw[ultra thick,->] (in) to (filter1);
+\draw[ultra thick,->] (filter1) to (filter2);
+\draw[ultra thick,->] (filter2) to (gen);
+\draw[ultra thick,->] (gen) to (out);
+\end{tikzpicture}
+\caption{Evolution of a DP. After creating some filter instances (shadow Filter squares) of the filter parameter (light Filter square) in the Generator, the DP has stretched.}
+\label{fig:activeDP}
+\end{subfigure}
+\caption{Dynamic Pipeline configuration}
+\end{figure}
+%%%
