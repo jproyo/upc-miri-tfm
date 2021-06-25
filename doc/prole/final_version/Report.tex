@@ -1,0 +1,802 @@
+\documentclass[preprint]{elsarticle}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%\usepackage{tikz}
+%\usetikzlibrary{shapes.misc,shadows}
+%\usetikzlibrary{positioning} 
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{parskip}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{paralist}
+\usepackage{listings}
+\usepackage{babel}
+\usepackage{color}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes.misc,shadows}
+\usetikzlibrary{quotes,positioning,arrows,decorations.markings}
+\usetikzlibrary{positioning} 
+\usepackage[cache=false,section]{minted}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[tworuled,algosection,figure,linesnumbered]{algorithm2e}
+\usepackage{glossaries}
+\usemintedstyle{default}
+\newminted{haskell}{frame=lines,framerule=2pt}
+\newminted{R}{frame=lines,framerule=2pt}
+\graphicspath{{./images/}}
+
+\bibliographystyle{abbrvnat}
+
+\newacronym{dp}{DPP}{Dynamic Pipeline Paradigm}
+\newacronym{dpf}{DPF}{Dynamic Pipeline Framework}
+\newacronym{dph}{DP-Haskell}{$DP_{WCC}$ in Haskell}
+\newacronym{bfs}{BFS}{Breadth-First Search}
+\newacronym{dfs}{DFS}{Depth-First Search}
+\newacronym{wcc}{WCC}{Weak Connected Components}
+\newacronym{hs}{Haskell}{Haskell Programming Language}
+\newacronym{fp}{FP}{Functional Programming}
+\newacronym{stm}{STM}{Software Transactional Memory}
+\newacronym{rl}{R}{R Language}
+\newacronym{os}{OS}{Operative System}
+\newacronym{dm}{Dm}{Diefficency Metrics}
+\newacronym{tfft}{TFFT}{Time for the first tuple}
+\newacronym{et}{ET}{Execution Time}
+\newacronym{comp}{Comp}{Completeness}
+\newacronym{tt}{T}{Throughput}
+\newacronym{dt}{dief$@$t}{Diefficiency first $t$ time units}
+\newacronym{snap}{SNAP}{Stanford Network Data Set Collection}
+\newacronym{ghc}{GHC}{Glasgow Haskell Compiler}
+\newacronym{dsl}{DSL}{Domain-specific Language}
+\newacronym{edsl}{EDSL}{Embedded Domain-specific Language}
+\newacronym{idl}{IDL}{Interpreter of DSL}
+\newacronym{rs}{RS}{Runtime System}
+\newacronym{go}{Go}{Go Programming Language}
+\newacronym{hl}{HL}{Host Language}
+
+
+\glsdisablehyper
+
+\newcommand{\DP}{\mathsf{DP}}
+\newcommand{\dpwcc}{\mathsf{DP_{WCC}}}
+\newcommand{\iwcc}{\mathsf{Sr}}
+\newcommand{\iwc}{\mathsf{Sr_{WCC}}}
+\newcommand{\owcc}{\mathsf{Sk}}
+\newcommand{\owc}{\mathsf{Sk_{WCC}}}
+\newcommand{\fwcc}{\mathsf{F}} 
+\newcommand{\fwc}{\mathsf{F_{WCC}}} 
+\newcommand{\gwcc}{\mathsf{G}}
+\newcommand{\gwc}{\mathsf{G_{WCC}}}
+\newcommand{\ice}{\mathsf{IC_E}}
+\newcommand{\csofv}{\mathsf{IC_{set(V)}}}
+\newcommand{\sgen}{\mathsf{S_G}}
+\newcommand{\sfilter}{\mathsf{S_F}}
+\newcommand{\sinp}{\mathsf{S_I}}
+\newcommand{\sout}{\mathsf{S_O}}
+\newcommand{\istream}{\mathsf{D}}
+\newcommand{\wccout}{\mathsf{R}}
+\newcommand{\fmem}{\mathsf{M_F}}
+\newcommand{\eof}{\mathsf{eof}}
+\newcommand{\Act}{\mathsf{actor_1}}
+\newcommand{\Actt}{\mathsf{actor_2}}
+\newcommand*{\listingautorefname}{listing}
+
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newdefinition{prob}{Problem}
+\newdefinition{defin}{Definition}
+\newdefinition{rmk}{Remark}
+\newproof{pf}{Proof}
+\newproof{pot}{Proof of Theorem \autoref{thm2}}
+
+%\title{Towards a Haskell Abstraction of Dynamic Pipeline %Paradigm\tnoteref{t1}}
+
+\title{Towards a Dynamic Pipeline Framework implemented in (parallel) Haskell\tnoteref{t1}}
+
+\tnotetext[t1]{This work has been partially supported by  MINECO and FEDER funds under grant TIN2017-86727-C2-1-R.}
+%
+\author[1]{Juan Pablo Royo Sales}
+\ead{juan.pablo.royo@estudiantat.upc.edu}
+
+\author[1]{Edelmira Pasarella}
+\ead{edelmira@cs.upc.edu}
+
+\author[1]{Cristina Zoltan}
+\ead{zoltan@cs.upc.edu}
+
+\author[2]{Maria-Esther Vidal}
+\ead{maria.vidal@tib.eu}
+
+\affiliation[1]{organization={Universitat Politecnica de Catalunya},
+postcode={08034},
+city={Barcelona},
+country={Spain}}
+
+\affiliation[2]{organization={TIB/L3S Research Centre at the University of Hannover},
+%addressline={JWRA 34, Jagathy},
+%postcode={695014},
+city={Hannover},
+country={Germany}}
+
+\begin{document}
+
+\begin{abstract}
+Streaming processing has given rise to new computation paradigms to provide effective and efficient data stream processing. The most important features of these new paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce incremental results. The Dynamic Pipeline Paradigm (DPP) is a naturally functional approach to deal with stream processing. This fact encourages us to use a  purely functional programming language for  DPP.  In this work, we tackle the problem of assessing the suitability of using (parallel) Haskell to implement a Dynamic Pipeline Framework (DPF).  The justification of this choice is twofold. From a formal point of view, Haskell has solid theoretical foundations, providing the possibility of manipulating computations as primary entities. From a practical perspective,  it has a robust set of tools for writing multithreading and parallel computations with optimal performance. As proof of concept, we present an implementation of a dynamic pipeline to compute the weakly connected components of a graph (WCC) in Haskell (a.k.a. $\dpwcc$). The  $\dpwcc$ behavior is empirically evaluated and compared with a solution provided by a Haskell library. The evaluation is assessed in three networks of different sizes and topology. Performance is measured in terms of the time of the first result, continuous generation of results, total time, and consumed memory. The results suggest that $\dpwcc$, even naive, is competitive with the baseline solution available in a Haskell library. $\dpwcc$ exhibits a higher continuous behavior and can produce the first result faster than the baseline. 
+Albeit initial,  these results put in perspective the suitability of Haskell's abstractions for the implementation of DPF.  Built on them, we will develop a general and parametric DPF in the future.
+
+%MEV- Commented Firstly, we conduct an empirical evaluation to assess the performance of an \textit{ad-hoc} Haskell implementation of a naive dynamic pipeline to compute  the weak connected components of a graph (WCC).  After analyzing the results of the empirical evaluation we obtained insights on  the basis to construct parallel solutions using the Dynamic Pipeline Paradigm and the more relevant  factors that impact its scalability.  This allowed us to isolate which are the Haskell abstractions to be redefined and which new ones must be defined as well as the systems parameters to be considered to lift the WCC dynamic pipeline to a general  DPF implementation. Finally, we present a first approach of a general parametric DPF implementation.
+
+%\textit{\acrfull{dp}} has been defined in order to solve problems where the data is heterogeneous 
+%and in motion. Taking advantage on pipelining stage parallelization, this paradigm allows to dynamically adapt 
+%stage computations according to the input. It has been shown in the definition of this computational model that any
+%implementation attempt of the paradigm requires fast and flexible parallelization techniques as well as tools that 
+%are suitable with the notion of computation as a \emph{first-class citizen}. In this work, we implement the \textit{Dynamic Pipeline Paradigm}
+%in \texttt{Haskell} for solving the problem of finding \textit{Connected Components of a Graph}. We experiment with different kind of Graphs and show how %\texttt{Haskell} behaves on that context. Through this approximation we generate enough evidence to support that \texttt{Haskell} it is a suitable Language %for implementing \textit{Dynamic Pipeline Paradigm} not only because of its strong theoretical foundations which provides different Abstraction to manipulate %computations as primary entities with Mathematical reasoning, but also because it has a powerful Set of Tools for writing multithreading and parallel %computations.
+\end{abstract}
+
+\begin{keyword}
+Dynamic pipeline \sep Haskell \sep parallelism \sep concurrency
+\end{keyword}
+
+\maketitle
+
+\section{Introduction}\label{intro}
+Effective streaming processing of large amounts of data has been studied for several years \cite{enumeratingsg, exploting, onthefly} as a key factor providing fast and incremental results in big data algorithmic problems. One of the most explored techniques, regardless of the approach, is the exploitation of parallel techniques to take advantage of the available computational power as much as possible. In that regard, the \acrfull{dp} \cite{dpdef} has lately emerged as one of the models that exploit data streaming processing using a dynamic pipeline parallelism approach \cite{onthefly}. This computational model has been designed with a functional focus, where the main components of the paradigm are functional stages or pipes which dynamically enlarge and shrink depending on incoming data.  
+
+One of the biggest challenges of implementing a \acrfull{dpf} is to find a proper set of tools and programming language which can take advantage of both of its primary aspects: \begin{inparaenum}[i\upshape)]
+\item  \emph{fast parallel} processing and 
+\item  \emph{strong theoretical} foundations that manage computations as first-class citizens.
+ \end{inparaenum}
+\acrfull{hs} is a statically typed pure functional language which has been designed and evolved from its birth in 1987, on strong theoretical foundations where computations are primary entities, and at the same time has been providing a powerful set of tools for writing multithreading and parallel programs with optimal performance \cite{parallelbook, monadpar}.
+
+\textbf{Problem Research and Objective:}\label{research:obj} The main objective of this work is to explore the feasibility of using a  \acrfull{fp} language to implement a \acrshort{dpf}. In particular, we tackle the problem of establishing the basis of an implementation of a \acrshort{dpf}  in \acrshort{hs}, a pure functional language. This is,  our aim is to determine the particular features (i.e., versions and libraries) of this language that will allow for an efficient implementation of the \acrshort{dpf}. To be concrete, through a particular and very relevant problem as the computation of the \acrfull{wcc} of a graph,  we study the  critical features required  in \acrshort{hs} for a \acrshort{dpf} implementation.
+
+\textbf{Approach:}  In Section \ref{section:prob:dp:haskell} we define a first approach for \acrshort{dp} Framework in \acrshort{hs}. In section \ref{WCC-1} we present an algorithm for enumerating \acrshort{wcc} using \acrshort{dp} and its implementation using  \acrshort{hs}. Finally, sections \ref{sec:evaluation} and \ref{experiments} report a set of experiments conducted to support our hypothesis, as well as the analysis of the results obtained from those experiments.
+
+\textbf{Contributions:} A proof of concept of the implementation of a $\DP$ for \acrshort{wcc} using \acrshort{hs}; the results of the empirical study suggests that   \acrshort{hs} is a suitable language for implementing \acrshort{dp}. This work also contributes to building the first abstraction approximation of a future framework/library of this computational model in that language. 
+
+
+%\section{Preliminaries}\label{section:prelim}
+\section{Dynamic Pipeline Paradigm}\label{sub:sec:dp:par}
+%
+%Stream Programming has become very popular and several frameworks support it, based on the model of pipelines, fork, and join %operators Spark \cite{apachespark}, Knime \cite{knime} %Hadoop \cite{hadoop}, 
+%etc. Algorithmic solutions based on these frameworks consist in describing dependencies among pieces of sequential code. To our %knowledge, very few frameworks have constructions that allow programmers to express a pipeline having a variable-length during %program execution. 
+The \textit{Dynamic Pipeline Paradigm} (DPP) \cite{dpdef} is a data-driven computational model  based on a one-dimensional and unidirectional chain of stages connected by means of channels synchronized by data availability. 
+This chain of stages is a computational structure called \textit{Dynamic Pipeline} ($\DP$). A $\DP$ stretches and shrinks depending on the spawning and the lifetime of its stages, respectively. Modeling an algorithmic solution as a $\DP$ corresponds to define a dynamic computational structure  in terms of four kinds of stages:  \textit{Source} ($\iwcc$),  \textit{Generator} ($\gwcc$),  \textit{Sink} ($\owcc$) and \textit{Filter} ($\fwcc$) stages.  To be concrete, the specific  behaviour of each stage to solve a particular problem must be defined as well as the number and the type of the I/O channels connecting them. Channels are unidirectional according to the flow of the data. The \textit{Generator} stage is in charge of spawning \textit{Filter} stage instances. This particular behavior of the \textit{Generator}  gives the elastic capacity to DPs. \textit{Filter} stage instances are stateful operators in the sense described in \cite{HR19}. This is, \textit{Filter} instances have a state.  
+The deployment of a $\DP$ consists in setting up the initial configuration depicted in \autoref{fig:initialDP}. The activation of a $\DP$ starts when a stream of data items arrives to the initial configuration of the $\DP$. In particular, when a stream data items arrives to the \textit{Source} stage. During the execution, the  \textit{Generator} stage spawns \textit{Filter} stage instances according to incoming data and the \textit{Generator} defined behavior. This evolution is illustrated in  \autoref{fig:activeDP}. If the stream  data is bounded, the computation finish when the lifetime of all the stages of the active $\DP$ have finished. Otherwise, if the stream data is unbounded, the $\DP$ remains active and incremental results are output. 
+%
+ \input{genericDP-Fig}
+%
+A \textit{Dynamic Pipeline Framework} (DPF) is a software system that allows to implement and activate their $\DP$s. In particular, a DPF provides a way to specify dynamic pipelines and an interpreter to run triggered $\DP$s that ensures, among others, proper resource utilization, safeness, and failure recovery.
+%This is, an initial pipeline composed of a chain of instantiated stages: \textit{Source},  \textit{Generator} parameterized by a  \textit{Filter} and \textit{Sink}. 
+ %\begin{center}
+% \begin{figure}[h!]
+%     \centering
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+     \includegraphics[width=0.5\textwidth] {dpf_haskell_v3.png}
+     %[width=10cm, height=9cm]
+       \end{center}
+     \caption{Dynamic Pipeline Framework Architecture}
+     \label{fig:dpf:hs:1}
+ %\end{figure}
+ \end{wrapfigure}
+\iffalse
+\acrshort{dpf} in \acrshort{hs} consists on a \textit{Type-Level} \acrfull{dsl} implementation. 
+\fi
+\acrshort{dpf} is implemented in some \acrfull{hl}\footnote{A Host Language means the Programming Language that is used to implement \acrshort{dpf}, i.e. Haskell, Go, Rust, etc.} and comprises three main modules: \begin{inparaenum}[i\upshape)]
+\item \acrfull{dsl}, which is representing $\DP$ in an \acrfull{edsl} to allow defining the different components of a $\DP$ as well as their connections, 
+\item \acrfull{idl} which has all the functions needed to set up a $\DP$,  and \item \acrfull{rs} to trigger and execute a $\DP$\end{inparaenum}.  \autoref{fig:dpf:hs:1} depicts the \acrshort{dpf}  architecture. 
+
+As we can appreciate in \autoref{fig:dpf:hs:1}, a user with $\DP$ and \acrshort{hl} knowledge (called \textit{Developer} here), interacts with the \acrshort{dsl} module. Through this module, the user defines the behaviors and connections of the four stages of a $\DP$, i.e., the channels between stages and their types, input data, and the \textit{Filter} template.  Indeed, \acrshort{idl} sets up the initial configuration as described in \autoref{fig:initialDP} and,   interprets and translates user definitions to specific \acrshort{hl} constructs and implementation. This means that the user needs to write the algorithms that each stage should perform,  interacting with the available channels declared for those stages. Considering a particular $\DP$, the \acrshort{rs} module contains an entry point function to allow the user to run it. The execution of the $\DP$ takes place as depicted in \autoref{fig:activeDP}.
+
+The \acrshort{dpf} requirements are defined based on stream processing systems described by R\"oger and Mayer \cite{HR19}. A $\DP$ spans a network of stages, hence to guarantee a good performance, it is needed to ensure low latency and high throughput when a $\DP$ is activated. To achieve this goal, it is necessary a high level of parallelization. Besides, to increase the parallelization level, it is required a mechanism that supports the deployment of the $\DP$ stateful stages in a multi-core server. In particular, this mechanism must support the $\DP$ elasticity, i.e., the spawn/kill  of filter instances. Additionally, the realization of channels must be supported and in-order computation ensured. 
+
+\iffalse
+It is out of the scope of this work the development and definition of \acrshort{dsl} component to complete the proposed framework. Moreover, we would like to remark that \acrshort{idl} is going to change and evolve as progress is being made on the \acrshort{dsl} part, since some design decisions on \acrshort{dsl} could affect \acrshort{idl}.
+\fi
+%
+\section{A Dynamic Pipeline Framework: First Approach}\label{section:prob:dp:haskell}
+
+In this section, we focus on the design and implementation of \acrshort{idl} and \acrshort{rs} in parallel Haskell. \acrshort{idl} and \acrshort{rs} can be considered the core of the \acrshort{dpf} since, according to the architecture shown in \autoref{fig:dpf:hs:1}, these components of the DPF are in charge of setting up and executing a $\DP$. 
+
+\acrshort{idl} implementation requires certain characteristics that chosen language and tools should provide to reach the desired objective. Regarding this, and according to what has been described on \autoref{sub:sec:dp:par}, we detail the tools and mechanisms selected for each component of a $\DP$\footnote{All the Source Code of this work can be found in this  \href{https://github.com/jproyo/upc-miri-tfm/tree/feature/library-v1/connected-comp}{Github Repository}}.
+
+\paragraph{$\DP$ Monad\label{sub:sec:filter}} A functional programming language like \acrshort{hs}, it is a proper host for representing those dynamic computations, not only due to its \acrshort{fp} nature, but also for it is strong type system which ensure safeness on the data representation pipeline and the computational sequence. Therefore, there is no need to select any other additional library rather than using \emph{Monads} \cite{monads} to represent the chain of computations and the dependency between those computations in the implementation of a pipeline. In this sense,  representing  a $\DP$ as a \emph{Monad}, \emph{Monad Laws} \cite{monadlaws} are ensured. In particular, the \emph{Monad} associativity law, i.e.,  ($(m >>= f ) >>= g = m >>= (\lambda x.f x >>= g)$), guarantees the execution flows of $\iwcc$, $\gwcc$ and $\owcc$.
+
+\paragraph{Filter / Stage} Abstractions like \textit{Recursive Schemes} \cite{lenses} has been deeply explored and used in \acrshort{hs}. They allow for the representation, in a formal and simple way, of dynamic functional structures like \textit{anamorphisms} and \textit{catamorphisms} \cite{lenses}. This abstraction is already provided in the base library in \mintinline{haskell}{fold} and \mintinline{haskell}{unfold} combinators. In this first solution, we have chosen to implement these simplest abstractions. However, we hypothesize if more \textit{Recursive Scheme} combinators are implemented, the proposed approach can take advantage of other properties and laws, e.g., the ones supported by \emph{algebra and coalgebra} structures \cite{lenses}. 
+
+\paragraph{Parallelization} One of the most important components of the implementation is the selection of a concurrency library to support an intensive parallelization workload. Parallelization techniques and tools have been intensively studied and implemented in \acrshort{hs} \cite{monadpar}. Indeed, it is well known that green or light threads and spark allow for spawning thousands to millions of parallel computations. These parallel computations do not penalize performance when compare with \acrfull{os} level threading \cite{parallelbook}. 
+%In that sense, one of the most important components of the implementation is the selection of a concurrency library to support an intensive parallelization workload. 
+A straightforward assumption to achieve this could be to use \texttt{monad-par} library \cite{monadparlib, monadpar}. Nevertheless, in this experimental work, we have discarded the use of sparks \cite{sparks} because we can achieve the level of required parallelism spawning green threads only. This is caused by the nature of \acrshort{dp}, where pipeline parallelism and not data parallelism is a structural processing mechanism. The next obvious choice is to use \mintinline{haskell}{forkIO :: IO () -> IO ThreadId} from \texttt{base} library \cite{forkio}. However, that would imply handling all the threads lifecycle, terminations, and errors programmatically without major combinators or abstractions to deal with them. Therefore, we choose \texttt{async} library \cite{async}  which enables to spawn asynchronous computations \cite{parallelbook} on \acrshort{hs} and at the same time, it provides useful combinators to managing thread terminations and errors.
+
+\paragraph{Channels\label{section:channels}} We have several techniques to our disposal to communicate between threads or sparks in \acrshort{hs} like \mintinline{haskell}{MVar} or concurrent safe mechanisms like \acrfull{stm} \cite{stm}. Moreover, we have at our disposal \textit{Channels} abstractions based on both mentioned communication techniques. In that sense, for conducting the communication between dynamic stages and data flowing in a $\DP$, we have selected \texttt{unagi-chan} library \cite{unagi} which provides the following advantages to our solution: Firstly,  \mintinline{haskell}{MVar} channel without using \acrshort{stm}. This allows avoiding internal locking for concurrent access. In this case, we can use this advantage because in a $\DP$, one specific stage which is running in a separated thread, can only access to its \textit{I/O} channels for reading/writing accordingly and those operations are not concurrently shared by other threads (stages) for the same channels. Second,  non-blocking channels. \texttt{unagi-chan} library contains blocking and non-blocking channels for reading. This aspect is key to gain speed up on the implementation. Third, the library is optimized for $x86$ architectures with use of low-level \texttt{fetch-and-add} instructions. Finally, \texttt{unagi-chan} is $100x$ faster on Benchmarking compare with \acrshort{stm} and default base \mintinline{haskell}{Chan} implementations.
+%
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={2}]{haskell}
+runParallelDP :: Handle -> IO ()
+runParallelDP h = source h >>= generator >>= sink
+
+source :: Handle -> IO (DP.Stream MySource MySink)
+source h = fromFile h >>= (|>> parseSource)
+
+sink :: MySink -> IO ()
+sink = DP.mapM (R.putStrLn . show)
+
+fromFile :: Handle -> IO (DP.Stream ByteString MySource)
+fromFile h = DP.unfoldM (B.hGetLine h) (R.hIsEOF h)
+
+\end{minted}
+\caption{An overview of a generic $\DP$ source code in Haskell}
+\label{src:haskell:1}
+\end{listing}
+%
+As we said in section \ref{sub:sec:dp:par}, to implement a \acrshort{dpf} the development  tool must provide  a high level of  parallelization and a mechanism that supports the deployment of $\DP s$ in multi-core servers allowing the elasticity  and channels. As explained above, Haskell meets these requirements. In  \autoref{src:haskell:1} we can see a source code corresponding to the implementation of a generic $\DP$ in Haskell.
+%
+\section{Computing (Weak) Connected Components}\label{WCC-1}
+%
+Let us consider the problem of computing the (weak) connected components of a graph $G$ using \acrshort{dp}. A connected component of a graph is a subgraph in which any two vertices are connected by paths. Thus, finding connected components of a directed graph implies obtaining the minimal partition of the set of nodes induced by the relationship \textit{connected}, i.e., there is a path between each pair of nodes. The input of the Dynamic Pipeline for computing the WCC of a graph, $\dpwcc$, is a sequence of edges ending with $\eof$%$G=\{(v,w) | v,w\in V, v\neq w\}$, this is a graph given in terms of a stream of edges
+\footnote{Note that there are neither isolated vertices nor loops in the source graph $G$.}. The connected components are output as soon as they are computed, i.e., they are produced incrementally. 
+%
+\subsection{$DP_{WCC}$ Definition}\label{sub:sec:mot:ex}\label{WCC}
+$\dpwcc$ is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\iwc$),  \textit{Generator} ($\gwc$),  \textit{Sink} ($\owc$), and \textit{Filter}($\fwc$) stages. Additionally,  the channels connecting these stages must be defined. In $\dpwcc$, stages are connected linearly and unidirectionally through the channels $\ice$ and  $\csofv$. Channel $\ice$ carries edges while channel  $\csofv$ conveys sets of connected vertices. Both channels end by the $\eof$ mark. The initial configuration of $\dpwcc$ is $\iwc \:\rightrightarrows\:\gwc \:\rightarrow \: \owc$, where $\rightrightarrows$ represents  channels $\ice$ and $\csofv$ while $\rightarrow$ represents the channel $\csofv$.
+ 
+ Once activated the initial $\dpwcc$, the stream of edges is fed into $\iwc$ and $\owc$ produces the resulting connected components. $\gwc$ has as parameter the template of the stage  $\fwc$. When an edge $(v,w)$ arrives to $\gwc$, it  spawns a new instance of $\fwc$ before $\gwc$. For example, the first time a filter instance is spawned, the $\dpwcc$ evolves to this one: $\iwc \:\rightrightarrows\: \fwc \:\rightrightarrows\: \gwc \:\rightarrow \: \owc$. The state of this new filter instance is initialized with the vertices $\{v,w\}$. When $\eof$ arrives to $\gwc$, it connects previous filter instance to $\owc$ through $\csofv$; then, $\gwc$ dies and the $\dpwcc$ evolves as follows: $\iwc \:\rightrightarrows\: \fwc \:\rightrightarrows\: \cdots \fwc \:\rightrightarrows \: \owc$. The behavior of $\fwc$ is given by a sequence of two actors (scripts). In what follows we denote these actors by $\Act$ and $\Actt$, respectively. The script $\Act$ keeps a set of connected vertices ($CV$) in the state of the $\fwc$ instance. When an edge $e$ arrives, if an endpoint of $e$ is present in the state, then the other endpoint of $e$ added to $CV$.  Edges without incident endpoints are passed to the next stage. When $\eof$ arrives at channel $\ice$, it is passed to the next stage and the script $\Actt$ starts its execution.  If script $\Actt$ receives a set of connected vertices $CV$ in $\csofv$, it determines if the intersection between $CV$ and the nodes in its state is not empty. If so, it adds the nodes in $CV$  to its state. Otherwise, the $CV$ is passed to the next stage.  Whenever $\eof$ is received, $\Actt$ passes--through $\csofv$-- the set of vertices in its state and the $\eof$ mark to the next stage; then, it dies.
+ The behavior of $\iwc$ corresponds to  the identity transformation over the data stream of edges.  As edges arrive, they are passed through  $\ice$ to the next stage. When receiving $\eof$ on $\ice$, this mark is put on both channels. Then, $\iwc$ dies. 
+ 
+%******
+%We have selected \acrfull{wcc} as a motivational example problem for conducting this work. This has been already described in previous \acrshort{dp} %work \cite{dpdef} as one of the suitable problems to be solved by this Paradigm.
+
+%\begin{defin}
+%A connected component of a graph $G$ is a connected subgraph $S$ of $G$ that is not a proper subgraph
+%of another connected subgraph $S'$ of $G$. Therefore, a connected component of a graph $G$ is a maximal
+%connected subgraph of $G$.
+%\end{defin}
+
+%Given an undirected graph $G = (V, E)$, we can find \acrshort{wcc} of $G$ in $O(V + E)$ using \textit{\acrfull{dfs}} or \textit{\acrfull{bfs}} algorithm %\cite{CormenLeisersonEtAl09}. 
+
+%Although this problem can be solved in linear time, when we are manipulating real-world graphs, which are usually big, it would be better to have a %computational model where this can be processed faster. \acrshort{dp} with its \textit{Parallelization Pipeline model} improve that speed up on Big %Graphs for finding \acrshort{wcc}.
+
+%Although this example does not present many challenges at the algorithmic level, we consider a proper problem to explore our assumptions because of the %following:
+
+%\begin{itemize}
+%    \item It allows us to compare \acrshort{dp} implementation against default implementation with \acrshort{dfs} and explore the difference in %execution time between both
+%    \item It allows us to describe a simple algorithm on \acrshort{dp} model without expending efforts of solving some complex algorithmic problem which %is not the main objective of this work
+%    \item It allows us to validate the correctness of the implementation with \acrshort{dp} because of the first statement.
+%\end{itemize}
+
+%\input{WCC-DP-Fig}
+
+\iffalse
+\subsection{Haskell}
+\acrshort{hs} is a statically typed pure functional language which more than $30$ years of academic research implemented within the language. It is widely used in different kinds of solutions in the industry as well such as \emph{blockchain, banks, financial institutions, APIs, tools, etc} \cite{hsindustry}. Some of the most important features in the language are: statically typed, purely functional, type inference, laziness, and concurrency \cite{haskell}.
+
+\acrshort{hs} implements \emph{System F} \cite{systemf} which is also known as \textit{polymorphic $\lambda$-calculus or the second-order $\lambda$-calculus} giving the language a strong theoretical roots. On the other hand, all the past academic research years have been positively impacted in the evolution of the language. As a result, important abstractions and other theoretical constructions have been added. They range from the concept of \textit{Monads} \cite{monads} and other \textit{Category Theory} \cite{arrows} constructions to \textit{Dependent Types} \cite{dependenttypes} and \textit{Effectfull Systems} \cite{extensibleeff} added later. 
+\fi
+
+
+\subsection{$\dpwcc$ Implementation}
+%
+As we said before, the  $\dpwcc$ implementation has been made as a proof of concept to understand and explore the limitations and challenges that we could find in the development of a future  \acrshort{dpf} in \acrshort{hs}. In Section \ref{section:prob:dp:haskell} we emphasize that the focus of \acrshort{dpf} in \acrshort{hs} is on the \acrshort{idl} component. Hence, the development of the $\dpwcc$ is as general as possible using most of the constructs and abstractions require by the  \acrshort{idl}.
+
+
+As we have seen on \autoref{section:prob:dp:haskell} in \autoref{src:haskell:1}, all the Stages \textit{Source} ($\iwc$),  \textit{Generator} ($\gwc$) and \textit{Sink} ($\owc$) are represented as \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L20-L27}{monadic computations} composed in \mintinline{haskell}{runParallelDP} function. As we can appreciate, \mintinline{haskell}{runParallelDP} is running in the context of a \mintinline{haskell}{Handle} descriptor which is the stream input file that is feeding $\iwc$. That input is injected incrementally in $\ice$ as we can see in this \emph{anamorphism} \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L84-L85}{\mintinline{haskell}{unfoldM}} with the help of the lazy \mintinline{haskell}{ByteString} reader. As long as a new edge $(v,w)$ is received by \mintinline{haskell}{generator}  from $\ice$ , a new \textit{Filter}($\fwc$) (monadic computation) is interposed in the execution chain. This can be seen with the use of \mintinline{haskell}{foldrS}  \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L35-L41}{here}. Channel connection and disconnection are implicit by function parameters and recursion since the new $\fwc$ is receiving as actual parameters, $\ice$, and $\csofv$ belonging to $\gwc$. In the next execution loop, $\gwc$ is pulling edges from $\ice$ provided by previously $\fwc$ created instance. It is important to remark that all these monadic computations are spawned in parallel through the use of \mintinline{haskell}{async} combinator \cite{async}. That means different threads continue reading and writing from channels without blocking progress if data is available. Actors (scripts) are described as computation as well as the rest of the stages but, in this particular case, they are not spawned in different threads because they must run sequentially in the same $\fwc$ thread according to the definition. Script $\Act$ and $\Actt$ are represented by functions \mintinline{haskell}{actor1} and \mintinline{haskell}{actor2} respectively. $\Act$ is reading all the edges $(v,w)$ pulled from $\ice$ and keeping in the filter state a list with all the vertices that are pairwise connected (see \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L50-L73}{repository} for more details), If the edge is not connecting to any vertex of the list it passes through the next computational stage as can be seen \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L55-L59}{here}. In all channels $\eof$ is represented using \mintinline{haskell}{Maybe} type, meaning that when someone pushes a \mintinline{haskell}{Nothing} value to the channel the next reader can detect $\eof$. This is why we are folding the channel with \mintinline{haskell}{maybe} combinator as it can be appreciated \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L51}{here}. Once $\Act$ finishes $\Actt$ starts its computation as it is described in these \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L62-L73}{lines}. In this case $\Actt$ is reading from $\csofv$ channel that could contain the previous calculated \mintinline{haskell}{ConnectedComp}. Using \mintinline{haskell}{union} and \mintinline{haskell}{intersect} combinators allows to merge the calculated list of vertices that are connected with previously calculated connected components by other $\fwc$. In this implementation \mintinline{haskell}{ConnectedComp} is a \mintinline{haskell}{newtype} over \mintinline{haskell}{IntSet} to speed up computation for intersection and union \cite{containers}. Moreover,  \mintinline{haskell}{doActor} which is an inner function of \mintinline{haskell}{actor2}, is pushing to $\csofv$ channel all \mintinline{haskell}{ConnectedComp} as they are treated. $\gwc$ computation passes to $\owc$ computation the reference to $\csofv$ channel which is going to pull \mintinline{haskell}{ConnectedComp} as long as it is available, and printing that information in the standard output incrementally. Once $\owc$ receives a \mintinline{haskell}{Nothing} ($\eof$) value from $\csofv$ the whole computation ends.
+
+
+\iffalse
+ To give an overview of the pipeline, we comment on the shared features of all the stages, and we go deeper into the configuration of the whole system and the \textit{Generator} ($\gwc$). The channel management implementation is the same for all the stages. Regarding the \textit{Filter} ($\fwcc$), we programmed the $\Act$ and $\Actt$ behavior in terms of set operations. As one can image to implement the  \textit{Source} ($\iwcc$) and the  \textit{Sink} ($\owcc$), is simple since they actually implement the identity transformation.
+ 
+In this part of the \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L20-L27}{source code} we present the main entry point of the program: \mintinline{haskell}{runParallelDP}. It allows us to see the configuration of the entire $\dpwcc$. We can appreciate that this code corresponds to the \textit{monadic} computational chain of the main three stages of the DP-Haskell, which at the same time matches almost identically to the formal definition of the proposed paradigm model in \autoref{sub:sec:dp:par}. In particular, to the initial configuration of DP-Haskell. We can also appreciate in the \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L84-L85}{function} that is processing the input file, the use of the \mintinline{haskell}{unfoldM} which is the \emph{anamorphism} that is reading incrementally from the input file and creating the stream. It is important that the input is being read in non-blocking mode and by batches of bytes\footnote{In this particular case by line because of parsing conveniences} allowing the streaming computation processing the edges as long as it arrives at the \textit{Generator} or the first \textit{Filter} stages.\footnote{The format of the input file for the case of this example is an \textbf{edgelist} format compatible with \emph{igraph R library} or similar https://igraph.org/r/doc/write\_graph.html}.
+
+Once we have the main components and the abstraction setup, we have to define \mintinline{haskell}{generator} function. The \textit{Generator} ($\gwcc$) is the stage in the $\dpwcc$ which is responsible for knowing when to create and interpose a new instance of the \textit{Filter} ($\fwcc$) in front of itself as it is described in \autoref{sub:sec:dp:par}. Remind that, in the case of $\dpwcc$, a new instance of $\fwcc$ is created when an edge arrives at the $\gwcc$. In this part of the \href{https://github.com/jproyo/upc-miri-tfm/blob/17ee929f64a8be8a88ced782bfcf6bf355d8580a/connected-comp/src/ConnComp/Internal.hs#L35-L73}{source code}, it is shown the use of the \textit{catamorphism} with the custom \mintinline{haskell}{foldrS} combinator. It reduces the stream and at the same time creates the intermediate \textit{Filters} (stages) of the pipe.
+\fi
+
+%\begin{inparaenum}[i\upshape)]
+%\item \emph{Source},
+%\item \emph{Generator}, and
+%\item \emph{Sink}
+% \end{inparaenum}.
+
+\iffalse
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={2,11}]{haskell}
+runParallelDP :: Handle -> IO ()
+runParallelDP h = input h >>= generator >>= output
+
+input :: Handle -> IO (DP.Stream Edge ConnectedComponents)
+input h = fromInput h >>= (|>> parseEdges)
+
+output :: ConnCompDP -> IO ()
+output = DP.mapM (R.putStrLn . show)
+
+fromInput :: Handle -> IO (DP.Stream ByteString ConnectedComponents)
+fromInput h = DP.unfoldM (B.hGetLine h) (R.hIsEOF h)
+
+parseEdges :: ByteString -> IO [Edge]
+parseEdges = toEdge . decodeUtf8
+\end{minted}
+\caption{Main algorithm \acrshort{dp} for \acrshort{wcc}}
+\label{src:haskell:1}
+\end{listing}
+\fi
+
+
+\iffalse
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={2,11}]{haskell}
+generator :: ConnCompDP -> IO ConnCompDP
+generator = DP.foldrS createNewFilter
+  where
+    createNewFilter c v = do
+      newInput  <- newChan
+      newOutput <- newChan
+      DP.Stream newInput newOutput 
+            <$> async (newFilter (toConnectedComp v) c newInput newOutput)
+  
+  \end{minted}
+  \caption{Generator \acrshort{dp} for \acrshort{wcc}}
+  \label{src:haskell:2}
+\end{listing}
+\fi
+
+\section{Empirical Evaluation}\label{sec:evaluation}
+The empirical study aims at evaluating the performance of $\dpwcc$ when implemented in \acrshort{hs}. 
+Our goal is to answer the following research questions: 
+
+\begin{inparaenum}[\bf {\bf RQ}1\upshape)]
+\label{res:question}
+    \item Does $\dpwcc$ in \acrshort{hs} support the dynamic parallelization level that $\dpwcc$ requires?
+    \item Is $\dpwcc$ in \acrshort{hs} competitive compared with default implementations on base libraries for the same problem?
+    \item Does $\dpwcc$ in \acrshort{hs} handle memory efficiently?
+\end{inparaenum}
+
+We have conducted different kinds of experiments to test our assumptions and verify the correctness of the implementation.
+First, we have performed an \emph{Implementation Analysis} in which we have selected some graphs from \acrfull{snap} \cite{stanford} and analyze how the implementation behaves under real-world graphs if it timeouts or not and if it is producing correct results in terms of the amount of \acrshort{wcc} that we know beforehand.
+We have also tested the implementation doing a \emph{Benchmark Analysis} where we focus on two different types of benchmarks. On the one hand, using \texttt{criterion} library \cite{criterion}, we have evaluated a benchmark between our solution and \acrshort{wcc} algorithm implemented in \texttt{containers} \acrshort{hs} library \cite{containers} using \mintinline{haskell}{Data.Graph}. On the other hand, we have compared if the results are being generated incrementally in both cases and how that is done during the pipeline execution time. This last analysis has been conducted using \texttt{diefpy} tool \cite{diefpaper,diefpy}.
+Finally, we have executed a \textit{Performance Analysis} in which we have to gather profiling data from \acrfull{ghc} for one of the real-world graphs, to measure how the program performs regarding multithreading and memory allocation.
+
+\subsection{Running Architecture}
+All the experiments have been executed in a $x86$ $64$ bits architecture with a \textit{$6$-Core Intel Core i7} processor of $2,2$ GHz which can emulate up to $12$ virtual cores. This processor has \emph{hyper-threading} enable. Regarding memory, the machine has $32 GB$ \emph{DDR4} of RAM, $256\ KB$ of L2 cache memory, and $9\ MB$ of L3 cache.
+
+\subsection{Haskell Setup}
+Regarding specific libraries and compilations flags used on \acrshort{hs}, we have used \acrshort{ghc} version $8.10.4$. We have also used the following set of libraries: \mintinline{bash}{bytestring 0.10.12.0} \cite{bytestring}, \mintinline{bash}{containers 0.6.2.1} \cite{containers}, \mintinline{bash}{relude 1.0.0.1} \cite{relude} and \mintinline{bash}{unagi-chan 0.4.1.3} \cite{unagi}. The use of \texttt{relude} library is because we disabled \mintinline{haskell}{Prelude} from the project with the language extension \mintinline{haskell}{NoImplicitPrelude} \cite{extensions}. Regarding compilation flags (\acrshort{ghc} options) we have compiled our program with \mintinline{bash}{-threaded}, \mintinline{bash}{-O3}, \mintinline{bash}{-rtsopts}, \mintinline{bash}{-with-rtsopts=-N}. Since we have used \texttt{stack} version $2.5.1$ \cite{stack} as a building tool on top of \acrshort{ghc} the compilation command is \mintinline{bash}{stack build}\footnote{For more information about package.yaml or cabal file please check https://github.com/jproyo/upc-miri-tfm/tree/main/connected-comp}.
+
+\subsection{DataSets}\label{data:set}
+
+For all the experiments, we have used the following networks taken from \acrshort{snap} \cite{stanford}. In this particular experiment setup, we have selected the following specific data sets that can be found here \cite{netenron, netastro, netwebgoogle}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|p{0.25\linewidth}|r|r|r|r|r|}
+   \hline
+   \textbf{Network} & \textbf{Nodes} & \textbf{Edges} & \textbf{Diameter} & \textbf{\#\acrshort{wcc}} & \textbf{\#Nodes Largest WCC} \\
+   \hline
+   Enron Emails & 36692 & 183831 & 11 & 1065 & 33696 (0.918) \\
+   \hline
+   Astro Physics Collaboration Net & 18772 & 198110 & 14 & 290 & 17903 (0.954)\\
+   \hline
+   Google Web Graph & 875713 & 5105039 & 21 & 2746 & 855802 (0.977)\\
+   \hline
+  \end{tabular}
+ \caption{DataSet of Graphs Selected}
+ \label{table:4}
+ \end{table}
+ 
+ The criteria for selecting the networks have been followed the idea or testing the solution in more complex graphs, in which all of them are undirected but with different sizes concerning its number of nodes as we can see in  \autoref{table:4}. 
+ %Smaller graphs have been tested as a part of the development cycle of the tool with automation testing libraries as it is described in \autoref{apx:1}.
+
+\subsection{Experiments Definition}\label{sub:exp:def}
+\paragraph{E1: Implementation Analysis}
+In this experiment, we measure \acrshort{ghc} statistics running time enabling \mintinline{bash}{+RTS -s} flags. The metrics that we measure are \emph{MUT Time} which is the amount of time in seconds \acrshort{ghc} is running computations and \emph{GC Time} which is the number of seconds that \acrshort{ghc} is running garbage collector. \emph{Total execution time} is the sum of both in seconds. At the same time, we are going to check the correctness of the output counting the number of \acrshort{wcc} generated by the algorithm against the already known topology of it in \autoref{data:set}. The experiment's primary goal is to help answer the research question [RQ2].
+
+\paragraph{E2: Benchmark Analysis}
+In this experiment, we conduct two benchmark analysis over execution time comparing \acrshort{dph} with \acrshort{hs} \texttt{containers} default implementation. In the first benchmark analysis, we use \texttt{criterion} \cite{criterion} tool in \acrshort{hs} which runs over four iterations of each of the algorithms to get a mean execution time in seconds and compare the results in a plot. In the second benchmark, we use \acrfull{dm} Tool \emph{diefpy} \cite{diefpy} in order to measure with the ability of \acrshort{dp} model to generate results incrementally \cite{diefpaper}. This is one of the strongest feature of \acrshort{dp} Paradigm since it allows process and generate results without no need of waiting for processing until the last element of the data source. This kind of aspect is essential not only for big data inputs where perhaps the requirements allow for processing until some point of the time having partial results but at the same time is important to process unbounded streams. The experiment's primary goal is to help answer the research question [RQ2] as well.
+
+\paragraph{E3: Performance Analysis}
+In this experiment, we measure internal parallelism in \acrshort{ghc} and memory usage during the execution of one of the example networks. The motivation of this is to verify empirically how \acrshort{dph} is handling parallelization and memory usage. This experiment is conducted using two tools, \textit{ThreadScope} \cite{threadscope} for conducting multithreading analysis and \textit{eventlog2html} \cite{eventlog2html} to conduct memory usage analysis. Regarding multithreading analysis the metrics that we measure are the distribution of threads among processors over execution time which is how many processors are executing running threads over the whole execution; and the mean number of running threads per time slot which is calculated by zooming in $8$ time slots and taking the mean number of threads per processor to see if it is equally distributed among them. In regards to memory management, the metric that we measure is the amount of memory in $MB$ consumed per data type during the whole execution time. The experiment helps to answer the research questions [RQ1,RQ3].
+
+\iffalse
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|p{0.16\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|l|}
+   \hline
+   \textbf{\#} & \textbf{Name} & \textbf{Goal} & \textbf{Motivation} & \textbf{How} & \textbf{RA} \\
+   \hline
+   \rule{0pt}{3ex}
+   \multirow{2}{*}{\textbf{E1}} & Implementation Analysis & Measure GHC running time & Analyze execution time on Different Graph topologies & Enabling \mintinline{haskell}{+RTS -s} Flags & [Q2]  \\
+   \cline{3-3} \cline{5-5} \rule{0pt}{3ex}
+   & & Check correcteness of outputs &  & Redirect output and check amount of \acrshort{wcc} & \\
+   \hline
+    \rule{0pt}{3ex}
+   \multirow{2}{*}{\textbf{E2}} & Benchmark Analysis & Measure execution time over $4$ iterations for each Graph from the selected DataSet, both for \acrshort{dp} and \texttt{containers} library & Compare execution time of both solutions & Use \emph{criterion} \cite{criterion} library  & [Q2] \\
+   \cline{3-5} \rule{0pt}{3ex}
+   & & Measure incremental generation of results, both for \acrshort{dp} and \texttt{containers} library & Compare diefficiency metrics & Use \emph{diefpy} \cite{diefpy} tool  & \\
+   \hline
+   \rule{0pt}{3ex}
+   \textbf{E3} & Performance Analysis &Measure Internal Parallelism and Memory distribution of the solution & Verify empirically parallelization and memory behaviour of the program to asses the feasibility of the implementation & Use \emph{ThreadScope} \cite{threadscope} for Threading analysis and \emph{eventlog2html} \cite{eventlog2html} for memory analysis & [Q1,Q3]\\
+   \hline
+  \end{tabular}
+ \caption{Experiments setup - Definition. RA (Research Answers)}
+ \label{table:exp:1}
+ \end{table}
+\fi
+
+\section{\textbf{Discussion of Observed Results}}\label{experiments}
+
+\subsection{Experiment: E1}\label{sub:sec:e1}
+The following represents the execution for running these graphs on our \acrshort{dp} implementation.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|r|r|r|r|}
+   \hline
+   \textbf{Network} & \textbf{Exec Param} & \textbf{MUT Time} & \textbf{GC Time} & \textbf{Total Time}\\
+   \hline
+   Enron Emails & \mintinline{bash}{+RTS -N4 -s} & 2.797s & 0.942s & 3.746s \\
+   \hline
+   Astro Physics Coll Net & \mintinline{bash}{+RTS -N4 -s} & 2.607s & 1.392s & 4.014s \\
+   \hline
+   Google Web Graph & \mintinline{bash}{+RTS -N8 -s} & 137.127s & 218.913s & \textbf{\textcolor{red}{356.058s}} \\
+   \hline
+  \end{tabular}
+ \caption{Execution times}
+ \label{table:5}
+ \end{table}
+
+It is important to point out that since the first two networks are smaller in the number of edges compared with \emph{web-Google}, executing those with $8$ cores as the \mintinline{bash}{-N} parameters indicates, does not affect the final speed-up since \acrshort{ghc} is not distributing threads on extra cores because it handles the load with $4$ cores only.
+
+As we can see in \autoref{table:5}, we are obtaining remarkable execution times for the first two graphs and it seems not to be the case for \textit{web-Google}. Doing a deeper analysis on the topology of this last graph, we can see according to \autoref{table:4} that the number of \textit{Nodes in the largest \acrshort{wcc}} is the highest one. This means that there is a \acrshort{wcc} which contains $97.7\%$ of the nodes. Moreover, we can confirm that if we analyze even deeper how is the structure of that \acrshort{wcc} with the output of the algorithm, we can notice that the largest \acrshort{wcc} is the last one on being processed. Having that into consideration we can state that due to the nature of our algorithm which needs to wait for collecting all the vertices in the \mintinline{haskell}{actor2} filter stage 
+%as it can be seen in \autoref{src:haskell:3}, 
+it penalizes our execution time for that particular case. A more elaborated technique for implementing the actors is required to speed up execution. 
+
+Regarding the correctness of the output, we have verified with the outputs that the number of connected components is the same as the metrics already gathered in \autoref{table:4}.
+
+\subsection{Experiment: E2}
+\paragraph{Criterion Benchmark}
+In \autoref{fig:1}, orange bars report the time taken by \mintinline{haskell}{Data.Graph} in \acrshort{hs} \texttt{containers} library \cite{containers}. Blue light bars represent the time taken by \acrshort{dph}.
+
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{bench_1.png}
+  \captionsetup{type=figure}
+  \captionof{figure}{Benchmark 1 - DP in Haskell vs. Data.Graph Haskell}
+  \label{fig:1}
+\end{minipage}
+
+\autoref{fig:1} shows that \acrshort{dph} solution is $1.3$ faster compare with \acrshort{hs} \texttt{containers} library. Despite this, if we zoom  in \autoref{fig:1}, it can be observed that \acrshort{dph} solution is slower compared with \acrshort{hs} \texttt{containers}; the reasons behind this have been explained in \autoref{sub:sec:e1}.
+\iffalse
+\begin{minipage}[t]{\linewidth}
+  \includegraphics[width=\textwidth]{bench_2}
+  \captionsetup{type=figure}
+  \captionof{figure}{Benchmark 2 - DP in Haskell vs. Data.Graph Haskell}
+  \label{fig:2}
+\end{minipage}
+\fi
+
+Regarding mean execution times for each implementation on each case measure by \texttt{criterion} library \cite{criterion}, we can display the following results:
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|l|l|l|}
+   \hline
+   \textbf{Network} & \textbf{\acrshort{dph}} & \textbf{\acrshort{hs} \texttt{containers}} & \textbf{Speed-up}\\
+   \hline
+   Enron Emails & 4.68s &  6.46s & 1.38\\
+   \hline
+   Astro Physics Coll Net & 4.98s & 6.95s  & 1.39\\
+   \hline
+   Google Web Graph & 386s & 106s & -3.64\\
+   \hline
+  \end{tabular}
+ \caption{Mean Execution times}
+ \label{table:6}
+ \end{table}
+
+These results allow for answering Question [Q2].
+We already had a partial answer with the previous experiment E1 about [Q2] (\autoref{res:question}) where we have seen that the graph topology is affecting the performance and the parallelization, penalizing \acrshort{dph} for this particular case. In this benchmark, the solution against a non-parallel \texttt{containers} \mintinline{haskell}{Data.Graph} confirms the hypothesis. 
+
+\paragraph{Diefficency Metrics}\label{sub:sub:sec:e2}
+Some considerations are needed before starting to analyze the data gathered with \acrshort{dm} tool. Firstly, the tool is plotting the results according to the traces generated by the implementation, both \acrshort{dph} and \acrshort{hs} \emph{containers}. By the nature of \acrshort{dp} model, we can gather or register that timestamps as long as the model is generating results. In the case of \acrshort{hs} \texttt{containers}, this is not possible since it calculates \acrshort{wcc} at once. This is not an issue and we still can check at what point in time all \acrshort{wcc} in \acrshort{hs} \texttt{containers} are generated. In those cases, we are going to see a straight vertical line. 
+
+It is important to remark that we needed to scale the timestamps because we have taken the time in nanoseconds. After all, the incremental generation between one \acrshort{wcc} and the other is very small but significant enough to be taken into consideration. Thus, if we left the time scale in integer milliseconds, microseconds, or nanoseconds integer part it cannot be appreciated. In case of escalation, we are discounting the nanosecond integer of the first generated results resulting in a time scale that starts close to $0$. This does not mean that the first result is generated at $0$ time, but we are discarding the previous time to focus on how the results are incrementally generated.
+
+Having said that, we can see the results of \acrshort{dm} which are presented in two types of plots. The first one is regular line graphs in where the $x$ axis shows the time escalated when the result was generated and the $y$ axis is showing the component number that was generated at that time. The second type of plot is a radar plot in which shows how the solution is behaving on the dimensions of  \acrfull{tfft}, \acrfull{et}, \acrfull{tt}, \acrfull{comp} and \acrfull{dt} and how are the tension between them; all these metrics are higher is better. All the details about these metrics are explained here \cite{diefpaper}.
+
+\begin{figure}[!htb]
+    \centering
+    \begin{minipage}{0.33\textwidth}
+     \includegraphics[width=1\linewidth, height=0.2\textheight]{email_enron}
+      \caption{email-Enron \acrshort{dm}}
+      \label{fig:dief:1}
+    \end{minipage}%
+    \begin{minipage}{0.33\textwidth}
+     \includegraphics[width=1\linewidth, height=0.2\textheight]{ca_astroph}
+      \caption{ca-AstroPh \acrshort{dm}}
+      \label{fig:dief:2}
+    \end{minipage}%
+    \begin{minipage}{0.33\textwidth}
+     \includegraphics[width=1\linewidth, height=0.2\textheight]{web_google}
+      \caption{web-Google \acrshort{dm}}
+      \label{fig:dief:3}
+    \end{minipage}
+\end{figure}
+
+Based on the results shown in all the figures above, all the solutions in \acrshort{dph} are being generated incrementally, but there is some difference that we would like to remark. In the case of \emph{email-Enron} and \emph{ca-AstroPh} graphs as we can see in \autoref{fig:dief:1} and \autoref{fig:dief:2}, there seems to be a more incremental generation of results. This is behavior is measured with the values of \acrfull{dt}. \emph{ca-AstroPh} as it can be seen in \autoref{fig:dief:2}, is even more incremental showing a clear separation between some results and others. The \emph{web-Google} network which is shown in \autoref{fig:dief:3}, is a little more linear and that is because all the results are being generated with very little difference in time between them. This is due to the fact of the explained reasons in \autoref{sub:sec:e1}. Having the biggest \acrshort{wcc} at the end of \emph{web-Google} \acrshort{dp} algorithm it is retaining results until the biggest \acrshort{wcc} can be solved, which takes longer. 
+
+\begin{figure}[!htb]
+    \centering
+    \begin{minipage}{0.33\textwidth}
+     \includegraphics[width=1\linewidth, height=0.2\textheight]{email_enron_radar}
+      \caption{email-Enron \acrshort{dm}}
+      \label{fig:dief:rad:1}
+    \end{minipage}%
+    \begin{minipage}{0.33\textwidth}
+     \includegraphics[width=1\linewidth, height=0.2\textheight]{ca_astroph_radar}
+      \caption{ca-AstroPh \acrshort{dm}}
+      \label{fig:dief:rad:2}
+    \end{minipage}%
+    \begin{minipage}{0.33\textwidth}
+     \includegraphics[width=1\linewidth, height=0.2\textheight]{web_google_radar}
+      \caption{web-Google \acrshort{dm}}
+      \label{fig:dief:rad:3}
+    \end{minipage}
+\end{figure}
+
+As we can appreciate in the above radar plots our previous analysis can be confirmed. We can see for example that the \acrlong{tt} of \emph{web-Google} in \autoref{fig:dief:rad:3}, in the case of \acrshort{dph} is worse than \acrshort{hs} \texttt{containers}, which is not happening for the others.
+
+In conclusion, we can say that regarding [Q2] (\autoref{res:question}) although \acrshort{dph} is faster than the traditional approach, the speed-up dimension execution factor is not always the most interest analysis that we can have, because as we have seen even when in the case of \emph{web-Google} Graph \acrshort{dph} is slower at execution, it is at least generating incremental results without the need to wait for the rest of the computations.
+
+\subsection{Experiment: E3}
+For this type of analysis, our experiment focuses on \emph{email-Enron} network \cite{netenron} only because profiling data generated by \acrshort{ghc} is big enough to conduct the analysis and on the other, and enabling profiling penalize execution time.
+
+\paragraph{Multithreading} For analyzing parallelization and multithreading we have used \textit{ThreadScope} \cite{threadscope} which allows us to see how the parallelization is taking place on \acrshort{ghc} at a fine grained level and how the threads are distributed throughout the different cores requested with the \mintinline{bash}{-N} execution \texttt{ghc-option} flag.
+
+\begin{minipage}[t!]{\linewidth}
+
+  \includegraphics[width=\textwidth]{screen_1}
+  \captionsetup{type=figure}
+  \captionof{figure}{Threadscope Image of General Execution}
+  \label{fig:3}
+\end{minipage}
+
+In \autoref{fig:3}, we can see that the parallelization is being distributed evenly among the $4$ Cores that we have set for this execution.
+The distribution of the load is more intensive at the end of the execution, where \mintinline{haskell}{actor2} filter stage 
+%as it can be seen in \autoref{src:haskell:3}, 
+of the algorithm is taking place and different filters are reaching execution of that second actor.
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+     \includegraphics[width=0.48\textwidth] {screen_2}
+     %[width=10cm, height=9cm]
+       \end{center}
+     \caption{Threadscope Image of Zoomed Fraction}
+     \label{fig:4}
+ %\end{figure}
+ \end{wrapfigure}
+Another important aspect shown in \autoref{fig:3}, is that this work is not so significant for \acrshort{ghc} and the threads and distribution of the work keeps between 1 or 2 cores during the execution time of the \mintinline{haskell}{actor1}. However, the usages increase on the second actor as pointed out before. In this regard, we can answer research questions [Q1] and [Q3] (\autoref{res:question}), verifying that \acrshort{hs} not only supports the required parallelization level but is evenly distributed across the program execution too.
+
+Finally, it can also be appreciated that there is no sequential execution on any part of the program because the $4$ cores have \textit{CPU} activity during the whole execution time. This is because as long the program start, and because of the nature of the \acrshort{dp} model, it is spawning the \textit{Source} stage in a separated thread. This is a clear advantage for the model and the processing of the data since the program does not need to wait to do some sequential processing like reading a file, before start computing the rest of the stages.
+
+
+
+
+%\begin{minipage}[t!]{\linewidth}
+%\begin{center}
+%  \includegraphics[width=0.6\textwidth]{screen_2}
+%  \captionsetup{type=figure}
+%  \captionof{figure}{Threadscope Image of Zoomed Fraction}
+%  \label{fig:4}
+%  \end{center}
+%\end{minipage}
+
+\autoref{fig:4} zooms in on \textit{ThreadScope} output in a particular moment, approximately in the middle of the execution. We can appreciate how many threads are being spawned and by the tool and if they are evenly distributed among cores. The numbers inside green bars represent the number of threads that are being executed on that particular core (horizontal line) at that execution slot. Thus, the number of threads varies among slot execution times because as it is already known, \acrshort{ghc} implements \emph{Preemptive Scheduling} \cite{lightweightghc}.
+
+Having said that, it can be appreciated in \autoref{fig:4} our first assumption that the load is evenly distributed because the mean number of executing threads per core is $571$.
+
+\paragraph{Memory allocation} Another important aspect in our case is how the memory is being managed to avoid memory leaks or other non-desired behavior that increases memory allocation during the execution time. This is even more important in the particular implementation of \acrshort{wcc} using \acrshort{dp} model because it requires to maintain the set of connected components in memory throughout the execution of the program or at least until we can output the calculated \acrshort{wcc} if we reach to the last \textit{Filter} and we know that this \acrshort{wcc} cannot be enlarged anymore. 
+
+In order to verify this, we measure memory allocation with \textit{eventlog2html} \cite{eventlog2html} which converts generated profiling memory eventlog files into graphical HTML representation. 
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+     \includegraphics[width=0.5\textwidth] {visualization}
+     %[width=10cm, height=9cm]
+       \end{center}
+     \caption{Memory Allocation}
+     \label{fig:5}
+ %\end{figure}
+ \end{wrapfigure}
+ 
+%\begin{minipage}[t]{\linewidth}
+%\begin{center}
+%  \includegraphics[width=0.6\textwidth]{visualization}
+%  \captionsetup{type=figure}
+%  \captionof{figure}{Memory Allocation}
+%  \label{fig:5}
+%  \end{center}
+%\end{minipage}
+
+As we can see in \autoref{fig:5}, \acrshort{dph} does an efficient work on allocating memory since we are not using more than $57$ MB of memory during the whole execution of the program.
+
+On the other hand, if we analyze how the memory is allocated during the execution of the program, it can also be appreciated that most of the memory is allocated at the beginning of the program and steadily decrease over time with a small peak at the end that does not overpass even half of the initial peak of $57$ MB. The explanation for this behavior is quite straightforward because at the beginning we are reading from the file and transforming a \mintinline{haskell}{ByteString} buffer to \mintinline{haskell}{(Int, Int)} edges. This is seen in the image in which the dark blue that is on top of the area is \mintinline{haskell}{ByteString} allocation. Light blue is allocation of \mintinline{haskell}{Maybe a} type which is the type that is returned by the \textit{Channels} because it can contain a value or not. Data value \mintinline{haskell}{Nothing} is indicating end of the \textit{Channel}. 
+%as we can see in \autoref{src:haskell:f3}.
+
+Another important aspect is the green area which represents \mintinline{haskell}{IntSet} allocation, which in the case of our program is the data structure that we use to gather the set of vertices that represents a \acrshort{wcc}. This means that the amount of memory used for gathering the \acrshort{wcc} itself is minimum and it is decreasing over time, which is another empirical indication that we are incrementally releasing results to the user. It can be seen as well that as long the green area reduces the lighter blue (\mintinline{haskell}{MUT_ARR_PTRS_CLEAN} \cite{ghcheap}) increases at the same time indicating that the computations for the output (releasing results) is taking place. 
+
+Finally, according to what we have stated above, we can answer the question [Q3] (\autoref{res:question}) showing that not only memory management was efficient, but at the same time, the memory was not leaking or increasing across the running execution program.
+
+\section{Related Work}
+Several implementations for streaming processing models \cite{conduit, pipes, streamly} in \acrshort{hs} have arisen over the years. All these libraries have their abstractions and can do data streaming processing in a fast way with different performance according to recent benchmarks \cite{benchstreamhs}. Although they seem to be suitable for implementing a $\DP$, it is required to know pipeline stages disposition beforehand, and it is hard to achieve a succinct and expressive implementation of a \acrshort{dpf}. Moreover, since they have been conceived as a data parallel streaming model \cite{HR19} by design instead of pipeline parallel streaming, implementing $\DP$ using these tools becomes counter-intuitive and hard to achieve.
+
+Another kind of streaming implementation in \acrshort{hs} is described in \cite{parallelbook}. In that work, the author describes how to encode pipeline parallelism with \mintinline{haskell}{Par} \textit{Monad}. Although this could have been a suitable alternative for implementing $\DP$, the parallelization level used by \mintinline{haskell}{Par} \textit{Monad} is sparks \cite{sparks}. As we have explained in section \autoref{section:prob:dp:haskell}, we do not require to reach that level of parallelization in our current model.
+
+In regards to other $\DP$ language implementations, a significant contribution on \cite{dpp_triangles} has been done, where a $\DP$ implementation in \acrfull{go} for counting triangles of graphs is compared against MapReduce. Those experiment results have shown how $\DP$ in \acrshort{go} improves the performance in terms of execution time and memory depending on the graph topology. It would be interesting and a matter of future work, to compare different language implementations of $\DP s$, taking into consideration those promising results and the ones presented in this article.
+
+\iffalse
+In particular, the problem presented in \autoref{sub:sec:mot:ex} is one of the algorithms in which the amount of stages that could run in parallel is the worst case having one Stage per edge at most, but still in that scenario the number of threads can be efficiently handled by \acrshort{ghc}. Therefore, there is no need for such a fine grained parallelization level as it could be required when the data should be split into the smallest processing units as possible. 
+\fi
+
+
+
+
+\section{Conclusions and Ongoing Work}\label{conc}
+The empirical evaluation of the \acrshort{dph} implementation to compute weakly connected components of a graph, evidence suitability, and robustness to provide a Dynamic Pipeline Framework in that language. Measuring  using \acrshort{dt} metrics in \autoref{sub:sub:sec:e2} reveals some advantageous capability of $\dpwcc$ implementation to deliver incremental results compared with default containers library implementation. Regarding the main aspects where DPP is strong, i.e. pipeline parallelism and time processing, the $\dpwcc$ performance shows that Haskell can deal with the requirements for the \acrshort{wcc} problem without penalizing neither execution time nor memory allocation. In particular, the $\dpwcc$ implementation outperforms in those cases where the topology of the graph is more sparse and where the number of vertices in the largest \acrshort{wcc} is not big enough. We think this work has gathered enough evidence to show that the implementation of Dynamic Pipeline in Haskell Programming Language is feasible. This fact opens a wide range of algorithms to be explored using the Dynamic Pipeline Paradigm, supported by purely functional programming language. As we mentioned in section \autoref{section:prob:dp:haskell}, we are addressing the design and the definition of the \acrshort{dsl} in Haskell, taking into account the knowledge obtained in this work. The complete \acrshort{dpf}'s implementation will contain the \textit{Type-Level} \acrshort{dsl} allowing the user to define algorithms in terms of $\DP$ and the \acrfull{idl} that will be mainly based on what has been presented here.
+
+\iffalse
+The  implementation of a Dynamic Pipeline to compute the weakly connected component of a graph in  Haskell and the assessment of its performance gives insight about implementing a Dynamic Pipeline Framework in this pure  functional language is  not  only  suitable  but also robust. Measuring  using \acrshort{dt} metrics in \autoref{sub:sub:sec:e2} reveals the advantageous capability of $\dpwcc$ implementation to deliver incremental results compare with default containers library implementation.  Regarding the main aspects where DPP is strong, i.e. pipeline parallelism and time processing, the $\dpwcc$ performance shows that Haskell can deal with the requirements for the \acrshort{wcc} problem without penalizing neither execution time nor memory allocation. In particular the $\dpwcc$ implementation outperforms  in  those  cases  where  the  topology of  the  graph  is  more  sparse  and  where  the  number  of  vertices  in  the  largest  \acrshort{wcc}  is  not  large (all  the  vertices  are  not  in  one  big \acrshort{wcc}). We think this work has gathered enough evidence to show that the implementation of a Dynamic Pipeline in Haskell Programming Language is feasible. This fact opens a wide range of algorithms to be explored using the Dynamic Pipeline Paradigm, supported by purely functional programming language.  Currently, we are addressing the design and definition of a general and parametric \acrshort{dpf} in Haskell taking advantage of all the abstraction mechanisms that Haskell provides and taking into account knowledge obtained in this work. We envision that such implementation requires only a few lines of code, taking advantage  of  already  built  Haskell libraries  and  techniques.    
+\fi
+
+\iffalse
+We have seen that \acrlong{dp} implemented in Haskell is not only suitable but also robust. We have also seen that this implementation requires only a few lines of code, taking advantage of already built libraries and techniques as we have described in \autoref{section:prob:dp:haskell}.
+We have also been able to verify that the implementation outperforms in those cases where the topology of the graph is more sparse and where the number of vertices in the largest \acrshort{wcc} is not large (all the vertices are not in one big \acrshort{wcc}). This behavior is present despite implementing a non-optimal subgraph algorithm for the specific problem of \acrshort{wcc}.
+Moreover, we have measure using \acrshort{dt} metrics in \autoref{sub:sub:sec:e2}, the advantageous capability of \acrshort{dph} implementation to deliver incremental results compare with default \texttt{containers} library implementation.
+Finally, we have been able to measure the principal aspects where \acrshort{dp} is strong such as pipeline parallelism and time processing showing that \acrshort{hs} can deal with the requirements for the problem without penalizing neither execution time nor memory allocation.
+We think this works has gathered enough evidence to show that the implementation of a \acrshort{dpf} is feasible in \acrlong{hs} opening a wide range of algorithms to be explored using the Dynamic Pipeline Paradigm, supported by a purely functional programming language. 
+Another important aspect is that we still need to explore in deep the design and definition of the main \acrshort{dpf} in \acrshort{hs} taking advantage of all the abstraction mechanisms that \acrshort{hs} provides.
+\fi
+\bibliography{Report}
+
+\iffalse
+\appendix
+\section{Automated Testing and QuickCheck}\label{apx:1}
+\subsection{Automated Cases}\label{auto}
+We have defined 6 small examples with the following particularities to be automated and be tested automatically on every run of \mintinline{bash}{stack test} or \mintinline{bash}{cabal test} depends on the selected building tool. In that sense
+we ensure the correctness of the principal algorithm on any possible modification and iteration. 
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|l|l|}
+   \hline
+   Graph case & Edges & Ordered (Edges)\\
+   \hline
+   1 \acrshort{wcc} & 5 & YES \\
+   \hline
+   1 \acrshort{wcc} & 5 & NO \\
+   \hline
+   2 \acrshort{wcc} & 8 & YES \\
+   \hline
+   1 \acrshort{wcc} & 6 & YES \\
+   \hline
+   3 \acrshort{wcc} & 11 & YES \\
+   \hline
+   3 \acrshort{wcc} & 11 & NO \\
+   \hline
+  \end{tabular}
+ \caption{Test Cases}
+ \label{table:apx:1}
+ \end{table}
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={}]{haskell}      
+it "Example 3 CC - Shuffle" $ do
+  let input = "1 2\n 2 3\n 4 5\n 1 4\n 1 3\n 7 8\n 10 12\n 3 5\n 3 6\n 7 9\n 11 10\n"
+  result <- liftIO $ runParallelWithExample input
+  length result `shouldBe` 3
+\end{minted}
+\caption{Example \textit{hspec} Testing}
+\label{src:haskell:6}
+\end{listing}
+
+\subsection{QuickCheck}\label{Quick}
+In this case, the main challenge consists of how to write \mintinline{haskell}{Arbitrary} derivations, to 
+allow \textit{QuickCheck} to generate a Graph $G$ and at the same time control the number of Connected Components that we want for $G$, to verify the following property: Given a graph $G$, $cc : G \to \mathbb{N}$ is the Function that gets the Number of Connected Components of $G$.
+Then,
+
+\begin{equation}
+  \forall G, cc(G) = size(DP(G))
+\end{equation}
+
+In our QuickCheck derivation this is the following:
+
+\begin{listing}[H]
+  \begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={}]{haskell}      
+newtype Edge a = Edge (a, a)
+    deriving (Show, Eq, Ord)
+  
+newtype Graph = Graph { _gEdges :: Set (Edge Integer) } deriving (Show)
+  
+instance Arbitrary (Edge Integer) where
+  arbitrary = do
+    v1 <- getPositive <$> arbitrary
+    v2 <- (getPositive <$> arbitrary) `suchThat` (/= v1)
+    return $ Edge (v1, v2)
+  
+arbitraryGraphs :: Gen (Graph, Int)
+arbitraryGraphs = do
+  amount <- choose (1, 10)
+  (, amount) <$> genGraph amount
+  
+genGraph :: Int -> Gen Graph
+genGraph = fmap Graph . genConnComp
+\end{minted}
+\caption{QuickCheck \acrshort{dp}}
+\label{src:haskell:7}
+\end{listing}
+
+We have avoided the details of \mintinline{haskell}{genConnComp} generator function, but it builds a Set of Edges 
+in which the number of connected components should be the amount provided by parameter, which is randomly generated by QuickCheck.
+Once we have QuickCheck generator we just need to tell QuickCheck how many examples we want to test to verify our property.
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={}]{haskell}      
+context "Property Based Testing Examples"
+  $ modifyMaxSuccess (const 1000)
+  $ it "Retrieves the correct number of connected components"
+  $ property
+  $ forAll arbitraryGraphs 
+  $ \(Graph{..}, amount) -> do 
+    result <- liftIO $ runParallelWithExample $ toEdgesText _gEdges
+    length result `shouldBe` amount
+    
+\end{minted}
+\caption{QuickCheck Property Verification of \acrshort{dp}}
+\label{src:haskell:8}
+\end{listing}
+
+
+\section{Filter}\label{filter}
+\textbf{Filters:}\newline
+In this case, the algorithm is not as succinct as the previous because here is where the 2-step calculation takes place. As explained before, each \textit{Filter} contains two sequential computations which are called \mintinline{haskell}{actor1} and \mintinline{haskell}{actor2}. The first one is responsible for gathering connected components based on the first edge from which the \textit{filter} was created.  The second \textit{actor} is responsible for \textit{combining} its calculated connected components with others that are coming from the downstream. Representing sequential computations in \acrshort{hs} is simple with \emph{Monadic} computations, which in this case \mintinline{haskell}{actor2} depends on the computation of \mintinline{haskell}{actor1}.
+
+\begin{listing}[H]
+\begin{minted}[fontsize=\small,numbers=left,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={3,10-11,21-22}]{haskell}
+newFilter :: ConnectedComponents -> ConnCompDP 
+          -> DP.Channel Edge -> DP.Channel ConnectedComponents -> IO ()
+newFilter conn inCh toInCh outCh = actor1 conn inCh toInCh >>= actor2 inCh toInCh outCh
+
+actor1 :: ConnectedComponents -> ConnCompDP -> DP.Channel Edge -> IO ConnectedComponents
+actor1 conn inCh toInCh = maybe finishActor doActor =<< DP.pullIn inCh
+ where
+  finishActor = DP.end' toInCh >> return conn
+
+  doActor v | toConnectedComp v `intersect` conn = actor1 (toConnectedComp v <> conn) inCh toInCh
+            | otherwise                          = v `DP.push'` toInCh >> actor1 conn inCh toInCh
+
+
+actor2 :: ConnCompDP -> DP.Channel Edge 
+       -> DP.Channel ConnectedComponents -> ConnectedComponents -> IO ()
+actor2 inCh toInCh outCh conn = maybe finishActor doActor =<< DP.pullOut inCh
+
+ where
+  finishActor = conn `DP.push'` outCh >> DP.end' outCh
+
+  doActor cc | conn `intersect` cc = actor2 inCh toInCh outCh (conn <> cc)
+             | otherwise           = cc `DP.push'` outCh >> actor2 inCh toInCh outCh conn
+\end{minted}
+\caption{Filters \acrshort{dp} for \acrshort{wcc}}
+\label{src:haskell:3}
+\end{listing}
+
+As we can see in \autoref{src:haskell:3} considering highlighted \texttt{line 21-22}, we use \mintinline{haskell}{Data.IntSet} module provided by \textbf{containers} \cite{containers} library to calculate the \textit{Intersection} and \textit{Union} of the \acrshort{wcc} calculated by this filter against  previous \acrshort{wcc} computed by other filters.\label{not:optimal}
+
+\fi
+\end{document}
+
