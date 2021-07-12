@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7d548821e7622924f53dcc39e66ac922c88304a8ef5d7af4905c0644900fc162
+-- hash: b631ff80c7ec4f10b125ad288b1958525d99f467fbd9a18ababe763da1e8d839
 
 name:           connected-comp
 version:        0.1.0.0
@@ -30,7 +30,38 @@ library
       Utils.Trace
   hs-source-dirs:
       src
-  default-extensions: ConstraintKinds DataKinds DeriveAnyClass DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
+  default-extensions:
+      ConstraintKinds
+      DataKinds
+      DeriveAnyClass
+      DeriveFunctor
+      DeriveGeneric
+      DeriveLift
+      DerivingStrategies
+      DerivingVia
+      EmptyCase
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      MultiWayIf
+      NoImplicitPrelude
+      OverloadedStrings
+      PackageImports
+      PartialTypeSignatures
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeOperators
+      TypeFamilies
   ghc-options: -Wall -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans
   build-depends:
       async
@@ -42,9 +73,6 @@ library
     , time
     , trifecta
     , unagi-chan
-  if false
-    other-modules:
-        Paths_connected_comp
   default-language: Haskell2010
 
 executable benchmark
@@ -53,7 +81,38 @@ executable benchmark
       Paths_connected_comp
   hs-source-dirs:
       app/Benchmark
-  default-extensions: ConstraintKinds DataKinds DeriveAnyClass DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
+  default-extensions:
+      ConstraintKinds
+      DataKinds
+      DeriveAnyClass
+      DeriveFunctor
+      DeriveGeneric
+      DeriveLift
+      DerivingStrategies
+      DerivingVia
+      EmptyCase
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      MultiWayIf
+      NoImplicitPrelude
+      OverloadedStrings
+      PackageImports
+      PartialTypeSignatures
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeOperators
+      TypeFamilies
   ghc-options: -Wall -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans -threaded -O3 -rtsopts -with-rtsopts=-N
   build-depends:
       async
@@ -76,7 +135,38 @@ executable compare-graph
       Paths_connected_comp
   hs-source-dirs:
       app/Compare
-  default-extensions: ConstraintKinds DataKinds DeriveAnyClass DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
+  default-extensions:
+      ConstraintKinds
+      DataKinds
+      DeriveAnyClass
+      DeriveFunctor
+      DeriveGeneric
+      DeriveLift
+      DerivingStrategies
+      DerivingVia
+      EmptyCase
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      MultiWayIf
+      NoImplicitPrelude
+      OverloadedStrings
+      PackageImports
+      PartialTypeSignatures
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeOperators
+      TypeFamilies
   ghc-options: -Wall -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans -threaded -O3 -rtsopts -with-rtsopts=-N
   build-depends:
       async
@@ -97,7 +187,38 @@ executable conn-comp
       Paths_connected_comp
   hs-source-dirs:
       app/DP
-  default-extensions: ConstraintKinds DataKinds DeriveAnyClass DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
+  default-extensions:
+      ConstraintKinds
+      DataKinds
+      DeriveAnyClass
+      DeriveFunctor
+      DeriveGeneric
+      DeriveLift
+      DerivingStrategies
+      DerivingVia
+      EmptyCase
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      MultiWayIf
+      NoImplicitPrelude
+      OverloadedStrings
+      PackageImports
+      PartialTypeSignatures
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeOperators
+      TypeFamilies
   ghc-options: -Wall -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans -threaded -O3 -rtsopts -with-rtsopts=-N
   build-depends:
       async
@@ -121,7 +242,38 @@ test-suite conn-comp-tests
       Paths_connected_comp
   hs-source-dirs:
       test
-  default-extensions: ConstraintKinds DataKinds DeriveAnyClass DeriveFunctor DeriveGeneric DeriveLift DerivingStrategies DerivingVia EmptyCase FlexibleContexts FlexibleInstances FunctionalDependencies GADTs GeneralizedNewtypeDeriving LambdaCase MultiParamTypeClasses MultiWayIf NoImplicitPrelude OverloadedStrings PackageImports PartialTypeSignatures Rank2Types RankNTypes RecordWildCards ScopedTypeVariables StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeOperators TypeFamilies
+  default-extensions:
+      ConstraintKinds
+      DataKinds
+      DeriveAnyClass
+      DeriveFunctor
+      DeriveGeneric
+      DeriveLift
+      DerivingStrategies
+      DerivingVia
+      EmptyCase
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      MultiWayIf
+      NoImplicitPrelude
+      OverloadedStrings
+      PackageImports
+      PartialTypeSignatures
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeOperators
+      TypeFamilies
   ghc-options: -Wall -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -fno-warn-deprecations -fno-warn-orphans -threaded -O2 -rtsopts -with-rtsopts=-N -Wno-unused-local-binds -Wno-unused-matches
   build-tool-depends:
       hspec-discover:hspec-discover

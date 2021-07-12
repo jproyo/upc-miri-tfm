@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{array}
 \usepackage{graphicx}
@@ -16,6 +17,7 @@
 \usepackage{caption}
 \usepackage{authblk}
 \usepackage{longtable}
+\usepackage[vlined,ruled]{algorithm2e}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
 \usepackage[cache=false]{minted}
@@ -27,7 +29,7 @@
 \tikzstyle{bag} = [align=center]
 
 \title{%
-      Counting Bi-Triangles on Bipartite Graph using Dynamic Pipeline Paradigm\\
+      Counting Bi-Triangles on Bipartite Graph using Dynamic Pipeline Paradigm with Haskell\\
       Master Thesis
 }
 \author{Juan Pablo Royo Sales}
@@ -38,12 +40,24 @@
 \fancyhf{}
 \fancyhead[C]{}
 \fancyhead[R]{UPC MIRI}
-\fancyhead[L]{TFM - Master Thesis}
+\fancyhead[L]{Master Thesis}
 \fancyfoot[L,C]{}
 \fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
 \setlength{\headheight}{15pt}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
+
+\newcommand{\dw}{\mathbb{DW}}
+\newcommand{\bt}{\mathbb{BT}}
+\newcommand{\st}{\mathtt{FState}}
+\newcommand{\sw}{\mathtt{spawn}}
+\newcommand{\us}{\mathtt{updateSate}}
+\newcommand{\gs}{\mathtt{getState}}
+\newcommand{\p}{\mathtt{push}}
+\newcommand{\mt}{\mathtt{matchQ}}
+\newcommand{\io}{\mathtt{indexOf}}
+\newcommand{\la}{\left\langle}
+\newcommand{\ra}{\right\rangle}
 
 \newacronym{fp}{Functional Programming}{Functional Programming}
 
@@ -51,23 +65,257 @@
 
 \begin{document}
 
-\maketitle
+% \maketitle
 
-\tableofcontents
+% \tableofcontents
 
-\section{Introduction}
-\section{Bi-Triangle Counting}
-\section{Dynamic Pipeline}
-\section{Haskell Implementation and Techniques}
+% \section{Introduction}
+% \section{Bi-Triangle Counting}
+% \section{Dynamic Pipeline}
+% \section{Haskell Implementation and Techniques}
 \section{Implementation}
-\section{Experiments and Discussion}
-\section{Future Work}
-\section{Conclusions}
 
-\bibliographystyle{alpha}
-\bibliography{Report}
+Given a Bipartite Graph $G = (V = (U \cup L), E)$, where $V$ is the vertex set and 
+$E$ is the edges set, we build the following algorithm to enumerate Bi-triangles.
 
-\appendix
+\paragraph{Definitions}
+\begin{itemize}
+      \item $E$: Set of edges, where $\forall (u,l) \in E, u \in U \land l \in L$
+      \item \textit{wedge} is a triple $(u,v,w), \{u,w\} \subseteq U  \land \{v\} \subseteq L \land \{(u,v), (v,w)\} \subseteq E$. $v$ is the middle vertex of the wedge
+      \item \textit{double-wedge} is a quintuplet $(u,v,w,t,z), \{u,w,z\} \subseteq U  \land \{v,t\} \subseteq L \land \{(u,v), (v,w), (w, t), (t,z)\} \subseteq E$. 
+            $v$, $w$ and $t$ are the middle vertex of the wedge
+      \item $F$: Filter template of Wedges DP
+      \item $W = \la l, W_l \ra$: Aggregated wedges of $l$, where $W_l \subseteq U \land W_l \neq \emptyset \land l \in L$
+      \item $U_t = \{(u_1, u_2, u_3) \mid \{u_1, u_2, u_3\} \in U \land u_1 < u_2 < u_3\}$: Set of triples on the upper layer
+      \item $DW = \la (l_l, l_u), U_t \ra$: Aggregated double-wedge, where $\{l_l, l_u\} \in L \land l_l < l_u$, such that $\forall (u_1, u_2, u_3) \in U_t, \{(u_1, l_1), (l_1, u_2), (u_2, l_2), (l_2, u_3)\} \in E$
+      \item $\dw$: Set of $DW$
+      \item $L_t = (l_l, l_m, l_u) \mid \{l_l, l_m, l_u\} \in L \land l_l < l_m < l_u$: One Triple on the lower layer
+      \item $BT = \la (l_l, l_m, l_u), U_t \ra$: Aggregated double-wedge, where $\{l_l, l_m, l_u\} \in L \land l_l < l_m < l_u$, such that \\
+       $\forall (u_1, u_2, u_3) \in U_t, \{(u_1, l_l), (l_l, u_2), (u_2, l_u), (l_u, u_3), (u_3, l_m), (l_m, u_1)\} \in E$
+      \item $\bt$: Set of $BT$
+      \item $\st = (W, \dw, \bt)$: State of Filter
+      \item $\sw(F,(u,l),\st)$: Spawn new filter with parameters $F$, $(u,l) \in E$ and $FState$ as the State of the Filter
+      \item $\gs$: Get Current State from Memory
+      \item $\us(\st)$: Overwrite State with new $\st$ in Memory
+      \item $\p(\mathtt{v}, OC_x)$: push some value $\mathtt{v}$ to Channel $OC_x$
+      \item $Q$: Query command to match some condition over $\bt$
+      \item $IC$: Set of Input Channels
+      \item $OC$: Set of Output Channels    
+      \item $IC_E$: Input Channels carrying edges
+      \item $OC_E$: Output Channels carrying edges
+      \item $IC_{W_1}$: Input Channels carrying Aggregated Wedges
+      \item $OC_{W_1}$: Output Channels carrying Aggregated Wedges
+      \item $IC_{W_2}$: Input Channels carrying Aggregated Wedges, second round
+      \item $OC_{W_2}$: Output Channels carrying Aggregated Wedges, second round
+      \item $IC_Q$: Input Channels carrying Query Command
+      \item $OC_Q$: Output Channels carrying Query Command
+      \item $IC_{BT}$: Input Channels carrying Aggregated Bi-triangles 
+      \item $OC_{BT}$: Input Channels carrying Aggregated Bi-triangles 
+      \item $\mt(Q, BT)$: Check if a Query $Q$ matches over $BT$ 
+\end{itemize}
+
+\begin{algorithm}[H]
+\SetKwInOut{P}{Filter Template}
+\SetKwInOut{IC}{Input Channels}
+\SetKwInOut{OC}{Output Channels}
+\P{$F$}
+\IC{$ IC = \la IC_E, IC_{W_1}, IC_Q, IC_{BT} \ra$}
+\OC{$ OC = \la OC_{W_2}, OC_{BT} \ra$}
+\ForAll{$(u,l) \in IC_E$}
+{$\st(F, (u, l), (\la l, \{u\} \ra, \emptyset, \emptyset))$;\\
+}
+\ForAll{$\la l, W_l \ra \in IC_{W_1}$}
+{$\p(\la l, W_l \ra, OC_{W_2})$;\\
+}
+\ForAll{$BT \in IC_{BT}$}
+{$\p(BT, OC_{BT})$;\\
+}
+\caption{$G$ Generator}
+\end{algorithm}
+
+Filter - Actor1
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\setcounter{AlgoLine}{20}
+\SetKwInOut{P}{Parameter}
+\SetKwInOut{IC}{Input Channels}
+\SetKwInOut{OC}{Output Channels}
+\SetKwInOut{PG}{Filter Program}
+\SetKwInOut{PC}{Post-Cond}
+\SetKwInOut{PrC}{Pre-Cond}
+\SetKwFunction{aa}{actor1}
+\SetKwProg{df}{def}{:}{}
+\P{$(u, l) \in E$}
+\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
+\BlankLine
+\tcp*[h]{$IC_E$ Channel: Build Aggregated Wedges $W$}\\
+\PC{$|W| > 1$ or Filter dies}
+\df{\aa{}}{
+$\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
+\ForAll{$(u',l') \in IC_E$}
+{\uIf{$l = l'$}{$W \leftarrow W \cup \{u'\}$}
+}
+\uIf{$|W| > 1$}{
+      $\us(\la l, W \ra, \mathbb{DW}, \mathbb{BT})$\\
+      $\p(\la l, W \ra, OC_{W_1})$\\
+      $\p(\la l, W \ra, OC_{W_2})$\\
+}
+}
+\caption{$F$ Filter - actor1}
+\end{algorithm}
+
+Filter - Actor2
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\setcounter{AlgoLine}{20}
+\SetKwInOut{P}{Parameter}
+\SetKwInOut{IC}{Input Channels}
+\SetKwInOut{OC}{Output Channels}
+\SetKwInOut{PG}{Filter Program}
+\SetKwInOut{PC}{Post-Cond}
+\SetKwInOut{PrC}{Pre-Cond}
+\SetKwFunction{ab}{actor2}
+\SetKwProg{df}{def}{:}{}
+\P{$(u, l) \in E$}
+\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
+\BlankLine
+\tcp*[h]{$IC_{W_1}$ Channel to build Double Edges $\dw$}\\
+\PrC{$|W| > 1$}
+\PC{$|\dw| \geq 1$ or Filter dies}
+\df{\ab{}}{
+$\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
+\ForAll{$\la l', W' \ra \in IC_{W_1}$}{
+      \If{$l' < l$}{
+            $I \leftarrow W' \setminus W$\\
+            $J \leftarrow W' \cap W$\\
+            $K \leftarrow W \setminus W'$\\
+            $cond_a \leftarrow |I| \geq 1 \land |J| > 0 \land |K| > 0 \land I < J < K$\\
+            $cond_b \leftarrow |I| = 0 \land |J| > 1 \land |K| > 0 \land J < K$\\
+            \uIf{$cond_a$}{
+                  $U_t' \leftarrow \emptyset$\\
+                  \ForEach{$i \in I$}{
+                        \ForEach{$j \in J, j > i$}{
+                              \ForEach{$k \in K, k > j$}{
+                                    $U_t' \leftarrow U_t' \cup \{(i,j,k)\}$
+                              }
+                        }
+                  }
+                  \If{$U_t' \neq \emptyset$}{$\dw \leftarrow \dw \cup \la (l', l), U_t' \ra$}
+            }
+            \uIf{$cond_b$}{
+                  $U_t' \leftarrow \emptyset$\\
+                  $I' \leftarrow J$\\
+                  \ForEach{$i \in I'$}{
+                        \ForEach{$j \in J, j > i$}{
+                              \ForEach{$k \in K, k > j$}{
+                                    $U_t' \leftarrow U_t' \cup \{(i,j,k)\}$
+                              }
+                        }
+                  }
+                  \If{$U_t' \neq \emptyset$}{$\dw \leftarrow \dw \cup \la (l', l), U_t' \ra$}
+            }
+      }
+}
+$\us(\la l, W \ra, \mathbb{DW}, \mathbb{BT})$\\
+}
+\caption{$F$ Filter - actor2}
+\end{algorithm}
+
+Filter - Actor3
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\setcounter{AlgoLine}{20}
+\SetKwInOut{P}{Parameter}
+\SetKwInOut{IC}{Input Channels}
+\SetKwInOut{OC}{Output Channels}
+\SetKwInOut{PG}{Filter Program}
+\SetKwInOut{PC}{Post-Cond}
+\SetKwInOut{PrC}{Pre-Cond}
+\SetKwFunction{ac}{actor3}
+\SetKwProg{df}{def}{:}{}
+\P{$(u, l) \in E$}
+\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
+\BlankLine
+\tcp*[h]{$IC_{W_2}$ Channel to build Bi-triangles $\bt$}\\
+\PrC{$|\dw| \geq 1$}
+\PC{$|\bt| \geq 1$ or Filter dies}
+\df{\ac{}}{
+      $\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
+      \ForAll{$\la l', W' \ra \in IC_{W_2}$}{
+            \tcp*[h]{By pass to be used by following Filters}
+            $\p(\la l', W' \ra, OC_{W_2})$\\ 
+            \ForEach(\tcp*{For each double wedge in State}){$\la (l_l, l_u), U_t' \ra \in \dw$}{
+                  $U_t'' \leftarrow \emptyset$\\
+                  \If{$l' > l_l \land l' < l_u$}{
+                        \ForEach{$(u_1, u_2, u_3) \in U_t'$}{
+                              \tcp*[h]{Get lower and upper bound indexes of Set. If exist there are greater or equal 0}
+                              $idx_1 \leftarrow \io(u_1, W')$\\
+                              $idx_3 \leftarrow \io(u_3, W')$\\
+                              \If{$idx_1 \geq 0 \land idx_3 > idx_1$}{
+                                    \ForEach{$w_i \in W', i \geq idx_1 \land i \leq idx_3$}{
+                                          $U_t'' \leftarrow U_t'' \cup \{u_1, u_2, u_3\} $
+                                    }
+                              }                  
+                        }
+                  }
+            }
+            \If{$U_t'' \neq \emptyset$}{
+                  $\bt \leftarrow \bt \cup \{(l_l, l', l_u), U_t''\}$
+            }
+      }
+      $\us(\la l, W \ra, \mathbb{DW}, \mathbb{BT})$\\
+}
+\caption{$F$ Filter - actor3}
+\end{algorithm}
+
+Filter - Actor4
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\setcounter{AlgoLine}{20}
+\SetKwInOut{P}{Parameter}
+\SetKwInOut{IC}{Input Channels}
+\SetKwInOut{OC}{Output Channels}
+\SetKwInOut{PG}{Filter Program}
+\SetKwInOut{PC}{Post-Cond}
+\SetKwInOut{PrC}{Pre-Cond}
+\SetKwFunction{ad}{actor4}
+\SetKwProg{df}{def}{:}{}
+\P{$(u, l) \in E$}
+\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
+\BlankLine
+\tcp*[h]{$IC_{W_2}$ Channel to build Bi-triangles $\bt$}\\
+\PrC{$|\bt| \geq 1$}
+\df{\ad{}}{
+\tcp*[h]{$IC_Q$ Process command Query}\\
+$\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
+\ForAll{$q \in IC_Q$}{
+      \ForEach{$\la (l_l, l_m, l_u), U_t \ra \in \bt$}{
+            \If{$\mt(q, \la (l_l, l_m, l_u), U_t \ra)$}{
+                  $\p(\la (l_l, l_m, l_u), U_t \ra, OC_{BT})$\\
+            }
+      }
+}
+}
+\caption{$F$ Filter - actor4}
+\end{algorithm}
+
+
+% \section{Experiments and Discussion}
+% \section{Future Work}
+% \section{Conclusions}
+
+% \bibliographystyle{alpha}
+% \bibliography{Report}
+
+% \appendix
 
 \end{document}
 
