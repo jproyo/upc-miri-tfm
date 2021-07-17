@@ -166,17 +166,13 @@ Filter - Actor1
 \FS{$(W, \dw, \bt)$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
-\PC{$|W_t| > 1$ or $\fid$}
+\PC{$|W_l| > 1$ or $\fid$}
 \BlankLine
 \tcp*[h]{$IC_E$ Channel: Build Aggregated Wedges $W$}\\
 \df{\aa{}}{
 $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \ForAll{$(u',l') \in IC_E$}
 {\uIf{$l = l'$}{$W_l \leftarrow W_l \cup \{u'\}$}
-}
-\tcp*[h]{By pass Wedges from previous filters to next ones}
-\ForAll{$\la l, W_l \ra \in IC_{W_1}$}{
-      $\p(\la l, W_l \ra, OC_{W_1})$
 }
 \uIf{$|W_l| > 1$}{
       $\us(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT})$\\
@@ -206,15 +202,17 @@ Filter - Actor2
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
 \BlankLine
 \tcp*[h]{$IC_{W_1}$ Channel to build Double Wedges $\dw$}\\
-\PrC{$|W_t| > 1$}
+\PrC{$|W_l| > 1$}
 \PC{$|\dw| \geq 1$ or $\fid$}
 \df{\ab{}}{
-$\mathtt{(\la l, W_t \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
-\ForAll{$\la l', W_t' \ra \in IC_{W_1}$}{
-      \If{$l' < l$ and $W_t' \cap W_t \neq \emptyset$}{
-            $I \leftarrow W_t' \setminus W_t$\\
-            $J \leftarrow W_t' \cap W_t$\\
-            $K \leftarrow W_t \setminus W_t'$\\
+$\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
+\ForAll{$\la l', W_l' \ra \in IC_{W_1}$}{
+      \tcp*[h]{By pass Wedges from previous filters to next ones}
+      $\p(\la l', W_l \ra, OC_{W_1})$\\
+      \If{$l' < l$ and $W_l' \cap W_l \neq \emptyset$}{
+            $I \leftarrow W_l' \setminus W_l$\\
+            $J \leftarrow W_l' \cap W_l$\\
+            $K \leftarrow W_l \setminus W_l'$\\
             $cond_a \leftarrow |I| \geq 1 \land |J| > 0 \land |K| > 0$\\
             $cond_b \leftarrow |I| = 0 \land |J| > 1 \land |K| > 0$\\
             $cond_c \leftarrow |I| = 0 \land |J| > 2 \land |K| = 0$\\
@@ -230,7 +228,7 @@ $\mathtt{(\la l, W_t \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
       }
 }
 \uIf{$\dw = \emptyset$}{$\fd$}
-\Else{$\us(\la l, W_t \ra, \mathbb{DW}, \mathbb{BT})$\\}
+\Else{$\us(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT})$\\}
 }
 \df{\but{I, J, K}}{
       $U_t' \leftarrow \emptyset$\\
@@ -288,7 +286,7 @@ Filter - Actor3
             }
       }
       \uIf{$\bt = \emptyset$}{$\fd$}
-      \Else{$\us(\la l, W_t \ra, \mathbb{DW}, \mathbb{BT})$\\}
+      \Else{$\us(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT})$\\}
 }
 \caption{$F$ Filter - actor3}
 \end{algorithm}
