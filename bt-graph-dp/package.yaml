@@ -11,8 +11,65 @@ category:            Data,Data Flow,Pipes
 extra-source-files:
 - README.md
 
+ghc-options:
+  - -Wall
+  - -fno-warn-partial-type-signatures
+  - -fconstraint-solver-iterations=0
+  - -fspecialise-aggressively
+  - -fexpose-all-unfoldings
+  - -flate-specialise
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wredundant-constraints
+  - -Wno-unused-top-binds
+  - -Wno-unused-foralls
+  - -fno-warn-deprecations
+  - -fno-warn-orphans
+
+default-extensions:
+  - ConstraintKinds
+  - DataKinds
+  - DefaultSignatures
+  - DeriveAnyClass
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveLift
+  - DeriveTraversable
+  - DerivingStrategies
+  - DerivingVia
+  - EmptyCase
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MultiParamTypeClasses
+  - MultiWayIf
+  - NoImplicitPrelude
+  - OverloadedStrings
+  - PackageImports
+  - PartialTypeSignatures
+  - PolyKinds
+  - Rank2Types
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TemplateHaskell
+  - TupleSections
+  - TypeApplications
+  - TypeOperators
+  - TypeFamilies
+
 dependencies:
+  - async
   - base >= 4.7 && < 5
+  - containers
+  - dynamic-pipeline
+  - relude
+  - trifecta
 
 executables:
   bt-graph-dp:
