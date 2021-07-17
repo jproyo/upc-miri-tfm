@@ -3,7 +3,21 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: dynamic-pipeline-0.3.1.2@sha256:8d63924fff72989e51a50c943ac7aae2b1b96dce8776c857ddd8e613e08f06dc,7690
+    pantry-tree:
+      size: 870
+      sha256: d38c9e2563a848979fdc832d874bdf508d494afb734a9fce39dba730feb34bb7
+  original:
+    hackage: dynamic-pipeline-0.3.1.2
+- completed:
+    hackage: HList-0.5.0.0@sha256:7d7a0bee8d01a7e0e10bf96c5214a21bebae3ecfc02d14fc13bf75458b38ac43,7137
+    pantry-tree:
+      size: 5718
+      sha256: 2881dd9fe6ee24dad62ecd68be6d98e834823d21b659f4ff0de87475e33371f1
+  original:
+    hackage: HList-0.5.0.0
 snapshots:
 - completed:
     size: 565715

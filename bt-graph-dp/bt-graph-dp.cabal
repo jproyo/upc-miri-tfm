@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 98b47b53525764b8d8f9d89bb8b6d9379a3f49515408e920a3b8ff87ce5cd2fb
+-- hash: 03243c578a380ae0cbfd172a96c247257dd918cdc00854139cfee8e27c19ab85
 
 name:           bt-graph-dp
 version:        0.1.0.0
@@ -22,9 +22,53 @@ extra-source-files:
 executable bt-graph-dp
   main-is: Main.hs
   other-modules:
+      BTriangle
+      Edges
       Paths_bt_graph_dp
   hs-source-dirs:
       src
+  default-extensions:
+      ConstraintKinds
+      DataKinds
+      DefaultSignatures
+      DeriveAnyClass
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveLift
+      DeriveTraversable
+      DerivingStrategies
+      DerivingVia
+      EmptyCase
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      MultiWayIf
+      NoImplicitPrelude
+      OverloadedStrings
+      PackageImports
+      PartialTypeSignatures
+      PolyKinds
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeOperators
+      TypeFamilies
+  ghc-options: -Wall -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -fspecialise-aggressively -fexpose-all-unfoldings -flate-specialise -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -Wno-unused-foralls -fno-warn-deprecations -fno-warn-orphans
   build-depends:
-      base >=4.7 && <5
+      async
+    , base >=4.7 && <5
+    , containers
+    , dynamic-pipeline
+    , relude
+    , trifecta
   default-language: Haskell2010

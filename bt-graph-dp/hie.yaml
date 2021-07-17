@@ -1,0 +1,13 @@
+cradle:
+  stack:
+    - path: "./src/Main.hs"
+      component: "bt-graph-dp:exe:bt-graph-dp"
+
+    - path: "./src/BTriangle.hs"
+      component: "bt-graph-dp:exe:bt-graph-dp"
+
+    - path: "./src/Edges.hs"
+      component: "bt-graph-dp:exe:bt-graph-dp"
+
+    - path: "./src/Paths_bt_graph_dp.hs"
+      component: "bt-graph-dp:exe:bt-graph-dp"
