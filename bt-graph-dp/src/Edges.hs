@@ -37,6 +37,7 @@ data DW = DW
   deriving Show
 
 newtype DWTT = DWTT [DW]
+  deriving newtype Show
 
 addDw :: DW -> DWTT -> DWTT
 addDw e (DWTT dw) = DWTT $ e : dw
@@ -51,6 +52,7 @@ data BT = BT
   deriving Show
 
 newtype BTTT = BTTT [BT]
+  deriving newtype Show
 
 addBt :: BT -> BTTT -> BTTT
 addBt e (BTTT bt) = BTTT $ e : bt

@@ -1,7 +1,10 @@
 module Main where
 
-import Relude
+import           BTriangle
+import           Relude                                            as R
+import           System.Environment
 
 main :: IO ()
 main = do
-  putStrLn "hello world"
+  file <- maybe (fail "Error no parameter found") return . R.viaNonEmpty R.head =<< getArgs
+  program file
