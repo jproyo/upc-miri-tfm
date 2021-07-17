@@ -51,7 +51,9 @@
 \newcommand{\bt}{\mathbb{BT}}
 \newcommand{\st}{\mathtt{FState}}
 \newcommand{\sw}{\mathtt{spawn}}
-\newcommand{\us}{\mathtt{updateSate}}
+\newcommand{\fd}{\mathtt{killFilter}}
+\newcommand{\fid}{\mathtt{filterIsDied}}
+\newcommand{\us}{\mathtt{updateState}}
 \newcommand{\gs}{\mathtt{getState}}
 \newcommand{\p}{\mathtt{push}}
 \newcommand{\mt}{\mathtt{matchQ}}
@@ -81,20 +83,31 @@ $E$ is the edges set, we build the following algorithm to enumerate Bi-triangles
 \paragraph{Definitions}
 \begin{itemize}
       \item $E$: Set of edges, where $\forall (u,l) \in E, u \in U \land l \in L$
-      \item \textit{wedge} is a triple $(u,v,w), \{u,w\} \subseteq U  \land \{v\} \subseteq L \land \{(u,v), (v,w)\} \subseteq E$. $v$ is the middle vertex of the wedge
+      \item $A$: Set of vertices labels
+      \item $id \in A$: Is the identifier label of the vertex
+      \item $\forall (u,v) \in V, u.id < v.id \Rightarrow u \prec v$: Vertices can be ordered in a sequence by it $id$ label
+      \item \textit{wedge} is a triple $(u,v,w), \{u,w\} \subseteq U  \land v \in L \land \{(u,v), (v,w)\} \subseteq E$. $v$ is the middle vertex of the wedge
       \item \textit{double-wedge} is a quintuplet $(u,v,w,t,z), \{u,w,z\} \subseteq U  \land \{v,t\} \subseteq L \land \{(u,v), (v,w), (w, t), (t,z)\} \subseteq E$. 
             $v$, $w$ and $t$ are the middle vertex of the wedge
       \item $F$: Filter template of Wedges DP
-      \item $W = \la l, W_l \ra$: Aggregated wedges of $l$, where $W_l \subseteq U \land W_l \neq \emptyset \land l \in L$
-      \item $U_t = \{(u_1, u_2, u_3) \mid \{u_1, u_2, u_3\} \in U \land u_1 < u_2 < u_3\}$: Set of triples on the upper layer
-      \item $DW = \la (l_l, l_u), U_t \ra$: Aggregated double-wedge, where $\{l_l, l_u\} \in L \land l_l < l_u$, such that $\forall (u_1, u_2, u_3) \in U_t, \{(u_1, l_1), (l_1, u_2), (u_2, l_2), (l_2, u_3)\} \in E$
+      \item $W_l$: Totally order set where $W_l \subseteq U$ and $(W_l, \prec)$ is a strict total order relation such that for all $a, b$ and $c \in W_l$:
+      \begin{itemize}
+            \item \textit{Irreflexive}: There is not $a \prec a$ 
+            \item \textit{Transitive}: $a \prec b \land b \prec c \Rightarrow a \prec c$ 
+            \item \textit{Connected}: $a \neq b \Rightarrow a \prec b \lor b \prec a$ 
+      \end{itemize}
+      \item $W = \la l, W_l \ra$: Aggregated wedges $W_l$ of $l$, where $l \in L$.
+      \item $U_t = \{(u_1, u_2, u_3) \mid \{u_1, u_2, u_3\} \subseteq U\}$: Set of triples on the upper layer
+      \item $DW = \la (l_1, l_2), U_t \ra$: Aggregated double-wedge, where $\{l_1, l_2\} \subseteq L \land l_l < l_u$, such that $\forall (u_1, u_2, u_3) \in U_t, \{(u_1, l_1), (l_1, u_2), (u_2, l_2), (l_2, u_3)\} \in E$
       \item $\dw$: Set of $DW$
-      \item $L_t = (l_l, l_m, l_u) \mid \{l_l, l_m, l_u\} \in L \land l_l < l_m < l_u$: One Triple on the lower layer
-      \item $BT = \la (l_l, l_m, l_u), U_t \ra$: Aggregated double-wedge, where $\{l_l, l_m, l_u\} \in L \land l_l < l_m < l_u$, such that \\
-       $\forall (u_1, u_2, u_3) \in U_t, \{(u_1, l_l), (l_l, u_2), (u_2, l_u), (l_u, u_3), (u_3, l_m), (l_m, u_1)\} \in E$
+      \item $L_t = (l_l, l_m, l_u) \mid \{l_l, l_m, l_u\} \subseteq L \land l_l < l_u$: One Triple on the lower layer
+      \item $BT = \la (l_l, l_m, l_u), U_t \ra$: Aggregated double-wedge, where $\{l_l, l_m, l_u\} \subseteq L \land l_l < l_u$, such that \\
+       $\forall (u_1, u_2, u_3) \in U_t, \{(u_1, l_l), (l_l, u_2), (u_2, l_u), (l_u, u_3), (u_3, l_m), (l_m, u_1)\} \subseteq E$
       \item $\bt$: Set of $BT$
       \item $\st = (W, \dw, \bt)$: State of Filter
-      \item $\sw(F,(u,l),\st)$: Spawn new filter with parameters $F$, $(u,l) \in E$ and $FState$ as the State of the Filter
+      \item $\sw(F,l,\st)$: Spawn new filter instance with parameters $F$, $l \in L$ and $FState$ as the State of the Filter
+      \item $\fd$: Kill this filter instance because PostCondition does not fullfil
+      \item $\fid$: State after calling $\fd$ on filter. Indicates if Filter is die or not. If it is died, this filter instance does not participate anymore in the pipeline streaming processor
       \item $\gs$: Get Current State from Memory
       \item $\us(\st)$: Overwrite State with new $\st$ in Memory
       \item $\p(\mathtt{v}, OC_x)$: push some value $\mathtt{v}$ to Channel $OC_x$
@@ -118,14 +131,17 @@ $E$ is the edges set, we build the following algorithm to enumerate Bi-triangles
 \SetKwInOut{P}{Filter Template}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
+\SetKwBlock{DoParallel}{do in parallel}{end}
 \P{$F$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_Q, IC_{BT} \ra$}
 \OC{$ OC = \la OC_{W_2}, OC_{BT} \ra$}
-\ForAll{$(u,l) \in IC_E$}
-{$\st(F, (u, l), (\la l, \{u\} \ra, \emptyset, \emptyset))$;\\
-}
-\ForAll{$\la l, W_l \ra \in IC_{W_1}$}
-{$\p(\la l, W_l \ra, OC_{W_2})$;\\
+\DoParallel{
+      \ForAll{$(u,l) \in IC_E$}
+      {$\sw(F, l, (\la l, \{u\} \ra, \emptyset, \emptyset))$;\\
+      }
+      \ForAll{$\la l, W_l \ra \in IC_{W_1}$}
+      {$\p(\la l, W_l \ra, OC_{W_2})$;\\
+      }
 }
 \ForAll{$BT \in IC_{BT}$}
 {$\p(BT, OC_{BT})$;\\
@@ -141,27 +157,27 @@ Filter - Actor1
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
-\SetKwInOut{PG}{Filter Program}
+\SetKwInOut{FS}{$\st$}
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{aa}{actor1}
 \SetKwProg{df}{def}{:}{}
-\P{$(u, l) \in E$}
+\P{$l \in L$}
+\FS{$(W, \dw, \bt)$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
+\PC{$|W_t| > 1$ or $\fid$}
 \BlankLine
 \tcp*[h]{$IC_E$ Channel: Build Aggregated Wedges $W$}\\
-\PC{$|W| > 1$ or Filter dies}
 \df{\aa{}}{
-$\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
+$\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \ForAll{$(u',l') \in IC_E$}
-{\uIf{$l = l'$}{$W \leftarrow W \cup \{u'\}$}
+{\uIf{$l = l'$}{$W_l \leftarrow W_l \cup \{u'\}$}
 }
-\uIf{$|W| > 1$}{
-      $\us(\la l, W \ra, \mathbb{DW}, \mathbb{BT})$\\
-      $\p(\la l, W \ra, OC_{W_1})$\\
-      $\p(\la l, W \ra, OC_{W_2})$\\
-}
+\uIf{$|W_l| > 1$}{
+      $\us(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT})$\\
+      $\p(\la l, W_l \ra, OC_{W_1})$\\
+}\Else{$\fd$}
 }
 \caption{$F$ Filter - actor1}
 \end{algorithm}
@@ -174,53 +190,54 @@ Filter - Actor2
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
-\SetKwInOut{PG}{Filter Program}
+\SetKwInOut{FS}{$\st$}
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ab}{actor2}
+\SetKwFunction{but}{buildUt}
 \SetKwProg{df}{def}{:}{}
-\P{$(u, l) \in E$}
+\P{$l \in L$}
+\FS{$(W, \dw, \bt)$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
 \BlankLine
-\tcp*[h]{$IC_{W_1}$ Channel to build Double Edges $\dw$}\\
-\PrC{$|W| > 1$}
-\PC{$|\dw| \geq 1$ or Filter dies}
+\tcp*[h]{$IC_{W_1}$ Channel to build Double Wedges $\dw$}\\
+\PrC{$|W_t| > 1$}
+\PC{$|\dw| \geq 1$ or $\fid$}
 \df{\ab{}}{
-$\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
-\ForAll{$\la l', W' \ra \in IC_{W_1}$}{
-      \If{$l' < l$}{
-            $I \leftarrow W' \setminus W$\\
-            $J \leftarrow W' \cap W$\\
-            $K \leftarrow W \setminus W'$\\
-            $cond_a \leftarrow |I| \geq 1 \land |J| > 0 \land |K| > 0 \land I < J < K$\\
-            $cond_b \leftarrow |I| = 0 \land |J| > 1 \land |K| > 0 \land J < K$\\
+$\mathtt{(\la l, W_t \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
+\ForAll{$\la l', W_t' \ra \in IC_{W_1}$}{
+      \If{$l' < l$ and $W_t' \cap W_t \neq \emptyset$}{
+            $I \leftarrow W_t' \setminus W_t$\\
+            $J \leftarrow W_t' \cap W_t$\\
+            $K \leftarrow W_t \setminus W_t'$\\
+            $cond_a \leftarrow |I| \geq 1 \land |J| > 0 \land |K| > 0$\\
+            $cond_b \leftarrow |I| = 0 \land |J| > 1 \land |K| > 0$\\
+            $cond_c \leftarrow |I| = 0 \land |J| > 2 \land |K| = 0$\\
+            $U_t' \leftarrow \emptyset$\\
             \uIf{$cond_a$}{
-                  $U_t' \leftarrow \emptyset$\\
-                  \ForEach{$i \in I$}{
-                        \ForEach{$j \in J, j > i$}{
-                              \ForEach{$k \in K, k > j$}{
-                                    $U_t' \leftarrow U_t' \cup \{(i,j,k)\}$
-                              }
-                        }
-                  }
-                  \If{$U_t' \neq \emptyset$}{$\dw \leftarrow \dw \cup \la (l', l), U_t' \ra$}
+                  $U_t' \leftarrow \but(I,J,K)$\\
+            }\uIf{$cond_b$}{
+                  $U_t' \leftarrow \but(J,J,K)$\\
+            }\uIf{$cond_c$}{
+                  $U_t' \leftarrow \but(J,J,J)$\\
             }
-            \uIf{$cond_b$}{
-                  $U_t' \leftarrow \emptyset$\\
-                  $I' \leftarrow J$\\
-                  \ForEach{$i \in I'$}{
-                        \ForEach{$j \in J, j > i$}{
-                              \ForEach{$k \in K, k > j$}{
-                                    $U_t' \leftarrow U_t' \cup \{(i,j,k)\}$
-                              }
-                        }
-                  }
-                  \If{$U_t' \neq \emptyset$}{$\dw \leftarrow \dw \cup \la (l', l), U_t' \ra$}
-            }
+            \If{$U_t' \neq \emptyset$}{$\dw \leftarrow \dw \cup \la (l', l), U_t' \ra$}
       }
 }
-$\us(\la l, W \ra, \mathbb{DW}, \mathbb{BT})$\\
+\uIf{$\dw = \emptyset$}{$\fd$}
+\Else{$\us(\la l, W_t \ra, \mathbb{DW}, \mathbb{BT})$\\}
+}
+\df{\but{I, J, K}}{
+      $U_t' \leftarrow \emptyset$\\
+      \ForEach{$i \in I$}{
+            \ForEach{$j \in J, j > i$}{
+                  \ForEach{$k \in K, k > j$}{
+                        $U_t' \leftarrow U_t' \cup \{(i,j,k)\}$
+                  }
+            }
+      }
+      \Return{$U_t'$}
 }
 \caption{$F$ Filter - actor2}
 \end{algorithm}
@@ -233,43 +250,41 @@ Filter - Actor3
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
-\SetKwInOut{PG}{Filter Program}
+\SetKwInOut{FS}{$\st$}
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ac}{actor3}
 \SetKwProg{df}{def}{:}{}
-\P{$(u, l) \in E$}
+\P{$l \in L$}
+\FS{$(W, \dw, \bt)$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
 \BlankLine
 \tcp*[h]{$IC_{W_2}$ Channel to build Bi-triangles $\bt$}\\
 \PrC{$|\dw| \geq 1$}
-\PC{$|\bt| \geq 1$ or Filter dies}
+\PC{$|\bt| \geq 1$ or $\fid$}
 \df{\ac{}}{
-      $\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
-      \ForAll{$\la l', W' \ra \in IC_{W_2}$}{
+      $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
+      \ForAll{$\la l', W_l' \ra \in IC_{W_2}$}{
             \tcp*[h]{By pass to be used by following Filters}
-            $\p(\la l', W' \ra, OC_{W_2})$\\ 
+            $\p(\la l', W_l' \ra, OC_{W_2})$\\ 
             \ForEach(\tcp*{For each double wedge in State}){$\la (l_l, l_u), U_t' \ra \in \dw$}{
                   $U_t'' \leftarrow \emptyset$\\
-                  \If{$l' > l_l \land l' < l_u$}{
-                        \ForEach{$(u_1, u_2, u_3) \in U_t'$}{
-                              \tcp*[h]{Get lower and upper bound indexes of Set. If exist there are greater or equal 0}
-                              $idx_1 \leftarrow \io(u_1, W')$\\
-                              $idx_3 \leftarrow \io(u_3, W')$\\
-                              \If{$idx_1 \geq 0 \land idx_3 > idx_1$}{
-                                    \ForEach{$w_i \in W', i \geq idx_1 \land i \leq idx_3$}{
-                                          $U_t'' \leftarrow U_t'' \cup \{u_1, u_2, u_3\} $
-                                    }
-                              }                  
-                        }
+                  \ForEach{$(u_1, u_2, u_3) \in U_t'$}{
+                        \tcp*[h]{Get lower and upper bound indexes of Set. If exist there are greater or equal 0}
+                        $idx_1 \leftarrow \io(u_1, W_l')$\\
+                        $idx_3 \leftarrow \io(u_3, W_l')$\\
+                        \If{$idx_1 \geq 0 \land idx_3 > idx_1$}{
+                              $U_t'' \leftarrow U_t'' \cup \{u_1, u_2, u_3\} $
+                        }                  
                   }
             }
             \If{$U_t'' \neq \emptyset$}{
                   $\bt \leftarrow \bt \cup \{(l_l, l', l_u), U_t''\}$
             }
       }
-      $\us(\la l, W \ra, \mathbb{DW}, \mathbb{BT})$\\
+      \uIf{$\bt = \emptyset$}{$\fd$}
+      \Else{$\us(\la l, W_t \ra, \mathbb{DW}, \mathbb{BT})$\\}
 }
 \caption{$F$ Filter - actor3}
 \end{algorithm}
@@ -282,12 +297,13 @@ Filter - Actor4
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
-\SetKwInOut{PG}{Filter Program}
+\SetKwInOut{FS}{$\st$}
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ad}{actor4}
 \SetKwProg{df}{def}{:}{}
-\P{$(u, l) \in E$}
+\P{$l \in L$}
+\FS{$(W, \dw, \bt)$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
 \BlankLine
