@@ -270,7 +270,7 @@ Filter - Actor3
       \ForAll{$\la l', W_l' \ra \in IC_{W_2}$}{
             \tcp*[h]{By pass to be used by following Filters}
             $\p(\la l', W_l' \ra, OC_{W_2})$\\ 
-            \ForEach(\tcp*{For each double wedge in State}){$\la (l_l, l_u), U_t' \ra \in \dw$}{
+            \ForEach(\tcp*{For each double wedge in State}){$\la (l_l, l_u), U_t' \ra \in \dw, l_l \neq l' \land l_u \neq l'$}{
                   $U_t'' \leftarrow \emptyset$\\
                   \ForEach{$(u_1, u_2, u_3) \in U_t'$}{
                         \tcp*[h]{Get lower and upper bound indexes of Set. If exist there are greater or equal 0}

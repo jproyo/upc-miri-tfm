@@ -154,7 +154,7 @@ actor3 _ _ _ _ rfb _ _ _ wfb = do
     foldM_ rfb $ \w@(W l' w_t') -> do
       push w wfb
       forM_ dtlist $ \(DW (l_l, l_u) ut) ->
-        let result = [ (u_1, u_2, u_3) | (u_1, u_2, u_3) <- S.toList ut, IS.member u_1 w_t' && IS.member u_3 w_t' ]
+        let result = [ (u_1, u_2, u_3) | (u_1, u_2, u_3) <- S.toList ut, IS.member u_1 w_t' && IS.member u_3 w_t', l' /= l_l && l' /= l_u ]
         in  unless (R.null result) $ modify $ \(w', dwtt', bttt) ->
               (w', dwtt', addBt (BT (l_l, l', l_u) $ S.fromList result) bttt)
   rfb |=>| wfb $ id
