@@ -9,6 +9,7 @@
 
 module Edges where
 
+import           Data.IntMap.Lazy
 import           Data.IntSet                                       as IS
 import           Data.Set                                          as S
 import           Relude                                            as R
@@ -18,6 +19,10 @@ import           Text.Trifecta.Parser                              as P
 type LowerVertex = Int
 type UpperVertex = Int
 type Edge = (UpperVertex, LowerVertex)
+
+-- | Command query
+data Q = ByVertex Int
+       | Count
 
 data W = W
   { _wLowerVertex :: LowerVertex
@@ -37,7 +42,7 @@ data DW = DW
   deriving Show
 
 newtype DWTT = DWTT [DW]
-  deriving newtype Show
+  deriving newtype (Show, Semigroup, Monoid)
 
 addDw :: DW -> DWTT -> DWTT
 addDw e (DWTT dw) = DWTT $ e : dw
@@ -51,14 +56,26 @@ data BT = BT
   }
   deriving Show
 
-newtype BTTT = BTTT [BT]
-  deriving newtype Show
+data BTTT = BTTT
+  { _btttKeys :: IntSet
+  , _btttBts  :: [BT]
+  }
+
+instance Monoid BTTT where
+  mempty = BTTT mempty mempty
+
+instance Semigroup BTTT where
+  bts1 <> bts2 = BTTT { _btttKeys = _btttKeys bts1 <> _btttKeys bts2, _btttBts = _btttBts bts1 <> _btttBts bts2 }
 
 addBt :: BT -> BTTT -> BTTT
-addBt e (BTTT bt) = BTTT $ e : bt
+addBt bt@BT {..} bts =
+  let newBtKeys = S.foldl (\bs (a, b, c) -> a `IS.insert` (b `IS.insert` (c `IS.insert` bs)))
+                          IS.empty
+                          (S.singleton _btLower <> _btUpper)
+  in  bts { _btttKeys = _btttKeys bts <> newBtKeys, _btttBts = bt : _btttBts bts }
 
 hasNotBT :: BTTT -> Bool
-hasNotBT (BTTT x) = R.null x
+hasNotBT BTTT {..} = R.null _btttBts
 
 nonEdge :: Edge
 nonEdge = (-1, -1)
