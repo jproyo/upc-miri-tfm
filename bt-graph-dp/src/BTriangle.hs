@@ -51,7 +51,7 @@ source' :: forall k (st :: k)
              -> WriteChannel Q
              -> WriteChannel BT
              -> WriteChannel W
-             -> IO ()
+             -> DP st ()
              )
 source' = withSource @DPBT . toFilters
 
@@ -62,7 +62,7 @@ toFilters :: FilePath
           -> WriteChannel Q
           -> WriteChannel BT
           -> WriteChannel W
-          -> IO ()
+          -> DP st ()
 toFilters filePath rfw wedges ww1 query wbt wfb = do
   unfoldFile filePath wedges (toEdge . decodeUtf8) -- Read from file and feed stream
   finish ww1 >> finish wbt -- mark as not used to continue in following filters
@@ -81,20 +81,21 @@ toFilters filePath rfw wedges ww1 query wbt wfb = do
       c   -> push c query >> loop
 
 
-sink' :: Stage (ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> IO ())
+sink' :: Stage (ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> DP s ())
 sink' = withSink @DPBT toOutput
 
-toOutput :: ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> IO ()
+toOutput :: ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> DP s ()
 toOutput _ _ _ rbt = foldM_ rbt $ \e -> liftIO $ do
   now <- nanoSecs
   putTextLn $ "Element Result: " <> show e <> " - Time: " <> showFullPrecision now
 
 type FilterState = (W, DWTT, BTTT)
 
-generator' :: forall k (st :: k) . GeneratorStage DPBT FilterState Edge
+generator' :: forall k (st :: k) . GeneratorStage DPBT FilterState Edge st
 generator' = let gen = withGenerator @DPBT genAction in mkGenerator gen filterTemplate
 
-genAction :: Filter DPBT FilterState Edge
+genAction :: forall s. 
+             Filter DPBT FilterState Edge s
           -> ReadChannel (UpperVertex, LowerVertex)
           -> ReadChannel W
           -> ReadChannel Q
@@ -105,7 +106,7 @@ genAction :: Filter DPBT FilterState Edge
           -> WriteChannel Q
           -> WriteChannel BT
           -> WriteChannel W
-          -> IO ()
+          -> DP s ()
 genAction filter' redges rw1 rq rbt rfd _ _ _ wbt wfc = do
   let unfoldFilter = mkUnfoldFilterForAll filter'
                                           (\(u, l) -> (W l $ IS.singleton u, mempty, mempty))
@@ -115,11 +116,10 @@ genAction filter' redges rw1 rq rbt rfd _ _ _ wbt wfc = do
   rw1' |=>| wfc $ id
   rbt' |=>| wbt $ id
 
-filterTemplate :: Filter DPBT FilterState Edge
+filterTemplate :: forall s. Filter DPBT FilterState Edge s
 filterTemplate = actor actor1 |>>> actor actor2 |>>> actor actor3 |>> actor actor4
 
-actor1 :: IORef FilterState
-       -> Edge
+actor1 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
        -> ReadChannel W
        -> ReadChannel Q
@@ -130,19 +130,18 @@ actor1 :: IORef FilterState
        -> WriteChannel Q
        -> WriteChannel BT
        -> WriteChannel W
-       -> IO ()
-actor1 ref (_, l) redges _ _ _ _ we ww1 _ _ _ = do
+       -> StateT FilterState (DP st) ()
+actor1 (_, l) redges _ _ _ _ we ww1 _ _ _ = do
   foldM_ redges $ \e@(u', l') -> do
     putTextLn $ "Reading edge" <> show e
     if l' == l
-      then modifyIORef ref $ \(w@W {..}, dwtt, bttt) -> (w { _wWedges = addWedge _wWedges u' }, dwtt, bttt)
+      then modify $ \(w@W {..}, dwtt, bttt) -> (w { _wWedges = addWedge _wWedges u' }, dwtt, bttt)
       else push e we
   finish we
-  (w@(W _ w_t), _, _) <- readIORef ref
+  (w@(W _ w_t), _, _) <- get
   when (IS.size w_t > 1) $ push w ww1
 
-actor2 :: IORef FilterState
-       -> Edge
+actor2 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
        -> ReadChannel W
        -> ReadChannel Q
@@ -153,9 +152,9 @@ actor2 :: IORef FilterState
        -> WriteChannel Q
        -> WriteChannel BT
        -> WriteChannel W
-       -> IO ()
-actor2 ref (_, l) _ rw1 _ _ _ _ ww1 _ _ _ = do
-  (W _ w_t, _, _) <- readIORef ref
+       -> StateT FilterState (DP st) ()
+actor2 (_, l) _ rw1 _ _ _ _ ww1 _ _ _ = do
+  (W _ w_t, _, _) <- get
   foldM_ rw1 $ \w@(W l' w_t') -> do
     putTextLn $ "[A2] - Reading rw1: " <> show w_t'
     push w ww1
@@ -177,14 +176,13 @@ actor2 ref (_, l) _ rw1 _ _ _ _ ww1 _ _ _ = do
           ut = mconcat result
         in
           if not $ R.null ut
-            then modifyIORef ref $ \(w', dwtt, bttt) -> (w', addDw (DW (l', l) $ S.fromList ut) dwtt, bttt)
+            then modify $ \(w', dwtt, bttt) -> (w', addDw (DW (l', l) $ S.fromList ut) dwtt, bttt)
             else pure ()
       else pure ()
   finish ww1
 
 
-actor3 :: IORef FilterState
-       -> Edge
+actor3 :: Edge 
        -> ReadChannel (UpperVertex, LowerVertex)
        -> ReadChannel W
        -> ReadChannel Q
@@ -195,10 +193,10 @@ actor3 :: IORef FilterState
        -> WriteChannel Q
        -> WriteChannel BT
        -> WriteChannel W
-       -> IO ()
-actor3 ref e _ _ _ _ rfb _ _ _ _ wfb = do
+       -> StateT FilterState (DP st) ()
+actor3 e _ _ _ _ rfb _ _ _ _ wfb = do
   putTextLn $ "Starting building BT- Edge: " <> show e
-  (_, dwtt, _) <- readIORef ref
+  (_, dwtt, _) <- get
   foldM_ rfb $ \w@(W l' w_t') -> do
     push w wfb
     unless (hasNotDW dwtt) $ do
@@ -212,7 +210,7 @@ actor3 ref e _ _ _ _ rfb _ _ _ _ wfb = do
               , l' /= l_l && l' /= l_u
               ]
         in  if not $ R.null result
-              then modifyIORef ref
+              then modify
                 $ \(w', dwtt', bttt) -> (w', dwtt', addBt (BT (l_l, l', l_u) $ S.fromList result) bttt)
               else pure ()
   putTextLn $ "Before Finishing building BT- Edge: " <> show e
@@ -220,8 +218,7 @@ actor3 ref e _ _ _ _ rfb _ _ _ _ wfb = do
   putTextLn $ "Finishing building BT- Edge: " <> show e
 
 
-actor4 :: IORef FilterState
-       -> Edge
+actor4 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
        -> ReadChannel W
        -> ReadChannel Q
@@ -232,9 +229,9 @@ actor4 :: IORef FilterState
        -> WriteChannel Q
        -> WriteChannel BT
        -> WriteChannel W
-       -> IO ()
-actor4 ref _ _ _ query rbt _ _ _ wq wbt _ = do
-  (_, _, bttt) <- readIORef ref
+       -> StateT FilterState (DP st) ()
+actor4 _ _ _ query rbt _ _ _ wq wbt _ = do
+  (_, _, bttt) <- get
   rbt |=> wbt
   foldM_ query $ \e -> do
     push e wq
