@@ -5,7 +5,9 @@ packages:
 - .
 
 extra-deps:
-- dynamic-pipeline-0.3.1.2
+- github: jproyo/dynamic-pipeline
+  commit: ca1cf995c63e8572e57cad0e310bcc601255f7ef
+#- dynamic-pipeline-0.3.1.2
 - HList-0.5.0.0
 
 allow-newer: true

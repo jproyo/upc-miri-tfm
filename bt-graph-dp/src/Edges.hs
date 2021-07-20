@@ -9,7 +9,6 @@
 
 module Edges where
 
-import           Data.IntMap.Lazy
 import           Data.IntSet                                       as IS
 import           Data.Set                                          as S
 import           Relude                                            as R
@@ -21,8 +20,11 @@ type UpperVertex = Int
 type Edge = (UpperVertex, LowerVertex)
 
 -- | Command query
-data Q = ByVertex Int
+data Q = ByVertex [Int]
        | Count
+       | NoCommand
+       | End
+  deriving (Show, Read)
 
 data W = W
   { _wLowerVertex :: LowerVertex
@@ -92,3 +94,17 @@ parseInt = fromInteger <$> integer
 parseEdge :: Parser Edge
 parseEdge = (,) <$> (whiteSpace *> parseInt <* whiteSpace) <*> parseInt
 
+toCommand :: String -> Q
+toCommand = foldResult (const NoCommand) identity . toCommand'
+
+toCommand' :: String -> Text.Trifecta.Result Q
+toCommand' = P.parseString parseCommand mempty
+
+parseCommand :: Parser Q
+parseCommand = byVertex <|> endQ
+
+byVertex :: Parser Q
+byVertex = ByVertex <$> (string "vertices in" *> (whiteSpace *> many parseInt))
+
+endQ :: Parser Q
+endQ = string "end" $> End

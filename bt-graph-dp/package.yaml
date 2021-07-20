@@ -69,6 +69,7 @@ dependencies:
   - containers
   - dynamic-pipeline
   - relude
+  - time
   - trifecta
 
 executables:
