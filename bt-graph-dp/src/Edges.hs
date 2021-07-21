@@ -101,10 +101,13 @@ toCommand' :: String -> Text.Trifecta.Result Q
 toCommand' = P.parseString parseCommand mempty
 
 parseCommand :: Parser Q
-parseCommand = byVertex <|> endQ
+parseCommand = byVertex <|> countQ <|> endQ
 
 byVertex :: Parser Q
 byVertex = ByVertex <$> (string "vertices in" *> (whiteSpace *> many parseInt))
+
+countQ :: Parser Q
+countQ = string "count" $> Count
 
 endQ :: Parser Q
 endQ = string "end" $> End
