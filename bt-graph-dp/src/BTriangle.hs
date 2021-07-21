@@ -75,10 +75,11 @@ toFilters filePath rfw wedges ww1 query wbt wfb = do
   loop      = getLine >>= \l -> do
     now <- nanoSecs
     tid <- myThreadId
-    putTextLn $ "New Command: " <> l <> " - Time: " <> showFullPrecision now <> " - Thread: " <> show tid
+    putTextLn $ "Command Line: " <> l <> " - Time: " <> showFullPrecision now <> " - Thread: " <> show tid
     case toCommand $ toString l of
-      End -> pure ()
-      c   -> push c query >> loop
+      End       -> pure ()
+      NoCommand -> putTextLn "[ERROR] No Command was inputed. Possible commands: 'vertices in 1 2 3...' | 'count'" >> loop
+      c         -> putTextLn "Before Query" >> push c query >> loop
 
 
 sink' :: Stage (ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> DP s ())
@@ -230,18 +231,21 @@ actor4 :: Edge
        -> WriteChannel BT
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
-actor4 _ _ _ query rbt _ _ _ wq wbt _ = do
+actor4 edge _ _ query rbt _ _ _ wq wbt _ = do   --- actor4_1 -> actor4_2 -> ..... -> actor4_n -> sink
   (_, _, bttt) <- get
-  rbt |=> wbt
+  putTextLn $ "Before foldM_ query - Id: " <> show edge
+  void $ liftIO $ async (rbt |=> wbt)
   foldM_ query $ \e -> do
+    putTextLn $ "Before push " <> show e <> " - Id: " <> show edge
     push e wq
+    putTextLn $ "After push " <> show e <> " - Id: " <> show edge <> " - Result: " <> show (_btttKeys bttt)
     unless (hasNotBT bttt) $ case e of
       ByVertex k -> do
         liftIO $ do
           tid <- myThreadId
-          putTextLn $ "New Command: " <> show k <> " - threadid: " <> show tid
+          putTextLn $ "New Command: " <> show k <> " - threadid: " <> show tid  <> " - Id: " <> show edge
         if not $ IS.null (IS.fromList k `IS.intersection` _btttKeys bttt)
-          then forM_ (_btttBts bttt) (`push` wbt)
+          then forM_ (_btttBts bttt) (liftIO . flip push wbt)
           else pure ()
       _ -> pure ()
   finish wq
