@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3af92e030d4deb843364b17714f63dae6d379b9d1e3b12ec5a4961e9c2c6ab2a
+-- hash: dda24fa8094acb3880c2175a3bea84bef9afb2eca8c118e47f53c17ef97b7de6
 
 name:           bt-graph-dp
 version:        0.1.0.0
@@ -69,6 +69,7 @@ executable bt-graph-dp
     , base >=4.7 && <5
     , containers
     , dynamic-pipeline
+    , raw-strings-qq
     , relude
     , time
     , trifecta
