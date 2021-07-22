@@ -77,3 +77,8 @@ executables:
   bt-graph-dp:
     source-dirs:      src
     main:             Main.hs
+    ghc-options:
+      - -threaded
+      - -O3
+      - -rtsopts
+      - -with-rtsopts=-N
