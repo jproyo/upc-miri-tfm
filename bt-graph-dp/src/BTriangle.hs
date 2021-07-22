@@ -37,8 +37,8 @@ showFullPrecision = toText . flip (showFFloat Nothing) ""
 -- printCC e c now now2 = putLBSLn $ "test-1,"<> e <>"," <> show c <> "," <> showFullPrecision (now2 - now)
 
 -- brittany-disable-next-binding
-type DPBT = Source (Channel (Edge :<+> W :<+> Q :<+> BT :<+> W :<+> Eof))
-                :=> Generator (Channel (Edge :<+> W :<+> Q :<+> BT :<+> Eof))
+type DPBT = Source (Channel (Edge :<+> W :<+> Q :<+> BT :<+> BTResult :<+> W :<+> Eof))
+                :=> Generator (Channel (Edge :<+> W :<+> Q :<+> BT :<+> BTResult :<+> Eof))
                 :=> FeedbackChannel (W :<+> Eof)
                 :=> Sink
 
@@ -50,6 +50,7 @@ source' :: forall k (st :: k)
              -> WriteChannel W
              -> WriteChannel Q
              -> WriteChannel BT
+             -> WriteChannel BTResult
              -> WriteChannel W
              -> DP st ()
              )
@@ -61,11 +62,12 @@ toFilters :: FilePath
           -> WriteChannel W
           -> WriteChannel Q
           -> WriteChannel BT
+          -> WriteChannel BTResult
           -> WriteChannel W
           -> DP st ()
-toFilters filePath rfw wedges ww1 query wbt wfb = do
+toFilters filePath rfw wedges ww1 query wbt wrbt wfb = do
   unfoldFile filePath wedges (toEdge . decodeUtf8) -- Read from file and feed stream
-  finish ww1 >> finish wbt -- mark as not used to continue in following filters
+  finish ww1 >> finish wbt >> finish wrbt -- mark as not used to continue in following filters
   rfw |=>| wfb $ id -- feedback channel
   liftIO doCommand
   finish query
@@ -73,22 +75,24 @@ toFilters filePath rfw wedges ww1 query wbt wfb = do
   doCommand = loop
 
   loop      = getLine >>= \l -> do
-    now <- nanoSecs
-    tid <- myThreadId
-    putTextLn $ "Command Line: " <> l <> " - Time: " <> showFullPrecision now <> " - Thread: " <> show tid
+    putTextLn $ "Executing Command: " <> l
     case toCommand $ toString l of
       End       -> pure ()
-      NoCommand -> putTextLn "[ERROR] No Command was inputed. Possible commands: 'vertices in 1 2 3...' | 'count'" >> loop
-      c         -> putTextLn "Before Query" >> push c query >> loop
+      NoCommand -> putTextLn ("[ERROR] No Command was inputed. Possible commands: \n" <> commandsText) >> loop
+      c         -> push c query >> loop
 
 
-sink' :: Stage (ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> DP s ())
+sink' :: Stage (ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> ReadChannel BTResult -> DP s ())
 sink' = withSink @DPBT toOutput
 
-toOutput :: ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> DP s ()
-toOutput _ _ _ rbt = foldM_ rbt $ \e -> liftIO $ do
-  now <- nanoSecs
-  putTextLn $ "Element Result: " <> show e <> " - Time: " <> showFullPrecision now
+toOutput :: ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> ReadChannel BTResult -> DP s ()
+toOutput _ _ _ _ rbt = foldM_ rbt $ \case 
+  RBT bt beforeNow -> liftIO $ do
+                        now <- nanoSecs
+                        putTextLn $ "[RESULT][ELAPSED: "<> showFullPrecision (now - beforeNow) <> " nanosec] [DATA - " <> show bt <> "]"
+  RC c beforeNow   -> liftIO $ do
+                        now <- nanoSecs
+                        putTextLn $ "[RESULT][ELAPSED: "<> showFullPrecision (now - beforeNow) <> " nanosec] [DATA - " <> show c <> "]"
 
 type FilterState = (W, DWTT, BTTT)
 
@@ -101,21 +105,23 @@ genAction :: forall s.
           -> ReadChannel W
           -> ReadChannel Q
           -> ReadChannel BT
+          -> ReadChannel BTResult
           -> ReadChannel W
           -> WriteChannel (UpperVertex, LowerVertex)
           -> WriteChannel W
           -> WriteChannel Q
           -> WriteChannel BT
+          -> WriteChannel BTResult
           -> WriteChannel W
           -> DP s ()
-genAction filter' redges rw1 rq rbt rfd _ _ _ wbt wfc = do
+genAction filter' redges rw1 rq rbt rbtr rfd _ _ _ _ wbtr wfc = do
   let unfoldFilter = mkUnfoldFilterForAll filter'
                                           (\(u, l) -> (W l $ IS.singleton u, mempty, mempty))
                                           redges
-                                          (rw1 .*. rq .*. rbt .*. rfd .*. HNil)
-  HCons rw1' (HCons _ (HCons rbt' _)) <- unfoldF unfoldFilter
+                                          (rw1 .*. rq .*. rbt .*. rbtr .*. rfd .*. HNil)
+  HCons rw1' (HCons _ (HCons _ (HCons rbtr' _))) <- unfoldF unfoldFilter
   rw1' |=>| wfc $ id
-  rbt' |=>| wbt $ id
+  rbtr' |=>| wbtr $ id
 
 filterTemplate :: forall s. Filter DPBT FilterState Edge s
 filterTemplate = actor actor1 |>>> actor actor2 |>>> actor actor3 |>> actor actor4
@@ -125,16 +131,17 @@ actor1 :: Edge
        -> ReadChannel W
        -> ReadChannel Q
        -> ReadChannel BT
+       -> ReadChannel BTResult
        -> ReadChannel W
        -> WriteChannel (UpperVertex, LowerVertex)
        -> WriteChannel W
        -> WriteChannel Q
        -> WriteChannel BT
+       -> WriteChannel BTResult
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
-actor1 (_, l) redges _ _ _ _ we ww1 _ _ _ = do
+actor1 (_, l) redges _ _ _ _ _ we ww1 _ _ _ _ = do
   foldM_ redges $ \e@(u', l') -> do
-    putTextLn $ "Reading edge" <> show e
     if l' == l
       then modify $ \(w@W {..}, dwtt, bttt) -> (w { _wWedges = addWedge _wWedges u' }, dwtt, bttt)
       else push e we
@@ -147,17 +154,18 @@ actor2 :: Edge
        -> ReadChannel W
        -> ReadChannel Q
        -> ReadChannel BT
+       -> ReadChannel BTResult
        -> ReadChannel W
        -> WriteChannel (UpperVertex, LowerVertex)
        -> WriteChannel W
        -> WriteChannel Q
        -> WriteChannel BT
+       -> WriteChannel BTResult
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
-actor2 (_, l) _ rw1 _ _ _ _ ww1 _ _ _ = do
+actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
   (W _ w_t, _, _) <- get
   foldM_ rw1 $ \w@(W l' w_t') -> do
-    putTextLn $ "[A2] - Reading rw1: " <> show w_t'
     push w ww1
     if (IS.size w_t > 1) && l' < l && IS.size (IS.intersection w_t w_t') > 0
       then
@@ -188,21 +196,21 @@ actor3 :: Edge
        -> ReadChannel W
        -> ReadChannel Q
        -> ReadChannel BT
+       -> ReadChannel BTResult
        -> ReadChannel W
        -> WriteChannel (UpperVertex, LowerVertex)
        -> WriteChannel W
        -> WriteChannel Q
        -> WriteChannel BT
+       -> WriteChannel BTResult
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
-actor3 e _ _ _ _ rfb _ _ _ _ wfb = do
-  putTextLn $ "Starting building BT- Edge: " <> show e
+actor3 _ _ _ _ _ _ rfb _ _ _ _ _ wfb = do
   (_, dwtt, _) <- get
   foldM_ rfb $ \w@(W l' w_t') -> do
     push w wfb
     unless (hasNotDW dwtt) $ do
       let (DWTT dtlist) = dwtt
-      putTextLn $ "[A3] - Reading rfb: " <> show w <> " - Edge: " <> show e
       forM_ dtlist $ \(DW (l_l, l_u) ut) ->
         let result =
               [ (u_1, u_2, u_3)
@@ -214,9 +222,8 @@ actor3 e _ _ _ _ rfb _ _ _ _ wfb = do
               then modify
                 $ \(w', dwtt', bttt) -> (w', dwtt', addBt (BT (l_l, l', l_u) $ S.fromList result) bttt)
               else pure ()
-  putTextLn $ "Before Finishing building BT- Edge: " <> show e
   finish wfb
-  putTextLn $ "Finishing building BT- Edge: " <> show e
+  liftIO myThreadId >>= putTextLn . ("Finishing building BT for Filter " <>) . show
 
 
 actor4 :: Edge
@@ -224,29 +231,36 @@ actor4 :: Edge
        -> ReadChannel W
        -> ReadChannel Q
        -> ReadChannel BT
+       -> ReadChannel BTResult
        -> ReadChannel W
        -> WriteChannel (UpperVertex, LowerVertex)
        -> WriteChannel W
        -> WriteChannel Q
        -> WriteChannel BT
+       -> WriteChannel BTResult
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
-actor4 edge _ _ query rbt _ _ _ wq wbt _ = do   --- actor4_1 -> actor4_2 -> ..... -> actor4_n -> sink
+actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do   
   (_, _, bttt) <- get
-  putTextLn $ "Before foldM_ query - Id: " <> show edge
-  void $ liftIO $ async (rbt |=> wbt)
+  void $ liftIO $ async (rbtr |=> wbtr)
   foldM_ query $ \e -> do
-    putTextLn $ "Before push " <> show e <> " - Id: " <> show edge
     push e wq
-    putTextLn $ "After push " <> show e <> " - Id: " <> show edge <> " - Result: " <> show (_btttKeys bttt)
     unless (hasNotBT bttt) $ case e of
       ByVertex k -> do
-        liftIO $ do
-          tid <- myThreadId
-          putTextLn $ "New Command: " <> show k <> " - threadid: " <> show tid  <> " - Id: " <> show edge
         if not $ IS.null (IS.fromList k `IS.intersection` _btttKeys bttt)
-          then forM_ (_btttBts bttt) (liftIO . flip push wbt)
+          then do 
+            now <- liftIO nanoSecs
+            forM_ (_btttBts bttt) (flip push wbtr . flip RBT now)
           else pure ()
+      ByEdge edges -> do
+        if not $ S.null (S.fromList edges `S.intersection` _btttEdges bttt)
+          then do 
+            now <- liftIO nanoSecs
+            forM_ (_btttBts bttt) (flip push wbtr . flip RBT now)
+          else pure ()
+      Count -> do
+        now <- liftIO nanoSecs
+        push (RC (R.length $ _btttBts bttt) now) wbtr
       _ -> pure ()
   finish wq
 
