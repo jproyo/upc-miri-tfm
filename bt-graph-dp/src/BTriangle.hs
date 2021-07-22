@@ -261,7 +261,7 @@ actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
       ByEdge edges | not $ S.null (S.fromList edges `S.intersection` _btttEdges bttt) -> sendBts bttt wbtr
       Count                                                                           -> do
         now <- liftIO nanoSecs
-        push (RC (R.length $ _btttBts bttt) now) wbtr
+        push (RC (getSum $ R.foldMap (Sum . S.size . _btUpper) $ _btttBts bttt) now) wbtr
       _ -> pure ()
   finish wq
 
@@ -269,8 +269,6 @@ sendBts :: MonadIO m => BTTT -> WriteChannel BTResult -> m ()
 sendBts bttt wbtr = do
   now <- liftIO nanoSecs
   forM_ (_btttBts bttt) (flip push wbtr . flip RBT now)
-
-
 
 program :: FilePath -> IO ()
 program file = runDP $ mkDP @DPBT (source' file) generator' sink'
