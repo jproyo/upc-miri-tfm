@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dda24fa8094acb3880c2175a3bea84bef9afb2eca8c118e47f53c17ef97b7de6
+-- hash: 472707cba087c406d52d6defb26fdbc08e1bc11ee78adebaefda229864857b73
 
 name:           bt-graph-dp
 version:        0.1.0.0
@@ -63,7 +63,7 @@ executable bt-graph-dp
       TypeApplications
       TypeOperators
       TypeFamilies
-  ghc-options: -Wall -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -fspecialise-aggressively -fexpose-all-unfoldings -flate-specialise -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -Wno-unused-foralls -fno-warn-deprecations -fno-warn-orphans
+  ghc-options: -Wall -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -fspecialise-aggressively -fexpose-all-unfoldings -flate-specialise -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -Wno-unused-foralls -fno-warn-deprecations -fno-warn-orphans -threaded -O3 -rtsopts -with-rtsopts=-N
   build-depends:
       async
     , base >=4.7 && <5
