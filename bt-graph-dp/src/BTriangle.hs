@@ -15,8 +15,8 @@ import           Data.Set                                          as S
 import           Data.Time.Clock.POSIX
 import           DynamicPipeline
 import           Edges
-import           Relude                                            as R
 import           Numeric
+import           Relude                                            as R
 
 t :: Integral b => POSIXTime -> IO b
 t fct = round . (fct *) <$> getPOSIXTime
@@ -82,25 +82,37 @@ toFilters filePath rfw wedges ww1 query wbt wrbt wfb = do
       c         -> push c query >> loop
 
 
-sink' :: Stage (ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> ReadChannel BTResult -> DP s ())
+sink' :: Stage
+           (  ReadChannel (UpperVertex, LowerVertex)
+           -> ReadChannel W
+           -> ReadChannel Q
+           -> ReadChannel BT
+           -> ReadChannel BTResult
+           -> DP s ()
+           )
 sink' = withSink @DPBT toOutput
 
-toOutput :: ReadChannel (UpperVertex, LowerVertex) -> ReadChannel W -> ReadChannel Q -> ReadChannel BT -> ReadChannel BTResult -> DP s ()
-toOutput _ _ _ _ rbt = foldM_ rbt $ \case 
+toOutput :: ReadChannel (UpperVertex, LowerVertex)
+         -> ReadChannel W
+         -> ReadChannel Q
+         -> ReadChannel BT
+         -> ReadChannel BTResult
+         -> DP s ()
+toOutput _ _ _ _ rbt = foldM_ rbt $ \case
   RBT bt beforeNow -> liftIO $ do
-                        now <- nanoSecs
-                        putTextLn $ "[RESULT][ELAPSED: "<> showFullPrecision (now - beforeNow) <> " nanosec] [DATA - " <> show bt <> "]"
-  RC c beforeNow   -> liftIO $ do
-                        now <- nanoSecs
-                        putTextLn $ "[RESULT][ELAPSED: "<> showFullPrecision (now - beforeNow) <> " nanosec] [DATA - " <> show c <> "]"
+    now <- nanoSecs
+    putTextLn $ "[RESULT][ELAPSED: " <> showFullPrecision (now - beforeNow) <> " nanosec] [DATA - " <> show bt <> "]"
+  RC c beforeNow -> liftIO $ do
+    now <- nanoSecs
+    putTextLn $ "[RESULT][ELAPSED: " <> showFullPrecision (now - beforeNow) <> " nanosec] [DATA - " <> show c <> "]"
 
 type FilterState = (W, DWTT, BTTT)
 
 generator' :: forall k (st :: k) . GeneratorStage DPBT FilterState Edge st
 generator' = let gen = withGenerator @DPBT genAction in mkGenerator gen filterTemplate
 
-genAction :: forall s. 
-             Filter DPBT FilterState Edge s
+genAction :: forall s
+           . Filter DPBT FilterState Edge s
           -> ReadChannel (UpperVertex, LowerVertex)
           -> ReadChannel W
           -> ReadChannel Q
@@ -123,7 +135,7 @@ genAction filter' redges rw1 rq rbt rbtr rfd _ _ _ _ wbtr wfc = do
   rw1' |=>| wfc $ id
   rbtr' |=>| wbtr $ id
 
-filterTemplate :: forall s. Filter DPBT FilterState Edge s
+filterTemplate :: forall s . Filter DPBT FilterState Edge s
 filterTemplate = actor actor1 |>>> actor actor2 |>>> actor actor3 |>> actor actor4
 
 actor1 :: Edge
@@ -191,7 +203,7 @@ actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
   finish ww1
 
 
-actor3 :: Edge 
+actor3 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
        -> ReadChannel W
        -> ReadChannel Q
@@ -219,8 +231,7 @@ actor3 _ _ _ _ _ _ rfb _ _ _ _ _ wfb = do
               , l' /= l_l && l' /= l_u
               ]
         in  if not $ R.null result
-              then modify
-                $ \(w', dwtt', bttt) -> (w', dwtt', addBt (BT (l_l, l', l_u) $ S.fromList result) bttt)
+              then modify $ \(w', dwtt', bttt) -> (w', dwtt', addBt (BT (l_l, l', l_u) $ S.fromList result) bttt)
               else pure ()
   finish wfb
   liftIO myThreadId >>= putTextLn . ("Finishing building BT for Filter " <>) . show
@@ -240,29 +251,24 @@ actor4 :: Edge
        -> WriteChannel BTResult
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
-actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do   
+actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
   (_, _, bttt) <- get
   void $ liftIO $ async (rbtr |=> wbtr)
   foldM_ query $ \e -> do
     push e wq
     unless (hasNotBT bttt) $ case e of
-      ByVertex k -> do
-        if not $ IS.null (IS.fromList k `IS.intersection` _btttKeys bttt)
-          then do 
-            now <- liftIO nanoSecs
-            forM_ (_btttBts bttt) (flip push wbtr . flip RBT now)
-          else pure ()
-      ByEdge edges -> do
-        if not $ S.null (S.fromList edges `S.intersection` _btttEdges bttt)
-          then do 
-            now <- liftIO nanoSecs
-            forM_ (_btttBts bttt) (flip push wbtr . flip RBT now)
-          else pure ()
-      Count -> do
+      ByVertex k | not $ IS.null (IS.fromList k `IS.intersection` _btttKeys bttt)     -> sendBts bttt wbtr
+      ByEdge edges | not $ S.null (S.fromList edges `S.intersection` _btttEdges bttt) -> sendBts bttt wbtr
+      Count                                                                           -> do
         now <- liftIO nanoSecs
         push (RC (R.length $ _btttBts bttt) now) wbtr
       _ -> pure ()
   finish wq
+
+sendBts :: MonadIO m => BTTT -> WriteChannel BTResult -> m ()
+sendBts bttt wbtr = do
+  now <- liftIO nanoSecs
+  forM_ (_btttBts bttt) (flip push wbtr . flip RBT now)
 
 
 
