@@ -17,7 +17,7 @@
 \usepackage{caption}
 \usepackage{authblk}
 \usepackage{longtable}
-\usepackage[vlined,ruled]{algorithm2e}
+\usepackage[ruled,linesnumbered,lined,boxed,commentsnumbered]{algorithm2e}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
 \usepackage[cache=false]{minted}
@@ -61,21 +61,22 @@
 \newcommand{\la}{\left\langle}
 \newcommand{\ra}{\right\rangle}
 
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
 \newacronym{fp}{Functional Programming}{Functional Programming}
 
 \newtheorem{hyp}{Hypothesis}
 
 \begin{document}
 
-% \maketitle
+\maketitle
 
-% \tableofcontents
+\tableofcontents
 
-% \section{Introduction}
-% \section{Bi-Triangle Counting}
-% \section{Dynamic Pipeline}
-% \section{Haskell Implementation and Techniques}
-\section{Implementation}
+\section{Introduction}
+\section{Dynamic Pipeline}
+\section{Algorithm Implementation}
 
 Given a Bipartite Graph $G = (V = (U \cup L), E)$, where $V$ is the vertex set and 
 $E$ is the edges set, we build the following algorithm to enumerate Bi-triangles.
@@ -90,21 +91,15 @@ $E$ is the edges set, we build the following algorithm to enumerate Bi-triangles
       \item \textit{double-wedge} is a quintuplet $(u,v,w,t,z), \{u,w,z\} \subseteq U  \land \{v,t\} \subseteq L \land \{(u,v), (v,w), (w, t), (t,z)\} \subseteq E$. 
             $v$, $w$ and $t$ are the middle vertex of the wedge
       \item $F$: Filter template of Wedges DP
-      \item $W_l$: Totally order set where $W_l \subseteq U$ and $(W_l, \prec)$ is a strict total order relation such that for all $a, b$ and $c \in W_l$:
-      \begin{itemize}
-            \item \textit{Irreflexive}: There is not $a \prec a$ 
-            \item \textit{Transitive}: $a \prec b \land b \prec c \Rightarrow a \prec c$ 
-            \item \textit{Connected}: $a \neq b \Rightarrow a \prec b \lor b \prec a$ 
-      \end{itemize}
+      \item $W_l$: Totally order set where $W_l \subseteq U$ and $(W_l, \prec)$ is a strict total order relation.
       \item $W = \la l, W_l \ra$: Aggregated wedges $W_l$ of $l$, where $l \in L$.
       \item $U_t = \{(u_1, u_2, u_3) \mid \{u_1, u_2, u_3\} \subseteq U\}$: Set of triples on the upper layer
       \item $DW = \la (l_1, l_2), U_t \ra$: Aggregated double-wedge, where $\{l_1, l_2\} \subseteq L \land l_l < l_u$, such that $\forall (u_1, u_2, u_3) \in U_t, \{(u_1, l_1), (l_1, u_2), (u_2, l_2), (l_2, u_3)\} \in E$
       \item $\dw$: Set of $DW$
-      \item $L_t = (l_l, l_m, l_u) \mid \{l_l, l_m, l_u\} \subseteq L \land l_l < l_u$: One Triple on the lower layer
-      \item $BT = \la (l_l, l_m, l_u), U_t \ra$: Aggregated double-wedge, where $\{l_l, l_m, l_u\} \subseteq L \land l_l < l_u$, such that \\
+      \item $BT = \la (l_l, l_m, l_u), U_t \ra$: Aggregated double-wedge, where $\{l_l, l_m, l_u\} \subseteq L \land l_l < l_m < l_u$, such that \\
        $\forall (u_1, u_2, u_3) \in U_t, \{(u_1, l_l), (l_l, u_2), (u_2, l_u), (l_u, u_3), (u_3, l_m), (l_m, u_1)\} \subseteq E$
       \item $\bt$: Set of $BT$
-      \item $\st = (W, \dw, \bt)$: State of Filter
+      \item $\st = (\la l, W_l \ra, \dw, \bt)$: State of Filter
       \item $\sw(F,l,\st)$: Spawn new filter instance with parameters $F$, $l \in L$ and $FState$ as the State of the Filter
       \item $\fd$: Kill this filter instance because PostCondition does not fullfil
       \item $\fid$: State after calling $\fd$ on filter. Indicates if Filter is die or not. If it is died, this filter instance does not participate anymore in the pipeline streaming processor
@@ -127,33 +122,62 @@ $E$ is the edges set, we build the following algorithm to enumerate Bi-triangles
       \item $\mt(Q, BT)$: Check if a Query $Q$ matches over $BT$ 
 \end{itemize}
 
-\begin{algorithm}[H]
+Source
+
+\begin{algorithm}
+\SetKwInOut{P}{Input Data}
+\SetKwInOut{Q}{Input Commands}
+\SetKwInOut{IC}{Input Channels}
+\SetKwInOut{OC}{Output Channels}
+\P{$IO_E$: File or Input Stream with Set of Edges $E$}
+\Q{$IO_Q$: File or Input Stream with Commands $Q$}
+\IC{$IC = \la IC_{W_2} \ra$}
+\OC{$OC = \la OC_E, OC_{W_2}, OC_Q \ra$}
+\ForAll(\tcp*[f]{Edges to Generator/Filter}){$(u,l) \in IO_E$}
+{$\p((u,l), OC_E)$
+}
+\ForAll(\tcp*[f]{Feedback from Generator to Filter}){$\la l, W_l \ra \in IC_{W_2}$}
+{$\p(\la l, W_l \ra, OC_{W_2})$
+}
+\ForAll(\tcp*[f]{Send Query Commands}){$Q \in IO_Q$}
+{$\p(Q, OC_Q)$
+}
+\caption{$S_r$ Source}
+\end{algorithm}
+
+\begin{algorithm}
 \SetKwInOut{P}{Filter Template}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
-\SetKwBlock{DoParallel}{do in parallel}{end}
 \P{$F$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_Q, IC_{BT} \ra$}
 \OC{$ OC = \la OC_{W_2}, OC_{BT} \ra$}
-\DoParallel{
-      \ForAll{$(u,l) \in IC_E$}
-      {$\sw(F, l, (\la l, \{u\} \ra, \emptyset, \emptyset))$;\\
-      }
-      \ForAll{$\la l, W_l \ra \in IC_{W_1}$}
-      {$\p(\la l, W_l \ra, OC_{W_2})$;\\
-      }
+\ForAll{$(u,l) \in IC_E$}
+{$\sw(F, l, (\la l, \{u\} \ra, \emptyset, \emptyset))$
+}
+\ForAll(\tcp*[f]{Feedback channel to retrofit Source}){$\la l, W_l \ra \in IC_{W_1}$}
+{$\p(\la l, W_l \ra, OC_{W_2})$
 }
 \ForAll{$BT \in IC_{BT}$}
-{$\p(BT, OC_{BT})$;\\
+{$\p(BT, OC_{BT})$
 }
 \caption{$G$ Generator}
 \end{algorithm}
 
-Filter - Actor1
+\begin{algorithm}
+\SetKwInOut{IC}{Input Channels}
+\SetKwInOut{O}{Output}
+\O{$IO_{BT}$: File or Output Stream with $BT$}
+\IC{$IC = \la IC_{BT} \ra$}
+\ForAll(\tcp*[f]{Read Results and put in $IO_{BT}$}){$BT \in IC_{BT}$}
+{$put(BT, IO_{BT})$
+}
+\caption{$S_k$ Sink}
+\end{algorithm}
 
-\begin{algorithm}[H]
-\DontPrintSemicolon
-\setcounter{AlgoLine}{20}
+Filter with Actors
+
+\begin{algorithm}
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -161,14 +185,13 @@ Filter - Actor1
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{aa}{actor1}
-\SetKwProg{df}{def}{:}{}
+\SetKwProg{df}{def}{:}{end}
 \P{$l \in L$}
-\FS{$(W, \dw, \bt)$}
+\FS{$(\la l, W_l \ra, \dw, \bt)$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
-\PC{$|W_l| > 1$ or $\fid$}
+\PC{$W_l \subseteq U, |W_l| > 1 \lor \fid$}
 \BlankLine
-\tcp*[h]{$IC_E$ Channel: Build Aggregated Wedges $W$}\\
 \df{\aa{}}{
 $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \ForAll{$(u',l') \in IC_E$}
@@ -179,14 +202,10 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
       $\p(\la l, W_l \ra, OC_{W_1})$\\
 }\Else{$\fd$}
 }
-\caption{$F$ Filter - actor1}
+\caption{$F$ Filter - actor1. This actor tries to build a Set of vertices $W_l \subseteq U$ adjancents to $l$ Filter parameter }
 \end{algorithm}
 
-Filter - Actor2
-
-\begin{algorithm}[H]
-\DontPrintSemicolon
-\setcounter{AlgoLine}{20}
+\begin{algorithm}
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -195,60 +214,67 @@ Filter - Actor2
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ab}{actor2}
 \SetKwFunction{but}{buildUt}
-\SetKwProg{df}{def}{:}{}
+\SetKwProg{df}{def}{:}{end}
 \P{$l \in L$}
-\FS{$(W, \dw, \bt)$}
+\FS{$(\la l, W_l \ra, \dw, \bt)$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
 \BlankLine
-\tcp*[h]{$IC_{W_1}$ Channel to build Double Wedges $\dw$}\\
-\PrC{$|W_l| > 1$}
-\PC{$|\dw| \geq 1$ or $\fid$}
+\PrC{$W_l \subseteq U, |W_l| > 1$}
+\PC{$\forall DW \in \dw, DW = \la (l, l'), U_t' \ra, |\dw| \geq 1 \lor \fid$}
 \df{\ab{}}{
 $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \ForAll{$\la l', W_l' \ra \in IC_{W_1}$}{
       \tcp*[h]{By pass Wedges from previous filters to next ones}
       $\p(\la l', W_l \ra, OC_{W_1})$\\
-      \If{$l' < l$ and $W_l' \cap W_l \neq \emptyset$}{
+      \If{$l < l'$ and $W_l' \cap W_l \neq \emptyset$}{
             $I \leftarrow W_l' \setminus W_l$\\
             $J \leftarrow W_l' \cap W_l$\\
             $K \leftarrow W_l \setminus W_l'$\\
-            $cond_a \leftarrow |I| \geq 1 \land |J| > 0 \land |K| > 0$\\
-            $cond_b \leftarrow |I| = 0 \land |J| > 1 \land |K| > 0$\\
-            $cond_c \leftarrow |I| = 0 \land |J| > 2 \land |K| = 0$\\
             $U_t' \leftarrow \emptyset$\\
-            \uIf{$cond_a$}{
+            \uIf{$|I| \geq 1 \land |J| > 0 \land |K| > 0$}{
                   $U_t' \leftarrow \but(I,J,K)$\\
-            }\uIf{$cond_b$}{
+            }\uIf{$|I| = 0 \land |J| > 1 \land |K| > 0$}{
                   $U_t' \leftarrow \but(J,J,K)$\\
-            }\uIf{$cond_c$}{
+            }\uIf{$|I| = 0 \land |J| > 2 \land |K| = 0$}{
                   $U_t' \leftarrow \but(J,J,J)$\\
+            }\uIf{$|I| > 0 \land |J| > 1 \land |K| = 0$}{
+                  $U_t' \leftarrow \but(I,J,J)$\\
             }
-            \If{$U_t' \neq \emptyset$}{$\dw \leftarrow \dw \cup \la (l', l), U_t' \ra$}
+            \If{$U_t' \neq \emptyset$}{$\dw \leftarrow \dw \cup \{\la (l, l'), U_t' \ra\}$}
       }
 }
 \uIf{$\dw = \emptyset$}{$\fd$}
 \Else{$\us(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT})$\\}
 }
+\caption{$F$ Filter - actor2. This actor tries to build a Set Double Wedges $\dw, \forall DW \in \dw, DW = \la (l, l'), U_t' \ra$, which first component $l$ of all tuples of the set is the Filter Parameter}
+\end{algorithm}
+
+\begin{algorithm}
+\SetKwInOut{I}{Input}
+\SetKwInOut{O}{Output}
+\SetKwFunction{but}{buildUt}
+\SetKwProg{df}{def}{:}{end}
+\I{$I, I \subseteq W_l$}
+\I{$J, J \subseteq W_l$}
+\I{$K, K \subseteq W_l$}
+\O{$U_t'$}
 \df{\but{I, J, K}}{
       $U_t' \leftarrow \emptyset$\\
       \ForEach{$i \in I$}{
-            \ForEach{$j \in J, j > i$}{
-                  \ForEach{$k \in K, k > j$}{
+            \ForEach{$j \in J, j \neq i$}{
+                  \ForEach{$k \in K, k \neq i \land k \neq j$}{
                         $U_t' \leftarrow U_t' \cup \{(i,j,k)\}$
                   }
             }
       }
       \Return{$U_t'$}
 }
-\caption{$F$ Filter - actor2}
+\caption{$\mathtt{buildUt}$ Auxiliary Function}
 \end{algorithm}
 
-Filter - Actor3
-
-\begin{algorithm}[H]
+\begin{algorithm}
 \DontPrintSemicolon
-\setcounter{AlgoLine}{20}
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -256,46 +282,77 @@ Filter - Actor3
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ac}{actor3}
-\SetKwProg{df}{def}{:}{}
+\SetKwProg{df}{def}{:}{end}
 \P{$l \in L$}
-\FS{$(W, \dw, \bt)$}
+\FS{$(\la l, W_l \ra, \dw, \bt)$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
 \BlankLine
-\tcp*[h]{$IC_{W_2}$ Channel to build Bi-triangles $\bt$}\\
-\PrC{$|\dw| \geq 1$}
-\PC{$|\bt| \geq 1$ or $\fid$}
+\PrC{$\forall DW \in \dw, DW = \la (l, l'), U_t' \ra, |\dw| \geq 1$}
+\PC{$\forall BT \in \bt, BT = \la (l_l, l, l_u), U_t'' \ra, |\bt| \geq 1 \lor \fid$}
 \df{\ac{}}{
       $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
       \ForAll{$\la l', W_l' \ra \in IC_{W_2}$}{
             \tcp*[h]{By pass to be used by following Filters}
             $\p(\la l', W_l' \ra, OC_{W_2})$\\ 
-            \ForEach(\tcp*{For each double wedge in State}){$\la (l_l, l_u), U_t' \ra \in \dw, l_l \neq l' \land l_u \neq l'$}{
-                  $U_t'' \leftarrow \emptyset$\\
-                  \ForEach{$(u_1, u_2, u_3) \in U_t'$}{
-                        \tcp*[h]{Get lower and upper bound indexes of Set. If exist there are greater or equal 0}
-                        $idx_1 \leftarrow \io(u_1, W_l')$\\
-                        $idx_3 \leftarrow \io(u_3, W_l')$\\
-                        \If{$idx_1 \geq 0 \land idx_3 > idx_1$}{
-                              $U_t'' \leftarrow U_t'' \cup \{u_1, u_2, u_3\} $
-                        }                  
-                  }
-                  \If{$U_t'' \neq \emptyset$}{
-                        $\bt \leftarrow \bt \cup \{(l_l, l', l_u), U_t''\}$
+            \If{$l < l'$}{
+                  \tcp*[h]{For each double wedge in State}\\
+                  \ForEach{$\la (l, l_u), U_t' \ra \in \dw, l_u \neq l'$}{
+                        $U_t'' \leftarrow \emptyset$\\
+                        $L \leftarrow \{l', l_u\}$\\
+                        $(l_l, l_m, l_{max}) \leftarrow (l, \argmin_{L}, \argmax_{L})$\\
+                        \ForEach{$(u_1, u_2, u_3) \in U_t'$}{
+                              $U_t'' \leftarrow \mathtt{buildBT}(l_m, W_l, W_l', \{u_1,u_2,u_3\})$
+                        }
+                        \If{$U_t'' \neq \emptyset$}{
+                              $\bt \leftarrow \bt \cup \{\la (l_l, l_m, l_{max}), U_t'' \ra\}$
+                        }
                   }
             }
       }
       \uIf{$\bt = \emptyset$}{$\fd$}
       \Else{$\us(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT})$\\}
 }
-\caption{$F$ Filter - actor3}
+\caption{$F$ Filter - actor3. This actor try to build Bi-triangles $\bt, \forall BT \in \bt, BT = \la (l_l, l, l_u), U_t'' \ra$, , which middle component $l$ of all triples of the set is the Filter Parameter}
 \end{algorithm}
 
-Filter - Actor4
+\begin{algorithm}
+\SetKwInOut{I}{Input}
+\SetKwInOut{O}{Output}
+\SetKwFunction{but}{buildBT}
+\SetKwProg{df}{def}{:}{end}
+\I{$l_m, l_m \in L$ Middle vertex of $L$ in possible $BT$}
+\I{$W_l, W_l \subseteq U$ Adjancents vertex of $l$ Filter parameter}
+\I{$W_l', W_l' \subseteq U$ Adjancents vertex of $l'$ Wedges that are arriving from $IC_{W_2}$ feedback channel}
+\I{$\{u_1,u_2,u_3\}, \{u_1,u_2,u_3\} \subseteq U$ Triple Instance of Double Wedge that is the State of the Filter}
+\O{$U_t''$}
+\df{\but{$l_m$, $W_l$, $W_l'$, $\{u_1,u_2,u_3\}$}}{
+      $U_t'' \leftarrow \emptyset$\\
+      $I \leftarrow W_l' \cap \{u_1,u_2,u_3\}$\tcp*[r]{$W_l'$ should intersect with 2 Vertex at least to build a Bi-triangle}
+      \If{$|I| > 1$}{
+            $J \leftarrow \{u_1,u_2,u_3\} \setminus I$\\
+            \uIf(\tcp*[r]{Then the Intersection contains all vertices}){$J = \emptyset$}{
+                  $(u_{t1}, u_{t2}, u_{t3}) \leftarrow (u_1, u_2, u_3) $
+            }\Else{
+                  $\{u_j\} \leftarrow J$\tcp*[r]{1 element only}
+                  $\{u_{i1}, u_{i2}\} \leftarrow I$\tcp*[r]{2 elements only}
+                  $(u_{t1}, u_{t2}, u_{t3}) \leftarrow (u_j, u_{i1}, u_{i2}) $
+            }
+            \tcp*[h]{We try to determine the position of the $U$ vertices in relation to $L$}\\
+            $\{u_{l1}, u_{l2}\} \leftarrow W_l \cap \{u_{t1}, u_{t2}, u_{t3}\}$\tcp*[r]{$l$ should have only 2 adjacents vertices by Post-Condition of actor1 and by Double Wedge definition}
+            $\{u_{l3}\} \leftarrow W_l \setminus \{u_{t1}, u_{t2}, u_{t3}\}$\tcp*[r]{The other vertex does not incidence on $l$}
+            \uIf{$(u_{l1}, l_m) \in E$}{
+                  $U_t'' \leftarrow U_t'' \cup \{(u_{l1}, u_{l2}, u_{l3})\}$
+            }\Else{
+                  $U_t'' \leftarrow U_t'' \cup \{(u_{l2}, u_{l1}, u_{l3})\}$
+            }
+      }
+      \Return{$U_t''$}
+}
+\caption{$\mathtt{buildBT}$ Auxiliary Function}
+\end{algorithm}
 
-\begin{algorithm}[H]
-\DontPrintSemicolon
-\setcounter{AlgoLine}{20}
+\begin{algorithm}
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -303,16 +360,15 @@ Filter - Actor4
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ad}{actor4}
-\SetKwProg{df}{def}{:}{}
+\SetKwProg{df}{def}{:}{end}
 \P{$l \in L$}
-\FS{$(W, \dw, \bt)$}
+\FS{$(\la l, W_l \ra, \dw, \bt)$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
 \BlankLine
 \tcp*[h]{$IC_{W_2}$ Channel to build Bi-triangles $\bt$}\\
-\PrC{$|\bt| \geq 1$}
+\PrC{$\forall BT \in \bt, BT = \la (l_l, l, l_u), U_t'' \ra, |\bt| \geq 1$}
 \df{\ad{}}{
-\tcp*[h]{$IC_Q$ Process command Query}\\
 $\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \ForAll{$q \in IC_Q$}{
       \ForEach{$\la (l_l, l_m, l_u), U_t \ra \in \bt$}{
@@ -322,18 +378,18 @@ $\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
       }
 }
 }
-\caption{$F$ Filter - actor4}
+\caption{$F$ Filter - actor4. This actor tries to process Query Commands $Q$ that arrives through Channel $IC_Q$. If they match with some Bi-triangles that are contained in this Filter, it will pass to the result Channel $OC_{BT}$ to be processed by the Sink}
 \end{algorithm}
 
 
-% \section{Experiments and Discussion}
-% \section{Future Work}
-% \section{Conclusions}
+\section{Experiments and Discussion}
+\section{Future Work}
+\section{Conclusions}
 
-% \bibliographystyle{alpha}
-% \bibliography{Report}
+\bibliographystyle{alpha}
+\bibliography{Report}
 
-% \appendix
+\appendix
 
 \end{document}
 
