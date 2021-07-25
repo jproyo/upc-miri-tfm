@@ -177,7 +177,6 @@ actor2 :: Edge
        -> StateT FilterState (DP st) ()
 actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
   (W _ w_t, _, _) <- get
-  putTextLn $ "[A2][W] " <> show l <> " - " <> show w_t
   foldM_ rw1 $ \w@(W l' w_t') -> do
     push w ww1
     buildDW w_t w_t' l l'
@@ -185,9 +184,11 @@ actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
 
 buildDW :: IntSet -> IntSet -> LowerVertex -> LowerVertex -> StateT FilterState (DP st) ()
 buildDW w_t w_t' l l' =
-  let ut = buildDW' w_t w_t'
-  in  if (IS.size w_t > 1) && l < l' && not (IS.null (IS.intersection w_t w_t')) && not (S.null ut)
-        then modify $ \(w', dwtt, bttt) -> (w', addDw (DW (l, l') ut) dwtt, bttt)
+  let pair = (min l l', max l l')
+      paramBuild = if l < l' then (w_t, w_t') else (w_t', w_t) 
+      ut = uncurry buildDW' paramBuild
+  in  if (IS.size w_t > 1) && l /= l' && not (IS.null (IS.intersection w_t w_t')) && not (S.null ut)
+        then modify $ \(w', dwtt, bttt) -> (w', addDw (DW pair ut) dwtt, bttt)
         else pure ()
 
 buildDW' :: IntSet -> IntSet -> UT
@@ -223,21 +224,18 @@ actor3 :: Edge
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
 actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
-  (W _ w_t, dwtt, _) <- get
-  putTextLn $ "[A3][DW][L=" <> show l <> "] " <> show dwtt
+  (_, dwtt, _) <- get
   foldM_ rfb $ \w@(W l' w_t') -> do
     push w wfb
-    -- putTextLn $ "[A3][DW-W][L=" <> show l <> "] " <> show w
-    when (hasNotDW dwtt) $ buildDW w_t w_t' l l'
-    (_, dwtt', _) <- get
-    when (hasDW dwtt' && l < l') $ do
-      let (DWTT dtlist) = dwtt'
-      forM_ dtlist $ \(DW (_, l_u) ut) ->
+    when (hasDW dwtt) $ do
+      let (DWTT dtlist) = dwtt
+      forM_ dtlist $ \(DW (l_l, l_u) ut) ->
         let
+          triple = (l_l, l', l_u)
           result =
-            [ (u_1, u_2, u_3) | l' < l_u, (u_1, u_2, u_3) <- S.toList ut, u_1 `IS.member` w_t' && u_3 `IS.member` w_t' ]
+            [ (u_1, u_2, u_3) | l' < l_u && l' > l_l, (u_1, u_2, u_3) <- S.toList ut, u_1 `IS.member` w_t' && u_3 `IS.member` w_t' ]
         in  if not $ R.null result
-              then modify $ \(w', dwtt'', bttt) -> (w', dwtt'', addBt (BT (l, l', l_u) $ S.fromList result) bttt)
+              then modify $ \(w', dwtt'', bttt) -> (w', dwtt'', addBt (BT triple $ S.fromList result) bttt)
               else pure ()
   finish wfb
   putTextLn $ "Finishing building BT for Filter with Param l=" <> show l
@@ -257,15 +255,16 @@ actor4 :: Edge
        -> WriteChannel BTResult
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
-actor4 (_, l) _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
+actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
   (_, _, bttt) <- get
-  putTextLn $ "[A4][BT][L=" <> show l <> "] " <> show bttt
+  -- putTextLn $ "[A4][BT][L=" <> show l <> "] " <> show bttt
   void $ liftIO $ async (rbtr |=> wbtr)
   foldM_ query $ \e -> do
     push e wq
     unless (hasNotBT bttt) $ case e of
       ByVertex k | not $ IS.null (IS.fromList k `IS.intersection` _btttKeys bttt)     -> sendBts bttt wbtr
       ByEdge edges | not $ S.null (S.fromList edges `S.intersection` _btttEdges bttt) -> sendBts bttt wbtr
+      AllBT -> sendBts bttt wbtr
       Count                                                                           -> do
         now <- liftIO nanoSecs
         push (RC (getSum $ R.foldMap (Sum . S.size . _btUpper) $ _btttBts bttt) now) wbtr

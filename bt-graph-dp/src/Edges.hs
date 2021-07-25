@@ -26,6 +26,7 @@ type Edge = (UpperVertex, LowerVertex)
 data Q = ByVertex [Int]
        | ByEdge [Edge]
        | Count
+       | AllBT
        | NoCommand
        | End
   deriving (Show, Read)
@@ -76,7 +77,8 @@ data BTTT = BTTT
   { _btttKeys  :: IntSet
   , _btttEdges :: Set Edge
   , _btttBts   :: [BT]
-  } deriving Show
+  }
+  deriving Show
 
 instance Monoid BTTT where
   mempty = BTTT mempty mempty mempty
@@ -133,7 +135,7 @@ toCommand' :: String -> Text.Trifecta.Result Q
 toCommand' = P.parseString parseCommand mempty
 
 parseCommand :: Parser Q
-parseCommand = byVertex <|> byEdge <|> countQ <|> endQ
+parseCommand = byVertex <|> byEdge <|> countQ <|> allQ <|> endQ
 
 byVertex :: Parser Q
 byVertex = ByVertex <$> (string "by-vertex" *> (whiteSpace *> many parseInt))
@@ -152,6 +154,9 @@ byEdge = ByEdge <$> (string "by-edge" *> (whiteSpace *> many parseEdgeWithComma)
 countQ :: Parser Q
 countQ = string "count" $> Count
 
+allQ :: Parser Q
+allQ = string "all" $> AllBT
+
 endQ :: Parser Q
 endQ = string "end" $> End
 
@@ -164,6 +169,8 @@ by-vertex LIST_VERTEX_SPLIT_BY_SPACE       Return all Bitriangles that contains 
 by-edge LIST_EDGES_SPLIT_BY_SPACE          Return all Bitriangles that contains any of the edges in the list
   
   Example: by-edge (1,101) (3,104)
+
+all                                        Enumerate all the Bitriangles. WARNING: This should be use for testing purpose only
 
 count                                      Count all the Bitriangles
 
