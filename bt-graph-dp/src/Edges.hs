@@ -56,6 +56,9 @@ addDw e (DWTT dw) = DWTT $ e : dw
 hasNotDW :: DWTT -> Bool
 hasNotDW (DWTT x) = R.null x
 
+hasDW :: DWTT -> Bool
+hasDW = not . hasNotDW
+
 data BTResult = RBT BT Double
               | RC  Int Double
 
@@ -73,7 +76,7 @@ data BTTT = BTTT
   { _btttKeys  :: IntSet
   , _btttEdges :: Set Edge
   , _btttBts   :: [BT]
-  }
+  } deriving Show
 
 instance Monoid BTTT where
   mempty = BTTT mempty mempty mempty
