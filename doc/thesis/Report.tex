@@ -70,12 +70,12 @@
 
 \begin{document}
 
-\maketitle
+% \maketitle
 
-\tableofcontents
+% \tableofcontents
 
-\section{Introduction}
-\section{Dynamic Pipeline}
+% \section{Introduction}
+% \section{Dynamic Pipeline}
 \section{Algorithm Implementation}
 
 Given a Bipartite Graph $G = (V = (U \cup L), E)$, where $V$ is the vertex set and 
@@ -213,7 +213,7 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ab}{actor2}
-\SetKwFunction{but}{buildUt}
+\SetKwFunction{comb}{combineDW}
 \SetKwProg{df}{def}{:}{end}
 \P{$l \in L$}
 \FS{$(\la l, W_l \ra, \dw, \bt)$}
@@ -227,21 +227,12 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \ForAll{$\la l', W_l' \ra \in IC_{W_1}$}{
       \tcp*[h]{By pass Wedges from previous filters to next ones}
       $\p(\la l', W_l \ra, OC_{W_1})$\\
-      \If{$l < l'$ and $W_l' \cap W_l \neq \emptyset$}{
-            $I \leftarrow W_l' \setminus W_l$\\
-            $J \leftarrow W_l' \cap W_l$\\
-            $K \leftarrow W_l \setminus W_l'$\\
-            $U_t' \leftarrow \emptyset$\\
-            \uIf{$|I| \geq 1 \land |J| > 0 \land |K| > 0$}{
-                  $U_t' \leftarrow \but(I,J,K)$\\
-            }\uIf{$|I| = 0 \land |J| > 1 \land |K| > 0$}{
-                  $U_t' \leftarrow \but(J,J,K)$\\
-            }\uIf{$|I| = 0 \land |J| > 2 \land |K| = 0$}{
-                  $U_t' \leftarrow \but(J,J,J)$\\
-            }\uIf{$|I| > 0 \land |J| > 1 \land |K| = 0$}{
-                  $U_t' \leftarrow \but(I,J,J)$\\
+      \If{$l \neq l'$ and $W_l' \cap W_l \neq \emptyset$}{
+            $U_t' \leftarrow \comb(l, l', W_l, W_l')$\\
+            \If{$U_t' \neq \emptyset$}{
+                  $\dw \leftarrow \dw \cup U_t'$
             }
-            \If{$U_t' \neq \emptyset$}{$\dw \leftarrow \dw \cup \{\la (l, l'), U_t' \ra\}$}
+      
       }
 }
 \uIf{$\dw = \emptyset$}{$\fd$}
@@ -253,12 +244,54 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \begin{algorithm}
 \SetKwInOut{I}{Input}
 \SetKwInOut{O}{Output}
+\SetKwFunction{comb}{combineDW}
+\SetKwFunction{but}{buildUt}
+\SetKwProg{df}{def}{:}{end}
+\I{$l, l \in L$: It is the Filter Parameter}
+\I{$l', l' \in L$: It is other Lower Vertex that trying to build a $DW$}
+\I{$W_l, W_l \subseteq U$, Adjancents vertices of $l$}
+\I{$W_l', W_l' \subseteq U$, Adjancents vertices of $l'$}
+\O{$U_t'$ or $\emptyset$ if cannot build any $DW$}
+\df{\comb{$l$, $l'$, $W_l$, $W_l'$}}{
+      $(l_l, l_u) \leftarrow (\argmin_{l,l'}, \argmax_{l,l'})$\\
+      \uIf{$l < l'$}{
+            $(W_{l_l}, W_{l_u}) \leftarrow (W_l, W_l')$
+      }\Else{
+            $(W_{l_l}, W_{l_u}) \leftarrow (W_l', W_l)$
+      }
+      $I \leftarrow W_{l_l} \setminus W_{l_u}$\\
+      $J \leftarrow W_{l_l} \cap W_{l_u}$\\
+      $K \leftarrow W_{l_u} \setminus W_{l_l}$\\
+      \Switch{$\mathtt{eval} \{I, J, K\}$}{
+            \uCase{$|I| \geq 1 \land |J| > 0 \land |K| > 0$}{
+                  \Return{$\but(I,J,K)$}
+            }\uCase{$|I| = 0 \land |J| > 1 \land |K| > 0$}{
+                  \Return{$\but(J,J,K)$}
+            }\uCase{$|I| = 0 \land |J| > 2 \land |K| = 0$}{
+                  \Return{$\but(J,J,J)$}
+            }\uCase{$|I| > 0 \land |J| > 1 \land |K| = 0$}{
+                  \Return{$\but(I,J,J)$}
+            }\Other{
+                  \Return{$\emptyset$}
+            }
+      }
+      \If{$U_t' \neq \emptyset$}{
+            $\dw \leftarrow \dw \cup \{\la (l_l, l_u), U_t' \ra\}$
+      }
+}
+\caption{$\mathtt{combineDW}$ Auxiliary Function}
+\end{algorithm}
+      
+
+\begin{algorithm}
+\SetKwInOut{I}{Input}
+\SetKwInOut{O}{Output}
 \SetKwFunction{but}{buildUt}
 \SetKwProg{df}{def}{:}{end}
 \I{$I, I \subseteq W_l$}
 \I{$J, J \subseteq W_l$}
 \I{$K, K \subseteq W_l$}
-\O{$U_t'$}
+\O{$U_t'$ or $\emptyset$ if cannot build any $DW$}
 \df{\but{I, J, K}}{
       $U_t' \leftarrow \emptyset$\\
       \ForEach{$i \in I$}{
@@ -295,18 +328,17 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
       \ForAll{$\la l', W_l' \ra \in IC_{W_2}$}{
             \tcp*[h]{By pass to be used by following Filters}
             $\p(\la l', W_l' \ra, OC_{W_2})$\\ 
-            \If{$l < l'$}{
-                  \tcp*[h]{For each double wedge in State}\\
-                  \ForEach{$\la (l, l_u), U_t' \ra \in \dw, l_u \neq l'$}{
-                        $U_t'' \leftarrow \emptyset$\\
-                        $L \leftarrow \{l', l_u\}$\\
-                        $(l_l, l_m, l_{max}) \leftarrow (l, \argmin_{L}, \argmax_{L})$\\
-                        \ForEach{$(u_1, u_2, u_3) \in U_t'$}{
-                              $U_t'' \leftarrow \mathtt{buildBT}(l_m, W_l, W_l', \{u_1,u_2,u_3\})$
+            \tcp*[h]{For each double wedge in State}\\
+            \ForEach{$\la (l_l, l_u), U_t' \ra \in \dw, l_l < l' \land l_u > l'$}{
+                  $U_t'' \leftarrow \emptyset$\\
+                  \ForEach{$(u_1, u_2, u_3) \in U_t'$}{
+                        $I \leftarrow W_l' \cap \{u_1, u_2, u_3\}$\\
+                        \If{$|I| \geq 2 \land u_1 \in I \land u_3 \in I$}{                  
+                              $U_t'' \leftarrow U_t'' \cup \{(u_1,u_2,u_3)\})$
                         }
-                        \If{$U_t'' \neq \emptyset$}{
-                              $\bt \leftarrow \bt \cup \{\la (l_l, l_m, l_{max}), U_t'' \ra\}$
-                        }
+                  }
+                  \If{$U_t'' \neq \emptyset$}{
+                        $\bt \leftarrow \bt \cup \{\la (l_l, l', l_u), U_t'' \ra\}$
                   }
             }
       }
@@ -314,42 +346,6 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
       \Else{$\us(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT})$\\}
 }
 \caption{$F$ Filter - actor3. This actor try to build Bi-triangles $\bt, \forall BT \in \bt, BT = \la (l_l, l, l_u), U_t'' \ra$, , which middle component $l$ of all triples of the set is the Filter Parameter}
-\end{algorithm}
-
-\begin{algorithm}
-\SetKwInOut{I}{Input}
-\SetKwInOut{O}{Output}
-\SetKwFunction{but}{buildBT}
-\SetKwProg{df}{def}{:}{end}
-\I{$l_m, l_m \in L$ Middle vertex of $L$ in possible $BT$}
-\I{$W_l, W_l \subseteq U$ Adjancents vertex of $l$ Filter parameter}
-\I{$W_l', W_l' \subseteq U$ Adjancents vertex of $l'$ Wedges that are arriving from $IC_{W_2}$ feedback channel}
-\I{$\{u_1,u_2,u_3\}, \{u_1,u_2,u_3\} \subseteq U$ Triple Instance of Double Wedge that is the State of the Filter}
-\O{$U_t''$}
-\df{\but{$l_m$, $W_l$, $W_l'$, $\{u_1,u_2,u_3\}$}}{
-      $U_t'' \leftarrow \emptyset$\\
-      $I \leftarrow W_l' \cap \{u_1,u_2,u_3\}$\tcp*[r]{$W_l'$ should intersect with 2 Vertex at least to build a Bi-triangle}
-      \If{$|I| > 1$}{
-            $J \leftarrow \{u_1,u_2,u_3\} \setminus I$\\
-            \uIf(\tcp*[r]{Then the Intersection contains all vertices}){$J = \emptyset$}{
-                  $(u_{t1}, u_{t2}, u_{t3}) \leftarrow (u_1, u_2, u_3) $
-            }\Else{
-                  $\{u_j\} \leftarrow J$\tcp*[r]{1 element only}
-                  $\{u_{i1}, u_{i2}\} \leftarrow I$\tcp*[r]{2 elements only}
-                  $(u_{t1}, u_{t2}, u_{t3}) \leftarrow (u_j, u_{i1}, u_{i2}) $
-            }
-            \tcp*[h]{We try to determine the position of the $U$ vertices in relation to $L$}\\
-            $\{u_{l1}, u_{l2}\} \leftarrow W_l \cap \{u_{t1}, u_{t2}, u_{t3}\}$\tcp*[r]{$l$ should have only 2 adjacents vertices by Post-Condition of actor1 and by Double Wedge definition}
-            $\{u_{l3}\} \leftarrow W_l \setminus \{u_{t1}, u_{t2}, u_{t3}\}$\tcp*[r]{The other vertex does not incidence on $l$}
-            \uIf{$(u_{l1}, l_m) \in E$}{
-                  $U_t'' \leftarrow U_t'' \cup \{(u_{l1}, u_{l2}, u_{l3})\}$
-            }\Else{
-                  $U_t'' \leftarrow U_t'' \cup \{(u_{l2}, u_{l1}, u_{l3})\}$
-            }
-      }
-      \Return{$U_t''$}
-}
-\caption{$\mathtt{buildBT}$ Auxiliary Function}
 \end{algorithm}
 
 \begin{algorithm}
@@ -382,14 +378,14 @@ $\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \end{algorithm}
 
 
-\section{Experiments and Discussion}
-\section{Future Work}
-\section{Conclusions}
+% \section{Experiments and Discussion}
+% \section{Future Work}
+% \section{Conclusions}
 
-\bibliographystyle{alpha}
-\bibliography{Report}
+% \bibliographystyle{alpha}
+% \bibliography{Report}
 
-\appendix
+% \appendix
 
 \end{document}
 
