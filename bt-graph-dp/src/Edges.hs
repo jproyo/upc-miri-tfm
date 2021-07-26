@@ -11,8 +11,10 @@ module Edges where
 
 import           Data.IntSet                                       as IS
 import           Data.Set                                          as S
+import           Data.Time.Clock.POSIX
 import           GHC.Show                                                                                             ( show
                                                                                                                       )
+import           Numeric
 import           Relude                                            as R
 import           Text.RawString.QQ
 import           Text.Trifecta
@@ -23,13 +25,15 @@ type UpperVertex = Int
 type Edge = (UpperVertex, LowerVertex)
 
 -- | Command query
-data Q = ByVertex [Int]
-       | ByEdge [Edge]
-       | Count
-       | AllBT
-       | NoCommand
-       | End
-  deriving (Show, Read)
+data Q = Q Command Double
+
+data Command = ByVertex [Int]
+            | ByEdge [Edge]
+            | Count
+            | AllBT
+            | NoCommand
+            | End
+        deriving (Show, Read)
 
 data W = W
   { _wLowerVertex :: LowerVertex
@@ -60,18 +64,47 @@ hasNotDW (DWTT x) = R.null x
 hasDW :: DWTT -> Bool
 hasDW = not . hasNotDW
 
-data BTResult = RBT BT Double
-              | RC  Int Double
+t :: Integral b => POSIXTime -> IO b
+t fct = round . (fct *) <$> getPOSIXTime
+
+nanoSecs :: IO Double
+nanoSecs = (/ 1000000) . fromInteger <$> t 1000000000
+
+microSecs :: IO Double
+microSecs = (/ 1000) . fromInteger <$> t 1000000
+
+milliSecs :: IO Double
+milliSecs = fromInteger <$> t 1000
+
+showFullPrecision :: Double -> String
+showFullPrecision = flip (showFFloat Nothing) ""
+
+printHeader :: IO ()
+printHeader = putBSLn "test,command,answer,number,time"
+
+printCC :: String -> BTResult -> Int -> IO ()
+printCC test (RBT (Q q startTime) bt) c = do
+  now <- nanoSecs
+  putLBSLn $ encodeUtf8 $ intercalate "," [test, R.show q, R.show bt, R.show c, showFullPrecision (now - startTime)]
+printCC _ x _ = putLBSLn $ R.show x
+
+
+data BTResult = RBT Q BT
+              | RC  Q Int
 
 instance Show BTResult where
-  show (RBT bt _) = R.show bt
-  show (RC  c  _) = R.show c
+  show (RBT _ bt) = R.show bt
+  show (RC  _ c ) = R.show c
 
 data BT = BT
   { _btLower :: (LowerVertex, LowerVertex, LowerVertex)
   , _btUpper :: UT
   }
-  deriving Show
+
+instance Show BT where
+  show BT {..} =
+    let (l_l, l_m, l_u) = _btLower
+    in  R.show [ [l_l, u_1, l_m, u_3, l_u, u_2, l_l] | (u_1, u_2, u_3) <- S.toList _btUpper ]
 
 data BTTT = BTTT
   { _btttKeys  :: IntSet
@@ -128,16 +161,16 @@ parseInt = fromInteger <$> integer
 parseEdge :: Parser Edge
 parseEdge = (,) <$> (whiteSpace *> parseInt <* whiteSpace) <*> parseInt
 
-toCommand :: String -> Q
+toCommand :: String -> Command
 toCommand = foldResult (const NoCommand) identity . toCommand'
 
-toCommand' :: String -> Text.Trifecta.Result Q
+toCommand' :: String -> Text.Trifecta.Result Command
 toCommand' = P.parseString parseCommand mempty
 
-parseCommand :: Parser Q
+parseCommand :: Parser Command
 parseCommand = byVertex <|> byEdge <|> countQ <|> allQ <|> endQ
 
-byVertex :: Parser Q
+byVertex :: Parser Command
 byVertex = ByVertex <$> (string "by-vertex" *> (whiteSpace *> many parseInt))
 
 parseEdgeWithComma :: Parser Edge
@@ -148,16 +181,16 @@ parseEdgeWithComma =
     <*  string ")"
     <*  whiteSpace
 
-byEdge :: Parser Q
+byEdge :: Parser Command
 byEdge = ByEdge <$> (string "by-edge" *> (whiteSpace *> many parseEdgeWithComma))
 
-countQ :: Parser Q
+countQ :: Parser Command
 countQ = string "count" $> Count
 
-allQ :: Parser Q
+allQ :: Parser Command
 allQ = string "all" $> AllBT
 
-endQ :: Parser Q
+endQ :: Parser Command
 endQ = string "end" $> End
 
 commandsText :: Text
