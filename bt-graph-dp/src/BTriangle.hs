@@ -8,14 +8,13 @@
 -- Portability : GHC
 module BTriangle where
 
---import           Control.Concurrent
-import           Control.Concurrent.Async
 import           Data.IntSet                                       as IS
 import           Data.Set                                          as S
 import           DynamicPipeline
 import           Edges
 import           Relude                                            as R
-import           System.Environment
+import           System.Environment                                                                                   ( lookupEnv
+                                                                                                                      )
 
 
 -- brittany-disable-next-binding
@@ -25,7 +24,7 @@ type DPBT = Source (Channel (Edge :<+> W :<+> Q :<+> BT :<+> BTResult :<+> W :<+
                 :=> Sink
 
 source' :: forall k (st :: k)
-         . FilePath
+         . Conf
         -> Stage
              (  ReadChannel W
              -> WriteChannel (UpperVertex, LowerVertex)
@@ -38,7 +37,7 @@ source' :: forall k (st :: k)
              )
 source' = withSource @DPBT . toFilters
 
-toFilters :: FilePath
+toFilters :: Conf
           -> ReadChannel W
           -> WriteChannel (UpperVertex, LowerVertex)
           -> WriteChannel W
@@ -47,23 +46,13 @@ toFilters :: FilePath
           -> WriteChannel BTResult
           -> WriteChannel W
           -> DP st ()
-toFilters filePath rfw wedges ww1 query wbt wrbt wfb = do
-  unfoldFile filePath wedges (toEdge . decodeUtf8) -- Read from file and feed stream
+toFilters Conf {..} rfw wedges ww1 query wbt wrbt wfb = do
+  unfoldFile _edgeFile wedges (toEdge . decodeUtf8) -- Read from file and feed stream
   finish ww1 >> finish wbt >> finish wrbt -- mark as not used to continue in following filters
   rfw |=>| wfb $ id -- feedback channel
   liftIO printHeader
-  now <- liftIO nanoSecs 
-  liftIO $ doCommand now
-  finish query
- where
-  doCommand n = loop n
-
-  loop n     = getLine >>= \l -> do
-    case toCommand $ toString l of
-      End       -> pure ()
-      NoCommand -> putTextLn ("[ERROR] No Command was inputed. Possible commands: \n" <> commandsText) >> loop n
-      c         -> push (Q c n) query >> loop n
-
+  now <- liftIO nanoSecs
+  unfoldFile _commandFile query (\c -> Q (toCommand . decodeUtf8 $ c) now _experimentName) 
 
 sink' :: Stage
            (  ReadChannel (UpperVertex, LowerVertex)
@@ -82,11 +71,8 @@ toOutput :: ReadChannel (UpperVertex, LowerVertex)
          -> ReadChannel BTResult
          -> DP s ()
 toOutput _ _ _ _ rbt = do
-  count <- newIORef 1
-  foldM_ rbt $ \result -> liftIO $ do
-    c <- readIORef count
-    printCC "Test-1" result c
-    modifyIORef count (+ 1)
+  c <- newIORef 1
+  foldM_ rbt $ \result -> liftIO $ readIORef c >>= printCC result >> modifyIORef c (+ 1)
 
 type FilterState = (W, DWTT, BTTT)
 
@@ -243,23 +229,22 @@ actor4 :: Edge
        -> StateT FilterState (DP st) ()
 actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
   (_, _, bttt) <- get
-  void $ liftIO $ async (rbtr |=> wbtr)
-  foldM_ query $ \e@(Q q _) -> do
+  rbtr |=> wbtr
+  foldM_ query $ \e@(Q q _ _) -> do
     push e wq
     unless (hasNotBT bttt) $ case q of
       ByVertex k | not $ IS.null (IS.fromList k `IS.intersection` _btttKeys bttt)     -> sendBts bttt e wbtr
       ByEdge edges | not $ S.null (S.fromList edges `S.intersection` _btttEdges bttt) -> sendBts bttt e wbtr
       AllBT                                                                           -> sendBts bttt e wbtr
-      Count                                                                           -> do
+      Count                                                                           ->
         push (RC e (getSum $ R.foldMap (Sum . S.size . _btUpper) $ _btttBts bttt)) wbtr
       _ -> pure ()
-  finish wq
 
 sendBts :: MonadIO m => BTTT -> Q -> WriteChannel BTResult -> m ()
 sendBts bttt q wbtr = forM_ (_btttBts bttt) (flip push wbtr . RBT q)
 
-program :: FilePath -> IO ()
-program file = runDP $ mkDP @DPBT (source' file) generator' sink'
+program :: Conf -> IO ()
+program conf = runDP $ mkDP @DPBT (source' conf) generator' sink'
 
 
 
