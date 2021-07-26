@@ -20,12 +20,22 @@ import           Text.RawString.QQ
 import           Text.Trifecta
 import           Text.Trifecta.Parser                              as P
 
+data Conf = Conf
+  { _edgeFile       :: FilePath
+  , _commandFile    :: FilePath
+  , _experimentName :: Text
+  }
+
 type LowerVertex = Int
 type UpperVertex = Int
 type Edge = (UpperVertex, LowerVertex)
 
 -- | Command query
-data Q = Q Command Double
+data Q = Q
+  { _command   :: Command
+  , _startTime :: Double
+  , _expName   :: Text
+  } deriving Show
 
 data Command = ByVertex [Int]
             | ByEdge [Edge]
@@ -82,11 +92,13 @@ showFullPrecision = flip (showFFloat Nothing) ""
 printHeader :: IO ()
 printHeader = putBSLn "test,command,answer,number,time"
 
-printCC :: String -> BTResult -> Int -> IO ()
-printCC test (RBT (Q q startTime) bt) c = do
+printCC :: BTResult -> Int -> IO ()
+printCC (RBT (Q q startTime name) bt) c = do
   now <- nanoSecs
-  putLBSLn $ encodeUtf8 $ intercalate "," [test, R.show q, R.show bt, R.show c, showFullPrecision (now - startTime)]
-printCC _ x _ = putLBSLn $ R.show x
+  putLBSLn $ encodeUtf8 $ intercalate
+    ","
+    [toString name, R.show q, R.show bt, R.show c, showFullPrecision (now - startTime)]
+printCC x _ = putLBSLn $ R.show x
 
 
 data BTResult = RBT Q BT

@@ -1,0 +1,4 @@
+by-vertex 1
+by-vertex 102
+by-vertex 3
+by-edge (1, 102)
