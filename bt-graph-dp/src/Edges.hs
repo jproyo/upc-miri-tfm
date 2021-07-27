@@ -95,9 +95,10 @@ printHeader = putBSLn "test,command,answer,number,time"
 printCC :: BTResult -> Int -> IO ()
 printCC (RBT (Q q startTime name) bt) c = do
   now <- nanoSecs
-  putLBSLn $ encodeUtf8 $ intercalate
-    ","
-    [toString name, R.show q, R.show bt, R.show c, showFullPrecision (now - startTime)]
+  forM_ (toBTPath bt) $ \path -> 
+    putLBSLn $ encodeUtf8 $ intercalate
+      ","
+      [toString name, R.show q, R.show path, R.show c, showFullPrecision (now - startTime)]
 printCC x _ = putLBSLn $ R.show x
 
 
@@ -111,12 +112,12 @@ instance Show BTResult where
 data BT = BT
   { _btLower :: (LowerVertex, LowerVertex, LowerVertex)
   , _btUpper :: UT
-  }
+  } deriving Show
 
-instance Show BT where
-  show BT {..} =
+toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
+toBTPath BT {..} =
     let (l_l, l_m, l_u) = _btLower
-    in  R.show [ [l_l, u_1, l_m, u_3, l_u, u_2, l_l] | (u_1, u_2, u_3) <- S.toList _btUpper ]
+    in  [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l) | (u_1, u_2, u_3) <- S.toList _btUpper ]
 
 data BTTT = BTTT
   { _btttKeys  :: IntSet
