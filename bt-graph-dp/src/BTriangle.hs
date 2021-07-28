@@ -157,7 +157,7 @@ actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
 
 {-# INLINE  buildDW #-}
 buildDW :: IntSet -> IntSet -> LowerVertex -> LowerVertex -> StateT FilterState (DP st) ()
-buildDW !w_t !w_t' l l' =
+buildDW w_t w_t' l l' =
   let pair       = (min l l', max l l')
       paramBuild = if l < l' then (w_t, w_t') else (w_t', w_t)
       ut         = uncurry buildDW' paramBuild
@@ -168,15 +168,15 @@ buildDW !w_t !w_t' l l' =
 {-# INLINE  buildDW' #-}
 buildDW' :: IntSet -> IntSet -> UT
 buildDW' !w_t !w_t' =
-  let !si = w_t IS.\\ w_t'
-      !sj = IS.intersection w_t w_t'
-      !sk = w_t' IS.\\ w_t
-      buildUt !si' !sj' !sk' =
+  let si = w_t IS.\\ w_t'
+      sj = IS.intersection w_t w_t'
+      sk = w_t' IS.\\ w_t
+      buildUt si' sj' sk' =
         [ (i, j, k) | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
-      !cond_a = IS.size si >= 1 && IS.size sj > 0 && IS.size sk > 0
-      !cond_b = IS.size si == 0 && IS.size sj > 1 && IS.size sk > 0
-      !cond_c = IS.size si == 0 && IS.size sj > 2 && IS.size sk == 0
-      !cond_d = IS.size si > 0 && IS.size sj > 1 && IS.size sk == 0
+      cond_a = IS.size si >= 1 && IS.size sj > 0 && IS.size sk > 0
+      cond_b = IS.size si == 0 && IS.size sj > 1 && IS.size sk > 0
+      cond_c = IS.size si == 0 && IS.size sj > 2 && IS.size sk == 0
+      cond_d = IS.size si > 0 && IS.size sj > 1 && IS.size sk == 0
       ut | cond_a    = buildUt si sj sk
          | cond_b    = buildUt sj sj sk
          | cond_c    = buildUt sj sj sj
