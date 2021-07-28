@@ -233,8 +233,8 @@ actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
   foldM_ query $ \e@(Q q _ _) -> do
     push e wq
     unless (hasNotBT bttt) $ case q of
-      ByVertex k | not $ IS.null (IS.fromList k `IS.intersection` _btttKeys bttt)     -> sendBts bttt e wbtr
-      ByEdge edges | not $ S.null (S.fromList edges `S.intersection` _btttEdges bttt) -> sendBts bttt e wbtr
+      ByVertex k | containsVertex k bttt      -> sendBts bttt e wbtr
+      ByEdge edges | containsEdges edges bttt -> sendBts bttt e wbtr
       AllBT                                                                           -> sendBts bttt e wbtr
       Count                                                                           ->
         push (RC e (getSum $ R.foldMap (Sum . S.size . _btUpper) $ _btttBts bttt)) wbtr

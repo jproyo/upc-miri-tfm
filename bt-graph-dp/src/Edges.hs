@@ -35,7 +35,8 @@ data Q = Q
   { _command   :: Command
   , _startTime :: Double
   , _expName   :: Text
-  } deriving Show
+  }
+  deriving Show
 
 data Command = ByVertex [Int]
             | ByEdge [Edge]
@@ -95,10 +96,9 @@ printHeader = putBSLn "test,command,answer,number,time"
 printCC :: BTResult -> Int -> IO ()
 printCC (RBT (Q q startTime name) bt) c = do
   now <- nanoSecs
-  forM_ (toBTPath bt) $ \path -> 
-    putLBSLn $ encodeUtf8 $ intercalate
-      ","
-      [toString name, R.show q, R.show path, R.show c, showFullPrecision (now - startTime)]
+  forM_ (toBTPath bt) $ \path -> putLBSLn $ encodeUtf8 $ intercalate
+    ","
+    [toString name, R.show q, R.show path, R.show c, showFullPrecision (now - startTime)]
 printCC x _ = putLBSLn $ R.show x
 
 
@@ -112,49 +112,44 @@ instance Show BTResult where
 data BT = BT
   { _btLower :: (LowerVertex, LowerVertex, LowerVertex)
   , _btUpper :: UT
-  } deriving Show
-
-toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
-toBTPath BT {..} =
-    let (l_l, l_m, l_u) = _btLower
-    in  [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l) | (u_1, u_2, u_3) <- S.toList _btUpper ]
-
-data BTTT = BTTT
-  { _btttKeys  :: IntSet
-  , _btttEdges :: Set Edge
-  , _btttBts   :: [BT]
   }
   deriving Show
 
-instance Monoid BTTT where
-  mempty = BTTT mempty mempty mempty
+toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
+toBTPath BT {..} =
+  let (l_l, l_m, l_u) = _btLower in [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l) | (u_1, u_2, u_3) <- S.toList _btUpper ]
 
-instance Semigroup BTTT where
-  bts1 <> bts2 = BTTT { _btttKeys  = _btttKeys bts1 <> _btttKeys bts2
-                      , _btttEdges = _btttEdges bts1 <> _btttEdges bts2
-                      , _btttBts   = _btttBts bts1 <> _btttBts bts2
-                      }
+isInTriple :: (Int, Int, Int) -> Int -> Bool
+isInTriple (a, b, c) vertex = a == vertex || b == vertex || c == vertex
+
+hasVertex :: BT -> Int -> Bool
+hasVertex BT {..} vertex = isInTriple _btLower vertex || any (`isInTriple` vertex) (S.toList _btUpper)
+
+hasEdge :: BT -> Edge -> Bool
+hasEdge BT {..} edge = any (isInEdge edge _btLower) (S.toList _btUpper)
+
+isInEdge :: Edge -> (LowerVertex, LowerVertex, LowerVertex) -> (UpperVertex, UpperVertex, UpperVertex) -> Bool
+isInEdge (u, l) (l1, l2, l3) (u1, u2, u3) =
+  (u == u1 && l1 == l)
+    || (u == u2 && l1 == l)
+    || (u == u1 && l2 == l)
+    || (u == u3 && l2 == l)
+    || (u == u2 && l3 == l)
+    || (u == u3 && l3 == l)
+
+newtype BTTT = BTTT
+  {  _btttBts   :: [BT]
+  }
+  deriving newtype (Semigroup, Monoid, Show)
 
 addBt :: BT -> BTTT -> BTTT
-addBt bt@BT {..} bts =
-  let
-    newBtKeys = S.foldl (\bs (a, b, c) -> a `IS.insert` (b `IS.insert` (c `IS.insert` bs)))
-                        IS.empty
-                        (S.singleton _btLower <> _btUpper)
-    (l_1, l_2, l_3) = _btLower
-    combineEdges bs (u_1, u_2, u_3) =
-      (u_1, l_1)
-        `S.insert` (          (u_2, l_1)
-                   `S.insert` (          (u_1, l_2)
-                              `S.insert` ((u_3, l_2) `S.insert` ((u_2, l_3) `S.insert` ((u_3, l_3) `S.insert` bs)))
-                              )
-                   )
-    newBtEdges = S.foldl combineEdges S.empty _btUpper
-  in
-    bts { _btttKeys  = _btttKeys bts <> newBtKeys
-        , _btttEdges = _btttEdges bts <> newBtEdges
-        , _btttBts   = bt : _btttBts bts
-        }
+addBt bt bts = bts { _btttBts = bt : _btttBts bts }
+
+containsVertex :: [Int] -> BTTT -> Bool
+containsVertex vertices BTTT {..} = any (\a -> any (hasVertex a) vertices) _btttBts
+
+containsEdges :: [Edge] -> BTTT -> Bool
+containsEdges edges BTTT {..} = any (\a -> any (hasEdge a) edges) _btttBts
 
 hasNotBT :: BTTT -> Bool
 hasNotBT BTTT {..} = R.null _btttBts
