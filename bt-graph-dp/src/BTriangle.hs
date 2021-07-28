@@ -9,7 +9,6 @@
 module BTriangle where
 
 import           Data.IntSet                                       as IS
-import           Data.Set                                          as S
 import           DynamicPipeline
 import           Edges
 import           Relude                                            as R
@@ -76,7 +75,7 @@ toOutput _ _ _ _ rbt = do
   c <- newIORef 1
   foldM_ rbt $ \result -> liftIO $ readIORef c >>= printCC result >> modifyIORef c (+ 1)
 
-type FilterState = (W, DWTT, BTTT)
+type FilterState = (W, Either DWTT BTTT)
 
 generator' :: forall k (st :: k) . GeneratorStage DPBT FilterState Edge st
 generator' = let gen = withGenerator @DPBT genAction in mkGenerator gen filterTemplate
@@ -99,7 +98,7 @@ genAction :: forall s
           -> DP s ()
 genAction filter' redges rw1 rq rbt rbtr rfd _ _ _ _ wbtr wfc = do
   let unfoldFilter = mkUnfoldFilterForAll filter'
-                                          (\(u, l) -> (W l $ IS.singleton u, mempty, mempty))
+                                          (\(u, l) -> (W l $ IS.singleton u, Left mempty))
                                           redges
                                           (rw1 .*. rq .*. rbt .*. rbtr .*. rfd .*. HNil)
   HCons rw1' (HCons _ (HCons _ (HCons rbtr' _))) <- unfoldF unfoldFilter
@@ -128,10 +127,10 @@ actor1 :: Edge
 actor1 (_, l) redges _ _ _ _ _ we ww1 _ _ _ _ = do
   foldM_ redges $ \e@(u', l') -> do
     e `seq` if l' == l
-      then modify $ \(w@W {..}, dwtt, bttt) -> (w { _wWedges = _wWedges `seq` addWedge _wWedges u' }, dwtt, bttt)
+      then modify $ \(w@W {..}, dwtt) -> (w { _wWedges = _wWedges `seq` addWedge _wWedges u' }, dwtt)
       else push e we
   finish we
-  (w@(W _ w_t), _, _) <- get
+  (w@(W _ w_t), _) <- get
   when (IS.size w_t > 1) $ push w ww1
 
 {-# INLINE  actor2 #-}
@@ -150,7 +149,7 @@ actor2 :: Edge
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
 actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
-  (W _ w_t, _, _) <- get
+  (W _ w_t, _) <- get
   foldM_ rw1 $ \w@(W l' w_t') -> do
     push w ww1
     buildDW w_t w_t' l l'
@@ -162,8 +161,8 @@ buildDW !w_t !w_t' l l' =
   let pair       = (min l l', max l l')
       paramBuild = if l < l' then (w_t, w_t') else (w_t', w_t)
       ut         = uncurry buildDW' paramBuild
-  in  if (IS.size w_t > 1) && abs (l - l') > 1 && not (IS.null (IS.intersection w_t w_t')) && not (S.null ut)
-        then modify $ \(w', dwtt, bttt) -> (w', addDw (DW pair ut) dwtt, bttt)
+  in  if (IS.size w_t > 1) && abs (l - l') > 1 && not (IS.null (IS.intersection w_t w_t')) && not (R.null ut)
+        then modify $ second (first (addDw (DW pair ut)))
         else pure ()
 
 {-# INLINE  buildDW' #-}
@@ -183,7 +182,7 @@ buildDW' !w_t !w_t' =
          | cond_c    = buildUt sj sj sj
          | cond_d    = buildUt si sj sj
          | otherwise = []
-  in  S.fromList ut
+  in ut
 
 {-# INLINE  actor3 #-}
 actor3 :: Edge
@@ -201,22 +200,26 @@ actor3 :: Edge
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
 actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
-  (_, dwtt, _) <- get
+  (_, dwtt') <- get
+  modify $ second (const $ Right mempty)
   foldM_ rfb $ \w@(W l' w_t') -> do
     push w wfb
-    when (hasDW dwtt) $ do
-      let (DWTT dtlist) = dwtt
-      forM_ dtlist $ \(DW (l_l, l_u) ut) ->
-        let triple = (l_l, l', l_u)
-            result =
-              [ (u_1, u_2, u_3)
-              | l' < l_u && l' > l_l
-              , (u_1, u_2, u_3) <- S.toList ut
-              , u_1 `IS.member` w_t' && u_3 `IS.member` w_t'
-              ]
-        in  if not $ R.null result
-              then modify $ \(w', dwtt'', bttt) -> (w', dwtt'', addBt (BT triple $ S.fromList result) bttt)
-              else pure ()
+    case dwtt' of 
+      Left dwtt -> 
+        when (hasDW dwtt) $ do
+          let (DWTT dtlist) = dwtt
+          forM_ dtlist $ \(DW (l_l, l_u) ut) ->
+            let triple = (l_l, l', l_u)
+                result =
+                  [ (u_1, u_2, u_3)
+                  | l' < l_u && l' > l_l
+                  , (u_1, u_2, u_3) <- ut
+                  , u_1 `IS.member` w_t' && u_3 `IS.member` w_t'
+                  ]
+            in  if not $ R.null result
+                  then modify $ second (second (addBt (BT triple result)))
+                  else pure ()
+      Right _ -> pure ()
   finish wfb
   whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
     $ putTextLn ("Finishing building BT for Filter with Param l=" <> show l)
@@ -237,17 +240,20 @@ actor4 :: Edge
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
 actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
-  (_, _, bttt) <- get
+  (_, bttt') <- get
   rbtr |=> wbtr
   foldM_ query $ \e@(Q q _ _) -> do
     push e wq
-    unless (hasNotBT bttt) $ case q of
-      ByVertex k | containsVertex k bttt      -> sendBts bttt e wbtr
-      ByEdge edges | containsEdges edges bttt -> sendBts bttt e wbtr
-      AllBT                                                                           -> sendBts bttt e wbtr
-      Count                                                                           ->
-        push (RC e (getSum $ R.foldMap (Sum . S.size . _btUpper) $ _btttBts bttt)) wbtr
-      _ -> pure ()
+    case bttt' of
+      Left _ -> pure ()
+      Right bttt ->
+        unless (hasNotBT bttt) $ case q of
+          ByVertex k | containsVertex k bttt      -> sendBts bttt e wbtr
+          ByEdge edges | containsEdges edges bttt -> sendBts bttt e wbtr
+          AllBT                                                                           -> sendBts bttt e wbtr
+          Count                                                                           ->
+            push (RC e (getSum $ R.foldMap (Sum . R.length . _btUpper) $ _btttBts bttt)) wbtr
+          _ -> pure ()
 
 {-# INLINE  sendBts #-}
 sendBts :: MonadIO m => BTTT -> Q -> WriteChannel BTResult -> m ()

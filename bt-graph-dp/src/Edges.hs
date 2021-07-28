@@ -10,7 +10,6 @@
 module Edges where
 
 import           Data.IntSet                                       as IS
-import           Data.Set                                          as S
 import           Data.Time.Clock.POSIX
 import           GHC.Show                                                                                             ( show
                                                                                                                       )
@@ -56,7 +55,7 @@ data W = W
 addWedge :: IntSet -> UpperVertex -> IntSet
 addWedge = flip IS.insert
 
-type UT = Set (UpperVertex, UpperVertex, UpperVertex)
+type UT = [(UpperVertex, UpperVertex, UpperVertex)]
 
 data DW = DW
   { _dwLower :: (LowerVertex, LowerVertex)
@@ -129,7 +128,7 @@ data BT = BT
 {-# INLINE  toBTPath #-}
 toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
 toBTPath BT{..} =
-  let (l_l, l_m, l_u) = _btLower in [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l) | (u_1, u_2, u_3) <- S.toList _btUpper ]
+  let (l_l, l_m, l_u) = _btLower in [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l) | (u_1, u_2, u_3) <- _btUpper ]
 
 {-# INLINE  isInTriple #-}
 isInTriple :: (Int, Int, Int) -> Int -> Bool
@@ -137,11 +136,11 @@ isInTriple (a, b, c) vertex = a == vertex || b == vertex || c == vertex
 
 {-# INLINE  hasVertex #-}
 hasVertex :: BT -> Int -> Bool
-hasVertex BT {..} vertex = isInTriple _btLower vertex || any (`isInTriple` vertex) (S.toList _btUpper)
+hasVertex BT {..} vertex = isInTriple _btLower vertex || any (`isInTriple` vertex) _btUpper
 
 {-# INLINE  hasEdge #-}
 hasEdge :: BT -> Edge -> Bool
-hasEdge BT {..} edge = any (isInEdge edge _btLower) (S.toList _btUpper)
+hasEdge BT {..} edge = any (isInEdge edge _btLower) _btUpper
 
 {-# INLINE  isInEdge #-}
 isInEdge :: Edge -> (LowerVertex, LowerVertex, LowerVertex) -> (UpperVertex, UpperVertex, UpperVertex) -> Bool
@@ -191,7 +190,7 @@ parseInt = fromInteger <$> integer
 
 {-# INLINE  parseEdge #-}
 parseEdge :: Parser Edge
-parseEdge = (,) <$> (whiteSpace *> parseInt <* whiteSpace) <*> parseInt
+parseEdge = (,) <$> (whiteSpace *> parseInt <* whiteSpace) <*> parseInt <* whiteSpace
 
 {-# INLINE  toCommand #-}
 toCommand :: String -> Command
