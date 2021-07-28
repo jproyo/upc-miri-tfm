@@ -27,6 +27,7 @@ ghc-options:
   - -fno-warn-orphans
 
 default-extensions:
+  - BangPatterns
   - ConstraintKinds
   - DataKinds
   - DefaultSignatures
