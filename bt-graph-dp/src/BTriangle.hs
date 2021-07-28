@@ -37,6 +37,7 @@ source' :: forall k (st :: k)
              )
 source' = withSource @DPBT . toFilters
 
+{-# INLINE  toFilters #-}
 toFilters :: Conf
           -> ReadChannel W
           -> WriteChannel (UpperVertex, LowerVertex)
@@ -64,6 +65,7 @@ sink' :: Stage
            )
 sink' = withSink @DPBT toOutput
 
+{-# INLINE  toOutput #-}
 toOutput :: ReadChannel (UpperVertex, LowerVertex)
          -> ReadChannel W
          -> ReadChannel Q
@@ -79,6 +81,7 @@ type FilterState = (W, DWTT, BTTT)
 generator' :: forall k (st :: k) . GeneratorStage DPBT FilterState Edge st
 generator' = let gen = withGenerator @DPBT genAction in mkGenerator gen filterTemplate
 
+{-# INLINE  genAction #-}
 genAction :: forall s
            . Filter DPBT FilterState Edge s
           -> ReadChannel (UpperVertex, LowerVertex)
@@ -103,9 +106,11 @@ genAction filter' redges rw1 rq rbt rbtr rfd _ _ _ _ wbtr wfc = do
   rw1' |=>| wfc $ id
   rbtr' |=>| wbtr $ id
 
+{-# INLINE  filterTemplate #-}
 filterTemplate :: forall s . Filter DPBT FilterState Edge s
 filterTemplate = actor actor1 |>>> actor actor2 |>>> actor actor3 |>> actor actor4
 
+{-# INLINE  actor1 #-}
 actor1 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
        -> ReadChannel W
@@ -122,13 +127,14 @@ actor1 :: Edge
        -> StateT FilterState (DP st) ()
 actor1 (_, l) redges _ _ _ _ _ we ww1 _ _ _ _ = do
   foldM_ redges $ \e@(u', l') -> do
-    if l' == l
-      then modify $ \(w@W {..}, dwtt, bttt) -> (w { _wWedges = addWedge _wWedges u' }, dwtt, bttt)
+    e `seq` if l' == l
+      then modify $ \(w@W {..}, dwtt, bttt) -> (w { _wWedges = _wWedges `seq` addWedge _wWedges u' }, dwtt, bttt)
       else push e we
   finish we
   (w@(W _ w_t), _, _) <- get
   when (IS.size w_t > 1) $ push w ww1
 
+{-# INLINE  actor2 #-}
 actor2 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
        -> ReadChannel W
@@ -150,8 +156,9 @@ actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
     buildDW w_t w_t' l l'
   finish ww1
 
+{-# INLINE  buildDW #-}
 buildDW :: IntSet -> IntSet -> LowerVertex -> LowerVertex -> StateT FilterState (DP st) ()
-buildDW w_t w_t' l l' =
+buildDW !w_t !w_t' l l' =
   let pair       = (min l l', max l l')
       paramBuild = if l < l' then (w_t, w_t') else (w_t', w_t)
       ut         = uncurry buildDW' paramBuild
@@ -159,17 +166,18 @@ buildDW w_t w_t' l l' =
         then modify $ \(w', dwtt, bttt) -> (w', addDw (DW pair ut) dwtt, bttt)
         else pure ()
 
+{-# INLINE  buildDW' #-}
 buildDW' :: IntSet -> IntSet -> UT
-buildDW' w_t w_t' =
-  let si = w_t IS.\\ w_t'
-      sj = IS.intersection w_t w_t'
-      sk = w_t' IS.\\ w_t
-      buildUt si' sj' sk' =
+buildDW' !w_t !w_t' =
+  let !si = w_t IS.\\ w_t'
+      !sj = IS.intersection w_t w_t'
+      !sk = w_t' IS.\\ w_t
+      buildUt !si' !sj' !sk' =
         [ (i, j, k) | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
-      cond_a = IS.size si >= 1 && IS.size sj > 0 && IS.size sk > 0
-      cond_b = IS.size si == 0 && IS.size sj > 1 && IS.size sk > 0
-      cond_c = IS.size si == 0 && IS.size sj > 2 && IS.size sk == 0
-      cond_d = IS.size si > 0 && IS.size sj > 1 && IS.size sk == 0
+      !cond_a = IS.size si >= 1 && IS.size sj > 0 && IS.size sk > 0
+      !cond_b = IS.size si == 0 && IS.size sj > 1 && IS.size sk > 0
+      !cond_c = IS.size si == 0 && IS.size sj > 2 && IS.size sk == 0
+      !cond_d = IS.size si > 0 && IS.size sj > 1 && IS.size sk == 0
       ut | cond_a    = buildUt si sj sk
          | cond_b    = buildUt sj sj sk
          | cond_c    = buildUt sj sj sj
@@ -177,6 +185,7 @@ buildDW' w_t w_t' =
          | otherwise = []
   in  S.fromList ut
 
+{-# INLINE  actor3 #-}
 actor3 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
        -> ReadChannel W
@@ -212,7 +221,7 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
   whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
     $ putTextLn ("Finishing building BT for Filter with Param l=" <> show l)
 
-
+{-# INLINE  actor4 #-}
 actor4 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
        -> ReadChannel W
@@ -240,8 +249,9 @@ actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
         push (RC e (getSum $ R.foldMap (Sum . S.size . _btUpper) $ _btttBts bttt)) wbtr
       _ -> pure ()
 
+{-# INLINE  sendBts #-}
 sendBts :: MonadIO m => BTTT -> Q -> WriteChannel BTResult -> m ()
-sendBts bttt q wbtr = forM_ (_btttBts bttt) (flip push wbtr . RBT q)
+sendBts !bttt !q wbtr = forM_ (_btttBts bttt) (flip push wbtr . RBT q)
 
 program :: Conf -> IO ()
 program conf = runDP $ mkDP @DPBT (source' conf) generator' sink'

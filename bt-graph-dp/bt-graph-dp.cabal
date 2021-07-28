@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5003b42aed381917a9dc63cb7aaae8ff57697805872f2f446c5ff6e5ea9b27c1
+-- hash: 7b198fa93b316efffd730646ed81ddbb9bbbc8fb37c7676c7c1b74da0b4f78cf
 
 name:           bt-graph-dp
 version:        0.1.0.0
@@ -28,6 +28,7 @@ executable bt-graph-dp
   hs-source-dirs:
       src
   default-extensions:
+      BangPatterns
       ConstraintKinds
       DataKinds
       DefaultSignatures
