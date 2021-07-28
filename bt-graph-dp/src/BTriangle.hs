@@ -171,16 +171,15 @@ buildDW' !w_t !w_t' =
   let si = w_t IS.\\ w_t'
       sj = IS.intersection w_t w_t'
       sk = w_t' IS.\\ w_t
+      !ssi = IS.size si
+      !ssj = IS.size sj
+      !ssk = IS.size sk
       buildUt si' sj' sk' =
         [ (i, j, k) | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
-      cond_a = IS.size si >= 1 && IS.size sj > 0 && IS.size sk > 0
-      cond_b = IS.size si == 0 && IS.size sj > 1 && IS.size sk > 0
-      cond_c = IS.size si == 0 && IS.size sj > 2 && IS.size sk == 0
-      cond_d = IS.size si > 0 && IS.size sj > 1 && IS.size sk == 0
-      ut | cond_a    = buildUt si sj sk
-         | cond_b    = buildUt sj sj sk
-         | cond_c    = buildUt sj sj sj
-         | cond_d    = buildUt si sj sj
+      ut | ssi >= 1 && ssj > 0 && ssk > 0 = buildUt si sj sk
+         | ssi == 0 && ssj > 1 && ssk > 0 = buildUt sj sj sk
+         | ssi == 0 && ssj > 2 && ssk == 0 = buildUt sj sj sj
+         | ssi > 0 && ssj > 1 && ssk == 0 = buildUt si sj sj
          | otherwise = []
   in ut
 
