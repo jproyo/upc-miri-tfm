@@ -6,7 +6,6 @@
 -- Maintainer  : juanpablo.royo@gmail.com
 -- Stability   : experimental
 -- Portability : GHC
-{-# LANGUAGE  UnboxedTuples #-}
 module BTriangle where
 
 import           Data.IntSet                                       as IS
@@ -15,8 +14,6 @@ import           Edges
 import           Relude                                            as R
 import           System.Environment                                                                                   ( lookupEnv
                                                                                                                       )
-
-
 -- brittany-disable-next-binding
 type DPBT = Source (Channel (Edge :<+> W :<+> Q :<+> BT :<+> BTResult :<+> W :<+> Eof))
                 :=> Generator (Channel (Edge :<+> W :<+> Q :<+> BT :<+> BTResult :<+> Eof))
@@ -166,10 +163,10 @@ actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
 {-# INLINE  buildDW #-}
 buildDW :: IntSet -> IntSet -> LowerVertex -> LowerVertex -> StateT FilterState (DP st) ()
 buildDW w_t w_t' l l' =
-  let pair       = (# min l l', max l l' #)
+  let pair       = Pair (min l l') (max l l')
       paramBuild = if l < l' then (w_t, w_t') else (w_t', w_t)
       ut         = uncurry buildDW' paramBuild
-  in  if (IS.size w_t > 1) && abs (l - l') > 1 && not (IS.null (IS.intersection w_t w_t')) && not (R.null ut)
+  in  if (IS.size w_t > 1) && abs (l - l') > 1 && not (IS.null (IS.intersection w_t w_t')) && not (nullTriplet ut)
         then modify $ flip modifyDWState (DW pair ut)
         else pure ()
 
@@ -182,13 +179,14 @@ buildDW' !w_t !w_t' =
       !ssi = IS.size si
       !ssj = IS.size sj
       !ssk = IS.size sk
-      buildUt si' sj' sk' =
-        [ (i, j, k) | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
+      -- buildUt si' sj' sk' =
+      --   [ Triplet i j k | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
+      buildUt si' sj' sk' = fromListTriple [(i,j,k) | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
       ut | ssi >= 1 && ssj > 0 && ssk > 0 = buildUt si sj sk
          | ssi == 0 && ssj > 1 && ssk > 0 = buildUt sj sj sk
          | ssi == 0 && ssj > 2 && ssk == 0 = buildUt sj sj sj
          | ssi > 0 && ssj > 1 && ssk == 0 = buildUt si sj sj
-         | otherwise = []
+         | otherwise = EmptyTriple
   in ut
 
 {-# INLINE  actor3 #-}
@@ -217,14 +215,15 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
         push w wfb
         when (hasDW dwtt) $ do
           let (DWTT dtlist) = dwtt
-          forM_ dtlist $ \(DW (# l_l, l_u #) ut) ->
-            let triple = (# l_l, l', l_u #)
-                result = [ (u_1, u_2, u_3)
-                  | l' < l_u && l' > l_l
-                  , (u_1, u_2, u_3) <- ut
-                  , u_1 `IS.member` w_t' && u_3 `IS.member` w_t'
-                  ]
-            in  if not $ R.null result
+          forM_ dtlist $ \(DW (Pair l_l l_u) ut) ->
+            let triple = Triplet l_l l' l_u
+                -- result = [ t'
+                --   | l' < l_u && l' > l_l
+                --   , t'@(Triplet u_1 _ u_3) <- ut
+                --   , u_1 `IS.member` w_t' && u_3 `IS.member` w_t'
+                --   ]
+                result = if l' < l_u && l' > l_l then filterTriplet (\u_1 _ u_3 -> u_1 `IS.member` w_t' && u_3 `IS.member` w_t') ut else EmptyTriple
+            in  if not $ nullTriplet result
                   then modify $ flip modifyBTState (BT triple result)
                   else pure ()
       finish wfb
@@ -258,14 +257,12 @@ actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
           ByVertex k | containsVertex k bttt      -> sendBts bttt e wbtr
           ByEdge edges | containsEdges edges bttt -> sendBts bttt e wbtr
           AllBT                                                                           -> sendBts bttt e wbtr
-          Count                                                                           ->
-            push (RC e (getSum $ R.foldMap (Sum . R.length . _btUpper) $ _btttBts bttt)) wbtr
           _ -> pure ()
     _ -> pure ()
 
 {-# INLINE  sendBts #-}
 sendBts :: MonadIO m => BTTT -> Q -> WriteChannel BTResult -> m ()
-sendBts !bttt !q wbtr = forM_ (_btttBts bttt) (flip push wbtr . RBT q)
+sendBts (BTTT bttt) !q wbtr = forM_ bttt (flip push wbtr . RBT q . toBTPath)
 
 program :: Conf -> IO ()
 program conf = runDP $ mkDP @DPBT (source' conf) generator' sink'
