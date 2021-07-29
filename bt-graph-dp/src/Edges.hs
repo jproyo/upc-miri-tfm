@@ -7,12 +7,12 @@
 -- Stability   : experimental
 -- Portability : GHC
 {-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE UnboxedTuples #-}
+-- {-# LANGUAGE UnliftedNewtypes #-}
 module Edges where
 
 import           Data.IntSet                                       as IS
 import           Data.Time.Clock.POSIX
-import           GHC.Show                                                                                             ( show
-                                                                                                                      )
 import           Numeric
 import           Relude                                            as R
 import           Text.RawString.QQ
@@ -52,19 +52,20 @@ data W = W
   deriving Show
 
 {-# INLINE  addWedge #-}
-addWedge :: IntSet -> UpperVertex -> IntSet
-addWedge = flip IS.insert
+addWedge :: UpperVertex -> IntSet -> IntSet
+addWedge = IS.insert
 
-type UT = [(UpperVertex, UpperVertex, UpperVertex)]
+-- type UT s = V.MVector s ( UpperVertex, UpperVertex, UpperVertex )
+
+type UT = [( UpperVertex, UpperVertex, UpperVertex )]
 
 data DW = DW
-  { _dwLower :: (LowerVertex, LowerVertex)
+  { _dwLower :: (# LowerVertex, LowerVertex #)
   , _dwUpper :: UT
   }
-  deriving Show
 
 newtype DWTT = DWTT [DW]
-  deriving newtype (Show, Semigroup, Monoid)
+  deriving newtype (Semigroup, Monoid)
 
 {-# INLINE  addDw #-}
 addDw :: DW -> DWTT -> DWTT
@@ -109,42 +110,59 @@ printCC (RBT (Q q startTime name) bt) c = do
   forM_ (toBTPath bt) $ \path -> putLBSLn $ encodeUtf8 $ intercalate
     ","
     [toString name, R.show q, R.show path, R.show c, showFullPrecision (now - startTime)]
-printCC x _ = putLBSLn $ R.show x
+printCC _ _ = putLBSLn "No Result can be shown for this command"
 
+data FilterState = Adj W 
+                 | DoubleWedges DWTT 
+                 | BiTriangles BTTT
+
+{-# INLINE  modifyWState #-}
+modifyWState :: FilterState -> UpperVertex -> FilterState
+modifyWState (Adj w@(W _ ws)) u = Adj $ w { _wWedges = addWedge u ws }
+modifyWState s _ = s
+
+{-# INLINE  modifyDWState #-}
+modifyDWState :: FilterState -> DW -> FilterState
+modifyDWState (DoubleWedges d) dw = DoubleWedges $ addDw dw d
+modifyDWState s _ = s
+
+{-# INLINE  modifyBTState #-}
+modifyBTState :: FilterState -> BT -> FilterState
+modifyBTState (BiTriangles b) bt = BiTriangles $ addBt bt b
+modifyBTState s _ = s
 
 data BTResult = RBT Q BT
               | RC  Q Int
 
-instance Show BTResult where
-  show (RBT _ bt) = R.show bt
-  show (RC  _ c ) = R.show c
-
 data BT = BT
-  { _btLower :: (LowerVertex, LowerVertex, LowerVertex)
+  { _btLower :: (# LowerVertex, LowerVertex, LowerVertex #)
   , _btUpper :: UT
   }
-  deriving Show
 
 {-# INLINE  toBTPath #-}
 toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
 toBTPath BT{..} =
-  let (l_l, l_m, l_u) = _btLower in [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l) | (u_1, u_2, u_3) <- _btUpper ]
+  let (# l_l, l_m, l_u #) = _btLower in [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l) | (u_1, u_2, u_3) <- _btUpper ]
 
 {-# INLINE  isInTriple #-}
 isInTriple :: (Int, Int, Int) -> Int -> Bool
 isInTriple (a, b, c) vertex = a == vertex || b == vertex || c == vertex
 
+{-# INLINE  isInTriple' #-}
+isInTriple' :: (# Int, Int, Int #) -> Int -> Bool
+isInTriple' (# a, b, c #) vertex = a == vertex || b == vertex || c == vertex
+
 {-# INLINE  hasVertex #-}
 hasVertex :: BT -> Int -> Bool
-hasVertex BT {..} vertex = isInTriple _btLower vertex || any (`isInTriple` vertex) _btUpper
+hasVertex BT {..} vertex = isInTriple' _btLower vertex || any (`isInTriple` vertex) _btUpper
 
 {-# INLINE  hasEdge #-}
 hasEdge :: BT -> Edge -> Bool
 hasEdge BT {..} edge = any (isInEdge edge _btLower) _btUpper
 
 {-# INLINE  isInEdge #-}
-isInEdge :: Edge -> (LowerVertex, LowerVertex, LowerVertex) -> (UpperVertex, UpperVertex, UpperVertex) -> Bool
-isInEdge (u, l) (l1, l2, l3) (u1, u2, u3) =
+isInEdge :: Edge -> (# LowerVertex, LowerVertex, LowerVertex #) -> (UpperVertex, UpperVertex, UpperVertex) -> Bool
+isInEdge (u, l) (# l1, l2, l3 #) (u1, u2, u3) =
   (u == u1 && l1 == l)
     || (u == u2 && l1 == l)
     || (u == u1 && l2 == l)
@@ -155,7 +173,7 @@ isInEdge (u, l) (l1, l2, l3) (u1, u2, u3) =
 newtype BTTT = BTTT
   {  _btttBts   :: [BT]
   }
-  deriving newtype (Semigroup, Monoid, Show)
+  deriving newtype (Semigroup, Monoid)
 
 {-# INLINE  addBt #-}
 addBt :: BT -> BTTT -> BTTT
