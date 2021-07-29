@@ -166,7 +166,7 @@ buildDW w_t w_t' l l' =
   let pair       = Pair (min l l') (max l l')
       paramBuild = if l < l' then (w_t, w_t') else (w_t', w_t)
       ut         = uncurry buildDW' paramBuild
-  in  if (IS.size w_t > 1) && abs (l - l') > 1 && not (IS.null (IS.intersection w_t w_t')) && not (nullTriplet ut)
+  in  if (IS.size w_t > 1) && abs (l - l') > 1 && not (IS.null (IS.intersection w_t w_t')) && not (R.null ut)
         then modify $ flip modifyDWState (DW pair ut)
         else pure ()
 
@@ -179,14 +179,13 @@ buildDW' !w_t !w_t' =
       !ssi = IS.size si
       !ssj = IS.size sj
       !ssk = IS.size sk
-      -- buildUt si' sj' sk' =
-      --   [ Triplet i j k | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
-      buildUt si' sj' sk' = fromListTriple [(i,j,k) | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
+      buildUt si' sj' sk' =
+        [ Triplet i j k | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
       ut | ssi >= 1 && ssj > 0 && ssk > 0 = buildUt si sj sk
          | ssi == 0 && ssj > 1 && ssk > 0 = buildUt sj sj sk
          | ssi == 0 && ssj > 2 && ssk == 0 = buildUt sj sj sj
          | ssi > 0 && ssj > 1 && ssk == 0 = buildUt si sj sj
-         | otherwise = EmptyTriple
+         | otherwise = []
   in ut
 
 {-# INLINE  actor3 #-}
@@ -217,13 +216,12 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
           let (DWTT dtlist) = dwtt
           forM_ dtlist $ \(DW (Pair l_l l_u) ut) ->
             let triple = Triplet l_l l' l_u
-                -- result = [ t'
-                --   | l' < l_u && l' > l_l
-                --   , t'@(Triplet u_1 _ u_3) <- ut
-                --   , u_1 `IS.member` w_t' && u_3 `IS.member` w_t'
-                --   ]
-                result = if l' < l_u && l' > l_l then filterTriplet (\u_1 _ u_3 -> u_1 `IS.member` w_t' && u_3 `IS.member` w_t') ut else EmptyTriple
-            in  if not $ nullTriplet result
+                result = [ t'
+                  | l' < l_u && l' > l_l
+                  , t'@(Triplet u_1 _ u_3) <- ut
+                  , u_1 `IS.member` w_t' && u_3 `IS.member` w_t'
+                  ]
+            in  if not $ R.null result
                   then modify $ flip modifyBTState (BT triple result)
                   else pure ()
       finish wfb
