@@ -8,6 +8,7 @@
 -- Portability : GHC
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE UnboxedTuples #-}
+-- {-# LANGUAGE UnliftedNewtypes #-}
 module Edges where
 
 import           Data.IntSet                                       as IS
@@ -23,31 +24,6 @@ data Conf = Conf
   , _commandFile    :: FilePath
   , _experimentName :: Text
   }
-
-data ListTriplet = EmptyTriple | Cons {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int ListTriplet
-
-{-# INLINE anyTriplet #-}
-anyTriplet :: (Int -> Int  -> Int -> Bool) -> ListTriplet -> Bool
-anyTriplet _ EmptyTriple = False
-anyTriplet fn (Cons !a !b !c rest) = fn a b c || anyTriplet fn rest
-
-{-# INLINE mapTriplet #-}
-mapTriplet :: (Int -> Int  -> Int -> c) -> ListTriplet -> [c]
-mapTriplet _ EmptyTriple = []
-mapTriplet fn (Cons !a !b !c rest) = fn a b c : mapTriplet fn rest
-
-{-# INLINE filterTriplet #-}
-filterTriplet :: (Int -> Int  -> Int -> Bool) -> ListTriplet -> ListTriplet
-filterTriplet _ EmptyTriple = EmptyTriple
-filterTriplet fn (Cons !a !b !c rest) = if fn a b c then Cons a b c (filterTriplet fn rest) else filterTriplet fn rest
-
-{-# INLINE nullTriplet #-}
-nullTriplet :: ListTriplet -> Bool
-nullTriplet EmptyTriple = True
-nullTriplet _ = False
-
-fromListTriple :: [(Int, Int, Int)] -> ListTriplet
-fromListTriple = R.foldl' (\l (a,b,c) -> Cons a b c l) EmptyTriple 
 
 type LowerVertex = Int
 type UpperVertex = Int
@@ -75,125 +51,118 @@ data W = W
   }
   deriving Show
 
-data Triplet = Triplet {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int
-data Pair = Pair {-# UNPACK #-} !Int {-# UNPACK #-} !Int
+{-# INLINE  addWedge #-}
+addWedge :: UpperVertex -> IntSet -> IntSet
+addWedge = IS.insert
 
-type UT = ListTriplet
+-- type UT s = V.MVector s ( UpperVertex, UpperVertex, UpperVertex )
+
+type UT = [( UpperVertex, UpperVertex, UpperVertex )]
 
 data DW = DW
-  { _dwLower :: Pair
+  { _dwLower :: (# LowerVertex, LowerVertex #)
   , _dwUpper :: UT
   }
 
 newtype DWTT = DWTT [DW]
   deriving newtype (Semigroup, Monoid)
 
-data BT = BT
-  { _btLower :: Triplet
-  , _btUpper :: UT
-  }
-
-newtype BTTT = BTTT [BT]
-  deriving newtype (Semigroup, Monoid)
-
-data BTResult = RBT Q [(Int, Int, Int, Int, Int, Int, Int)]
-              | RC  Q Int
-
-data FilterState = Adj W
-                 | DoubleWedges DWTT
-                 | BiTriangles BTTT
-
-
-{-# INLINE addWedge #-}
-addWedge :: UpperVertex -> IntSet -> IntSet
-addWedge = IS.insert
-
-{-# INLINE addDw #-}
+{-# INLINE  addDw #-}
 addDw :: DW -> DWTT -> DWTT
 addDw e (DWTT dw) = DWTT $ e : dw
 
-{-# INLINE hasNotDW #-}
+{-# INLINE  hasNotDW #-}
 hasNotDW :: DWTT -> Bool
 hasNotDW (DWTT x) = R.null x
 
-{-# INLINE hasDW #-}
+{-# INLINE  hasDW #-}
 hasDW :: DWTT -> Bool
 hasDW = not . hasNotDW
 
-{-# INLINE t #-}
+{-# INLINE  t #-}
 t :: Integral b => POSIXTime -> IO b
 t fct = round . (fct *) <$> getPOSIXTime
 
-{-# INLINE nanoSecs #-}
+{-# INLINE  nanoSecs #-}
 nanoSecs :: IO Double
 nanoSecs = (/ 1000000) . fromInteger <$> t 1000000000
 
-{-# INLINE microSecs #-}
+{-# INLINE  microSecs #-}
 microSecs :: IO Double
 microSecs = (/ 1000) . fromInteger <$> t 1000000
 
-{-# INLINE milliSecs #-}
+{-# INLINE  milliSecs #-}
 milliSecs :: IO Double
 milliSecs = fromInteger <$> t 1000
 
-{-# INLINE showFullPrecision #-}
+{-# INLINE  showFullPrecision #-}
 showFullPrecision :: Double -> String
 showFullPrecision = flip (showFFloat Nothing) ""
 
-{-# INLINE printHeader #-}
+{-# INLINE  printHeader #-}
 printHeader :: IO ()
 printHeader = putBSLn "test,command,answer,number,time"
 
-{-# INLINE printCC #-}
+{-# INLINE  printCC #-}
 printCC :: BTResult -> Int -> IO ()
 printCC (RBT (Q q startTime name) bt) c = do
   now <- nanoSecs
-  forM_ bt $ \path -> putLBSLn $ encodeUtf8 $ intercalate
+  forM_ (toBTPath bt) $ \path -> putLBSLn $ encodeUtf8 $ intercalate
     ","
     [toString name, R.show q, R.show path, R.show c, showFullPrecision (now - startTime)]
 printCC _ _ = putLBSLn "No Result can be shown for this command"
 
-{-# INLINE modifyWState #-}
+data FilterState = Adj W 
+                 | DoubleWedges DWTT 
+                 | BiTriangles BTTT
+
+{-# INLINE  modifyWState #-}
 modifyWState :: FilterState -> UpperVertex -> FilterState
 modifyWState (Adj w@(W _ ws)) u = Adj $ w { _wWedges = addWedge u ws }
-modifyWState s                _ = s
+modifyWState s _ = s
 
-{-# INLINE modifyDWState #-}
+{-# INLINE  modifyDWState #-}
 modifyDWState :: FilterState -> DW -> FilterState
 modifyDWState (DoubleWedges d) dw = DoubleWedges $ addDw dw d
-modifyDWState s                _  = s
+modifyDWState s _ = s
 
-{-# INLINE modifyBTState #-}
+{-# INLINE  modifyBTState #-}
 modifyBTState :: FilterState -> BT -> FilterState
 modifyBTState (BiTriangles b) bt = BiTriangles $ addBt bt b
-modifyBTState s               _  = s
+modifyBTState s _ = s
 
-{-# INLINE toBTPath #-}
+data BTResult = RBT Q BT
+              | RC  Q Int
+
+data BT = BT
+  { _btLower :: (# LowerVertex, LowerVertex, LowerVertex #)
+  , _btUpper :: UT
+  }
+
+{-# INLINE  toBTPath #-}
 toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
-toBTPath BT {..} =
-  let (Triplet l_l l_m l_u) = _btLower 
-   in mapTriplet (\u_1 u_2 u_3 -> (l_l, u_1, l_m, u_3, l_u, u_2, l_l)) _btUpper
+toBTPath BT{..} =
+  let (# l_l, l_m, l_u #) = _btLower in [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l) | (u_1, u_2, u_3) <- _btUpper ]
 
+{-# INLINE  isInTriple #-}
+isInTriple :: (Int, Int, Int) -> Int -> Bool
+isInTriple (a, b, c) vertex = a == vertex || b == vertex || c == vertex
 
-{-# INLINE isInTriple #-}
-isInTriple :: Int -> Int -> Int -> Int -> Bool
-isInTriple a b c vertex = a == vertex || b == vertex || c == vertex
+{-# INLINE  isInTriple' #-}
+isInTriple' :: (# Int, Int, Int #) -> Int -> Bool
+isInTriple' (# a, b, c #) vertex = a == vertex || b == vertex || c == vertex
 
-{-# INLINE isInTriple' #-}
-isInTriple' :: Triplet -> Int -> Bool
-isInTriple' (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
-
-{-# INLINE hasVertex #-}
+{-# INLINE  hasVertex #-}
 hasVertex :: BT -> Int -> Bool
-hasVertex BT {..} vertex = isInTriple' _btLower vertex || anyTriplet (`isInTriple` vertex) _btUpper
+hasVertex BT {..} vertex = isInTriple' _btLower vertex || any (`isInTriple` vertex) _btUpper
 
-{-# INLINE hasEdge #-}
+{-# INLINE  hasEdge #-}
 hasEdge :: BT -> Edge -> Bool
-hasEdge BT {..} edge = anyTriplet (isInEdge edge _btLower) _btUpper
+hasEdge BT {..} edge = any (isInEdge edge _btLower) _btUpper
 
-{-# INLINE isInEdge #-}
-isInEdge :: Edge -> Triplet -> Int -> Int -> Int -> Bool
-isInEdge (u, l) (Triplet l1 l2 l3) u1 u2 u3 =
+{-# INLINE  isInEdge #-}
+isInEdge :: Edge -> (# LowerVertex, LowerVertex, LowerVertex #) -> (UpperVertex, UpperVertex, UpperVertex) -> Bool
+isInEdge (u, l) (# l1, l2, l3 #) (u1, u2, u3) =
   (u == u1 && l1 == l)
     || (u == u2 && l1 == l)
     || (u == u1 && l2 == l)
@@ -201,59 +170,63 @@ isInEdge (u, l) (Triplet l1 l2 l3) u1 u2 u3 =
     || (u == u2 && l3 == l)
     || (u == u3 && l3 == l)
 
+newtype BTTT = BTTT
+  {  _btttBts   :: [BT]
+  }
+  deriving newtype (Semigroup, Monoid)
 
-{-# INLINE addBt #-}
+{-# INLINE  addBt #-}
 addBt :: BT -> BTTT -> BTTT
-addBt bt (BTTT bts) = BTTT (bt : bts)
+addBt bt bts = bts { _btttBts = bt : _btttBts bts }
 
-{-# INLINE containsVertex #-}
+{-# INLINE  containsVertex #-}
 containsVertex :: [Int] -> BTTT -> Bool
-containsVertex vertices (BTTT bts) = R.any (\a -> R.any (hasVertex a) vertices) bts
+containsVertex vertices BTTT {..} = any (\a -> any (hasVertex a) vertices) _btttBts
 
-{-# INLINE containsEdges #-}
+{-# INLINE  containsEdges #-}
 containsEdges :: [Edge] -> BTTT -> Bool
-containsEdges edges (BTTT bts) = R.any (\a -> R.any (hasEdge a) edges) bts
+containsEdges edges BTTT {..} = any (\a -> any (hasEdge a) edges) _btttBts
 
-{-# INLINE hasNotBT #-}
+{-# INLINE  hasNotBT #-}
 hasNotBT :: BTTT -> Bool
-hasNotBT (BTTT bts) = R.null bts
+hasNotBT BTTT {..} = R.null _btttBts
 
 nonEdge :: Edge
 nonEdge = (-1, -1)
 
-{-# INLINE toEdge #-}
+{-# INLINE  toEdge #-}
 toEdge :: String -> Edge
 toEdge = foldResult (const nonEdge) identity . toEdge'
 
-{-# INLINE toEdge' #-}
+{-# INLINE  toEdge' #-}
 toEdge' :: String -> Text.Trifecta.Result Edge
 toEdge' = P.parseString parseEdge mempty
 
-{-# INLINE parseInt #-}
+{-# INLINE  parseInt #-}
 parseInt :: Parser Int
 parseInt = fromInteger <$> integer
 
-{-# INLINE parseEdge #-}
+{-# INLINE  parseEdge #-}
 parseEdge :: Parser Edge
 parseEdge = (,) <$> (whiteSpace *> parseInt <* whiteSpace) <*> parseInt <* whiteSpace
 
-{-# INLINE toCommand #-}
+{-# INLINE  toCommand #-}
 toCommand :: String -> Command
 toCommand = foldResult (const NoCommand) identity . toCommand'
 
-{-# INLINE toCommand' #-}
+{-# INLINE  toCommand' #-}
 toCommand' :: String -> Text.Trifecta.Result Command
 toCommand' = P.parseString parseCommand mempty
 
-{-# INLINE parseCommand #-}
+{-# INLINE  parseCommand #-}
 parseCommand :: Parser Command
 parseCommand = byVertex <|> byEdge <|> countQ <|> allQ <|> endQ
 
-{-# INLINE byVertex #-}
+{-# INLINE  byVertex #-}
 byVertex :: Parser Command
 byVertex = ByVertex <$> (string "by-vertex" *> (whiteSpace *> many parseInt))
 
-{-# INLINE parseEdgeWithComma #-}
+{-# INLINE  parseEdgeWithComma #-}
 parseEdgeWithComma :: Parser Edge
 parseEdgeWithComma =
   (,)
@@ -262,23 +235,23 @@ parseEdgeWithComma =
     <*  string ")"
     <*  whiteSpace
 
-{-# INLINE byEdge #-}
+{-# INLINE  byEdge #-}
 byEdge :: Parser Command
 byEdge = ByEdge <$> (string "by-edge" *> (whiteSpace *> many parseEdgeWithComma))
 
-{-# INLINE countQ #-}
+{-# INLINE  countQ #-}
 countQ :: Parser Command
 countQ = string "count" $> Count
 
-{-# INLINE allQ #-}
+{-# INLINE  allQ #-}
 allQ :: Parser Command
 allQ = string "all" $> AllBT
 
-{-# INLINE endQ #-}
+{-# INLINE  endQ #-}
 endQ :: Parser Command
 endQ = string "end" $> End
 
-{-# INLINE commandsText #-}
+{-# INLINE  commandsText #-}
 commandsText :: Text
 commandsText = [r|
 by-vertex LIST_VERTEX_SPLIT_BY_SPACE       Return all Bitriangles that contains any of the vertices in the list
