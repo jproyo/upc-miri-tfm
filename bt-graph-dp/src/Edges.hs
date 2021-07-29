@@ -24,31 +24,6 @@ data Conf = Conf
   , _experimentName :: Text
   }
 
-data ListTriplet = EmptyTriple | Cons {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int ListTriplet
-
-{-# INLINE anyTriplet #-}
-anyTriplet :: (Int -> Int  -> Int -> Bool) -> ListTriplet -> Bool
-anyTriplet _ EmptyTriple = False
-anyTriplet fn (Cons !a !b !c rest) = fn a b c || anyTriplet fn rest
-
-{-# INLINE mapTriplet #-}
-mapTriplet :: (Int -> Int  -> Int -> c) -> ListTriplet -> [c]
-mapTriplet _ EmptyTriple = []
-mapTriplet fn (Cons !a !b !c rest) = fn a b c : mapTriplet fn rest
-
-{-# INLINE filterTriplet #-}
-filterTriplet :: (Int -> Int  -> Int -> Bool) -> ListTriplet -> ListTriplet
-filterTriplet _ EmptyTriple = EmptyTriple
-filterTriplet fn (Cons !a !b !c rest) = if fn a b c then Cons a b c (filterTriplet fn rest) else filterTriplet fn rest
-
-{-# INLINE nullTriplet #-}
-nullTriplet :: ListTriplet -> Bool
-nullTriplet EmptyTriple = True
-nullTriplet _ = False
-
-fromListTriple :: [(Int, Int, Int)] -> ListTriplet
-fromListTriple = R.foldl' (\l (a,b,c) -> Cons a b c l) EmptyTriple 
-
 type LowerVertex = Int
 type UpperVertex = Int
 type Edge = (UpperVertex, LowerVertex)
@@ -78,7 +53,7 @@ data W = W
 data Triplet = Triplet {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int
 data Pair = Pair {-# UNPACK #-} !Int {-# UNPACK #-} !Int
 
-type UT = ListTriplet
+type UT = [Triplet]
 
 data DW = DW
   { _dwLower :: Pair
@@ -172,12 +147,12 @@ modifyBTState s               _  = s
 toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
 toBTPath BT {..} =
   let (Triplet l_l l_m l_u) = _btLower 
-   in mapTriplet (\u_1 u_2 u_3 -> (l_l, u_1, l_m, u_3, l_u, u_2, l_l)) _btUpper
+   in R.map (\(Triplet u_1 u_2 u_3) -> (l_l, u_1, l_m, u_3, l_u, u_2, l_l)) _btUpper
 
 
 {-# INLINE isInTriple #-}
-isInTriple :: Int -> Int -> Int -> Int -> Bool
-isInTriple a b c vertex = a == vertex || b == vertex || c == vertex
+isInTriple :: Triplet -> Int -> Bool
+isInTriple (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
 
 {-# INLINE isInTriple' #-}
 isInTriple' :: Triplet -> Int -> Bool
@@ -185,15 +160,15 @@ isInTriple' (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
 
 {-# INLINE hasVertex #-}
 hasVertex :: BT -> Int -> Bool
-hasVertex BT {..} vertex = isInTriple' _btLower vertex || anyTriplet (`isInTriple` vertex) _btUpper
+hasVertex BT {..} vertex = isInTriple' _btLower vertex || any (`isInTriple` vertex) _btUpper
 
 {-# INLINE hasEdge #-}
 hasEdge :: BT -> Edge -> Bool
-hasEdge BT {..} edge = anyTriplet (isInEdge edge _btLower) _btUpper
+hasEdge BT {..} edge = any (isInEdge edge _btLower) _btUpper
 
 {-# INLINE isInEdge #-}
-isInEdge :: Edge -> Triplet -> Int -> Int -> Int -> Bool
-isInEdge (u, l) (Triplet l1 l2 l3) u1 u2 u3 =
+isInEdge :: Edge -> Triplet -> Triplet -> Bool
+isInEdge (u, l) (Triplet l1 l2 l3) (Triplet u1 u2 u3) =
   (u == u1 && l1 == l)
     || (u == u2 && l1 == l)
     || (u == u1 && l2 == l)
