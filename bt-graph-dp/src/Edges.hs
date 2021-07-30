@@ -10,6 +10,7 @@
 {-# LANGUAGE UnboxedTuples #-}
 module Edges where
 
+import           Data.HashMap.Strict                               as H
 import           Data.IntSet                                       as IS
 import           Data.Time.Clock.POSIX
 import           Numeric
@@ -51,7 +52,9 @@ data W = W
   deriving Show
 
 data Triplet = Triplet {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int
+  deriving (Generic, Eq, Hashable)
 data Pair = Pair {-# UNPACK #-} !Int {-# UNPACK #-} !Int
+  deriving (Generic, Eq, Hashable)
 
 type UT = [Triplet]
 
@@ -60,16 +63,14 @@ data DW = DW
   , _dwUpper :: UT
   }
 
-newtype DWTT = DWTT [DW]
-  deriving newtype (Semigroup, Monoid)
+newtype DWTT = DWTT (HashMap Pair UT)
 
 data BT = BT
   { _btLower :: Triplet
   , _btUpper :: UT
   }
 
-newtype BTTT = BTTT [BT]
-  deriving newtype (Semigroup, Monoid)
+newtype BTTT = BTTT (HashMap Triplet UT)
 
 data BTResult = RBT Q [(Int, Int, Int, Int, Int, Int, Int)]
               | RC  Q Int
@@ -85,7 +86,7 @@ addWedge = IS.insert
 
 {-# INLINE addDw #-}
 addDw :: DW -> DWTT -> DWTT
-addDw e (DWTT dw) = DWTT $ e : dw
+addDw DW {..} (DWTT dw) = DWTT $ H.insert _dwLower _dwUpper dw
 
 {-# INLINE hasNotDW #-}
 hasNotDW :: DWTT -> Bool
@@ -144,27 +145,18 @@ modifyBTState (BiTriangles b) bt = BiTriangles $ addBt bt b
 modifyBTState s               _  = s
 
 {-# INLINE toBTPath #-}
-toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
-toBTPath BT {..} =
-  let (Triplet l_l l_m l_u) = _btLower 
-   in R.map (\(Triplet u_1 u_2 u_3) -> (l_l, u_1, l_m, u_3, l_u, u_2, l_l)) _btUpper
+toBTPath :: (Triplet, UT) -> [(Int, Int, Int, Int, Int, Int, Int)]
+toBTPath (Triplet l_l l_m l_u, ut) =
+  R.map (\(Triplet u_1 u_2 u_3) -> (l_l, u_1, l_m, u_3, l_u, u_2, l_l)) ut
 
 
 {-# INLINE isInTriple #-}
 isInTriple :: Triplet -> Int -> Bool
 isInTriple (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
 
-{-# INLINE isInTriple' #-}
-isInTriple' :: Triplet -> Int -> Bool
-isInTriple' (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
-
-{-# INLINE hasVertex #-}
-hasVertex :: BT -> Int -> Bool
-hasVertex BT {..} vertex = isInTriple' _btLower vertex || any (`isInTriple` vertex) _btUpper
-
-{-# INLINE hasEdge #-}
-hasEdge :: BT -> Edge -> Bool
-hasEdge BT {..} edge = any (isInEdge edge _btLower) _btUpper
+{-# INLINE hasEdges #-}
+hasEdges :: [Edge] -> Triplet -> UT -> Bool
+hasEdges edges tr = R.any (\tu -> R.any (\e -> isInEdge e tr tu) edges)
 
 {-# INLINE isInEdge #-}
 isInEdge :: Edge -> Triplet -> Triplet -> Bool
@@ -179,15 +171,20 @@ isInEdge (u, l) (Triplet l1 l2 l3) (Triplet u1 u2 u3) =
 
 {-# INLINE addBt #-}
 addBt :: BT -> BTTT -> BTTT
-addBt bt (BTTT bts) = BTTT (bt : bts)
+addBt BT {..} (BTTT bts) = BTTT $ H.insert _btLower _btUpper bts
+
+inTriplets :: [Triplet] -> [Int] -> Bool 
+inTriplets ts = R.any (flip R.any ts . flip isInTriple)
 
 {-# INLINE containsVertex #-}
 containsVertex :: [Int] -> BTTT -> Bool
-containsVertex vertices (BTTT bts) = R.any (\a -> R.any (hasVertex a) vertices) bts
+containsVertex vertices (BTTT bts) = let !inKeys = inTriplets (H.keys bts) vertices
+                                         inVals = R.any (`inTriplets` vertices) $ H.elems bts
+                                      in inKeys || inVals
 
 {-# INLINE containsEdges #-}
 containsEdges :: [Edge] -> BTTT -> Bool
-containsEdges edges (BTTT bts) = R.any (\a -> R.any (hasEdge a) edges) bts
+containsEdges edges (BTTT bts) = getAny $ H.foldMapWithKey (\k -> Any . hasEdges edges k) bts
 
 {-# INLINE hasNotBT #-}
 hasNotBT :: BTTT -> Bool

@@ -74,6 +74,7 @@ dependencies:
   - relude
   - time
   - trifecta
+  - unordered-containers 
 
 executables:
   bt-graph-dp:

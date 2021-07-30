@@ -9,6 +9,7 @@
 module BTriangle where
 
 import           Data.IntSet                                       as IS
+import Data.HashMap.Strict as H
 import           DynamicPipeline
 import           Edges
 import           Relude                                            as R
@@ -150,7 +151,7 @@ actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
   state' <- get
   case state' of
     Adj (W _ w_t) -> do 
-      modify $ const $ DoubleWedges mempty
+      modify $ const $ DoubleWedges $ DWTT H.empty
       foldM_ rw1 $ \w@(W l' w_t') -> do
         push w ww1
         buildDW w_t w_t' l l'
@@ -207,23 +208,34 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
   state' <- get
   case state' of
     DoubleWedges dwtt -> do 
-      modify $ const $ BiTriangles mempty
+      modify $ const $ BiTriangles $ BTTT H.empty
       whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
         $ liftIO milliSecs >>= putTextLn . mappend ("[BT] - [Starting] - Filter with Param l=" <> show l <> " - Time: ") . toText . showFullPrecision
       foldM_ rfb $ \w@(W l' w_t') -> do
         push w wfb
         when (hasDW dwtt) $ do
           let (DWTT dtlist) = dwtt
-          forM_ dtlist $ \(DW (Pair l_l l_u) ut) ->
+          let subMap = flip filterWithKey dtlist $ \(Pair l_l l_u) _ -> l' < l_u && l' > l_l 
+          forM_ (H.toList subMap) $ \(Pair l_l l_u , ut) -> do
             let triple = Triplet l_l l' l_u
                 result = [ t'
-                  | l' < l_u && l' > l_l
-                  , t'@(Triplet u_1 _ u_3) <- ut
+                  | t'@(Triplet u_1 _ u_3) <- ut
                   , u_1 `IS.member` w_t' && u_3 `IS.member` w_t'
-                  ]
-            in  if not $ R.null result
-                  then modify $ flip modifyBTState (BT triple result)
-                  else pure ()
+                  ] 
+              in  if not $ R.null result
+                    then modify $ flip modifyBTState (BT triple result)
+                    else pure ()
+
+          -- forM_ dtlist $ \(DW (Pair l_l l_u) ut) ->
+          --   let triple = Triplet l_l l' l_u
+          --       result = [ t'
+          --         | l' < l_u && l' > l_l
+          --         , t'@(Triplet u_1 _ u_3) <- ut
+          --         , u_1 `IS.member` w_t' && u_3 `IS.member` w_t'
+          --         ]
+          --   in  if not $ R.null result
+          --         then modify $ flip modifyBTState (BT triple result)
+          --         else pure ()
       finish wfb
       whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
         $ liftIO milliSecs >>= putTextLn . mappend ("[BT] - [Finish] - Filter with Param l=" <> show l <> " - Time: ") . toText . showFullPrecision
@@ -260,7 +272,7 @@ actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
 
 {-# INLINE  sendBts #-}
 sendBts :: MonadIO m => BTTT -> Q -> WriteChannel BTResult -> m ()
-sendBts (BTTT bttt) !q wbtr = forM_ bttt (flip push wbtr . RBT q . toBTPath)
+sendBts (BTTT bttt) !q wbtr = forM_ (H.toList bttt) (flip push wbtr . RBT q . toBTPath)
 
 program :: Conf -> IO ()
 program conf = runDP $ mkDP @DPBT (source' conf) generator' sink'

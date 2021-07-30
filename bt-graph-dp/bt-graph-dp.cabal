@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7b198fa93b316efffd730646ed81ddbb9bbbc8fb37c7676c7c1b74da0b4f78cf
+-- hash: f2fb3bb64b34f438a2a5d58f59982b74116a37a45837c7d951f21ff36b880ec4
 
 name:           bt-graph-dp
 version:        0.1.0.0
@@ -75,4 +75,5 @@ executable bt-graph-dp
     , relude
     , time
     , trifecta
+    , unordered-containers
   default-language: Haskell2010
