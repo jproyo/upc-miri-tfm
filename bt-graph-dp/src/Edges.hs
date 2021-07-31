@@ -53,7 +53,10 @@ data W = W
 data Triplet = Triplet {-# UNPACK #-} !Int {-# UNPACK #-} !Int {-# UNPACK #-} !Int
 data Pair = Pair {-# UNPACK #-} !Int {-# UNPACK #-} !Int
 
-type UT = [Triplet]
+type UT = (IntSet, IntSet, IntSet)
+
+emptyUT :: UT -> Bool
+emptyUT (si, sj, sk) = IS.null si && IS.null sj && IS.null sk
 
 data DW = DW
   { _dwLower :: Pair
@@ -146,8 +149,24 @@ modifyBTState s               _  = s
 {-# INLINE toBTPath #-}
 toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
 toBTPath BT {..} =
-  let (Triplet l_l l_m l_u) = _btLower 
-   in R.map (\(Triplet u_1 u_2 u_3) -> (l_l, u_1, l_m, u_3, l_u, u_2, l_l)) _btUpper
+  let (Triplet l_l l_m l_u) = _btLower
+      (si, sj, sk)          = _btUpper
+  in  [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
+      | u_1 <- IS.toList si
+      , u_2 <- IS.toList sj
+      , u_1 /= u_2
+      , u_3 <- IS.toList sk
+      , u_1 /= u_2 && u_2 /= u_3
+      ]
+
+
+{-# INLINE containsVertex #-}
+containsVertex :: [Int] -> BTTT -> Bool
+containsVertex vertices (BTTT bts) = R.any (getAny . foldMap hasVertex bts) vertices
+
+{-# INLINE containsEdges #-}
+containsEdges :: [Edge] -> BTTT -> Bool
+containsEdges edges (BTTT bts) = R.any (getAny . foldMap hasEdge bts) edges
 
 
 {-# INLINE isInTriple #-}
@@ -155,20 +174,32 @@ isInTriple :: Triplet -> Int -> Bool
 isInTriple (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
 
 {-# INLINE isInTriple' #-}
-isInTriple' :: Triplet -> Int -> Bool
-isInTriple' (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
+isInTriple' :: Triplet -> Int -> Any
+isInTriple' (Triplet a b c) vertex = Any (a == vertex) <> Any (b == vertex) <> Any (c == vertex)
 
 {-# INLINE hasVertex #-}
-hasVertex :: BT -> Int -> Bool
-hasVertex BT {..} vertex = isInTriple' _btLower vertex || any (`isInTriple` vertex) _btUpper
+hasVertex :: BT -> Int -> Any
+hasVertex BT {..} vertex =
+  let (si, sj, sk) = _btUpper
+  in  isInTriple' _btLower vertex <> Any (IS.member vertex si || IS.member vertex sj || IS.member vertex sk)
 
 {-# INLINE hasEdge #-}
-hasEdge :: BT -> Edge -> Bool
-hasEdge BT {..} edge = any (isInEdge edge _btLower) _btUpper
+hasEdge :: BT -> Edge -> Any
+hasEdge BT {..} edge =
+  let (si, sj, sk) = _btUpper
+  in  foldMap
+        Any
+        [ isInEdge edge _btLower u_1 u_2 u_3
+        | u_1 <- IS.toList si
+        , u_2 <- IS.toList sj
+        , u_1 /= u_2
+        , u_3 <- IS.toList sk
+        , u_1 /= u_2 && u_2 /= u_3
+        ]
 
 {-# INLINE isInEdge #-}
-isInEdge :: Edge -> Triplet -> Triplet -> Bool
-isInEdge (u, l) (Triplet l1 l2 l3) (Triplet u1 u2 u3) =
+isInEdge :: Edge -> Triplet -> Int -> Int -> Int -> Bool
+isInEdge (u, l) (Triplet l1 l2 l3) u1 u2 u3 =
   (u == u1 && l1 == l)
     || (u == u2 && l1 == l)
     || (u == u1 && l2 == l)
@@ -181,13 +212,6 @@ isInEdge (u, l) (Triplet l1 l2 l3) (Triplet u1 u2 u3) =
 addBt :: BT -> BTTT -> BTTT
 addBt bt (BTTT bts) = BTTT (bt : bts)
 
-{-# INLINE containsVertex #-}
-containsVertex :: [Int] -> BTTT -> Bool
-containsVertex vertices (BTTT bts) = R.any (\a -> R.any (hasVertex a) vertices) bts
-
-{-# INLINE containsEdges #-}
-containsEdges :: [Edge] -> BTTT -> Bool
-containsEdges edges (BTTT bts) = R.any (\a -> R.any (hasEdge a) edges) bts
 
 {-# INLINE hasNotBT #-}
 hasNotBT :: BTTT -> Bool
