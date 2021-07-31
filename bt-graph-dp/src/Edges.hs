@@ -10,6 +10,7 @@
 {-# LANGUAGE UnboxedTuples #-}
 module Edges where
 
+import Control.Concurrent.Async
 import           Data.IntSet                                       as IS
 import           Data.Time.Clock.POSIX
 import           Numeric
@@ -74,7 +75,7 @@ data BT = BT
 newtype BTTT = BTTT [BT]
   deriving newtype (Semigroup, Monoid)
 
-data BTResult = RBT Q [(Int, Int, Int, Int, Int, Int, Int)]
+data BTResult = RBT Q (Int, Int, Int, Int, Int, Int, Int)
               | RC  Q Int
 
 data FilterState = Adj W
@@ -126,9 +127,9 @@ printHeader = putBSLn "test,command,answer,number,time"
 printCC :: BTResult -> Int -> IO ()
 printCC (RBT (Q q startTime name) bt) c = do
   now <- nanoSecs
-  forM_ bt $ \path -> putLBSLn $ encodeUtf8 $ intercalate
+  putLBSLn $ encodeUtf8 $ intercalate
     ","
-    [toString name, R.show q, R.show path, R.show c, showFullPrecision (now - startTime)]
+    [toString name, R.show q, R.show bt, R.show c, showFullPrecision (now - startTime)]
 printCC _ _ = putLBSLn "No Result can be shown for this command"
 
 {-# INLINE modifyWState #-}
@@ -159,43 +160,35 @@ toBTPath BT {..} =
       , u_1 /= u_2 && u_2 /= u_3
       ]
 
+{-# INLINE filterBTByVertex #-}
+filterBTByVertex :: MonadIO m => BT -> [Int] -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
+filterBTByVertex BT {..} vertices f = do
+  let (Triplet l_l l_m l_u) = _btLower
+      (si, sj, sk)          = _btUpper
+  liftIO $ mapConcurrently_  f [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
+          | v <- vertices
+          , u_1 <- IS.toList si
+          , u_2 <- IS.toList sj
+          , u_1 /= u_2
+          , u_3 <- IS.toList sk
+          , u_1 /= u_2 && u_2 /= u_3
+          , l_l == v || u_1 == v || l_m == v || u_3 == v || l_u == v || u_2 == v || l_l == v
+          ]
 
-{-# INLINE containsVertex #-}
-containsVertex :: [Int] -> BTTT -> Bool
-containsVertex vertices (BTTT bts) = R.any (getAny . foldMap hasVertex bts) vertices
-
-{-# INLINE containsEdges #-}
-containsEdges :: [Edge] -> BTTT -> Bool
-containsEdges edges (BTTT bts) = R.any (getAny . foldMap hasEdge bts) edges
-
-
-{-# INLINE isInTriple #-}
-isInTriple :: Triplet -> Int -> Bool
-isInTriple (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
-
-{-# INLINE isInTriple' #-}
-isInTriple' :: Triplet -> Int -> Any
-isInTriple' (Triplet a b c) vertex = Any (a == vertex) <> Any (b == vertex) <> Any (c == vertex)
-
-{-# INLINE hasVertex #-}
-hasVertex :: BT -> Int -> Any
-hasVertex BT {..} vertex =
-  let (si, sj, sk) = _btUpper
-  in  isInTriple' _btLower vertex <> Any (IS.member vertex si || IS.member vertex sj || IS.member vertex sk)
-
-{-# INLINE hasEdge #-}
-hasEdge :: BT -> Edge -> Any
-hasEdge BT {..} edge =
-  let (si, sj, sk) = _btUpper
-  in  foldMap
-        Any
-        [ isInEdge edge _btLower u_1 u_2 u_3
-        | u_1 <- IS.toList si
-        , u_2 <- IS.toList sj
-        , u_1 /= u_2
-        , u_3 <- IS.toList sk
-        , u_1 /= u_2 && u_2 /= u_3
-        ]
+{-# INLINE filterBTByEdge #-}
+filterBTByEdge :: MonadIO m => BT -> [Edge] -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
+filterBTByEdge BT {..} vertices f = do
+  let (Triplet l_l l_m l_u) = _btLower
+      (si, sj, sk)          = _btUpper
+  liftIO $ mapConcurrently_  f [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
+          | v <- vertices
+          , u_1 <- IS.toList si
+          , u_2 <- IS.toList sj
+          , u_1 /= u_2
+          , u_3 <- IS.toList sk
+          , u_1 /= u_2 && u_2 /= u_3
+          , isInEdge v _btLower u_1 u_2 u_3
+          ]
 
 {-# INLINE isInEdge #-}
 isInEdge :: Edge -> Triplet -> Int -> Int -> Int -> Bool
