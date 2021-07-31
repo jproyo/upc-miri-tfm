@@ -262,14 +262,6 @@ filterUt wt (si, sj, sk) =
 inSomeLeftAndRight :: IntSet -> UT -> Bool
 inSomeLeftAndRight wt (si, _, sk) = 
   not (IS.null (wt `IS.intersection` si) || IS.null (wt `IS.intersection` sk))
-  -- not $ R.null
-  -- [ 1
-  -- | u_1 <- IS.toList si
-  -- , u_2 <- IS.toList sj
-  -- , u_1 /= u_2
-  -- , u_3 <- IS.toList sk
-  -- , u_1 /= u_2 && u_2 /= u_3 && u_1 `IS.member` wt && u_3 `IS.member` wt
-  -- ]
 
 {-# INLINE actor4 #-}
 actor4 :: Edge
@@ -291,18 +283,17 @@ actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
   case state' of
     BiTriangles bttt -> do
       rbtr |=> wbtr
-      foldM_ query $ \e@(Q q _ _) -> do
+      foldM_ query $ \e -> do
         push e wq
-        unless (hasNotBT bttt) $ case q of
-          ByVertex k | containsVertex k bttt      -> sendBts bttt e wbtr
-          ByEdge edges | containsEdges edges bttt -> sendBts bttt e wbtr
-          AllBT                                   -> sendBts bttt e wbtr
-          _                                       -> pure ()
+        unless (hasNotBT bttt) $ sendBts bttt e wbtr
     _ -> pure ()
 
 {-# INLINE sendBts #-}
 sendBts :: MonadIO m => BTTT -> Q -> WriteChannel BTResult -> m ()
-sendBts (BTTT bttt) !q wbtr = forM_ bttt (flip push wbtr . RBT q . toBTPath)
+sendBts (BTTT bttt) q@(Q c _ _) wbtr = case c of
+  ByVertex vx -> forM_ bttt (\bt -> filterBTByVertex bt vx (flip push wbtr . RBT q))
+  ByEdge edges -> forM_ bttt (\bt -> filterBTByEdge bt edges (flip push wbtr . RBT q))
+  _ -> pure ()
 
 program :: Conf -> IO ()
 program conf = runDP $ mkDP @DPBT (source' conf) generator' sink'
