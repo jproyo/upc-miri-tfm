@@ -84,3 +84,12 @@ executables:
       - -O3
       - -rtsopts
       - -with-rtsopts=-N
+
+  # bt-graph-dp-2:
+  #   source-dirs:      src
+  #   main:             Main.hs
+  #   ghc-options:
+  #     - -threaded
+  #     - -O3
+  #     - -rtsopts
+  #     - -with-rtsopts=-N

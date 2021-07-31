@@ -13,6 +13,7 @@ conf_debug:
   dconf_dump_ast_full: false
 conf_forward:
   options_ghc:
+  - -XBangPatterns
   - -XConstraintKinds
   - -XDataKinds
   - -XDeriveFunctor
