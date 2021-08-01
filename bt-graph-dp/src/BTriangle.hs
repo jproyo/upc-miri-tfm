@@ -211,7 +211,7 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
   case state' of
     DoubleWedges dwtt -> do
       modify $ const $ BiTriangles mempty
-      now <- printDebug "QUERY" l Nothing
+      now <- printDebug "BT" l Nothing
       foldM_ rfb $ \w@(W l' w_t') -> do
         push w wfb
         when (hasDW dwtt) $ do
@@ -228,9 +228,9 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
 {-# INLINE filterUt #-}
 filterUt :: IntSet -> UT -> UT
 filterUt wt (si, sj, sk) =
-  let si'' = IS.filter (`IS.member` wt) si
-      sk'' = IS.filter (`IS.member` wt) sk
-  in  (si'', sj, sk'')
+  let si' = IS.filter (`IS.member` wt) si
+      sk' = IS.filter (`IS.member` wt) sk
+  in  (si', sj, sk')
 
 
 {-# INLINE inSomeLeftAndRight #-}
