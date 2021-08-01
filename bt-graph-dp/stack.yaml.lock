@@ -5,12 +5,12 @@
 
 packages:
 - completed:
-    hackage: dynamic-pipeline-0.3.1.3@sha256:24f8b1891ee2c965c0a9c725435ed8c730427637fcb460ed77974701844a40f3,7690
+    hackage: dynamic-pipeline-0.3.2.0@sha256:d19b147ba5cad598501c8dff3be61ccf6e6c9dcb25fe107c65fea2d3dd73b979,7690
     pantry-tree:
       size: 870
-      sha256: b9bed030a09138b22cf2e610c3ff6851c320b0178a616e371ad5c423c9fb0ff0
+      sha256: cb857bae1e7f6a3ba5a26f24d11225b2b9cf40ac0ef498ae3b8d0b080499bd55
   original:
-    hackage: dynamic-pipeline-0.3.1.3
+    hackage: dynamic-pipeline-0.3.2.0
 - completed:
     hackage: HList-0.5.0.0@sha256:7d7a0bee8d01a7e0e10bf96c5214a21bebae3ecfc02d14fc13bf75458b38ac43,7137
     pantry-tree:
