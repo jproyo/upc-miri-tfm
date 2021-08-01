@@ -57,8 +57,12 @@ data Pair = Pair {-# UNPACK #-} !Int {-# UNPACK #-} !Int
 
 type UT = (IntSet, IntSet, IntSet)
 
-emptyUT :: UT -> Bool
-emptyUT (si, sj, sk) = IS.null si && IS.null sj && IS.null sk
+nullUT :: UT -> Bool
+nullUT (si, sj, sk) = IS.null si && IS.null sj && IS.null sk
+
+emptyUT :: UT 
+emptyUT = (IS.empty, IS.empty, IS.empty)
+
 
 data DW = DW
   { _dwLower :: Pair
@@ -173,17 +177,17 @@ buildBT = do
   (si, sj, sk)          <- _btUpper
   return
     [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
-    | u_1 <- IS.toList si
-    , u_2 <- IS.toList sj
+    | u_1 <- IS.toAscList si
+    , u_2 <- IS.toAscList sj
     , u_1 /= u_2
-    , u_3 <- IS.toList sk
+    , u_3 <- IS.toAscList sk
     , u_1 /= u_2 && u_2 /= u_3
     ]
 
 {-# INLINE filterBTByVertex #-}
 filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> m ()) -> m ()
 filterBTByVertex bt vertices f =
-  when (getAny $ foldMap (hasVertex bt) $ IS.toList vertices)
+  when (getAny $ foldMap (hasVertex bt) $ IS.toAscList vertices)
     $ mapM_ f
     . R.filter (R.any (`IS.member` vertices) . tupleToList)
     . buildBT

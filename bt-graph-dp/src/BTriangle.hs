@@ -8,6 +8,7 @@
 -- Portability : GHC
 module BTriangle where
 
+import           Control.Concurrent.Async
 import           Data.IntSet                                       as IS
 import           DynamicPipeline
 import           Edges
@@ -70,11 +71,11 @@ toOutput :: ReadChannel (UpperVertex, LowerVertex)
          -> ReadChannel BTResult
          -> DP s ()
 toOutput _ _ _ _ rbt = do
-  c <- newIORef 1
+  c  <- newIORef 1
   c2 <- newIORef 0
-  foldM_ rbt $ \case 
-    r@(RBT _ _) -> liftIO $ readIORef c >>= printCC r >> modifyIORef c (+ 1)
-    RC _ countR -> liftIO $ modifyIORef c2 (+countR)
+  foldM_ rbt $ \case
+    r@(RBT _ _)      -> liftIO $ readIORef c >>= printCC r >> modifyIORef c (+ 1)
+    RC _      countR -> liftIO $ modifyIORef c2 (+ countR)
   readIORef c2 >>= \cr -> when (cr > 0) $ putTextLn $ "[BT-TOTAL] = " <> show cr
 
 generator' :: forall k (st :: k) . GeneratorStage DPBT FilterState Edge st
@@ -153,16 +154,12 @@ actor2 (_, l) _ rw1 _ _ _ _ _ ww1 _ _ _ _ = do
   case state' of
     Adj (W _ w_t) -> do
       modify $ const $ DoubleWedges mempty
+      now <- printDebug "DW" l Nothing
       foldM_ rw1 $ \w@(W l' w_t') -> do
         push w ww1
         buildDW w_t w_t' l l'
       finish ww1
-      whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
-        $   liftIO milliSecs
-        >>= putTextLn
-        .   mappend ("[DW] - [Finish] - Filter with Param l=" <> show l <> " - Time: ")
-        .   toText
-        .   showFullPrecision
+      void $ printDebug "DW" l $ Just now
     _ -> pure ()
 
 
@@ -172,7 +169,7 @@ buildDW w_t w_t' l l' =
   let pair       = Pair (min l l') (max l l')
       paramBuild = if l < l' then (w_t, w_t') else (w_t', w_t)
       ut         = uncurry buildDW' paramBuild
-  in  if (IS.size w_t > 1) && abs (l - l') > 1 && not (IS.null (IS.intersection w_t w_t')) && not (emptyUT ut)
+  in  if (IS.size w_t > 1) && abs (l - l') > 1 && not (IS.null (IS.intersection w_t w_t')) && not (nullUT ut)
         then modify $ flip modifyDWState (DW pair ut)
         else pure ()
 
@@ -187,10 +184,7 @@ buildDW' !w_t !w_t' =
       !ssi    = IS.size si
       !ssj    = IS.size sj
       !ssk    = IS.size sk
-      -- buildUt si' sj' sk' =
-      --   [ Triplet i j k | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
       buildUt = (,,)
-      --   [ Triplet i j k | i <- IS.toList si', j <- IS.toList sj', i /= j, k <- IS.toList sk', i /= k && j /= k ]
       ut | ssi >= 1 && ssj > 0 && ssk > 0  = buildUt si sj sk
          | ssi == 0 && ssj > 1 && ssk > 0  = buildUt sj sj sk
          | ssi == 0 && ssj > 2 && ssk == 0 = buildUt sj sj sj
@@ -218,54 +212,33 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
   case state' of
     DoubleWedges dwtt -> do
       modify $ const $ BiTriangles mempty
-      whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
-        $   liftIO milliSecs
-        >>= putTextLn
-        .   mappend ("[BT] - [Starting] - Filter with Param l=" <> show l <> " - Time: ")
-        .   toText
-        .   showFullPrecision
+      now <- printDebug "QUERY" l Nothing
       foldM_ rfb $ \w@(W l' w_t') -> do
         push w wfb
         when (hasDW dwtt) $ do
           let (DWTT dtlist) = dwtt
           forM_ dtlist $ \(DW (Pair l_l l_u) ut) ->
             let triple = Triplet l_l l' l_u
-                result = if l' < l_u && l' > l_l && w_t' `inSomeLeftAndRight` ut 
-                          then Just $ filterUt w_t' ut  
-                          else Nothing
-                -- result = [ t'
-                --   | l' < l_u && l' > l_l
-                --   , t'@(Triplet u_1 _ u_3) <- ut
-                --   , u_1 `IS.member` w_t' && u_3 `IS.member` w_t'
-                --   ]
+                result =
+                  if l' < l_u && l' > l_l && w_t' `inSomeLeftAndRight` ut 
+                    then Just $ filterUt w_t' ut 
+                    else Nothing
             in  maybe (pure ()) (modify . flip modifyBTState . BT triple) result
       finish wfb
-      whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
-        $   liftIO milliSecs
-        >>= putTextLn
-        .   mappend ("[BT] - [Finish] - Filter with Param l=" <> show l <> " - Time: ")
-        .   toText
-        .   showFullPrecision
+      void $ printDebug "BT" l $ Just now
     _ -> pure ()
 
+{-# INLINE filterUt #-}
 filterUt :: IntSet -> UT -> UT
-filterUt wt (si, sj, sk) = 
-  let u1u3 = [ (u_1, u_2, u_3)
-              | u_1 <- IS.toList si
-              , u_2 <- IS.toList sj
-              , u_1 /= u_2
-              , u_3 <- IS.toList sk
-              , u_1 /= u_2 && u_2 /= u_3 && u_1 `IS.member` wt && u_3 `IS.member` wt
-              ]
-      si' = IS.filter (\i -> R.any (\(u1, _, _) -> u1 == i) u1u3) si
-      sj' = IS.filter (\i -> R.any (\(_, u2, _) -> u2 == i) u1u3) sj
-      sk' = IS.filter (\i -> R.any (\(_, _, u3) -> u3 == i) u1u3) sk
-   in (si', sj', sk')
+filterUt wt (si, sj, sk) =
+  let si'' = IS.filter (`IS.member` wt) si
+      sk'' = IS.filter (`IS.member` wt) sk
+  in  (si'', sj, sk'')
 
 
+{-# INLINE inSomeLeftAndRight #-}
 inSomeLeftAndRight :: IntSet -> UT -> Bool
-inSomeLeftAndRight wt (si, _, sk) = 
-  not (IS.null (wt `IS.intersection` si) || IS.null (wt `IS.intersection` sk))
+inSomeLeftAndRight wt (si, _, sk) = not (IS.null (wt `IS.intersection` si) || IS.null (wt `IS.intersection` sk))
 
 {-# INLINE actor4 #-}
 actor4 :: Edge
@@ -286,33 +259,47 @@ actor4 (_, l) _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
   state' <- get
   case state' of
     BiTriangles bttt -> do
+      now <- printDebug "QUERY" l Nothing
       rbtr |=> wbtr
-      whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
-        $   liftIO milliSecs
-        >>= putTextLn
-        .   mappend ("[QUERY] - [Starting] - Filter with Param l=" <> show l <> " - Time: ")
-        .   toText
-        .   showFullPrecision
       foldM_ query $ \e -> do
         push e wq
         unless (hasNotBT bttt) $ sendBts bttt e wbtr
-      whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
-        $   liftIO milliSecs
-        >>= putTextLn
-        .   mappend ("[QUERY] - [Finish] - Filter with Param l=" <> show l <> " - Time: ")
-        .   toText
-        .   showFullPrecision
+      void $ printDebug "QUERY" l $ Just now
 
     _ -> pure ()
 
 {-# INLINE sendBts #-}
 sendBts :: MonadIO m => BTTT -> Q -> WriteChannel BTResult -> m ()
 sendBts (BTTT bttt) q@(Q c _ _) wbtr = case c of
-  ByVertex vx -> forM_ bttt (\bt -> filterBTByVertex bt vx (flip push wbtr . RBT q))
-  ByEdge edges -> forM_ bttt (\bt -> filterBTByEdge bt edges (flip push wbtr . RBT q))
-  AllBT -> forM_ bttt (R.mapM_ (flip push wbtr . RBT q) . buildBT)
-  Count -> forM_ bttt (flip push wbtr . RC q . R.length . buildBT)
-  _ -> pure ()
+  ByVertex vx    -> forM_ bttt (\bt -> filterBTByVertex bt vx (flip push wbtr . RBT q))
+  ByEdge   edges -> forM_ bttt (\bt -> filterBTByEdge bt edges (flip push wbtr . RBT q))
+  AllBT          -> forM_ bttt (R.mapM_ (flip push wbtr . RBT q) . buildBT)
+  Count          -> forM_ bttt (flip push wbtr . RC q . R.length . buildBT)
+  _              -> pure ()
+
+{-# INLINE printDebug #-}
+printDebug :: MonadIO m => Text -> Int -> Maybe Double -> m Double
+printDebug step param diff = do
+  envEnable <- liftIO $ lookupEnv "LOG_DEBUG" <&> isJust
+  if envEnable
+    then do
+      now <- liftIO milliSecs
+      let dfs = maybe "" (mappend " - Diff: " . toText . showFullPrecision . (now -)) diff
+      let st  = maybe "Starting" (const "Finish") diff
+      let msg = mconcat
+            [ "["
+            , step
+            , "] - ["
+            , st
+            , "] - Filter with Param l="
+            , show param
+            , " - Time: "
+            , toText $ showFullPrecision now
+            , dfs
+            ]
+      liftIO $ putTextLn msg
+      return now
+    else return (0 :: Double)
 
 program :: Conf -> IO ()
 program conf = runDP $ mkDP @DPBT (source' conf) generator' sink'
