@@ -278,11 +278,17 @@ actor4 :: Edge
        -> WriteChannel BTResult
        -> WriteChannel W
        -> StateT FilterState (DP st) ()
-actor4 _ _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
+actor4 (_, l) _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
   state' <- get
   case state' of
     BiTriangles bttt -> do
       rbtr |=> wbtr
+      whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
+        $   liftIO milliSecs
+        >>= putTextLn
+        .   mappend ("[QUERY] - [Starting] - Filter with Param l=" <> show l <> " - Time: ")
+        .   toText
+        .   showFullPrecision
       foldM_ query $ \e -> do
         push e wq
         unless (hasNotBT bttt) $ sendBts bttt e wbtr

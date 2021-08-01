@@ -10,8 +10,9 @@
 {-# LANGUAGE UnboxedTuples #-}
 module Edges where
 
-import Control.Concurrent.Async
+--import           Control.Concurrent.Async
 import           Data.IntSet                                       as IS
+import           Data.Set                                          as S
 import           Data.Time.Clock.POSIX
 import           Numeric
 import           Relude                                            as R
@@ -37,8 +38,8 @@ data Q = Q
   }
   deriving Show
 
-data Command = ByVertex [Int]
-            | ByEdge [Edge]
+data Command = ByVertex IntSet
+            | ByEdge (Set Edge)
             | Count
             | AllBT
             | NoCommand
@@ -147,48 +148,104 @@ modifyBTState :: FilterState -> BT -> FilterState
 modifyBTState (BiTriangles b) bt = BiTriangles $ addBt bt b
 modifyBTState s               _  = s
 
-{-# INLINE toBTPath #-}
-toBTPath :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
-toBTPath BT {..} =
+{-# INLINE containsVertex #-}
+containsVertex :: [Int] -> BTTT -> Bool
+containsVertex vertices (BTTT bts) = R.any (getAny . foldMap hasVertex bts) vertices
+
+{-# INLINE containsEdges #-}
+containsEdges :: [Edge] -> BTTT -> Bool
+containsEdges edges (BTTT bts) = R.any (getAny . foldMap hasEdge bts) edges
+
+{-# INLINE isInTriple #-}
+isInTriple :: Triplet -> Int -> Bool
+isInTriple (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
+
+{-# INLINE isInTriple' #-}
+isInTriple' :: Triplet -> Int -> Any
+isInTriple' (Triplet a b c) vertex = Any (a == vertex) <> Any (b == vertex) <> Any (c == vertex)
+
+{-# INLINE hasVertex #-}
+hasVertex :: BT -> Int -> Any
+hasVertex BT {..} vertex =
+  let (si, sj, sk) = _btUpper
+  in  isInTriple' _btLower vertex <> Any (IS.member vertex si || IS.member vertex sj || IS.member vertex sk)
+
+{-# INLINE hasEdge #-}
+hasEdge :: BT -> Edge -> Any
+hasEdge BT {..} edge =
+  let (si, sj, sk) = _btUpper
+  in  foldMap
+        Any
+        [ isInEdge edge _btLower u_1 u_2 u_3
+        | u_1 <- IS.toList si
+        , u_2 <- IS.toList sj
+        , u_1 /= u_2
+        , u_3 <- IS.toList sk
+        , u_1 /= u_2 && u_2 /= u_3
+        ]
+
+buildBT :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
+buildBT = do
+  (Triplet l_l l_m l_u) <- _btLower
+  (si, sj, sk)          <- _btUpper
+  return
+    [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
+    | u_1 <- IS.toList si
+    , u_2 <- IS.toList sj
+    , u_1 /= u_2
+    , u_3 <- IS.toList sk
+    , u_1 /= u_2 && u_2 /= u_3
+    ]
+
+{-# INLINE filterBTByVertex #-}
+filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> m ()) -> m ()
+filterBTByVertex bt@BT {..} vertices f = do
   let (Triplet l_l l_m l_u) = _btLower
       (si, sj, sk)          = _btUpper
-  in  [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
+  if getAny $ foldMap (hasVertex bt) $ IS.toList vertices
+    then mapM_
+      f
+      [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
       | u_1 <- IS.toList si
       , u_2 <- IS.toList sj
       , u_1 /= u_2
       , u_3 <- IS.toList sk
       , u_1 /= u_2 && u_2 /= u_3
+      , R.any (`IS.member` vertices) [l_l, u_1, l_m, u_3, l_u, u_2, l_l]
       ]
-
-{-# INLINE filterBTByVertex #-}
-filterBTByVertex :: MonadIO m => BT -> [Int] -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
-filterBTByVertex BT {..} vertices f = do
-  let (Triplet l_l l_m l_u) = _btLower
-      (si, sj, sk)          = _btUpper
-  liftIO $ mapConcurrently_  f [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
-          | v <- vertices
-          , u_1 <- IS.toList si
-          , u_2 <- IS.toList sj
-          , u_1 /= u_2
-          , u_3 <- IS.toList sk
-          , u_1 /= u_2 && u_2 /= u_3
-          , l_l == v || u_1 == v || l_m == v || u_3 == v || l_u == v || u_2 == v || l_l == v
-          ]
+    else pure ()
 
 {-# INLINE filterBTByEdge #-}
-filterBTByEdge :: MonadIO m => BT -> [Edge] -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
-filterBTByEdge BT {..} vertices f = do
+filterBTByEdge :: MonadIO m => BT -> Set Edge -> ((Int, Int, Int, Int, Int, Int, Int) -> m ()) -> m ()
+filterBTByEdge bt@BT {..} edges f = do
   let (Triplet l_l l_m l_u) = _btLower
       (si, sj, sk)          = _btUpper
-  liftIO $ mapConcurrently_  f [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
-          | v <- vertices
-          , u_1 <- IS.toList si
-          , u_2 <- IS.toList sj
-          , u_1 /= u_2
-          , u_3 <- IS.toList sk
-          , u_1 /= u_2 && u_2 /= u_3
-          , isInEdge v _btLower u_1 u_2 u_3
-          ]
+  if getAny $ foldMap (hasEdge bt) edges
+    then mapM_
+      f
+      [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
+      | u_1 <- IS.toList si
+      , u_2 <- IS.toList sj
+      , u_1 /= u_2
+      , u_3 <- IS.toList sk
+      , u_1 /= u_2 && u_2 /= u_3
+      , isInSetEdge edges _btLower u_1 u_2 u_3
+      ]
+    else pure ()
+
+isInSetEdge :: Set Edge -> Triplet -> Int -> Int -> Int -> Bool
+isInSetEdge edges (Triplet l1 l2 l3) u1 u2 u3 =
+  R.any (`S.member` edges) [(u1, l1), (u2, l1), (u1, l2), (u3, l2), (u2, l3), (u3, l3)]
+
+{-# INLINE isInEdge' #-}
+isInEdge' :: Edge -> (Int,Int,Int,Int,Int,Int) -> Bool
+isInEdge' (u, l) (l1, l2, l3, u1, u2, u3) =
+  (u == u1 && l1 == l)
+    || (u == u2 && l1 == l)
+    || (u == u1 && l2 == l)
+    || (u == u3 && l2 == l)
+    || (u == u2 && l3 == l)
+    || (u == u3 && l3 == l)
 
 {-# INLINE isInEdge #-}
 isInEdge :: Edge -> Triplet -> Int -> Int -> Int -> Bool
@@ -243,7 +300,7 @@ parseCommand = byVertex <|> byEdge <|> countQ <|> allQ <|> endQ
 
 {-# INLINE byVertex #-}
 byVertex :: Parser Command
-byVertex = ByVertex <$> (string "by-vertex" *> (whiteSpace *> many parseInt))
+byVertex = ByVertex . IS.fromList <$> (string "by-vertex" *> (whiteSpace *> many parseInt))
 
 {-# INLINE parseEdgeWithComma #-}
 parseEdgeWithComma :: Parser Edge
@@ -256,7 +313,7 @@ parseEdgeWithComma =
 
 {-# INLINE byEdge #-}
 byEdge :: Parser Command
-byEdge = ByEdge <$> (string "by-edge" *> (whiteSpace *> many parseEdgeWithComma))
+byEdge = ByEdge . S.fromList <$> (string "by-edge" *> (whiteSpace *> many parseEdgeWithComma))
 
 {-# INLINE countQ #-}
 countQ :: Parser Command
