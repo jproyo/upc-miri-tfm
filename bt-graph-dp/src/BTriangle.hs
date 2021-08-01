@@ -8,7 +8,6 @@
 -- Portability : GHC
 module BTriangle where
 
-import           Control.Concurrent.Async
 import           Data.IntSet                                       as IS
 import           DynamicPipeline
 import           Edges
@@ -220,9 +219,7 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
           forM_ dtlist $ \(DW (Pair l_l l_u) ut) ->
             let triple = Triplet l_l l' l_u
                 result =
-                  if l' < l_u && l' > l_l && w_t' `inSomeLeftAndRight` ut 
-                    then Just $ filterUt w_t' ut 
-                    else Nothing
+                  if l' < l_u && l' > l_l && w_t' `inSomeLeftAndRight` ut then Just $ filterUt w_t' ut else Nothing
             in  maybe (pure ()) (modify . flip modifyBTState . BT triple) result
       finish wfb
       void $ printDebug "BT" l $ Just now
