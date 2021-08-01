@@ -71,7 +71,11 @@ toOutput :: ReadChannel (UpperVertex, LowerVertex)
          -> DP s ()
 toOutput _ _ _ _ rbt = do
   c <- newIORef 1
-  foldM_ rbt $ \result -> liftIO $ readIORef c >>= printCC result >> modifyIORef c (+ 1)
+  c2 <- newIORef 0
+  foldM_ rbt $ \case 
+    r@(RBT _ _) -> liftIO $ readIORef c >>= printCC r >> modifyIORef c (+ 1)
+    RC _ countR -> liftIO $ modifyIORef c2 (+countR)
+  readIORef c2 >>= \cr -> when (cr > 0) $ putTextLn $ "[BT-TOTAL] = " <> show cr
 
 generator' :: forall k (st :: k) . GeneratorStage DPBT FilterState Edge st
 generator' = let gen = withGenerator @DPBT genAction in mkGenerator gen filterTemplate
@@ -292,6 +296,13 @@ actor4 (_, l) _ _ query _ rbtr _ _ _ wq _ wbtr _ = do
       foldM_ query $ \e -> do
         push e wq
         unless (hasNotBT bttt) $ sendBts bttt e wbtr
+      whenM (liftIO $ lookupEnv "LOG_DEBUG" <&> isJust)
+        $   liftIO milliSecs
+        >>= putTextLn
+        .   mappend ("[QUERY] - [Finish] - Filter with Param l=" <> show l <> " - Time: ")
+        .   toText
+        .   showFullPrecision
+
     _ -> pure ()
 
 {-# INLINE sendBts #-}
