@@ -131,7 +131,11 @@ printCC (RBT (Q q startTime name) bt) c = do
   putLBSLn $ encodeUtf8 $ intercalate
     ","
     [toString name, R.show q, R.show bt, R.show c, showFullPrecision (now - startTime)]
-printCC _ _ = putLBSLn "No Result can be shown for this command"
+printCC (RC (Q q startTime name) count') c = do 
+  now <- nanoSecs
+  putLBSLn $ encodeUtf8 $ intercalate
+    ","
+    [toString name, R.show q, R.show count', R.show c, showFullPrecision (now - startTime)]
 
 {-# INLINE modifyWState #-}
 modifyWState :: FilterState -> UpperVertex -> FilterState
@@ -148,18 +152,6 @@ modifyBTState :: FilterState -> BT -> FilterState
 modifyBTState (BiTriangles b) bt = BiTriangles $ addBt bt b
 modifyBTState s               _  = s
 
-{-# INLINE containsVertex #-}
-containsVertex :: [Int] -> BTTT -> Bool
-containsVertex vertices (BTTT bts) = R.any (getAny . foldMap hasVertex bts) vertices
-
-{-# INLINE containsEdges #-}
-containsEdges :: [Edge] -> BTTT -> Bool
-containsEdges edges (BTTT bts) = R.any (getAny . foldMap hasEdge bts) edges
-
-{-# INLINE isInTriple #-}
-isInTriple :: Triplet -> Int -> Bool
-isInTriple (Triplet a b c) vertex = a == vertex || b == vertex || c == vertex
-
 {-# INLINE isInTriple' #-}
 isInTriple' :: Triplet -> Int -> Any
 isInTriple' (Triplet a b c) vertex = Any (a == vertex) <> Any (b == vertex) <> Any (c == vertex)
@@ -171,18 +163,9 @@ hasVertex BT {..} vertex =
   in  isInTriple' _btLower vertex <> Any (IS.member vertex si || IS.member vertex sj || IS.member vertex sk)
 
 {-# INLINE hasEdge #-}
-hasEdge :: BT -> Edge -> Any
-hasEdge BT {..} edge =
-  let (si, sj, sk) = _btUpper
-  in  foldMap
-        Any
-        [ isInEdge edge _btLower u_1 u_2 u_3
-        | u_1 <- IS.toList si
-        , u_2 <- IS.toList sj
-        , u_1 /= u_2
-        , u_3 <- IS.toList sk
-        , u_1 /= u_2 && u_2 /= u_3
-        ]
+hasEdge :: Edge -> BT -> Any
+hasEdge edge = foldMap (Any . isInEdge' edge) . buildBT
+
 
 buildBT :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
 buildBT = do
@@ -199,69 +182,38 @@ buildBT = do
 
 {-# INLINE filterBTByVertex #-}
 filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> m ()) -> m ()
-filterBTByVertex bt@BT {..} vertices f = do
-  let (Triplet l_l l_m l_u) = _btLower
-      (si, sj, sk)          = _btUpper
-  if getAny $ foldMap (hasVertex bt) $ IS.toList vertices
-    then mapM_
-      f
-      [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
-      | u_1 <- IS.toList si
-      , u_2 <- IS.toList sj
-      , u_1 /= u_2
-      , u_3 <- IS.toList sk
-      , u_1 /= u_2 && u_2 /= u_3
-      , R.any (`IS.member` vertices) [l_l, u_1, l_m, u_3, l_u, u_2, l_l]
-      ]
-    else pure ()
+filterBTByVertex bt vertices f =
+  when (getAny $ foldMap (hasVertex bt) $ IS.toList vertices)
+    $ mapM_ f
+    . R.filter (R.any (`IS.member` vertices) . tupleToList)
+    . buildBT
+    $ bt
+
+tupleToList :: (Int, Int, Int, Int, Int, Int, Int) -> [Int]
+tupleToList (a, b, c, d, e, f, g) = [a, b, c, d, e, f, g]
 
 {-# INLINE filterBTByEdge #-}
 filterBTByEdge :: MonadIO m => BT -> Set Edge -> ((Int, Int, Int, Int, Int, Int, Int) -> m ()) -> m ()
-filterBTByEdge bt@BT {..} edges f = do
-  let (Triplet l_l l_m l_u) = _btLower
-      (si, sj, sk)          = _btUpper
-  if getAny $ foldMap (hasEdge bt) edges
-    then mapM_
-      f
-      [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
-      | u_1 <- IS.toList si
-      , u_2 <- IS.toList sj
-      , u_1 /= u_2
-      , u_3 <- IS.toList sk
-      , u_1 /= u_2 && u_2 /= u_3
-      , isInSetEdge edges _btLower u_1 u_2 u_3
-      ]
-    else pure ()
+filterBTByEdge bt edges f =
+  when (getAny $ foldMap (`hasEdge` bt) edges) $ mapM_ f . R.filter (isInSetEdge edges) . buildBT $ bt
 
-isInSetEdge :: Set Edge -> Triplet -> Int -> Int -> Int -> Bool
-isInSetEdge edges (Triplet l1 l2 l3) u1 u2 u3 =
+isInSetEdge :: Set Edge -> (Int, Int, Int, Int, Int, Int, Int) -> Bool
+isInSetEdge edges (l1, u1, l2, u3, l3, u2, _) =
   R.any (`S.member` edges) [(u1, l1), (u2, l1), (u1, l2), (u3, l2), (u2, l3), (u3, l3)]
 
 {-# INLINE isInEdge' #-}
-isInEdge' :: Edge -> (Int,Int,Int,Int,Int,Int) -> Bool
-isInEdge' (u, l) (l1, l2, l3, u1, u2, u3) =
+isInEdge' :: Edge -> (Int, Int, Int, Int, Int, Int, Int) -> Bool
+isInEdge' (u, l) (l1, u1, l2, u3, l3, u2, _) =
   (u == u1 && l1 == l)
     || (u == u2 && l1 == l)
     || (u == u1 && l2 == l)
     || (u == u3 && l2 == l)
     || (u == u2 && l3 == l)
     || (u == u3 && l3 == l)
-
-{-# INLINE isInEdge #-}
-isInEdge :: Edge -> Triplet -> Int -> Int -> Int -> Bool
-isInEdge (u, l) (Triplet l1 l2 l3) u1 u2 u3 =
-  (u == u1 && l1 == l)
-    || (u == u2 && l1 == l)
-    || (u == u1 && l2 == l)
-    || (u == u3 && l2 == l)
-    || (u == u2 && l3 == l)
-    || (u == u3 && l3 == l)
-
 
 {-# INLINE addBt #-}
 addBt :: BT -> BTTT -> BTTT
 addBt bt (BTTT bts) = BTTT (bt : bts)
-
 
 {-# INLINE hasNotBT #-}
 hasNotBT :: BTTT -> Bool

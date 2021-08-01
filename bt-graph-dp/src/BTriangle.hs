@@ -299,6 +299,8 @@ sendBts :: MonadIO m => BTTT -> Q -> WriteChannel BTResult -> m ()
 sendBts (BTTT bttt) q@(Q c _ _) wbtr = case c of
   ByVertex vx -> forM_ bttt (\bt -> filterBTByVertex bt vx (flip push wbtr . RBT q))
   ByEdge edges -> forM_ bttt (\bt -> filterBTByEdge bt edges (flip push wbtr . RBT q))
+  AllBT -> forM_ bttt (R.mapM_ (flip push wbtr . RBT q) . buildBT)
+  Count -> forM_ bttt (flip push wbtr . RC q . R.length . buildBT)
   _ -> pure ()
 
 program :: Conf -> IO ()
