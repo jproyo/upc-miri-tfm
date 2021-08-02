@@ -5,6 +5,7 @@ import           Control.Monad
 import           Edges
 import           Options.Applicative                               as Opt
 import           Relude                                            as R
+import System.IO
 
 edgesFile :: Opt.Parser FilePath
 edgesFile = Opt.strOption (Opt.long "edges" <> Opt.short 'f' <> Opt.metavar "FilePath" <> Opt.help "Edges file path")
@@ -24,5 +25,8 @@ conf = info
   (fullDesc <> progDesc "Bi-Triangles Enumeration with DP" <> header "bt-graph-dp - Bi-Triangles Enumeration with DP")
 
 main :: IO ()
-main = Opt.execParser conf >>= program
+main = do 
+  hSetBuffering stdout LineBuffering  
+  hSetBuffering stderr LineBuffering 
+  Opt.execParser conf >>= program
 
