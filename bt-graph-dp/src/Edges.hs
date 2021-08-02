@@ -60,9 +60,8 @@ type UT = (IntSet, IntSet, IntSet)
 nullUT :: UT -> Bool
 nullUT (si, sj, sk) = IS.null si && IS.null sj && IS.null sk
 
-emptyUT :: UT 
+emptyUT :: UT
 emptyUT = (IS.empty, IS.empty, IS.empty)
-
 
 data DW = DW
   { _dwLower :: Pair
@@ -121,25 +120,21 @@ milliSecs :: IO Double
 milliSecs = fromInteger <$> t 1000
 
 {-# INLINE showFullPrecision #-}
-showFullPrecision :: Double -> String
-showFullPrecision = flip (showFFloat Nothing) ""
+showFullPrecision :: Double -> Text
+showFullPrecision = toText . flip (showFFloat Nothing) ""
 
 {-# INLINE printHeader #-}
 printHeader :: IO ()
-printHeader = putBSLn "test,command,answer,number,time"
+printHeader = putTextLn "test,command,answer,number,time"
 
 {-# INLINE printCC #-}
 printCC :: BTResult -> Int -> IO ()
 printCC (RBT (Q q startTime name) bt) c = do
   now <- nanoSecs
-  putLBSLn $ encodeUtf8 $ intercalate
-    ","
-    [toString name, R.show q, R.show bt, R.show c, showFullPrecision (now - startTime)]
-printCC (RC (Q q startTime name) count') c = do 
+  putTextLn $ mconcat [name, ",", R.show q, ",", R.show bt, ",", R.show c, ",", showFullPrecision (now - startTime)]
+printCC (RC (Q q startTime name) count') c = do
   now <- nanoSecs
-  putLBSLn $ encodeUtf8 $ intercalate
-    ","
-    [toString name, R.show q, R.show count', R.show c, showFullPrecision (now - startTime)]
+  putTextLn $ mconcat [name, ",", R.show q, ",", R.show count', ",", R.show c, ",", showFullPrecision (now - startTime)]
 
 {-# INLINE modifyWState #-}
 modifyWState :: FilterState -> UpperVertex -> FilterState
@@ -188,8 +183,9 @@ buildBT = do
 filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
 filterBTByVertex bt vertices f =
   when (getAny $ foldMap (hasVertex bt) $ IS.toAscList vertices)
-    $ liftIO . mapConcurrently_ f
-    -- . R.filter (R.any (`IS.member` vertices) . tupleToList)
+    $ liftIO
+    . mapConcurrently_ f
+    . R.filter (R.any (`IS.member` vertices) . tupleToList)
     . buildBT
     $ bt
 
@@ -199,10 +195,12 @@ tupleToList (a, b, c, d, e, f, g) = [a, b, c, d, e, f, g]
 {-# INLINE filterBTByEdge #-}
 filterBTByEdge :: MonadIO m => BT -> Set Edge -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
 filterBTByEdge bt edges f =
-  when (getAny $ foldMap (`hasEdge` bt) edges) 
-    $ liftIO . mapConcurrently_ f 
-    -- . R.filter (isInSetEdge edges) 
-    . buildBT $ bt
+  when (getAny $ foldMap (`hasEdge` bt) edges)
+    $ liftIO
+    . mapConcurrently_ f
+    . R.filter (isInSetEdge edges)
+    . buildBT
+    $ bt
 
 isInSetEdge :: Set Edge -> (Int, Int, Int, Int, Int, Int, Int) -> Bool
 isInSetEdge edges (l1, u1, l2, u3, l3, u2, _) =
