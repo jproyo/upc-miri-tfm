@@ -10,7 +10,7 @@
 {-# LANGUAGE UnboxedTuples #-}
 module Edges where
 
---import           Control.Concurrent.Async
+import           Control.Concurrent.Async
 import           Data.IntSet                                       as IS
 import           Data.Set                                          as S
 import           Data.Time.Clock.POSIX
@@ -185,11 +185,11 @@ buildBT = do
     ]
 
 {-# INLINE filterBTByVertex #-}
-filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> m ()) -> m ()
+filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
 filterBTByVertex bt vertices f =
   when (getAny $ foldMap (hasVertex bt) $ IS.toAscList vertices)
-    $ mapM_ f
-    . R.filter (R.any (`IS.member` vertices) . tupleToList)
+    $ liftIO . mapConcurrently_ f
+    -- . R.filter (R.any (`IS.member` vertices) . tupleToList)
     . buildBT
     $ bt
 
@@ -197,9 +197,12 @@ tupleToList :: (Int, Int, Int, Int, Int, Int, Int) -> [Int]
 tupleToList (a, b, c, d, e, f, g) = [a, b, c, d, e, f, g]
 
 {-# INLINE filterBTByEdge #-}
-filterBTByEdge :: MonadIO m => BT -> Set Edge -> ((Int, Int, Int, Int, Int, Int, Int) -> m ()) -> m ()
+filterBTByEdge :: MonadIO m => BT -> Set Edge -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
 filterBTByEdge bt edges f =
-  when (getAny $ foldMap (`hasEdge` bt) edges) $ mapM_ f . R.filter (isInSetEdge edges) . buildBT $ bt
+  when (getAny $ foldMap (`hasEdge` bt) edges) 
+    $ liftIO . mapConcurrently_ f 
+    -- . R.filter (isInSetEdge edges) 
+    . buildBT $ bt
 
 isInSetEdge :: Set Edge -> (Int, Int, Int, Int, Int, Int, Int) -> Bool
 isInSetEdge edges (l1, u1, l2, u3, l3, u2, _) =
