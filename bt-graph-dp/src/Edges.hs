@@ -161,6 +161,18 @@ hasVertex BT {..} vertex =
   let (si, sj, sk) = _btUpper
   in  isInTriple' _btLower vertex <> Any (IS.member vertex si || IS.member vertex sj || IS.member vertex sk)
 
+{-# INLINE isInLower #-}
+isInLower :: BT -> IntSet -> Bool
+isInLower BT {..} vertices = getAny $ foldMap (isInTriple' _btLower) $ IS.toAscList vertices
+
+{-# INLINE isInUpper #-}
+isInUpper :: BT -> IntSet -> Bool
+isInUpper BT {..} vertices =
+  let (si, sj, sk) = _btUpper
+  in  getAny
+        $ foldMap (\vertex -> Any (IS.member vertex si || IS.member vertex sj || IS.member vertex sk))
+        $ IS.toAscList vertices
+
 {-# INLINE hasEdge #-}
 hasEdge :: Edge -> BT -> Any
 hasEdge edge = foldMap (Any . isInEdge' edge) . buildBT
@@ -180,13 +192,32 @@ buildBT = do
 
 {-# INLINE filterBTByVertex #-}
 filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
-filterBTByVertex bt vertices f =
-  when (getAny $ foldMap (hasVertex bt) $ IS.toAscList vertices)
+filterBTByVertex bt vertices f = do
+  when (isInLower bt vertices) $ liftIO . mapConcurrently_ f . buildBT $ bt
+
+  when (isInUpper bt vertices)
     $ liftIO
     . mapConcurrently_ f
-    . R.filter (R.any (`IS.member` vertices) . tupleToList)
-    . buildBT
-    $ bt
+    $ buildBTUpper bt vertices
+
+{-# INLINE buildBTUpper #-}
+buildBTUpper :: BT -> IntSet -> [(Int, Int, Int, Int, Int, Int, Int)]
+buildBTUpper BT{..} vertices = 
+  let (Triplet l_l l_m l_u) = _btLower
+      (si, sj, sk)          = _btUpper
+      si' = IS.intersection si vertices
+      sj' = IS.intersection sj vertices
+      sk' = IS.intersection sk vertices
+      si'' = if IS.null si' then si else si'
+      sj'' = if IS.null sj' then sj else sj'
+      sk'' = if IS.null sk' then sk else sk'
+  in 
+    [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
+    | u_1 <- IS.toAscList si''
+    , u_2 <- IS.toAscList sj''
+    , u_3 <- IS.toAscList sk''
+    , u_1 /= u_2 && u_2 /= u_3 && u_1 /= u_3
+    ]
 
 tupleToList :: (Int, Int, Int, Int, Int, Int, Int) -> [Int]
 tupleToList (a, b, c, d, e, f, g) = [a, b, c, d, e, f, g]
