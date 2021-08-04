@@ -165,7 +165,7 @@ hasVertex BT {..} vertex =
 hasEdge :: Edge -> BT -> Any
 hasEdge edge = foldMap (Any . isInEdge' edge) . buildBT
 
-
+{-# INLINE buildBT #-}
 buildBT :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
 buildBT = do
   (Triplet l_l l_m l_u) <- _btLower
@@ -174,9 +174,8 @@ buildBT = do
     [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
     | u_1 <- IS.toAscList si
     , u_2 <- IS.toAscList sj
-    , u_1 /= u_2
     , u_3 <- IS.toAscList sk
-    , u_1 /= u_2 && u_2 /= u_3
+    , u_1 /= u_2 && u_2 /= u_3 && u_1 /= u_3
     ]
 
 {-# INLINE filterBTByVertex #-}
