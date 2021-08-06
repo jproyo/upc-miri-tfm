@@ -1,0 +1,72 @@
+Amazon (Wang) network, part of the Koblenz Network Collection
+===========================================================================
+
+This directory contains the TSV and related files of the wang-amazon network: This is the rating network from Amazon, where users rate individual items. 
+
+
+More information about the network is provided here: 
+http://konect.cc/networks/wang-amazon
+
+Files: 
+    meta.wang-amazon -- Metadata about the network 
+    out.wang-amazon -- The adjacency matrix of the network in whitespace-separated values format, with one edge per line
+      The meaning of the columns in out.wang-amazon are: 
+        First column: ID of from node 
+        Second column: ID of to node
+        Third column (if present): weight or multiplicity of edge
+        Fourth column (if present):  timestamp of edges Unix time
+        Third column: edge weight
+        Fourth column: timestamp of the edge
+
+
+Use the following References for citation:
+
+@MISC{konect:2017:wang-amazon,
+    title = {Amazon (Wang) network dataset -- {KONECT}},
+    month = nov,
+    year = {2017},
+    url = {http://konect.cc/networks/wang-amazon}
+}
+
+@inproceedings{konect:wang2010,
+	author = {Hongning Wang and Yue Lu and Chengxiang Zhai},
+	title = {Latent Aspect Rating Analysis on Review Text Data: A Rating Regression Approach},
+	booktitle = {Proc. Int. Conf. on Knowl. Discov. and Data Min.},
+	year = {2010},
+	pages = {783--792},
+}
+
+@inproceedings{konect:wang2011,
+	author = {Hongning Wang and Yue Lu and ChengXiang Zhai},
+	title = {Latent Aspect Rating Analysis without Aspect Keyword Supervision},
+	booktitle = {Proc. Int. Conf. on Knowl. Discov. and Data Min.},
+	year = {2011},
+	pages = {618--626},
+}
+
+
+@inproceedings{konect,
+	title = {{KONECT} -- {The} {Koblenz} {Network} {Collection}},
+	author = {Jérôme Kunegis},
+	year = {2013},
+	booktitle = {Proc. Int. Conf. on World Wide Web Companion},
+	pages = {1343--1350},
+	url = {http://dl.acm.org/citation.cfm?id=2488173},
+	url_presentation = {https://www.slideshare.net/kunegis/presentationwow},
+	url_web = {http://konect.cc/},
+	url_citations = {https://scholar.google.com/scholar?cites=7174338004474749050},
+}
+
+@inproceedings{konect,
+	title = {{KONECT} -- {The} {Koblenz} {Network} {Collection}},
+	author = {Jérôme Kunegis},
+	year = {2013},
+	booktitle = {Proc. Int. Conf. on World Wide Web Companion},
+	pages = {1343--1350},
+	url = {http://dl.acm.org/citation.cfm?id=2488173},
+	url_presentation = {https://www.slideshare.net/kunegis/presentationwow},
+	url_web = {http://konect.cc/},
+	url_citations = {https://scholar.google.com/scholar?cites=7174338004474749050},
+}
+
+

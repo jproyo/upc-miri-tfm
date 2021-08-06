@@ -77,8 +77,25 @@ dependencies:
 
 executables:
   bt-graph-dp:
-    source-dirs:      src
+    source-dirs:      
+      - app/BT
+      - src
     main:             Main.hs
+    ghc-options:
+      - -threaded
+      - -O3
+      - -rtsopts
+      - -with-rtsopts=-N
+
+  benchmark:
+    source-dirs:      
+      - app/Benchmark
+      - src
+    main:             Main.hs
+    dependencies:
+      - criterion
+      - directory
+      - time
     ghc-options:
       - -threaded
       - -O3

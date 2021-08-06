@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7b198fa93b316efffd730646ed81ddbb9bbbc8fb37c7676c7c1b74da0b4f78cf
+-- hash: f812daedbaed3e09652fc1586a7132770fc696f89c848f090ad28ee48c155225
 
 name:           bt-graph-dp
 version:        0.1.0.0
@@ -19,6 +19,67 @@ build-type:     Simple
 extra-source-files:
     README.md
 
+executable benchmark
+  main-is: Main.hs
+  other-modules:
+      BTriangle
+      Edges
+      Paths_bt_graph_dp
+  hs-source-dirs:
+      app/Benchmark
+      src
+  default-extensions:
+      BangPatterns
+      ConstraintKinds
+      DataKinds
+      DefaultSignatures
+      DeriveAnyClass
+      DeriveFoldable
+      DeriveFunctor
+      DeriveGeneric
+      DeriveLift
+      DeriveTraversable
+      DerivingStrategies
+      DerivingVia
+      EmptyCase
+      FlexibleContexts
+      FlexibleInstances
+      FunctionalDependencies
+      GADTs
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      MultiParamTypeClasses
+      MultiWayIf
+      NoImplicitPrelude
+      OverloadedStrings
+      PackageImports
+      PartialTypeSignatures
+      PolyKinds
+      Rank2Types
+      RankNTypes
+      RecordWildCards
+      ScopedTypeVariables
+      StandaloneDeriving
+      TemplateHaskell
+      TupleSections
+      TypeApplications
+      TypeOperators
+      TypeFamilies
+  ghc-options: -Wall -fno-warn-partial-type-signatures -fconstraint-solver-iterations=0 -fspecialise-aggressively -fexpose-all-unfoldings -flate-specialise -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints -Wno-unused-top-binds -Wno-unused-foralls -fno-warn-deprecations -fno-warn-orphans -threaded -O3 -rtsopts -with-rtsopts=-N
+  build-depends:
+      async
+    , base >=4.7 && <5
+    , containers
+    , criterion
+    , directory
+    , dynamic-pipeline
+    , optparse-applicative
+    , raw-strings-qq
+    , relude
+    , time
+    , trifecta
+  default-language: Haskell2010
+
 executable bt-graph-dp
   main-is: Main.hs
   other-modules:
@@ -26,6 +87,7 @@ executable bt-graph-dp
       Edges
       Paths_bt_graph_dp
   hs-source-dirs:
+      app/BT
       src
   default-extensions:
       BangPatterns
