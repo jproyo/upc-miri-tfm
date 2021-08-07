@@ -20,11 +20,10 @@ runBench = do
   let conf = defaultConfig { reportFile = Just $ "benchmark/output/report_benchmark_" <> time' <> ".html" }
   runMode
     (Run conf Glob ["*/*"])
-    [ byLowerVertex, byUpperVertex
-    ]
+    [ expByLowerVertex, expByUpperVertex, expByEdge ]
 
-
-byLowerVertex = bgroup
+expByLowerVertex :: Benchmark
+expByLowerVertex = bgroup
       "BiTriangle Enumeration - Search by-vertex in Lower Layer"
       [ bench "opsahl-ucforum-vertex-lower-low" $ whnfIO
         (program $ Conf { _edgeFile       = "benchmark/opsahl-ucforum/input.txt"
@@ -82,7 +81,8 @@ byLowerVertex = bgroup
         )
       ]
 
-byUpperVertex = bgroup
+expByUpperVertex :: Benchmark
+expByUpperVertex = bgroup
       "BiTriangle Enumeration - Search by-vertex in Upper Layer"
       [ bench "opsahl-ucforum-vertex-upper-low" $ whnfIO
         (program $ Conf { _edgeFile       = "benchmark/opsahl-ucforum/input.txt"
@@ -140,7 +140,8 @@ byUpperVertex = bgroup
         )
       ]
 
-byEdge = bgroup
+expByEdge :: Benchmark
+expByEdge = bgroup
       "BiTriangle Enumeration - Search by-edge"
       [ bench "opsahl-ucforum-edge-low" $ whnfIO
         (program $ Conf { _edgeFile       = "benchmark/opsahl-ucforum/input.txt"
