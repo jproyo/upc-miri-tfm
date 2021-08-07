@@ -1,2 +1,0 @@
-by-vertex 14 32
-by-edge (81, 13)
