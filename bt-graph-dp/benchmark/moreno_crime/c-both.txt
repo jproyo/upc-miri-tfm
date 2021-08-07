@@ -1,2 +1,0 @@
-by-vertex 533 240
-by-edge (502, 460)
