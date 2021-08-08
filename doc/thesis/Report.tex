@@ -67,6 +67,7 @@
 \newacronym{fp}{Functional Programming}{Functional Programming}
 
 \newtheorem{hyp}{Hypothesis}
+\newtheorem{theorem}{Theorem}
 
 \begin{document}
 
@@ -124,7 +125,7 @@ $E$ is the edges set, we build the following algorithm to enumerate Bi-triangles
 
 Source
 
-\begin{algorithm}
+\begin{algorithm}H
 \SetKwInOut{P}{Input Data}
 \SetKwInOut{Q}{Input Commands}
 \SetKwInOut{IC}{Input Channels}
@@ -145,7 +146,7 @@ Source
 \caption{$S_r$ Source}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}H
 \SetKwInOut{P}{Filter Template}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -164,7 +165,7 @@ Source
 \caption{$G$ Generator}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}H
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{O}{Output}
 \O{$IO_{BT}$: File or Output Stream with $BT$}
@@ -177,7 +178,7 @@ Source
 
 Filter with Actors
 
-\begin{algorithm}
+\begin{algorithm}H
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -205,7 +206,7 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \caption{$F$ Filter - actor1. This actor tries to build a Set of vertices $W_l \subseteq U$ adjancents to $l$ Filter parameter }
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}H
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -241,7 +242,7 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \caption{$F$ Filter - actor2. This actor tries to build a Set Double Wedges $\dw, \forall DW \in \dw, DW = \la (l, l'), U_t' \ra$, which first component $l$ of all tuples of the set is the Filter Parameter}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}H
 \SetKwInOut{I}{Input}
 \SetKwInOut{O}{Output}
 \SetKwFunction{comb}{combineDW}
@@ -283,7 +284,7 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \end{algorithm}
       
 
-\begin{algorithm}
+\begin{algorithm}H
 \SetKwInOut{I}{Input}
 \SetKwInOut{O}{Output}
 \SetKwFunction{but}{buildUt}
@@ -306,7 +307,7 @@ $\mathtt{(\la l, W_l \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \caption{$\mathtt{buildUt}$ Auxiliary Function}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}H
 \DontPrintSemicolon
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
@@ -377,15 +378,47 @@ $\mathtt{(\la l, W \ra, \mathbb{DW}, \mathbb{BT}) \leftarrow \gs}$\\
 \caption{$F$ Filter - actor4. This actor tries to process Query Commands $Q$ that arrives through Channel $IC_Q$. If they match with some Bi-triangles that are contained in this Filter, it will pass to the result Channel $OC_{BT}$ to be processed by the Sink}
 \end{algorithm}
 
+
+\clearpage
 \section{Draft-Correctness of the Algorithm}
 
-A bi-triangle can be described as a sequence $(a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U$
+A bi-triangle can be described as a sequence $(a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U\footnote{In the enumeration, L and $U$ be interchanged}$
 
-We need to prove that the algorithm can enumerate all the  bi-triangle in the graph and also that there are not duplicates in the enumeration.
+We need to prove that the algorithm can enumerate all   bi-triangle in the graph and also that there are not duplicates in the enumeration.
 
-First we are going to prove that if we take all the triples $(a,b,c)$  such $a<b$ and $b<c$ we will show that no bi-triangle $(a,A,b,B,c,C)$ is listed twice.  We will show that we  enumerate all the bi-triangles  where $A,B,C$  are distinct and $A$ is incident to $a$ and $b$, $B$is incident to $a$ and $c$ and $C$ is incident to $b$ and $C$. 
+First we are going to prove that if we take all the triples $(a,b,c)$  such $a<b$ and $b<c$  and    $(a,A,b,B,c,C)$ is a bi-triangle, then it is not listed twice (theorem \ref{TH-unicity}).  We will show that we  enumerate all the bi-triangles  where $A,B,C$  are distinct and $A$ is incident to $a$ and $b$, $B$is incident to $a$ and $c$ and $C$ is incident to $b$ and $C$ (theorem \ref{TH-all}). 
+\begin{theorem} \label{TH-unicity}Every bi-triangle is listed at most once 
 
-Lets assume that a bi-triangle $(a,A,b,B,c,C)$ such $a<b$ and $b<c$. without loss of generality we  will assume that $a$ small one in the set $\{a,b,c\}$. So we are going to talk from now on of the bi-triangles produced by the filter $F_a$.
+\end{theorem}
+\begin{proof}
+As a bi-triangle is a 6-closed cycle it can be described as a sequence of nodes  $(a,A,b,B,c,C)$, each one adjacent to its neighbour. For every feasible permutation  starting with a node in $L$ we are going to proof that only one will be accepted by actor3.  
+\begin{itemize}
+    \item $(b,C,c,B,a,A)$ not accepted because $c > a$
+    \item $(b,A,a,B,c,C)$ not accepted because $b > a$
+    \item $(c,B,a,A,b,C)$ not accepted because $c > a$ and $c > b$
+    \item $(c,C,b,A,a,B)$ not accepted because $c > a  $
+    \item $(a,A,b,C,c,B)$ is accepted because $a < c $ in actor 2 of filter $F_a$ or $F_c$ and $a < b <c$  in actor 3
+    \item $(a,B,c,C,b,A)$ not accepted because $c > a$
+\end{itemize}
+
+
+Therefore the  only sequence constructed by the algorithm is the one that satisfies $a < b < c $ where $A,B,C$  are distinct and $A$ is incident to $a$ and $b$, $B$ is incident to $a$ and $c$ and $C$ is incident to $b$ and $C$.
+\end{proof}
+
+
+\begin{theorem}\label{TH-all}Every bi-triangle present in the graph is listed.
+
+\end{theorem}
+\begin{proof}
+
+
+Lets assume that a bi-triangle $(a,A,b,B,c,C)$   will assume that $a$ is the smallest element in the set $\{a,b,c\}$ and $c$ is the bigger.
+When actor 1 in fiter $F_a$1 ends reading all the edges, $\{A,B\} \subseteq W_a$. Also When actor 1 in fiter $F_c$1 ends reading all the edges, $\{B,C\} \subseteq W_c$. 
+
+AS $a < c$  in filter $F_a$ the pair $(a,c)$  will be added to D
+$DW$. When actor 3 in filter $F_a$ receives $(b, W_b)$ will add to $BT$ because of the non empty intersection. Therefore the bi-triangle $(a,A,b,B,c,C)$ can be recognized
+\end{proof}
+\iffalse So we are going to talk from now on of the bi-triangles produced by the filter $F_a$ or by the filter $F_c$.
 
  At the end of the execution of actor 3 $F_a$ constructs the sets where to choose $A,B,C$
  
@@ -419,7 +452,7 @@ Lets assume that a bi-triangle $(a,A,b,B,c,C)$ such $a<b$ and $b<c$. without los
           \item $(,,,,,)$
  \end{enumerate}
  
- All the configurations are rejected by filters $F_b$ and $F_c$, and the listing starting with $a$ the ordered one is accepted and the unordered rejected
+ All the configurations are rejected by filters $F_b$ and $F_c$, and the listing starting with $a$ the ordered one is accepted and the unordered rejected  \fi
  
 
 
