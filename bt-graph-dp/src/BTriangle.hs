@@ -228,8 +228,8 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
 {-# INLINE filterUt #-}
 filterUt :: IntSet -> UT -> UT
 filterUt wt (si, sj, sk) =
-  let si' = IS.filter (`IS.member` wt) si
-      sk' = IS.filter (`IS.member` wt) sk
+  let si' = IS.intersection wt si
+      sk' = IS.intersection wt sk
   in  (si', sj, sk')
 
 
