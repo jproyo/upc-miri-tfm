@@ -71,10 +71,10 @@ toOutput :: ReadChannel (UpperVertex, LowerVertex)
          -> DP s ()
 toOutput _ _ _ _ rbt = do
   c  <- newIORef 1
-  c2 <- newIORef 0
+  c2 <- newIORef (0::Integer)
   foldM_ rbt $ \case
     r@(RBT _ _)      -> liftIO $ readIORef c >>= printCC r >> modifyIORef c (+ 1)
-    RC _      countR -> liftIO $ modifyIORef c2 (+ countR)
+    RC _      countR -> liftIO $ modifyIORef c2 (+ toInteger countR)
   readIORef c2 >>= \cr -> when (cr > 0) $ putTextLn $ "[BT-TOTAL] = " <> show cr
 
 generator' :: forall k (st :: k) . GeneratorStage DPBT FilterState Edge st
@@ -168,7 +168,7 @@ buildDW w_t w_t' l l' =
   let pair       = Pair (min l l') (max l l')
       paramBuild = if l < l' then (w_t, w_t') else (w_t', w_t)
       ut         = uncurry buildDW' paramBuild
-  in  if (IS.size w_t > 1) && abs (l - l') > 1 && not (IS.null (IS.intersection w_t w_t')) && not (nullUT ut)
+  in  if (IS.size w_t > 1) && l /= l' && not (IS.null (IS.intersection w_t w_t')) && not (nullUT ut)
         then modify $ flip modifyDWState (DW pair ut)
         else pure ()
 
