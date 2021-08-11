@@ -71,7 +71,7 @@ toOutput :: ReadChannel (UpperVertex, LowerVertex)
          -> DP s ()
 toOutput _ _ _ _ rbt = do
   c  <- newIORef 1
-  c2 <- newIORef (0::Integer)
+  c2 <- newIORef (0 :: Integer)
   foldM_ rbt $ \case
     r@(RBT _ _)      -> liftIO $ readIORef c >>= printCC r >> modifyIORef c (+ 1)
     RC _      countR -> liftIO $ modifyIORef c2 (+ toInteger countR)
@@ -176,20 +176,7 @@ buildDW w_t w_t' l l' =
 
 {-# INLINE buildDW' #-}
 buildDW' :: IntSet -> IntSet -> UT
-buildDW' !w_t !w_t' =
-  let si      = w_t IS.\\ w_t'
-      sj      = IS.intersection w_t w_t'
-      sk      = w_t' IS.\\ w_t
-      !ssi    = IS.size si
-      !ssj    = IS.size sj
-      !ssk    = IS.size sk
-      buildUt = (,,)
-      ut | ssi >= 1 && ssj > 0 && ssk > 0  = buildUt si sj sk
-         | ssi == 0 && ssj > 1 && ssk > 0  = buildUt sj sj sk
-         | ssi == 0 && ssj > 2 && ssk == 0 = buildUt sj sj sj
-         | ssi > 0 && ssj > 1 && ssk == 0  = buildUt si sj sj
-         | otherwise                       = buildUt IS.empty IS.empty IS.empty
-  in  ut
+buildDW' !w_t !w_t' = (w_t IS.\\ w_t', IS.intersection w_t w_t', w_t' IS.\\ w_t)
 
 {-# INLINE actor3 #-}
 actor3 :: Edge
@@ -228,14 +215,15 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
 {-# INLINE filterUt #-}
 filterUt :: IntSet -> UT -> UT
 filterUt wt (si, sj, sk) =
-  let si' = IS.filter (`IS.member` wt) si
-      sk' = IS.filter (`IS.member` wt) sk
+  let si' = IS.filter (`IS.member` wt) (si `IS.union` sj)
+      sk' = IS.filter (`IS.member` wt) (sj `IS.union` sk)
   in  (si', sj, sk')
 
 
 {-# INLINE inSomeLeftAndRight #-}
 inSomeLeftAndRight :: IntSet -> UT -> Bool
-inSomeLeftAndRight wt (si, _, sk) = not (IS.null (wt `IS.intersection` si) || IS.null (wt `IS.intersection` sk))
+inSomeLeftAndRight wt (si, sj, sk) =
+  not (IS.null (wt `IS.intersection` (si `IS.union` sj)) || IS.null (wt `IS.intersection` (sj `IS.union` sk)))
 
 {-# INLINE actor4 #-}
 actor4 :: Edge
