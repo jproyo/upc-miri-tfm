@@ -5,7 +5,7 @@ import os
 def btcounting():
   lambda_big = 0
   lambda_big_hat = 0
-  g = igraph.Graph.Read_Edgelist(f = os.path.realpath("../data/dbpedia/input.txt"))
+  g = igraph.Graph.Read_Edgelist(f = os.path.realpath("input/threebts.txt"))
   upper = g.get_edge_dataframe()["source"]
   lower = g.get_edge_dataframe()["target"]
   for l in lower:
