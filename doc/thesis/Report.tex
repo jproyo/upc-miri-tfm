@@ -130,6 +130,13 @@ Let $\at$ be a set of all possibles Aggregated bi-triangles in $G$.
 An \textit{filter state} of DP is a sum type $\st = \aw + \dw + \at$
 \end{definition}
 %
+\begin{definition}[Query]
+Let $G=((U\cup L),E)$ be a bipartite graph. 
+A \textit{query} $Q$ is a sum type $Q = Q_V + Q_E$, where $Q_V \subseteq (U \cup L)$ and $Q_E \subseteq E$. 
+It could be a query of vertices or edges.
+\end{definition}
+%
+
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|l|} \hline
@@ -148,6 +155,7 @@ $\dw$ & the set of all the possible double-wedges in $G$\\  \hline
 $\la (l_1, l_2), U_t \ra$ & an aggregated double wedge\\  \hline
 $\la (l_1, l_2,l_3), U_t \ra$ & an aggregated bi-triangle\\  \hline
 $\aw + \dw + \at$ & $\st$ Filter State Sum Type\\  \hline
+$Q_V + Q_E$ & $Q$ Query Sum Type\\  \hline
 \end{tabular}
 \caption{Summary of notations and their meanings.}
 \label{table:notation}
@@ -190,14 +198,18 @@ $OC_{BT}$ & Input Channels carrying Aggregated Bi-triangles \\ \hline
 \caption{Summary of Channels used in DP}
 \label{table:channels}
 \end{table}
+%
 %      
       
 \subsection{Algorithm Definition}
+
 \begin{algorithm}
 \SetKwInOut{P}{Input Data}
 \SetKwInOut{Q}{Input Commands}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
+\SetAlgorithmName{Source}{src}{}
+\SetAlgoRefName{$S_r$}
 \P{$IO_E$: File or Input Stream with Set of Edges $E$}
 \Q{$IO_Q$: File or Input Stream with Commands $Q$}
 \IC{$IC = \la IC_{W_2} \ra$}
@@ -211,13 +223,15 @@ $OC_{BT}$ & Input Channels carrying Aggregated Bi-triangles \\ \hline
 \ForAll(\tcp*[f]{Send Query Commands}){$Q \in IO_Q$}
 {$\p(Q, OC_Q)$
 }
-\caption{$S_r$ Source}
+\caption{This is the algorithm of the DP Source}
 \end{algorithm}
 
 \begin{algorithm}
 \SetKwInOut{P}{Filter Template}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
+\SetAlgorithmName{Generator}{gen}{}
+\SetAlgoRefName{$G$}
 \P{$F$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_Q, IC_{BT} \ra$}
 \OC{$ OC = \la OC_{W_2}, OC_{BT} \ra$}
@@ -230,18 +244,20 @@ $OC_{BT}$ & Input Channels carrying Aggregated Bi-triangles \\ \hline
 \ForAll{$\bti \in IC_{BT}$}
 {$\p(\bti, OC_{BT})$
 }
-\caption{$G$ Generator}
+\caption{This is the algorithm of the DP Generator}
 \end{algorithm}
 
 \begin{algorithm}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{O}{Output}
+\SetAlgorithmName{Sink}{sink}{}
+\SetAlgoRefName{$S_k$}
 \O{$IO_{BT}$: File or Output Stream with $BT$}
 \IC{$IC = \la IC_{BT} \ra$}
 \ForAll(\tcp*[f]{Read Results and put in $IO_{BT}$}){$\bti \in IC_{BT}$}
 {$put(\bti, IO_{BT})$
 }
-\caption{$S_k$ Sink}
+\caption{This is the algorithm of the DP Sink}
 \end{algorithm}
 
 \begin{algorithm}
@@ -253,6 +269,8 @@ $OC_{BT}$ & Input Channels carrying Aggregated Bi-triangles \\ \hline
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{aa}{actor1}
 \SetKwProg{df}{def}{:}{end}
+\SetAlgorithmName{Filter}{fa1}{}
+\SetAlgoRefName{actor1}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -269,7 +287,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
       $\p(\la l, W_l \ra, OC_{W_1})$\\
 }\Else{$\fd$}
 }
-\caption{$F$ Filter - actor1. This actor tries to build a Set of vertices $W_l \subseteq U$ adjancents to $l$ Filter parameter }
+\caption{This actor tries to build a Set of vertices $W_l \subseteq U$ adjancents to $l$ Filter parameter }
 \end{algorithm}
 
 \begin{algorithm}
@@ -280,8 +298,9 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ab}{actor2}
-\SetKwFunction{comb}{buildDW}
 \SetKwProg{df}{def}{:}{end}
+\SetAlgorithmName{Filter}{fa2}{}
+\SetAlgoRefName{actor2}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -296,54 +315,22 @@ $\la l, W_l \ra \leftarrow \gs$\\
       $\p(\la l', W_l \ra, OC_{W_1})$\\
       $\dw \leftarrow \emptyset$\\
       \If{$l \neq l' \land W_l' \cap W_l \neq \emptyset$}{
-            $\la (l_l, l_u), U_t \ra \leftarrow \comb(l, l', W_l, W_l')$\\
-            \If{$U_t \neq \la \emptyset,\emptyset,\emptyset \ra$}{
-                  $\dw \leftarrow \dw \cup \{\la (l, l'), U_t \ra\}$
-            }      
+            $(l_l, l_u) \leftarrow (\argmin_{l,l'}, \argmax_{l,l'})$\\
+            \uIf{$l < l'$}{
+                  $(W_{l_l}, W_{l_u}) \leftarrow (W_l, W_l')$
+            }\Else{
+                  $(W_{l_l}, W_{l_u}) \leftarrow (W_l', W_l)$
+            }
+            $I \leftarrow W_{l_l} \setminus W_{l_u}$\\
+            $J \leftarrow W_{l_l} \cap W_{l_u}$\\
+            $K \leftarrow W_{l_u} \setminus W_{l_l}$\\
+            $\dw \leftarrow \dw \cup \{\la (l, l'), \la I, J, K\ra \ra\}$
       }
 }
 \uIf{$\dw = \emptyset$}{$\fd$}
 \Else{$\us(\mathbb{DW})$}
 }
-\caption{$F$ Filter - actor2. This actor tries to build a Set of all possible Aggregated double-wedges $\dw = \{\la (l,l'), U_t \ra\}$, which first component $l$ is the Parameter of the Filter}
-\end{algorithm}
-
-\begin{algorithm}
-\SetKwInOut{I}{Input}
-\SetKwInOut{O}{Output}
-\SetKwFunction{comb}{buildDW}
-\SetKwProg{df}{def}{:}{end}
-\I{$l, l \in L$: It is the Filter Parameter}
-\I{$l', l' \in L$: It is other Lower Vertex that trying to build a $DW$}
-\I{$W_l, W_l \subseteq U$, Adjancents vertices of $l$}
-\I{$W_l', W_l' \subseteq U$, Adjancents vertices of $l'$}
-\df{\comb{$l$, $l'$, $W_l$, $W_l'$}}{
-      $(l_l, l_u) \leftarrow (\argmin_{l,l'}, \argmax_{l,l'})$\\
-      \uIf{$l < l'$}{
-            $(W_{l_l}, W_{l_u}) \leftarrow (W_l, W_l')$
-      }\Else{
-            $(W_{l_l}, W_{l_u}) \leftarrow (W_l', W_l)$
-      }
-      $I \leftarrow W_{l_l} \setminus W_{l_u}$\\
-      $J \leftarrow W_{l_l} \cap W_{l_u}$\\
-      $K \leftarrow W_{l_u} \setminus W_{l_l}$\\
-      $U_t \leftarrow \la \emptyset,\emptyset,\emptyset \ra$\\
-      \Switch{$\mathtt{eval} \{I, J, K\}$}{
-            \uCase{$|I| \geq 1 \land |J| > 0 \land |K| > 0$}{
-                  $U_t \leftarrow \la I,J,K \ra$
-            }\uCase{$|I| = 0 \land |J| > 1 \land |K| > 0$}{
-                  $U_t \leftarrow \la J,J,K \ra$
-            }\uCase{$|I| = 0 \land |J| > 2 \land |K| = 0$}{
-                  $U_t \leftarrow \la J,J,J \ra$
-            }\uCase{$|I| > 0 \land |J| > 1 \land |K| = 0$}{
-                  $U_t \leftarrow \la I,J,J \ra$
-            }\Other{
-                  $U_t \leftarrow \la \emptyset,\emptyset,\emptyset \ra$
-            }
-      }
-      \Return{$\la (l_l, l_u), U_t \ra$}
-}
-\caption{$\mathtt{buildDW}$ Auxiliary Function}
+\caption{This actor tries to build a Set of all possible Aggregated double-wedges $\dw = \{\la (l,l'), U_t \ra\}$, which first component $l$ is the Parameter of the Filter}
 \end{algorithm}
 
 \begin{algorithm}
@@ -356,6 +343,8 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ac}{actor3}
 \SetKwProg{df}{def}{:}{end}
+\SetAlgorithmName{Filter}{fa3}{}
+\SetAlgoRefName{actor3}
 \P{$l \in L$}
 \FS{$\dw$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -369,11 +358,12 @@ $\la l, W_l \ra \leftarrow \gs$\\
             \tcp*[h]{By pass to be used by following Filters}
             $\p(\la l', W_l' \ra, OC_{W_2})$\\ 
             \tcp*[h]{For each double wedge in State}\\
-            \ForEach{$\la (l_l, l_u), U_t \ra \in \dw, l_l < l' \land l_u > l'$}{
-                  $\la I, J, K \ra \leftarrow U_t$\\
-                  \If{$W_l' \cap I \neq \emptyset \land W_l' \cap K \neq \emptyset$}{
-                        $I' \leftarrow I \cap W_l'$\\
-                        $K' \leftarrow K \cap W_l'$\\
+            \ForEach{$\la (l_l, l_u), \la I, J, K \ra \ra \in \dw, l_l < l' \land l_u > l'$}{
+                  $I' \leftarrow I \cup J$\\
+                  $K' \leftarrow K \cup J$\\
+                  \If{$W_l' \cap I' \neq \emptyset \land W_l' \cap K' \neq \emptyset$}{
+                        $I' \leftarrow I' \cap W_l'$\\
+                        $K' \leftarrow K' \cap W_l'$\\
                         $U_t' \leftarrow U_t' \cup \{\la I', J, K' \ra\})$
                   }
                   \If{$U_t' \neq \la \emptyset,\emptyset,\emptyset \ra$}{
@@ -384,7 +374,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
       \uIf{$\at = \emptyset$}{$\fd$}
       \Else{$\us(\at)$\\}
 }
-\caption{$F$ Filter - actor3. This actor try to build a Set of all possible Aggregated bi-triangles $\at = \{\la (l_l, l_m, l_u), U_t \ra\}$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter}
+\caption{This actor try to build a Set of all possible Aggregated bi-triangles $\at = \{\la (l_l, l_m, l_u), U_t \ra\}$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter}
 \end{algorithm}
 
 \begin{algorithm}
@@ -395,59 +385,138 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \SetKwInOut{PC}{Post-Cond}
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{ad}{actor4}
-\SetKwFunction{but}{buildBt}
+\SetKwFunction{butV}{buildBtVertex}
+\SetKwFunction{butE}{buildBtEdge}
 \SetKwProg{df}{def}{:}{end}
+\SetAlgorithmName{Filter}{fa4}{}
+\SetAlgoRefName{actor4}
 \P{$l \in L$}
 \FS{$\at$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
 \BlankLine
-\tcp*[h]{$IC_{W_2}$ Channel to build Bi-triangles $\bt$}\\
 \PrC{$|\at| \geq 1$}
 \df{\ad{}}{
 $\at \leftarrow \gs$\\
-$\bt \leftarrow \but(\at)$\\
-\ForAll{$q \in IC_Q$}{
-      \ForEach{$\bti \in \bt$}{
-            \If{$\mt(q, \bti)$}{
-                  $\p(\bti, OC_{BT})$\\
+\ForAll{$Q \in IC_Q$}{
+      \ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \at$}{
+            \Switch{$Q$}{
+                  \Case{$Q_V$}{
+                        \If{$Q_V \cap \{l_l, l_m, l_u\} \neq \emptyset \lor Q_V \cap (I \cup J \cup K) \neq \emptyset$}{
+                              $\bt \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), Q_V)$\\
+                              \ForAll{$\bti \in \bt$}{
+                                    $\p(\bti, OC_{BT})$
+                              }
+                        }
+                  }
+                  \Case{$Q_E$}{
+                        \ForEach{$(u,l) \in Q_E$}{
+                              \If{$(l = l_l \lor l = l_m \lor l = l_u) \land u \in (I \cup J \cup K)$}{
+                                    $\bt \leftarrow \butE(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), (u,l))$\\
+                                    \ForAll{$\bti \in \bt$}{
+                                          $\p(\bti, OC_{BT})$
+                                    }
+                              }
+                        }
+                  }
             }
       }
 }
 }
-\caption{$F$ Filter - actor4. This actor tries to process Query Commands $Q$ that arrives through Channel $IC_Q$. If they match with some Bi-triangles that are contained in this Filter, it will pass to the result Channel $OC_{BT}$ to be processed by the Sink}
+\caption{This actor tries to process Query Commands $Q$ that arrives through Channel $IC_Q$. If they match with some Bi-triangles that are contained in this Filter, it will pass to the result Channel $OC_{BT}$ to be processed by the Sink}
 \end{algorithm}
 
 
 \begin{algorithm}
 \SetKwInOut{I}{Input}
 \SetKwInOut{O}{Output}
-\SetKwFunction{but}{buildBt}
+\SetKwFunction{but}{buildBtVertex}
 \SetKwProg{df}{def}{:}{end}
-\I{$\at$}
+\SetAlgorithmName{Function}{a1}{}
+\SetAlgoRefName{buildBtVertex}
+\I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$}
+\I{$Q_V$}
 \O{$\bt$ or $\emptyset$ if cannot build any $\bt$}
-\df{\but{$\at$}}{
-      $\la (l_l, l_m, l_u), U_t \ra \leftarrow \at$\\
-      $\la I, J, K \ra \leftarrow U_t$\\
+\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $Q_V$}}{
+      $\bt \leftarrow \emptyset$\\
+      \uIf{$Q_V \cap \{l_l, l_m, l_u\}$}{
+            \tcp*[h]{If it is in lower i need to build all for this lower triplet}\\
+            \ForEach{$i \in I$}{
+                  \ForEach{$j \in J, j \neq i$}{
+                        \ForEach{$k \in K, k \neq i \land k \neq j$}{
+                              $\bt \leftarrow \bt \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
+                        }
+                  }
+            }
+      }\Else{
+            \tcp*[h]{Otherwise just build those that are in the this upper $v$}\\
+            \ForEach{$i \in I$}{
+                  \ForEach{$j \in J, j \neq i$}{
+                        \ForEach{$k \in K, k \neq i \land k \neq j \land (Q_V \cap \{i,j,k\} \neq \emptyset$}{
+                              $\bt \leftarrow \bt \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
+                        }
+                  }
+            }
+      }
+      \Return{$\bt$}
+}
+\caption{Given a Set of Vertex Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\at$ param}
+\end{algorithm}
+
+\begin{algorithm}
+\SetKwInOut{I}{Input}
+\SetKwInOut{O}{Output}
+\SetKwFunction{but}{buildBtEdge}
+\SetKwFunction{he}{hasEdge}
+\SetKwProg{df}{def}{:}{end}
+\SetAlgorithmName{Function}{a2}{}
+\SetAlgoRefName{buildBtEdge}
+\I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$}
+\I{$(u,l)$}
+\O{$\bt$ or $\emptyset$ if cannot build any $\bt$}
+\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $Q_V$}}{
       $\bt \leftarrow \emptyset$\\
       \ForEach{$i \in I$}{
             \ForEach{$j \in J, j \neq i$}{
-                  \ForEach{$k \in K, k \neq i \land k \neq j$}{
+                  \ForEach{$k \in K, k \neq i \land k \neq j \land \he((u,l), (l_l,l_m,l_u),(i,j,k))$}{
                         $\bt \leftarrow \bt \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
                   }
             }
-             }
-            \Return{$\bt$}
-       }
-\caption{$\mathtt{buildBT}$ Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\at$ param}
+      }
+      \Return{$\bt$}
+}
+\df{\he{$(u,l), (l_l,l_m,l_u), (i,j,k)$}}{
+      \If{$(u,l) = (l_l, i) \lor (u,l) = (l_l, j) \lor (u,l) = (l_u, j) \lor (u,l) = (l_u, k) \lor (u,l) = (l_m, i) \lor (u,l) = (l_m, k)$}{
+            \Return{True}
+      }\Else{
+            \Return{False}
+      }
+}
+\caption{Given a Set of Edges Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\at$ param}
 \end{algorithm}
-
+      
 \clearpage
 \section{Draft-Correctness of the Algorithm}
 
 A bi-triangle can be described as a sequence $(a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U\footnote{In the enumeration, L and $U$ be interchanged}$
 
 We need to prove that the algorithm can enumerate all   bi-triangle in the graph and also that there are not duplicates in the enumeration.
+
+\begin{quote}
+Very recently, Qiao
+et al. proposed CrystalJoin [41] that aims at resolving the
+output crisis by compressing the (intermediate) results (taken from Distributed Subgraph Matching on Timely Dataflow).
+\end{quote}
+
+We use the same technique, compressing a group of bi-triangles as $(a,b,c,(I,J,K))$. 
+\begin{definition}{Compress representation of bi-triangles}
+
+$(a,b,c,(I,J,K))$  where  $I, J,K$ are sets of upper nodes. $I$ is the set of nodes  incident to $a$ and $b$, $J$ is the set of nodes incident to $a$ and $c$ and $K$ is the set of nodes incident to $b$ and $c$.
+\end{definition}
+\begin{algorithm}{Listing bi-tringles}
+
+Listing bi-tringles, from this compressed representation, stands for finding  triples $(A,B,C)$ such that $A \in I$, $B \in J$  and $C \in K$, all pairwise distinct.
+\end{algorithm} 
 
 First we are going to prove that if we take all the triples $(a,b,c)$  such $a<b$ and $b<c$  and    $(a,A,b,B,c,C)$ is a bi-triangle, then it is not listed twice (theorem \ref{TH-unicity}).  We will show that we  enumerate all the bi-triangles  where $A,B,C$  are distinct and $A$ is incident to $a$ and $b$, $B$is incident to $a$ and $c$ and $C$ is incident to $b$ and $C$ (theorem \ref{TH-all}). 
 \begin{theorem} \label{TH-unicity}Every bi-triangle is listed at most once 
@@ -472,14 +541,17 @@ Therefore the  only sequence constructed by the algorithm is the one that satisf
 \begin{theorem}\label{TH-all}Every bi-triangle present in the graph is listed.
 
 \end{theorem}
+
 \begin{proof}
 
-
+Obvious  from the definition of $I,J,K$  and the algorithm of obtaining bi-triangles. 
+\iffalse
 Lets assume that a bi-triangle $(a,A,b,B,c,C)$   will assume that $a$ is the smallest element in the set $\{a,b,c\}$ and $c$ is the bigger.
 When actor 1 in fiter $F_a$1 ends reading all the edges, $\{A,B\} \subseteq W_a$. Also When actor 1 in fiter $F_c$1 ends reading all the edges, $\{B,C\} \subseteq W_c$. 
 
 AS $a < c$  in filter $F_a$ the pair $(a,c)$  will be added to D
 $DW$. When actor 3 in filter $F_a$ receives $(b, W_b)$ will add to $BT$ because of the non empty intersection. Therefore the bi-triangle $(a,A,b,B,c,C)$ can be recognized
+\fi
 \end{proof}
 \iffalse So we are going to talk from now on of the bi-triangles produced by the filter $F_a$ or by the filter $F_c$.
 
