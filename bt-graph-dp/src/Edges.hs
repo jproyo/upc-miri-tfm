@@ -151,6 +151,29 @@ modifyBTState :: FilterState -> BT -> FilterState
 modifyBTState (BiTriangles b) bt = BiTriangles $ addBt bt b
 modifyBTState s               _  = s
 
+{-# INLINE inLower #-}
+inLower :: BT -> IntSet -> Bool
+inLower BT {..} vertices =
+  getAny $ foldMap (isInTriple' _btLower) $ IS.toAscList vertices
+
+{-# INLINE inUpper #-}
+inUpper :: BT -> IntSet -> Bool
+inUpper BT {..} vertices =
+  let (si, sj, sk) = _btUpper
+   in R.any (\vertex -> IS.member vertex si || IS.member vertex sj || IS.member vertex sk) $ IS.toAscList vertices
+
+{-# INLINE isInLower #-}
+isInLower :: BT -> IntSet -> Bool
+isInLower BT {..} vertices = getAny $ foldMap (isInTriple' _btLower) $ IS.toAscList vertices
+
+{-# INLINE isInUpper #-}
+isInUpper :: BT -> IntSet -> Bool
+isInUpper BT {..} vertices =
+  let (si, sj, sk) = _btUpper
+  in  getAny
+        $ foldMap (\vertex -> Any (IS.member vertex si || IS.member vertex sj || IS.member vertex sk))
+        $ IS.toAscList vertices
+
 {-# INLINE isInTriple' #-}
 isInTriple' :: Triplet -> Int -> Any
 isInTriple' (Triplet a b c) vertex = Any (a == vertex) <> Any (b == vertex) <> Any (c == vertex)
@@ -168,9 +191,13 @@ hasEdge edge = foldMap (Any . isInEdge' edge) . buildBT
 {-# INLINE buildBT #-}
 buildBT :: BT -> [(Int, Int, Int, Int, Int, Int, Int)]
 buildBT = do
-  Triplet l_l l_m l_u <- _btLower
-  (si, sj, sk)        <- _btUpper
-  return
+  t'           <- _btLower
+  (si, sj, sk) <- _btUpper
+  return $ buildBT'' t' si sj sk
+
+{-# INLINE buildBT'' #-}
+buildBT'' :: Triplet -> IntSet -> IntSet -> IntSet -> [(Int, Int, Int, Int, Int, Int, Int)]
+buildBT'' (Triplet l_l l_m l_u) si sj sk = 
     [ (l_l, u_1, l_m, u_3, l_u, u_2, l_l)
     | u_1 <- IS.toAscList si
     , u_2 <- IS.toAscList sj
@@ -178,15 +205,47 @@ buildBT = do
     , u_1 /= u_2 && u_2 /= u_3 && u_1 /= u_3
     ]
 
+{-# INLINE buildBT' #-}
+buildBT' :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
+buildBT' BT{..} vertices f = do
+  let triplet               = _btLower
+  let (si, sj, sk)          = _btUpper
+  let si' = IS.intersection si vertices
+  let sj' = IS.intersection sj vertices
+  let sk' = IS.intersection sk vertices
+  unless (IS.null si')
+    $ liftIO
+    . mapConcurrently_ f
+    $ buildBT'' triplet si' sj sk
+
+  unless (IS.null sj')
+    $ liftIO
+    . mapConcurrently_ f
+    $ buildBT'' triplet si sj' sk
+
+  unless (IS.null sk')
+    $ liftIO
+    . mapConcurrently_ f
+    $ buildBT'' triplet si sj sk'
+
 {-# INLINE filterBTByVertex #-}
 filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
 filterBTByVertex bt vertices f = do
-  when (getAny $ foldMap (hasVertex bt) $ IS.toAscList vertices)
-    $ liftIO
-    . mapConcurrently_ f
-    . R.filter (R.any (`IS.member` vertices) . tupleToList)
-    . buildBT
-    $ bt
+  -- when (getAny $ foldMap (hasVertex bt) $ IS.toAscList vertices)
+  --   $ liftIO
+  --   . mapConcurrently_ f
+  --   . R.filter (R.any (`IS.member` vertices) . tupleToList)
+  --   . buildBT
+  --   $ bt
+  if inLower bt vertices then
+     liftIO
+     . mapConcurrently_ f
+     . buildBT
+     $ bt
+  else 
+    if inUpper bt vertices 
+      then buildBT' bt vertices f
+      else pure ()
 
 tupleToList :: (Int, Int, Int, Int, Int, Int, Int) -> [Int]
 tupleToList (a, b, c, d, e, f, g) = [a, b, c, d, e, f, g]
