@@ -130,7 +130,7 @@ actor1 (_, l) redges _ _ _ _ _ we ww1 _ _ _ _ = do
   finish we
   state' <- get
   case state' of
-    Adj w@(W _ ws) -> unless (IS.null ws) $ push w ww1
+    Adj w@(W _ ws) -> when (IS.size ws > 1) $ push w ww1
     _              -> pure ()
 
 {-# INLINE actor2 #-}
@@ -168,7 +168,7 @@ buildDW w_t w_t' l l' =
   let pair       = Pair (min l l') (max l l')
       paramBuild = if l < l' then (w_t, w_t') else (w_t', w_t)
       ut         = uncurry buildDW' paramBuild
-  in  if not (IS.null w_t) && l /= l' && not (IS.null (IS.intersection w_t w_t')) && not (nullUT ut)
+  in  if (IS.size w_t > 1) && l /= l' && not (IS.null (IS.intersection w_t w_t')) && not (nullUT ut)
         then modify $ flip modifyDWState (DW pair ut)
         else pure ()
 
@@ -215,15 +215,15 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
 {-# INLINE filterUt #-}
 filterUt :: IntSet -> UT -> UT
 filterUt wt (si, sj, sk) =
-  let si' = (si `IS.union` sj) `intersect` wt
-      sk' = (sj `IS.union` sk) `intersect` wt
+  let si' = IS.filter (`IS.member` wt) (si `IS.union` sj)
+      sk' = IS.filter (`IS.member` wt) (sj `IS.union` sk)
   in  (si', sj, sk')
 
 
 {-# INLINE inSomeLeftAndRight #-}
 inSomeLeftAndRight :: IntSet -> UT -> Bool
 inSomeLeftAndRight wt (si, sj, sk) =
-   not (IS.null ((si `IS.union` sj) `intersect` wt) || IS.null ((sj `IS.union` sk) `intersect` wt))
+   not (IS.null (wt `IS.intersection` (si `IS.union` sj)) || IS.null (wt `IS.intersection` (sj `IS.union` sk)))
 
 {-# INLINE actor4 #-}
 actor4 :: Edge
@@ -264,13 +264,13 @@ sendBts (BTTT bttt) q@(Q c _ _) wbtr = case c of
 
 {-# INLINE printDebug #-}
 printDebug :: MonadIO m => Text -> Int -> Maybe Double -> m Double
-printDebug step param diffTime = do
+printDebug step param diff = do
   envEnable <- liftIO $ lookupEnv "LOG_DEBUG" <&> isJust
   if envEnable
     then do
       now <- liftIO milliSecs
-      let dfs = maybe "" (mappend " - Diff: " . toText . showFullPrecision . (now -)) diffTime
-      let st  = maybe "Starting" (const "Finish") diffTime
+      let dfs = maybe "" (mappend " - Diff: " . toText . showFullPrecision . (now -)) diff
+      let st  = maybe "Starting" (const "Finish") diff
       let msg = mconcat
             [ "["
             , step
