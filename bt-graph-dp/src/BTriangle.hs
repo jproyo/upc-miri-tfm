@@ -223,7 +223,7 @@ filterUt wt (si, sj, sk) =
 {-# INLINE inSomeLeftAndRight #-}
 inSomeLeftAndRight :: IntSet -> UT -> Bool
 inSomeLeftAndRight wt (si, sj, sk) =
-  not (IS.null (wt `IS.intersection` (si `IS.union` sj)) || IS.null (wt `IS.intersection` (sj `IS.union` sk)))
+   not (IS.null (wt `IS.intersection` (si `IS.union` sj)) || IS.null (wt `IS.intersection` (sj `IS.union` sk)))
 
 {-# INLINE actor4 #-}
 actor4 :: Edge
