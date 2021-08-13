@@ -206,24 +206,28 @@ actor3 (_, l) _ _ _ _ _ rfb _ _ _ _ _ wfb = do
           forM_ dtlist $ \(DW (Pair l_l l_u) ut) ->
             let triple = Triplet l_l l' l_u
                 result =
-                  if l' < l_u && l' > l_l && w_t' `inSomeLeftAndRight` ut then Just $ filterUt w_t' ut else Nothing
+                  if l' < l_u && l' > l_l then filterUt w_t' ut else Nothing
             in  maybe (pure ()) (modify . flip modifyBTState . BT triple) result
       finish wfb
       void $ printDebug "BT" l $ Just now
     _ -> pure ()
 
 {-# INLINE filterUt #-}
-filterUt :: IntSet -> UT -> UT
+filterUt :: IntSet -> UT -> Maybe UT
 filterUt wt (si, sj, sk) =
-  let si' = IS.filter (`IS.member` wt) (si `IS.union` sj)
-      sk' = IS.filter (`IS.member` wt) (sj `IS.union` sk)
-  in  (si', sj, sk')
+  let si' = IS.filter (`IS.member` wt) si 
+      sj' = IS.filter (`IS.member` wt) sj
+      sk' = IS.filter (`IS.member` wt) sk
+      sij' = si' `IS.union` sj'
+      sjk' = sk' `IS.union` sj'
+      wtInSome = not (IS.null sij' || IS.null sjk')
+  in  if wtInSome then Just (sij', sj, sjk') else Nothing
 
 
-{-# INLINE inSomeLeftAndRight #-}
-inSomeLeftAndRight :: IntSet -> UT -> Bool
-inSomeLeftAndRight wt (si, sj, sk) =
-   not (IS.null (wt `IS.intersection` (si `IS.union` sj)) || IS.null (wt `IS.intersection` (sj `IS.union` sk)))
+-- {-# INLINE inSomeLeftAndRight #-}
+-- inSomeLeftAndRight :: IntSet -> UT -> Bool
+-- inSomeLeftAndRight wt (si, sj, sk) =
+--    not (IS.null (wt `IS.intersection` (si `IS.union` sj)) || IS.null (wt `IS.intersection` (sj `IS.union` sk)))
 
 {-# INLINE actor4 #-}
 actor4 :: Edge
