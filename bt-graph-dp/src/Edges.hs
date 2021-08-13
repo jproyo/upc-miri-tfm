@@ -205,39 +205,28 @@ buildBT'' (Triplet l_l l_m l_u) si sj sk =
     , u_1 /= u_2 && u_2 /= u_3 && u_1 /= u_3
     ]
 
-{-# INLINE diff #-}
-diff :: IntSet -> IntSet -> IntSet 
-diff = flip diff'
-
-{-# INLINE diff' #-}
-diff' :: IntSet -> IntSet -> IntSet 
-diff' = IS.filter . flip IS.notMember
-
-intersect :: IntSet -> IntSet -> IntSet 
-intersect = IS.filter . flip IS.member
-
 {-# INLINE buildBT' #-}
 buildBT' :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
 buildBT' BT{..} vertices f = do
   let triplet               = _btLower
   let (si, sj, sk)          = _btUpper
-  let si' = si `intersect` vertices
-  let sj' = sj `intersect` vertices
-  let sk' = sk `intersect` vertices
+  let si' = IS.filter (`IS.member` si) vertices
+  let sj' = IS.filter (`IS.member` sj) vertices
+  let sk' = IS.filter (`IS.member` sk) vertices
   unless (IS.null si')
     $ liftIO
     . mapConcurrently_ f
-    $ buildBT'' triplet si' (sj `diff` si') sk
+    $ buildBT'' triplet si' (sj IS.\\ si') sk
 
   unless (IS.null sj')
     $ liftIO
     . mapConcurrently_ f
-    $ buildBT'' triplet (si `diff` sj') sj' (sk `diff` sj')
+    $ buildBT'' triplet (si IS.\\ sj') sj' (sk IS.\\ sj')
 
   unless (IS.null sk')
     $ liftIO
     . mapConcurrently_ f
-    $ buildBT'' triplet si (sj `diff` sk') sk'
+    $ buildBT'' triplet si (sj IS.\\ sk') sk'
 
 {-# INLINE filterBTByVertex #-}
 filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
