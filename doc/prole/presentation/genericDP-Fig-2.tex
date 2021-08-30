@@ -1,0 +1,13 @@
+\begin{tikzpicture}
+   %Nodes
+   \node[indata] (data)  {eof .. 2};
+   \node[ionode,label=below:Source]      (in)       [right=of data]           {$\iwcc$};
+   \node[filternode,label=above:1]  (filter1)               [right=of in] {$\fwcc$};
+   \node[gennode,label=below:Generator]  (gen)  [right=of filter1]  {$\gwcc$};
+   \node[paramnode,label=above:Filter]  (param)  [above= 0.2mm of gen] {$\fwcc$};
+   \node[ionode,label=below:Sink]        (out)  [right=of gen] {$\owcc$};
+   %Lines
+   \draw[ultra thick,->] (in) to (filter1);
+   \draw[ultra thick,->] (filter1) to (gen);
+   \draw[ultra thick,->] (gen) to (out);
+   \end{tikzpicture}  
