@@ -1,0 +1,17 @@
+\begin{tikzpicture}
+	%Nodes
+	\node[source]      (in)                   {\hspace{1cm}};
+	\node[source]      (stream)                 [right=of in]    {\hspace{1cm}};
+	\node[filternode,label=below:$F_{\{4,5\}}$]  (filter3)               [right=of stream] {\small $\{4,5\}$};
+	\node[gennode,label=below:Generator]   (gen)                 [right=of filter3] {$\gwcc$};
+	\node[paramnode,label=above:Filter]  (param)          [above= 0.2mm of gen] {$\fwcc$};
+	\node[ionode,label=below:Sink]      (out)                  [right=of gen] {$\owcc$};
+	\node[outdata]     (x)     [right=of out]                    {};
+	%Lines 
+	\draw[edge] (in.-20) to  ["{\small$eof\:\{3,4,6\}$}",swap]   (filter3.195);
+	\draw[edge] (filter3.12) to  ["{\small$eof$}"] (gen.167);
+	\draw[edge] (filter3.-12) to ["{\small$\{1,2\}$}",swap] (gen.196);
+	\draw[edge] (gen) to (out);
+	\draw[ioedge] (out) to (x);
+	\end{tikzpicture}
+

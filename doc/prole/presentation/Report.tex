@@ -14,6 +14,7 @@
 \usepackage{multirow}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{multimedia}
 \usepackage{tikz}
 \usetikzlibrary{shapes.misc,shadows}
 \usetikzlibrary{quotes,positioning,arrows,decorations.markings}
@@ -48,7 +49,8 @@
 \newcommand{\eof}{\mathsf{eof}}
 \newcommand{\Act}{\mathsf{actor_1}}
 \newcommand{\Actt}{\mathsf{actor_2}}
-
+\definecolor{androidgreen}{rgb}{0.64,0.78,0.22}
+\definecolor{titaniumyellow}{rgb}{0.93,0.9,0.0}
 
 \makeatletter
 \long\def\beamer@author[#1]#2{%
@@ -141,61 +143,35 @@
   \end{frame}
 
   \begin{frame}[fragile]{Motivation}
-    Using an \textbf{FP Language} to build a \textbf{Dynamic Pipeline Framework}
+    \begin{itemize}
+      \item Assess the suitability of \textbf{Haskell} to implement \textbf{Dynamic Pipeline Paradigm}
+    \end{itemize}    
   \end{frame}
 
   \begin{frame}[fragile]{Motivation}
-    Using an \textbf{FP Language} to build a \textbf{Dynamic Pipeline Framework}
-
-    \begin{block}
-
+    \begin{itemize}
+      \item Assess the suitability of \textbf{Haskell} to implement \textbf{Dynamic Pipeline Paradigm}
+      \vspace{0.5cm}
       \begin{itemize}
-        \item \textbf{Haskell}: 
-        \begin{itemize}
-          \item Pure FP Language
-          \item Strong theoretical foundations
-          \item Toolset for building Multithreading Programs
-        \end{itemize}
+        \item Pure FP Language
+        \item Strong theoretical foundations
+        \item Toolset for building Multithreading Programs
       \end{itemize}
-      
-    \end{block}
-  \end{frame}
-  
-  \begin{frame}[fragile]{Motivation}
-    Using an \textbf{FP Language} to build a \textbf{Dynamic Pipeline Framework}
-
-    \begin{block}
-
-      \begin{itemize}
-        \item \textbf{Haskell}: 
-        \begin{itemize}
-          \item Pure FP Language
-          \item Strong theoretical foundations
-          \item Toolset for building Multithreading Programs
-        \end{itemize}
-        \item Experimental approach solving \textbf{WCC} to empirically test our assumptions
-      \end{itemize}
-
-    \end{block}
+    \end{itemize}    
   \end{frame}
 
   \begin{frame}[fragile]{Motivation}
-    Using an \textbf{FP Language} to build a \textbf{Dynamic Pipeline Framework}
-
-    \begin{block}
-
+    \begin{itemize}
+      \item Assess the suitability of \textbf{Haskell} to implement \textbf{Dynamic Pipeline Paradigm}
+      \vspace{0.5cm}
       \begin{itemize}
-        \item \textbf{Haskell}: 
-        \begin{itemize}
-          \item Pure FP Language
-          \item Strong theoretical foundations
-          \item Toolset for building Multithreading Programs
-        \end{itemize}
-        \item Experimental approach solving \textbf{WCC} to empirically test our assumptions
-        \item Build a first approach of a \textbf{DP Framework in Haskell}
+        \item Pure FP Language
+        \item Strong theoretical foundations
+        \item Toolset for building Multithreading Programs
       \end{itemize}
-
-    \end{block}
+      \vspace{0.5cm}
+      \item Provide a \textbf{Proof of Concept} for implementing Weakly Connected Components (\textbf{WCC}) of a Graph
+    \end{itemize}    
   \end{frame}
 
   \begin{frame}{Agenda}
@@ -205,28 +181,229 @@
 
   \input{genericDP-Fig}
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
-    \input{genericDP-Fig-1}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-3cm,yshift=-2cm] at (current page.north east) {
+        \input{graph-DP-Fig}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-0}
+    \end{figure}
   \end{frame}
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
-    \input{genericDP-Fig-1}
-    \input{genericDP-Fig-2}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{2cm}{\input{genericDP-Fig-0}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-1}
+    \end{figure}
+  \end{frame}
+
+  \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+    \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+      \resizebox{5cm}{2cm}{\input{genericDP-Fig-0}}
+      };
+    \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{6cm}{2cm}{\input{genericDP-Fig-1}}
+    };
+  \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-2}
+    \end{figure}
   \end{frame}   
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
-    \input{genericDP-Fig-1}
-    \input{genericDP-Fig-2}
-    \input{genericDP-Fig-3}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{2cm}{\input{genericDP-Fig-1}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{6cm}{2cm}{\input{genericDP-Fig-2}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-3}
+    \end{figure}
   \end{frame}   
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
-    \input{genericDP-Fig-4}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{2cm}{\input{genericDP-Fig-2}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{6cm}{2cm}{\input{genericDP-Fig-3}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-4}
+    \end{figure}
   \end{frame}   
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
-    \input{genericDP-Fig-4}
-    \input{genericDP-Fig-5}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{2cm}{\input{genericDP-Fig-3}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{6cm}{2cm}{\input{genericDP-Fig-4}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-5}
+    \end{figure}
   \end{frame}   
+
+  \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{2cm}{\input{genericDP-Fig-4}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{6cm}{2cm}{\input{genericDP-Fig-5}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-6}
+    \end{figure}
+  \end{frame}  
+
+  \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{2cm}{\input{genericDP-Fig-5}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{6cm}{2cm}{\input{genericDP-Fig-6}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-7}
+    \end{figure}
+  \end{frame}  
+
+  \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{2cm}{\input{genericDP-Fig-6}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{6cm}{2cm}{\input{genericDP-Fig-7}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-8}
+    \end{figure}
+  \end{frame} 
+  
+  \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{2cm}{\input{genericDP-Fig-7}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{6cm}{2cm}{\input{genericDP-Fig-8}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-9}
+    \end{figure}
+  \end{frame}  
+
+  \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{2cm}{\input{genericDP-Fig-8}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{6cm}{1cm}{\input{genericDP-Fig-9}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-10}
+    \end{figure}
+  \end{frame}  
+
+  \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{1cm}{\input{genericDP-Fig-9}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{5cm}{1cm}{\input{genericDP-Fig-10}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-11}
+    \end{figure}
+  \end{frame}  
+
+  \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
+        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+      };
+      \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+        \resizebox{5cm}{1cm}{\input{genericDP-Fig-10}}
+        };
+      \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
+          \resizebox{5cm}{1cm}{\input{genericDP-Fig-11}}
+      };
+    \end{tikzpicture}
+    \begin{figure}
+      \centering
+      \input{genericDP-Fig-12}
+    \end{figure}
+  \end{frame}  
 
   \begin{frame}{Agenda}
     \section{DP Framework: Haskell}
@@ -235,116 +412,303 @@
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{center}
-      \includegraphics[width = 0.6\textwidth, height = 0.8\textheight]{dpf_haskell_v3}
+      \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3}
     \end{center}
   \end{frame}
+
+    \begin{frame}[fragile]{DP Framework: Haskell}
+      \begin{center}
+      \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3-1}
+    \end{center}
+  \end{frame}
+
+  \lstset{
+    basicstyle=\itshape,
+    literate={->}{$\rightarrow$}{2}
+  }
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \frametitle{DSL Grammar}
+    \tiny
+      \begin{equation*}
+          \boxed{
+           \begin{aligned}
+          V &= \{DP,S_r,S_k,G,F_b,CH,CH_s,\text{\mintinline{haskell}{Source}},\text{\mintinline{haskell}{Generator}},\text{\mintinline{haskell}{Sink}},\text{\mintinline{haskell}{FeedbackChannel}},\text{\mintinline{haskell}{Type}},\text{\mintinline{haskell}{Eof}},\text{\mintinline{haskell}{:=>}},\text{\mintinline{haskell}{:<+>}}\},\\
+          \Sigma &= \{\text{\mintinline{haskell}{Source}},\text{\mintinline{haskell}{Generator}},\text{\mintinline{haskell}{Sink}},\text{\mintinline{haskell}{FeedbackChannel}},\text{\mintinline{haskell}{Type}},\text{\mintinline{haskell}{Eof}},\text{\mintinline{haskell}{:=>}},\text{\mintinline{haskell}{:<+>}}\},
+          \end{aligned}
+          }
+      \end{equation*}
+    \small
+    \begin{equation*}
+      \boxed{
+        \begin{aligned}
+      DP  &\rightarrow S_r\ \text{\mintinline{haskell}{:=>}}\ G\ \text{\mintinline{haskell}{:=>}}\ S_k\ |\ S_r\ \text{\mintinline{haskell}{:=>}}\ G\ \text{\mintinline{haskell}{:=>}}\ F_b\ \text{\mintinline{haskell}{:=>}}\ S_k\\
+      S_r &\rightarrow \text{\mintinline{haskell}{Source}}\ CH_s\\
+      G   &\rightarrow \text{\mintinline{haskell}{Generator}}\ CH_s\\
+      S_k &\rightarrow \text{\mintinline{haskell}{Sink}}\\
+      F_b &\rightarrow \text{\mintinline{haskell}{FeedbackChannel}} CH\\
+      CH_s &\rightarrow \text{\mintinline{haskell}{Channel}}\ CH\\
+      CH &\rightarrow \text{\mintinline{haskell}{Type :<+>}}\ CH\ |\ \text{\mintinline{haskell}{Eof}}
+    \end{aligned}
+    }
+    \end{equation*}
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{itemize}
+      \item If we define a \textbf{DP} Language that is Recognize by the Grammar
+    \end{itemize}    
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{itemize}
+      \item If we define a \textbf{DP} Language that is Recognize by the Grammar
+      \item It is Compile time checked by the Grammar (\textit{Type-safe})
+    \end{itemize}    
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{itemize}
+      \item If we define a \textbf{DP} Language that is Recognize by the Grammar
+      \item It is Compile time checked by the Grammar (\textit{Type-safe})
+    \end{itemize}    
+    \begin{exampleblock}{Type Level DSL}
+      \begin{minted}[fontsize=\tiny,highlightlines={7-17}]{shell}      
+ghci> import DynamicPipeline
+ghci> type DPExample = Source (Channel (Int :<+> Eof)) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
+type DPExample :: *
+type DPExample =
+  Source (Channel (Int :<+> Eof))
+  :=> (Generator (Channel (Int :<+> Eof)) :=> Sink)
+ghci> :t mkDP @DPExample
+mkDP @DPExample
+  :: forall k (st :: k) filterState filterParam.
+      Stage (WriteChannel Int -> DP st ())
+      -> GeneratorStage DPExample filterState filterParam st
+      -> Stage (ReadChannel Int -> DP st ())
+      -> DP st ()    
+    \end{minted}
+    \end{exampleblock}
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{itemize}
+      \item Otherwise the Compiler warning us about \textbf{Grammar Verification Error}
+    \end{itemize}    
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{itemize}
+      \item Otherwise the Compiler warning us about \textbf{Grammar Verification Error}
+    \end{itemize}    
+    \begin{alertblock}{Type Level DSL}
+    \begin{minted}[fontsize=\tiny,highlightlines={8-17},highlightcolor=titaniumyellow]{shell}      
+ghci> type DPExample2 = Source (Channel Int) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
+type DPExample2 :: *
+type DPExample2 =
+  Source (Channel Int)
+  :=> (Generator (Channel (Int :<+> Eof)) :=> Sink)
+ghci> :t mkDP @DPExample2
+
+<interactive>:1:1: error:
+    Invalid Semantic for Source Stage
+    in the DP Definition 'ChanIn Int'
+    Language Grammar:
+    DP       -> Source CHANS :=> Generator CHANS :=> Sink
+    DP       -> Source CHANS :=> Generator CHANS :=> FEEDBACK :=> Sink
+    CHANS    -> Channel CH
+    FEEDBACK -> FeedbackChannel CH
+    CH       -> Type :<+> CH | Eof
+    Example: 'Source (Channel (Int :<+> Int)) :=> Generator (Channel (Int :<+> Int)) :=> Sink'    
+    \end{minted}
+    \end{alertblock}
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{center}
+      \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3-3}
+    \end{center}
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{block}{Runtime System}
+      \begin{itemize}
+        \item \textbf{DP Monad}:
+        \begin{itemize} 
+        \item Monad with Existential Type to not escape DP Context. (\textit{Rank-2 Polymorphic type})
+        \item Associativity Monad law guarantees execution flow (\mintinline{haskell}{ source >>= generator >>= sink }) 
+        \end{itemize}
+      \end{itemize}
+    \end{block}
+    \end{frame}
   
   \begin{frame}[fragile]{DP Framework: Haskell}
-    \begin{center}
-      \includegraphics[width = 0.6\textwidth, height = 0.8\textheight]{dpf_haskell_v3-1}
-    \end{center}
+    \begin{block}{Runtime System}
+      \begin{itemize}
+        \item \textbf{DP Monad}:
+        \begin{itemize} 
+        \item Monad with Existential Type to not escape DP Context. (\textit{Rank-2 Polymorphic type})
+        \item Associativity Monad law guarantees execution flow (\mintinline{haskell}{ source >>= generator >>= sink }) 
+        \end{itemize}
+        \item \textbf{Filter / Stage}: 
+        \begin{itemize}
+          \item Use of \mintinline{haskell}{unfold} to generate dynamic filter computations (\textit{Anamorphism})
+          \item Use of \mintinline{haskell}{fold} to reduce results to Sink (\textit{Catamorphism})
+        \end{itemize}
+      \end{itemize}
+    \end{block}
+    \end{frame}
+  
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{block}{Runtime System}
+      \begin{itemize}
+        \item \textbf{DP Monad}:
+        \begin{itemize} 
+        \item Monad with Existential Type to not escape DP Context. (\textit{Rank-2 Polymorphic type})
+        \item Associativity Monad law guarantees execution flow (\mintinline{haskell}{ source >>= generator >>= sink }) 
+        \end{itemize}
+        \item \textbf{Filter / Stage}: 
+        \begin{itemize}
+          \item Use of \mintinline{haskell}{unfold} to generate dynamic filter computations (\textit{Anamorphism})
+          \item Use of \mintinline{haskell}{fold} to reduce results to Sink (\textit{Catamorphism})
+        \end{itemize}
+        \item \textbf{Multithreading}: \mintinline{shell}{async} library
+      \end{itemize}
+    \end{block}
+    \end{frame}
+  
+  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{block}{Runtime System}
+    \begin{itemize}
+      \item \textbf{DP Monad}:
+      \begin{itemize} 
+      \item Monad with Existential Type to not escape DP Context. (\textit{Rank-2 Polymorphic type})
+      \item Associativity Monad law guarantees execution flow (\mintinline{haskell}{ source >>= generator >>= sink }) 
+      \end{itemize}
+    \item \textbf{Filter / Stage}: 
+      \begin{itemize}
+        \item Use of \mintinline{haskell}{unfold} to generate dynamic filter computations (\textit{Anamorphism})
+        \item Use of \mintinline{haskell}{fold} to reduce results to Sink (\textit{Catamorphism})
+      \end{itemize}
+      \item \textbf{Multithreading}: \mintinline{shell}{async} library
+      \item \textbf{Channels}: \mintinline{shell}{unagi-chan} library
+    \end{itemize}
+  \end{block}
   \end{frame}
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{center}
-      \includegraphics[width = 0.6\textwidth, height = 0.8\textheight]{dpf_haskell_v3-2}
+      \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3-2}
     \end{center}
   \end{frame}
 
   \begin{frame}[fragile]{DP Framework: Haskell}
-    \begin{center}
-      \includegraphics[width = 0.6\textwidth, height = 0.8\textheight]{dpf_haskell_v3-3}
-    \end{center}
+    \begin{block}{IDL}
+      \begin{minted}[fontsize=\tiny]{shell}      
+ghci> type DPExample = Source (Channel (Int :<+> Eof)) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
+type DPExample :: *
+type DPExample =
+  Source (Channel (Int :<+> Eof))
+  :=> (Generator (Channel (Int :<+> Eof)) :=> Sink)
+    \end{minted}
+  \end{block}
   \end{frame}
 
   \begin{frame}[fragile]{DP Framework: Haskell}
-    \textbf{Focus on IDL}
+    \begin{block}{IDL}
+      \begin{minted}[fontsize=\tiny,highlightlines={7-11}]{shell}      
+ghci> type DPExample = Source (Channel (Int :<+> Eof)) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
+type DPExample :: *
+type DPExample =
+  Source (Channel (Int :<+> Eof))
+  :=> (Generator (Channel (Int :<+> Eof)) :=> Sink)
+        
+ghci> :t withSource @DPExample
+withSource @DPExample
+  :: forall k (st :: k).
+      (WriteChannel Int -> DP st ())
+      -> Stage (WriteChannel Int -> DP st ())
+    \end{minted}
+  \end{block}
+  \end{frame}
 
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{block}{IDL}
+      \begin{minted}[fontsize=\tiny,highlightlines={7-9}]{shell}      
+ghci> :t withSource @DPExample
+withSource @DPExample
+  :: forall k (st :: k).
+      (WriteChannel Int -> DP st ())
+      -> Stage (WriteChannel Int -> DP st ())
+      
+ghci> let source' = withSource @DPExample  $ \wc -> unfoldT ([1..10] <> [1..10]) wc identity
+ghci> :t source'
+source' :: forall k (st :: k). Stage (WriteChannel Int -> DP st ())
+    \end{minted}
+  \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{block}{IDL}
+      \begin{minted}[fontsize=\tiny,highlightlines={11-16}]{shell}      
+ghci> :t withSource @DPExample
+withSource @DPExample
+  :: forall k (st :: k).
+      (WriteChannel Int -> DP st ())
+      -> Stage (WriteChannel Int -> DP st ())
+      
+ghci> let source' = withSource @DPExample  $ \wc -> unfoldT ([1..10] <> [1..10]) wc identity
+ghci> :t source'
+source' :: forall k (st :: k). Stage (WriteChannel Int -> DP st ())
+
+ghci> :t withGenerator @DPExample
+withGenerator @DPExample
+  :: forall k filter (st :: k).
+      (filter -> ReadChannel Int -> WriteChannel Int -> DP st ())
+      -> Stage
+          (filter -> ReadChannel Int -> WriteChannel Int -> DP st ())    
+    \end{minted}
+  \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{block}{IDL}
+      \begin{minted}[fontsize=\tiny,highlightlines={11-16}]{shell}      
+ghci> :t withSource @DPExample
+withSource @DPExample
+  :: forall k (st :: k).
+      (WriteChannel Int -> DP st ())
+      -> Stage (WriteChannel Int -> DP st ())
+      
+ghci> let source' = withSource @DPExample  $ \wc -> unfoldT ([1..10] <> [1..10]) wc identity
+ghci> :t source'
+source' :: forall k (st :: k). Stage (WriteChannel Int -> DP st ())
+
+ghci> :t withGenerator @DPExample
+withGenerator @DPExample
+  :: forall k filter (st :: k).
+      (filter -> ReadChannel Int -> WriteChannel Int -> DP st ())
+      -> Stage
+          (filter -> ReadChannel Int -> WriteChannel Int -> DP st ())    
+    \end{minted}
+  \end{block}
+  \begin{block}{Techniques}
+    \begin{itemize}
+      \item First Class Families
+      \item Type-level Defunctionalization 
+      \item Defunctionalization
+      \item Associated Type Families
+    \end{itemize}
+  \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{block}{}
       Library released on Hackage \\
       https://hackage.haskell.org/package/dynamic-pipeline
-    \end{block}
-  \end{frame}
-
-  \begin{frame}[fragile]{DP Framework: Haskell}
-    \textbf{Focus on IDL}
-
-    \begin{block}
-
-      \begin{itemize}
-        \item \textbf{DP Monad}: 
-        \begin{itemize}
-          \item Monad with Existential type to not scape DP Context. (\textit{Rank-2 Polymorphic type})
-          \item Associativity Monad law guarantees execution flow (\mintinline{haskell}{ source >>= generator >>= sink }) 
-        \end{itemize}
-      \end{itemize}
-      
-    \end{block}
-  \end{frame}
-
-  \begin{frame}[fragile]{DP Framework: Haskell}
-    \textbf{Focus on IDL}
-
-    \begin{block}
-
-      \begin{itemize}
-        \item \textbf{DP Monad}: 
-        \begin{itemize}
-          \item Monad with Existential type to not scape DP Context. (\textit{Rank-2 Polymorphic type})
-          \item Associativity Monad law guarantees execution flow (\mintinline{haskell}{ source >>= generator >>= sink }) 
-        \end{itemize}
-        \item \textbf{Filter / Stage}: 
-        \begin{itemize}
-          \item Use of \mintinline{haskell}{unfold} to generate dynamic filter computations (\textit{Anamorphism})
-          \item Use of \mintinline{haskell}{fold} to reduce results to Sink (\textit{Catamorphism})
-        \end{itemize}
-      \end{itemize}
-      
-    \end{block}
-  \end{frame}
-
-  \begin{frame}[fragile]{DP Framework: Haskell}
-    \textbf{Focus on IDL}
-
-    \begin{block}
-
-      \begin{itemize}
-        \item \textbf{DP Monad}: 
-        \begin{itemize}
-          \item Monad with Existential type to not scape DP Context. (\textit{Rank-2 Polymorphic type})
-          \item Associativity Monad law guarantees execution flow (\mintinline{haskell}{ source >>= generator >>= sink }) 
-        \end{itemize}
-        \item \textbf{Filter / Stage}: 
-        \begin{itemize}
-          \item Use of \mintinline{haskell}{unfold} to generate dynamic filter computations (\textit{Anamorphism})
-          \item Use of \mintinline{haskell}{fold} to reduce results to Sink (\textit{Catamorphism})
-        \end{itemize}
-        \item \textbf{Parallelization}: \mintinline{haskell}{ async } library
-      \end{itemize}
-      
-    \end{block}
-  \end{frame}
-
-  \begin{frame}[fragile]{DP Framework: Haskell}
-    \textbf{Focus on IDL}
-
-    \begin{block}
-
-      \begin{itemize}
-        \item \textbf{DP Monad}: 
-        \begin{itemize}
-          \item Monad with Existential type to not scape DP Context. (\textit{Rank-2 Polymorphic type})
-          \item Associativity Monad law guarantees execution flow (\mintinline{haskell}{ source >>= generator >>= sink }) 
-        \end{itemize}
-        \item \textbf{Filter / Stage}: 
-        \begin{itemize}
-          \item Use of \mintinline{haskell}{unfold} to generate dynamic filter computations (\textit{Anamorphism})
-          \item Use of \mintinline{haskell}{fold} to reduce results to Sink (\textit{Catamorphism})
-        \end{itemize}
-        \item \textbf{Parallelization}: \mintinline{haskell}{ async } library
-        \item \textbf{Channels}: \mintinline{haskell}{ unagi-chan } library
-      \end{itemize}
-      
+      \begin{center}
+        \includegraphics[width = 0.9\textwidth, height = 0.6\textheight]{dp-fw-hs}
+      \end{center}  
     \end{block}
   \end{frame}
 
@@ -355,7 +719,21 @@
 
   \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
     \begin{block}{Program}
-      \begin{minted}[fontsize=\tiny,numbers=left,framesep=2mm,baselinestretch=1.2]{haskell}      
+      \begin{minted}[fontsize=\tiny,highlightlines={5-6}]{haskell}      
+type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
+:=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
+:=> Sink
+
+program :: FilePath -> IO ()
+program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
+      \end{minted}
+    \end{block}
+  \end{frame}
+
+
+  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+    \begin{block}{Program}
+      \begin{minted}[fontsize=\tiny,highlightlines={5-9}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Sink
@@ -366,8 +744,34 @@ source' :: FilePath
 source' filePath = withSource @DPConnComp
   $ \edgeOut _ -> unfoldFile filePath edgeOut (toEdge . decodeUtf8)
 
+program :: FilePath -> IO ()
+program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'  
+      \end{minted}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+    \begin{block}{Program}
+      \begin{minted}[fontsize=\tiny,highlightlines={5-7}]{haskell}      
+type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
+:=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
+:=> Sink
+
 sink' :: Stage (ReadChannel Edge -> ReadChannel ConnectedComponents -> DP st ())
 sink' = withSink @DPConnComp $ \_ cc -> withDP $ foldM_ cc print
+
+program :: FilePath -> IO ()
+program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'  
+      \end{minted}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+    \begin{block}{Program}
+      \begin{minted}[fontsize=\tiny,highlightlines={7-8,11-11}]{haskell}      
+type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
+:=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
+:=> Sink
 
 generator' :: GeneratorStage DPConnComp ConnectedComponents Edge st
 generator' =
@@ -384,9 +788,34 @@ program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
   \end{frame}
 
   \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
-    \begin{block}{Actors}
-      \begin{minted}[fontsize=\tiny,numbers=left,framesep=2mm,baselinestretch=1.2]{haskell}      
-actor1 :: Edge -> ReadChannel Edge
+    \begin{block}{Program}
+      \begin{minted}[fontsize=\tiny,highlightlines={11-14}]{haskell}      
+type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
+:=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
+:=> Sink
+
+genAction :: Filter DPConnComp ConnectedComponents Edge st
+          -> ReadChannel Edge
+          -> ReadChannel ConnectedComponents
+          -> WriteChannel Edge
+          -> WriteChannel ConnectedComponents
+          -> DP st ()
+genAction filter' readEdge readCC _ writeCC = do
+  let unfoldFilter = mkUnfoldFilterForAll filter' toConnectedComp readEdge (readCC .*. HNil) 
+  results <- unfoldF unfoldFilter
+  foldM_ (hHead results) (`push` writeCC)
+
+program :: FilePath -> IO ()
+program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
+      \end{minted}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+    \begin{block}{Program}
+      \begin{minted}[fontsize=\tiny,highlightlines={7-12,20-28}]{haskell}      
+actor1 :: Edge
+       -> ReadChannel Edge
        -> ReadChannel ConnectedComponents
        -> WriteChannel Edge
        -> WriteChannel ConnectedComponents
@@ -409,10 +838,23 @@ actor2 _ _ readCC _ writeCC = do
 
  where
    pushMemory = get >>= flip push writeCC
+
    doActor cc conn
     | cc `intersect` conn = modify (cc <>)
     | otherwise = push cc writeCC
       \end{minted}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{center}
+      \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3-4}
+    \end{center}
+  \end{frame}
+
+  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+    \begin{block}{Demo Time}
+      \movie[width=12cm,height=4.5cm,poster,externalviewer]{}{screen_2.mp4}
     \end{block}
   \end{frame}
 
@@ -423,6 +865,13 @@ actor2 _ _ readCC _ writeCC = do
 
 
   \begin{frame}[fragile]{Empirical Evaluation}
+    \begin{block}{Research Questions}
+      \begin{itemize}
+            \item Does $\dpwcc$ in Haskell support the dynamic parallelization level that $\dpwcc$ requires?
+            \item Is $\dpwcc$ in Haskell competitive compared with default implementations on base libraries for the same problem?
+            \item Does $\dpwcc$ in Haskell handle memory efficiently?
+        \end{itemize}        
+    \end{block}
     \begin{block}{Experiments}
       \begin{itemize}
         \item \textbf{Implementation Analysis}: Measure and analyze Total execution time, MUT time and GC Time.
@@ -453,11 +902,48 @@ actor2 _ _ readCC _ writeCC = do
       \end{tabular}
      \end{table}
     \end{block}
+    \begin{block}{Hardware Environment}
+      \begin{itemize}
+            \item $x86$ $64$ bits
+            \item $6$-Core Intel Core i7 processor of $2,2$ GHz up to $12$ virtual cores
+            \item \emph{Hyper-threading} enable
+            \item $32 GB$ \emph{DDR4} of RAM, $256\ KB$ of L2 cache memory, and $9\ MB$ of L3 cache
+        \end{itemize}        
+    \end{block}
   \end{frame}
 
   \begin{frame}[fragile]{Empirical Evaluation}
-    Criterion
+    \frametitle{Diefficiency Metrics}
+      \begin{figure}[!htb]
+        \centering
+        \begin{minipage}{0.33\textwidth}
+         \includegraphics[width=1\linewidth, height=0.4\textheight]{email_enron}
+        \end{minipage}%
+        \begin{minipage}{0.33\textwidth}
+         \includegraphics[width=1\linewidth, height=0.4\textheight]{ca_astroph}
+        \end{minipage}%
+        \begin{minipage}{0.33\textwidth}
+         \includegraphics[width=1\linewidth, height=0.4\textheight]{web_google}
+        \end{minipage}
+    \end{figure}
+  \begin{figure}[!htb]
+      \centering
+      \begin{minipage}{0.33\textwidth}
+       \includegraphics[width=1\linewidth, height=0.35\textheight]{email_enron_radar}
+      \end{minipage}%
+      \begin{minipage}{0.33\textwidth}
+       \includegraphics[width=1\linewidth, height=0.35\textheight]{ca_astroph_radar}
+      \end{minipage}%
+      \begin{minipage}{0.33\textwidth}
+       \includegraphics[width=1\linewidth, height=0.35\textheight]{web_google_radar}
+      \end{minipage}
+  \end{figure}
+  \end{frame}
 
+  \begin{frame}[fragile]{Empirical Evaluation}
+    \frametitle{Benchmark}
+
+    \begin{block}{Execution time}
     \begin{table}[H]
       \centering
       \begin{tabular}{|l|l|l|l|}
@@ -468,48 +954,37 @@ actor2 _ _ readCC _ writeCC = do
        \hline
        Astro Physics Coll Net & 4.98s & 6.95s  & 1.39\\
        \hline
-       Google Web Graph & 386s & 106s & -3.64\\
+       Google Web Graph & 386s & 106s & \color{red}0.27\\
        \hline
       \end{tabular}
-     \end{table}
+     \end{table}      
+    \end{block}
+
+     \vspace{1cm}
 
     \begin{minipage}[t]{\linewidth}
-      \includegraphics[width=\textwidth]{bench_1}
+      \includegraphics[width=\textwidth]{bench_2}
     \end{minipage}
-
-    Diefficency Metrics
-
-      \begin{figure}[!htb]
-        \centering
-        \begin{minipage}{0.33\textwidth}
-         \includegraphics[width=1\linewidth, height=0.2\textheight]{email_enron}
-        \end{minipage}%
-        \begin{minipage}{0.33\textwidth}
-         \includegraphics[width=1\linewidth, height=0.2\textheight]{ca_astroph}
-        \end{minipage}%
-        \begin{minipage}{0.33\textwidth}
-         \includegraphics[width=1\linewidth, height=0.2\textheight]{web_google}
-        \end{minipage}
-    \end{figure}
-    
   \end{frame}
 
   \begin{frame}[fragile]{Empirical Evaluation}
-
-    \begin{figure}[!htb]
-      \centering
-      \begin{minipage}{0.48\textwidth}
-       \includegraphics[width=1\linewidth, height=0.5\textheight]{screen_2}
-       \caption{ThreadScope}
-      \end{minipage}%
-      \begin{minipage}{0.48\textwidth}
-         \includegraphics[width=1\linewidth, height=0.5\textheight]{visualization}
-         \caption{Eventlog}
-      \end{minipage}
-     \end{figure}
-
+    \begin{columns}[onlytextwidth] 
+      \begin{column}{.45\textwidth} 
+        \begin{block}{ThreadScope}
+          \begin{minipage}{\textwidth}
+            \includegraphics[width=1\linewidth, height=0.5\textheight]{screen_2}
+          \end{minipage}%     
+        \end{block}%
+      \end{column} \hfill%
+      \begin{column}{.45\textwidth} 
+        \begin{block}{Eventlog - Memory Allocation}
+          \begin{minipage}{\textwidth}
+            \includegraphics[width=1\linewidth, height=0.5\textheight]{visualization}
+          \end{minipage}%
+        \end{block}
+    \end{column} 
+  \end{columns}
   \end{frame}
-
 
   \begin{frame}{Agenda}
     \section{Conclusions and Future Work}
