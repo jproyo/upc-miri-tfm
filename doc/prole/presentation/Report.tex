@@ -429,11 +429,19 @@
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \frametitle{DSL Grammar}
-    \tiny
+    \small
+    \begin{equation*}
+      \boxed{
+       \begin{aligned}
+      G_{dsl} = (N, \Sigma, DB, P)
+      \end{aligned}
+      }
+  \end{equation*}
+  \tiny
       \begin{equation*}
           \boxed{
            \begin{aligned}
-          V &= \{DP,S_r,S_k,G,F_b,CH,CH_s,\text{\mintinline{haskell}{Source}},\text{\mintinline{haskell}{Generator}},\text{\mintinline{haskell}{Sink}},\text{\mintinline{haskell}{FeedbackChannel}},\text{\mintinline{haskell}{Type}},\text{\mintinline{haskell}{Eof}},\text{\mintinline{haskell}{:=>}},\text{\mintinline{haskell}{:<+>}}\},\\
+          N &= \{DP,S_r,S_k,G,F_b,CH,CH_s\},\\
           \Sigma &= \{\text{\mintinline{haskell}{Source}},\text{\mintinline{haskell}{Generator}},\text{\mintinline{haskell}{Sink}},\text{\mintinline{haskell}{FeedbackChannel}},\text{\mintinline{haskell}{Type}},\text{\mintinline{haskell}{Eof}},\text{\mintinline{haskell}{:=>}},\text{\mintinline{haskell}{:<+>}}\},
           \end{aligned}
           }
@@ -442,13 +450,14 @@
     \begin{equation*}
       \boxed{
         \begin{aligned}
-      DP  &\rightarrow S_r\ \text{\mintinline{haskell}{:=>}}\ G\ \text{\mintinline{haskell}{:=>}}\ S_k\ |\ S_r\ \text{\mintinline{haskell}{:=>}}\ G\ \text{\mintinline{haskell}{:=>}}\ F_b\ \text{\mintinline{haskell}{:=>}}\ S_k\\
-      S_r &\rightarrow \text{\mintinline{haskell}{Source}}\ CH_s\\
-      G   &\rightarrow \text{\mintinline{haskell}{Generator}}\ CH_s\\
-      S_k &\rightarrow \text{\mintinline{haskell}{Sink}}\\
-      F_b &\rightarrow \text{\mintinline{haskell}{FeedbackChannel}} CH\\
-      CH_s &\rightarrow \text{\mintinline{haskell}{Channel}}\ CH\\
-      CH &\rightarrow \text{\mintinline{haskell}{Type :<+>}}\ CH\ |\ \text{\mintinline{haskell}{Eof}}
+      P = \{\\
+      DP  &\rightarrow S_r\ \text{\mintinline{haskell}{:=>}}\ G\ \text{\mintinline{haskell}{:=>}}\ S_k\ |\ S_r\ \text{\mintinline{haskell}{:=>}}\ G\ \text{\mintinline{haskell}{:=>}}\ F_b\ \text{\mintinline{haskell}{:=>}}\ S_k,\\
+      S_r &\rightarrow \text{\mintinline{haskell}{Source}}\ CH_s,\\
+      G   &\rightarrow \text{\mintinline{haskell}{Generator}}\ CH_s,\\
+      S_k &\rightarrow \text{\mintinline{haskell}{Sink}},\\
+      F_b &\rightarrow \text{\mintinline{haskell}{FeedbackChannel}} CH,\\
+      CH_s &\rightarrow \text{\mintinline{haskell}{Channel}}\ CH,\\
+      CH &\rightarrow \text{\mintinline{haskell}{Type :<+>}}\ CH\ |\ \text{\mintinline{haskell}{Eof}}\}
     \end{aligned}
     }
     \end{equation*}
@@ -456,21 +465,13 @@
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{itemize}
-      \item If we define a \textbf{DP} Language that is Recognize by the Grammar
+      \item The specification of \textbf{DP} in the Language, it is compile time checked (\textit{Type-safe})
     \end{itemize}    
   \end{frame}
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{itemize}
-      \item If we define a \textbf{DP} Language that is Recognize by the Grammar
-      \item It is Compile time checked by the Grammar (\textit{Type-safe})
-    \end{itemize}    
-  \end{frame}
-
-  \begin{frame}[fragile]{DP Framework: Haskell}
-    \begin{itemize}
-      \item If we define a \textbf{DP} Language that is Recognize by the Grammar
-      \item It is Compile time checked by the Grammar (\textit{Type-safe})
+      \item The specification of \textbf{DP} in the Language, it is compile time checked (\textit{Type-safe})
     \end{itemize}    
     \begin{exampleblock}{Type Level DSL}
       \begin{minted}[fontsize=\tiny,highlightlines={7-17}]{shell}      
@@ -491,38 +492,38 @@ mkDP @DPExample
     \end{exampleblock}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
-    \begin{itemize}
-      \item Otherwise the Compiler warning us about \textbf{Grammar Verification Error}
-    \end{itemize}    
-  \end{frame}
+  % \begin{frame}[fragile]{DP Framework: Haskell}
+  %   \begin{itemize}
+  %     \item Otherwise the compiler warns us about \textbf{Grammar Verification Error}
+  %   \end{itemize}    
+  % \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
-    \begin{itemize}
-      \item Otherwise the Compiler warning us about \textbf{Grammar Verification Error}
-    \end{itemize}    
-    \begin{alertblock}{Type Level DSL}
-    \begin{minted}[fontsize=\tiny,highlightlines={8-17},highlightcolor=titaniumyellow]{shell}      
-ghci> type DPExample2 = Source (Channel Int) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
-type DPExample2 :: *
-type DPExample2 =
-  Source (Channel Int)
-  :=> (Generator (Channel (Int :<+> Eof)) :=> Sink)
-ghci> :t mkDP @DPExample2
+%   \begin{frame}[fragile]{DP Framework: Haskell}
+%     \begin{itemize}
+%       \item Otherwise the compiler warns us about \textbf{Grammar Verification Error}
+%     \end{itemize}    
+%     \begin{alertblock}{Type Level DSL}
+%     \begin{minted}[fontsize=\tiny,highlightlines={8-17},highlightcolor=titaniumyellow]{shell}      
+% ghci> type DPExample2 = Source (Channel Int) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
+% type DPExample2 :: *
+% type DPExample2 =
+%   Source (Channel Int)
+%   :=> (Generator (Channel (Int :<+> Eof)) :=> Sink)
+% ghci> :t mkDP @DPExample2
 
-<interactive>:1:1: error:
-    Invalid Semantic for Source Stage
-    in the DP Definition 'ChanIn Int'
-    Language Grammar:
-    DP       -> Source CHANS :=> Generator CHANS :=> Sink
-    DP       -> Source CHANS :=> Generator CHANS :=> FEEDBACK :=> Sink
-    CHANS    -> Channel CH
-    FEEDBACK -> FeedbackChannel CH
-    CH       -> Type :<+> CH | Eof
-    Example: 'Source (Channel (Int :<+> Int)) :=> Generator (Channel (Int :<+> Int)) :=> Sink'    
-    \end{minted}
-    \end{alertblock}
-  \end{frame}
+% <interactive>:1:1: error:
+%     Invalid Semantic for Source Stage
+%     in the DP Definition 'ChanIn Int'
+%     Language Grammar:
+%     DP       -> Source CHANS :=> Generator CHANS :=> Sink
+%     DP       -> Source CHANS :=> Generator CHANS :=> FEEDBACK :=> Sink
+%     CHANS    -> Channel CH
+%     FEEDBACK -> FeedbackChannel CH
+%     CH       -> Type :<+> CH | Eof
+%     Example: 'Source (Channel (Int :<+> Int)) :=> Generator (Channel (Int :<+> Int)) :=> Sink'    
+%     \end{minted}
+%     \end{alertblock}
+%   \end{frame}
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{center}

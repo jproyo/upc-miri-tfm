@@ -10,8 +10,8 @@
 	\node[outdata]     (x)     [right=of out]                    {};
 	%Lines
 	\draw[edge] (stream.17) to ["{\small$eof$}"] (filter2.170);
-	\draw[edge] (in.-20) to  ["{\small$eof\:\{1,2\}$}",swap]   (filter2.190);
-	\draw[edge] (filter2.10) to ["{\small$eof$}"] (filter3.169);
+	\draw[edge] (in.-21) to  ["{\small$eof\:\{1,2\}$}",swap]   (filter2.190);
+	\draw[edge] (filter2.10) to (filter3.169);
 	\draw[edge] (filter2.-10) to  (filter3.194);
 	\draw[edge] (filter3.12) to  (gen.167);
 	\draw[edge] (filter3.-12) to (gen.196);
