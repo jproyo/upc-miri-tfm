@@ -1,28 +1,36 @@
 \chapter{Introduction and Preliminaries}
 \section{Motivation}
-A \acrfull{bn} is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. 
-For instance, two different sets of objects can be modeled with a \acrshort{bn}, establishing the relationships between them.
-There are different use cases in which we can take advantage of a \acrshort{bn} representation and detect how the elements between the sets
+A \acrfull{bg} is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. 
+For instance, two different sets of objects can be modeled with a \acrshort{bg}, establishing the relationships between them.
+There are different use cases in which we can take advantage of a \acrshort{bg} representation and detect how the elements between the sets
 are related. For example in coding theory~\cite{DBLP:journals/corr/WangL13} has been studied to represent relation between words in code 
 or for representing graphs in hypergraph theory~\cite{hypergraph}. Another important field that we consider this has a strong potential is 
-in pharmacology, where the relation between the drugs and side effects can be modeled with \acrshort{bn} as well~\cite{drugs}.
+in pharmacology, where the relation between the drugs and side effects can be modeled with \acrshort{bg} as well~\cite{drugs}.
 
-In order to detect the underlying relations of the different sets components in a \acrshort{bn} we have at our disposal the same metrics as \acrfull{un}.
-Unfortunately most of those metrics on \acrshort{un} like clustering coefficient, social analysis or triangle-based community computation~\cite{ccoef,detect_graph,Newman_2003},
-are based on computing the number of triangles in the network. Obtaining those metrics on \acrshort{bn} requires to count \acrfull{bt} on \acrshort{bn}.
+In order to detect the underlying relations of the different sets components in a \acrshort{bg} we have at our disposal the same metrics as \acrfull{ug}.
+Unfortunately most of those metrics on \acrshort{ug} like clustering coefficient, social analysis or triangle-based community computation~\cite{ccoef,detect_graph,Newman_2003},
+are based on computing the number of triangles in the network. Obtaining those metrics on \acrshort{bg} requires to count \acrfull{bt} on \acrshort{bg}.
 In that matter, there has been a novel work that provides efficient algorithms to count \acrshort{bt} in $P$~\cite{btcount}.
 
-On the other hand, there exists other kind of relationships in \acrshort{bn} that cannot be obtained only by counting \acrshort{bt} and requires to know specific
+On the other hand, there exists other kind of relationships in \acrshort{bg} that cannot be obtained only by counting \acrshort{bt} and requires to know specific
 structural details about those \acrshort{bt}. One of those relations are motif-paths~\cite{Li2019MotifPA}, in particular a \acrshort{bt} is a motif and for detecting
 a path between different \acrshort{bt} we need to be able to enumerate the \acrshort{bt} more than counting.
-Moreover, in large \acrshort{bn} with millions of \acrshort{bt} an user might want to not wait for enumerating all the \acrshort{bt} that are participating on the network,
+Moreover, in large \acrshort{bg} with millions of \acrshort{bt} an user might want to not wait for enumerating all the \acrshort{bt} that are participating on the network,
 and it might require to ask for some of them that matches certain characteristics, like in motif-path semantic. This leads us to the main motivation of this work which is provide
-an incremental algorithm to enumerate \acrlong{bt} in \acrlong{bn}.
+an incremental algorithm to enumerate \acrlong{bt} in \acrlong{bg}.
+
+Regarding the possible implementations of this kind of algorithm, streaming processing has given rise to new computation paradigms to provide effective and efficient data stream processing.
+The most important features of these new paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, 
+reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce incremental results. 
+The \acrfull{dp} is a naturally functional approach to deal with stream processing. 
+This fact encourages us to use \acrlong{hs}, a purely functional programming language, for \acrshort{dp}.
+
+In conclusion, taking advantage of this computational model we can design an incremental algorithm to enumerate \acrshort{bt} in \acrshort{bg}
 
 \section{Problem Statement}
 Before presenting the problem statement we should provide some definitions.
 
-\begin{definition}[\acrlong{bn}] 
+\begin{definition}[\acrlong{bg}] 
 A bipartite graph is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.\cite{Bondy1976}
 \end{definition}
 
@@ -55,9 +63,23 @@ It could be a query of vertices or edges.
   \]
   \end{definition}
   
-\paragraph{Statement:}Given a \acrlong{bn} $G$ and a query $Q$, incrementally enumerate all the \acrlong{bt} $BT_{\ell}^{\mu}$ that matches query $Q$.
+\paragraph{Statement:}Given a \acrlong{bg} $G$ and a query $Q$, incrementally enumerate all the \acrlong{bt} $BT_{\ell}^{\mu}$ that matches query $Q$.
 
 \section{Propose Solution}
-\section{Document Overview}
-\section{Chapter Summary}
+The solution proposed in this work is implementing this algorithm using \acrfull{dp} implemented in \acrfull{hs}.
+In that propose, we first develop a \acrlong{dpf} written in \acrlong{hs} that could help to implement any algorithm using \acrshort{dp}.
+Following that, we provide a correct pseudo-code algorithm for incrementally enumerate \acrshort{bt} using \acrshort{dp}. And finally, we  
+show the implementation of that pseudo-code using the \acrshort{dpf} in \acrshort{hs}, that we call \acrfull{dpbt}.
 
+
+\section{Document Overview}
+The structure of all this work is the following. In the following chapter, we present an important contribution that we made for PROLE21 Conference~\cite{prole21} related to 
+this work. Then we deeply describe the \acrshort{dpf} written in \acrshort{hs} with all the used techniques that the paradigm provides.
+After that we focus on the main problem of this work which is all the details related to the incremental algorithm for enumerate \acrshort{bt} in \acrshort{bg}.
+Moreover, in the chapter following the algorithm, we show how we implement that algorithm using the \acrshort{dpf} in \acrshort{hs}. After that we describe a set 
+of experiments that answer the research questions related with the motivation of this work. Finally, we present what is the work that is left for the future, and the conclusions that
+we have arrived.
+
+\section{Chapter Summary}
+In this chapter we have shown the motivation of this work, as well as the problem statement related to that motivation and the proposed solution to that problem.
+We have also describe how is going to be the organization of all the document to facilitate the reader review.
