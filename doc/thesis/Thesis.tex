@@ -1,4 +1,4 @@
-\documentclass[thesis]{csthes}
+\documentclass[thesis]{Thesis}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -6,8 +6,8 @@
 \usepackage{amsthm}
 \usepackage{array}
 \usepackage{graphicx}
-\usepackage{parskip}
 \usepackage[pdfencoding=auto]{hyperref}
+\usepackage{fancyvrb}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{tikz}
@@ -31,9 +31,10 @@
 \title{An incremental algorithm for enumerating bi-triangles in large bi-partite networks}
 \setthesistype{Master}
 \author{Juan Pablo Royo Sales}
-\degree{MIRI - Advance Computing}
+\degree{Master in Innovation and Research in Informatics - Advance Computing}
 \supervisor{Dra. Edelmira Pasarella}
 \cosupervisor{Prof. Dra. Maria-Esther Vidal}
+\cosupervisorb{Prof. Dra. Cristina Zoltan}
 
 \date\today
 
@@ -109,22 +110,34 @@
 \glsdisablehyper
 
 \newtheorem{hyp}{Hypothesis}
-\newtheorem{theorem}{Theorem}
-\newtheorem{definition}{Definition}
-\newtheorem{remark}{Remark}
 
 
 \begin{document}
 
 \maketitle
 
-% \renewcommand{\abstractname}{Acknowledgements}
-% \begin{thanks}
-%  Thanks Mum!
-% \end{thanks}
+\quote{
+  \textit{.. when a Mathematical Reasoning can be had it's as great a folly to make use of any other, as to grope for a thing in the dark, when you have a Candle standing by you.}
+  \begin{flushright}
+    \textit{Of the Laws of Chance, John Arbuthnot (1662)}
+  \end{flushright}
+}
 
-\renewcommand{\abstractname}{Abstract}
-\begin{abstract}
+\rhead{\thepage}
+\pagestyle{fancy}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+\pagestyle{fancy}
+
+\acknowledgements{
+  Thanks Mum!
+}
+
+\abstract{
 A bipartite network is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. For instance, two different sets of objects can be modeled with this, establishing the relationships between them (e.g. a network of drugs and side effects of those drugs). 
 One of the metrics, that reflect accurately if the relationships are strong on particular elements of the sets, is bi-triangles of bipartite graphs. Although it is known that enumerating those bi-triangles is an NP-complete problem,
 having an incremental algorithm that provides incremental results for enumerating bi-triangles that matches specific criteria,
@@ -140,20 +153,20 @@ we provide an algorithm for enumerating bi-triangles in a bi-partite graph given
 At the end of the work, we empirically evaluate the implementation against large bipartite networks through a series of experiments and metrics and discuses
 the conclusions that we arrive at based on these experiments' results.
 All these results are novel and cannot be compared with related works since they focused on counting problems and not enumeration.
-\end{abstract}
-      
-\mainmatter
-\tableofcontents
-\cleardoublepage
+}
+
+\pagestyle{fancy}
 
 \input{chapters/chapter_1.tex}
 \input{chapters/chapter_2.tex}
 \input{chapters/chapter_3.tex}
 \input{chapters/chapter_4.tex}
 \input{chapters/chapter_5.tex}
+\input{chapters/chapter_6.tex}
+\input{chapters/chapter_7.tex}
 
 \bibliographystyle{alpha}
-\bibliography{Report}
+\bibliography{Thesis}
 
 \appendix
 

@@ -9,11 +9,15 @@
 
 \RequirePackage{ifthen}
 
+\newcommand\bhrule{\typeout{------------------------------------------------------------------------------}}
+\newcommand\btypeout[1]{\bhrule\typeout{\space #1}\bhrule}
+
 % Defaults / Base commands for options
 \newcommand*{\@dateprefix}{}
 \newcommand*{\selectedlanguage}{}
 \newcommand*{\selectedtype}{}
 \newcommand*{\@cosupervisor}{}
+\newcommand*{\@cosupervisorb}{}
 \newboolean{isThesis}
 \setboolean{isThesis}{false}
 
@@ -45,39 +49,6 @@
 \RequirePackage{fancyhdr}
 \RequirePackage[OT1]{fontenc}
 
-% Define pagestyles
-\fancypagestyle{plain}{
-	\fancyhead{}% clear all header fields
-	\fancyfoot{}% clear all footer fields
-	\fancyfoot[LE,RO]{\thepage}%
-	\renewcommand{\headrulewidth}{0pt}%
-	\renewcommand{\footrulewidth}{0pt}%
-}
-\fancypagestyle{default}{
-  \fancyhf{}
-  \fancyhead[C]{}
-  \fancyhead[R]{UPC MIRI}
-  \fancyhead[L]{Master Thesis}
-  \fancyfoot[L,C]{}
-  \fancyfoot[R]{Page \thepage{} of \pageref{LastPage}}
-  \setlength{\headheight}{15pt}
-  \renewcommand{\headrulewidth}{0.4pt}
-  \renewcommand{\footrulewidth}{0.4pt}
-}
-\fancypagestyle{blank}{
-	\fancyhead{}% clear all header fields
-	\fancyfoot{}% clear all footer fields
-	\renewcommand{\headrulewidth}{0pt}%
-	\renewcommand{\footrulewidth}{0pt}%
-}
-
-% Use blank pagestyle for empty pages inserted by \cleardoublepage
-\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
-    \thispagestyle{blank}\hbox{}\newpage\if@twocolumn\hbox{}\newpage\fi\fi\fi}
-
-\widowpenalty=10000
-\clubpenalty=10000
-
 % Define commands for title page
 
 \newcommand{\subtitle}[1]{\renewcommand{\@subtitle}{#1}}
@@ -90,6 +61,7 @@
 \newcommand*{\supervisor}[1]{\renewcommand*{\@supervisor}{#1}}
 \newcommand*{\@supervisor}{\@latex@warning@no@line{No \protect\supervisor\space given}Enter the supervisor!}
 \newcommand*{\cosupervisor}[1]{\renewcommand*{\@cosupervisor}{#1}}
+\newcommand*{\cosupervisorb}[1]{\renewcommand*{\@cosupervisorb}{#1}}
 
 \newcommand*{\@@date}{\@dateprefix\@date}
 
@@ -101,7 +73,7 @@
   \let\footnoterule\relax
   \let \footnote \thanks
   \begin{center}
-    \vspace*{.02\textheight}
+    \vspace*{.01\textheight}
     \includegraphics[width=0.7\textwidth]{images/upc_logo.png}
   \end{center}
   \null\vfil  
@@ -112,25 +84,26 @@
     {\huge \@subtitle \par}%
     \vskip 2.5em%
 	{\Large \textsc{\thesistype} \textsc{Thesis} }%
-	\vskip 2.5em%
+	\vskip 1em%
 	{\Large \textsc{\@degree} \par}  
-	\vskip 0.5em%
+	\vskip 1em%
 	\Large
   	\vskip 0.5em%
     {\Large \@author \par}% 
-    \vskip 2.5em%
+    \vskip 1.5em%
     {\large \@@date \par}%       % Set date in \large size.
   \vfil
   {\large Supervisor/a : \@supervisor}
   \vskip 0.1em%
   {\large Co-Supervisor/a : \@cosupervisor}
-  % TODO: Add cooperation partners here
+  {\large Co-Supervisor/a : \@cosupervisorb}
   \end{center}\par
   \newpage
   \thispagestyle{empty}
   \vfil
   \setcounter{page}\@ne
   \setcounter{footnote}{0}%
+  \pagenumbering{roman}
   \global\let\maketitle\relax
   \global\let\@author\@empty
   \global\let\@date\@empty
@@ -142,12 +115,81 @@
   \let\and\oldand
 }
 
+
+\thispagestyle{plain}
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2.0ex plus0.5ex minus0.2ex}
+\usepackage{vmargin}
+\setmarginsrb           { 1.5in}  % left margin
+                        { 0.6in}  % top margin
+                        { 1.3in}  % right margin
+                        { 1.0in}  % bottom margin
+                        {  20pt}  % head height
+                        {0.25in}  % head sep
+                        {   9pt}  % foot height
+                        { 0.3in}  % foot sep
+\raggedbottom
+\setlength{\topskip}{1\topskip \@plus 5\p@}
+\doublehyphendemerits=10000       % No consecutive line hyphens.
+\brokenpenalty=10000              % No broken words across columns/pages.
+\widowpenalty=10000                % Almost no widows at bottom of page.
+\clubpenalty=10000                 % Almost no orphans at top of page.
+\interfootnotelinepenalty=9999    % Almost never break footnotes.
+\usepackage{fancyhdr}
+\lhead[\rm\thepage]{\fancyplain{}{\sl{\rightmark}}}
+\rhead[\fancyplain{}{\sl{\leftmark}}]{\rm\thepage}
+\chead{}\lfoot{}\rfoot{}\cfoot{}
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\btypeout{\thechapter\space #1}\markboth{\@chapapp\ \thechapter\ #1}{\@chapapp\ \thechapter\ #1}}
+\renewcommand{\sectionmark}[1]{}
+\renewcommand{\subsectionmark}[1]{}
+
+\usepackage{amsmath,amsfonts,amssymb,amscd,amsthm,xspace}
+\theoremstyle{plain}
+\newtheorem{example}{Example}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{axiom}[theorem]{Axiom}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\usepackage[centerlast,small,sc]{caption}
+\setlength{\captionmargin}{20pt}
+\newcommand{\fref}[1]{Figure~\ref{#1}}
+\newcommand{\tref}[1]{Table~\ref{#1}}
+\newcommand{\eref}[1]{Equation~\ref{#1}}
+\newcommand{\cref}[1]{Chapter~\ref{#1}}
+\newcommand{\sref}[1]{Section~\ref{#1}}
+\newcommand{\aref}[1]{Appendix~\ref{#1}}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{.85}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\dbltopfraction}{.85}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\dblfloatpagefraction}{.75}
+\setcounter{topnumber}{9}
+\setcounter{bottomnumber}{9}
+\setcounter{totalnumber}{20}
+\setcounter{dbltopnumber}{9}
+
+
 % Define structuring commands
 \newcommand{\mainmatter}{%
   \cleardoublepage%
   \pagenumbering{arabic}%
-  \pagestyle{default}%
   \setcounter{page}{1}%
 }
 
-\pagestyle{default}
+\newcommand\acknowledgements[1]{
+\thispagestyle{plain}
+\begin{center}{\huge{\textit{Acknowledgements}} \par}\end{center}
+{\normalsize #1}
+\vfil\vfil\null
+}
+
+
