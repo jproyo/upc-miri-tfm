@@ -1,21 +1,6 @@
 \chapter{An Incremental algorithm to enumerate Bi-Triangles using DP}
 \section{Algorithm Implementation}
 
-\begin{definition}[Bipartite graph] 
-A bipartite graph is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.\cite{Bondy1976}
-\end{definition}
-
-Since the bipartite graph $G$ is an undirected graph, the edges in $E$ are bidirectional and although $E\subseteq U\times L$, in an abuse of notation, we indistinctly use $(u,l)$ and $(l,u)$ for edges in $E$. Additionally, 
-without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. 
-
-%
-\begin{definition}[Bi-Triangle]
-Let $G=((U\cup L),E)$ be a bipartite graph. Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
-The 6-cycle $u_1,l_1,u_2,l_3,u_3,l_2,u_1$  is a \textit{bi-triangle} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
-\end{definition}
-
-In what follows, when convenient, the bi-triangle $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,u_3)}$  will be denoted by the set of edges $\{(u_1, l_1), (l_1,u_2), (u_2, l_3), (l_3,u_3), (u_3, l_2), (l_2,u_1)\} \subseteq E$
-
 \begin{definition}[Wedge]
 Let $G=((U\cup L),E)$ be a bipartite graph. A  \textit{wedge} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
@@ -52,12 +37,6 @@ Let $\aw$ be a set of all possibles Aggregated wedges in $G$.
 Let $\dw$ be a set of all possibles Aggregated double-wedges in $G$.
 Let $\at$ be a set of all possibles Aggregated bi-triangles in $G$.
 An \textit{filter state} of DP is a sum type $\st = \aw + \dw + \at$
-\end{definition}
-%
-\begin{definition}[Query]
-Let $G=((U\cup L),E)$ be a bipartite graph. 
-A \textit{query} $Q$ is a sum type $Q = Q_V + Q_E$, where $Q_V \subseteq (U \cup L)$ and $Q_E \subseteq E$. 
-It could be a query of vertices or edges.
 \end{definition}
 %
 

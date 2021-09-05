@@ -1,6 +1,62 @@
 \chapter{Introduction and Preliminaries}
 \section{Motivation}
+A \acrfull{bn} is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. 
+For instance, two different sets of objects can be modeled with a \acrshort{bn}, establishing the relationships between them.
+There are different use cases in which we can take advantage of a \acrshort{bn} representation and detect how the elements between the sets
+are related. For example in coding theory~\cite{DBLP:journals/corr/WangL13} has been studied to represent relation between words in code 
+or for representing graphs in hypergraph theory~\cite{hypergraph}. Another important field that we consider this has a strong potential is 
+in pharmacology, where the relation between the drugs and side effects can be modeled with \acrshort{bn} as well~\cite{drugs}.
+
+In order to detect the underlying relations of the different sets components in a \acrshort{bn} we have at our disposal the same metrics as \acrfull{un}.
+Unfortunately most of those metrics on \acrshort{un} like clustering coefficient, social analysis or triangle-based community computation~\cite{ccoef,detect_graph,Newman_2003},
+are based on computing the number of triangles in the network. Obtaining those metrics on \acrshort{bn} requires to count \acrfull{bt} on \acrshort{bn}.
+In that matter, there has been a novel work that provides efficient algorithms to count \acrshort{bt} in $P$~\cite{btcount}.
+
+On the other hand, there exists other kind of relationships in \acrshort{bn} that cannot be obtained only by counting \acrshort{bt} and requires to know specific
+structural details about those \acrshort{bt}. One of those relations are motif-paths~\cite{Li2019MotifPA}, in particular a \acrshort{bt} is a motif and for detecting
+a path between different \acrshort{bt} we need to be able to enumerate the \acrshort{bt} more than counting.
+Moreover, in large \acrshort{bn} with millions of \acrshort{bt} an user might want to not wait for enumerating all the \acrshort{bt} that are participating on the network,
+and it might require to ask for some of them that matches certain characteristics, like in motif-path semantic. This leads us to the main motivation of this work which is provide
+an incremental algorithm to enumerate \acrlong{bt} in \acrlong{bn}.
+
 \section{Problem Statement}
+Before presenting the problem statement we should provide some definitions.
+
+\begin{definition}[\acrlong{bn}] 
+A bipartite graph is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.\cite{Bondy1976}
+\end{definition}
+
+Since the bipartite graph $G$ is an undirected graph, the edges in $E$ are bidirectional and although $E\subseteq U\times L$, in an abuse of notation, we indistinctly use $(u,l)$ and $(l,u)$ for edges in $E$. Additionally, 
+without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. 
+
+%
+\begin{definition}[\acrlong{bt}]
+Let $G=((U\cup L),E)$ be a bipartite graph. Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
+The 6-cycle $u_1,l_1,u_2,l_3,u_3,l_2,u_1$  is a \textit{bi-triangle} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
+\end{definition}
+
+In what follows, when convenient, the bi-triangle $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,u_3)}$  will be denoted by the set of edges $\{(u_1, l_1), (l_1,u_2), (u_2, l_3), (l_3,u_3), (u_3, l_2), (l_2,u_1)\} \subseteq E$
+
+\begin{definition}[Query]
+Let $G=((U\cup L),E)$ be a bipartite graph. 
+A \textit{query} $Q$ is a sum type $Q = Q_V + Q_E$, where $Q_V \subseteq (U \cup L)$ and $Q_E \subseteq E$. 
+It could be a query of vertices or edges.
+\end{definition}
+
+\begin{definition}[Query Match]
+  Let $G=((U\cup L),E)$ be a bipartite graph.
+  Let $Q$ be a query.
+  A query $Q$ matches in a bipartite graph $G$ if forall $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,u_3)}$ of $G$
+  \[
+    Q = \left\{\begin{array}{lr}
+      Q_V, & \forall\ v \in Q_V, v \in \{l_1,l_2,l_3,u_1,u_2,u_3\}\\
+      Q_E, & \forall\ (u,l) \in Q_E, (u,l) \in \{(u_1, l_1), (l_1,u_2), (u_2, l_3), (l_3,u_3), (u_3, l_2), (l_2,u_1)\} 
+      \end{array}\right\} 
+  \]
+  \end{definition}
+  
+\paragraph{Statement:}Given a \acrlong{bn} $G$ and a query $Q$, incrementally enumerate all the \acrlong{bt} $BT_{\ell}^{\mu}$ that matches query $Q$.
+
 \section{Propose Solution}
 \section{Document Overview}
 \section{Chapter Summary}

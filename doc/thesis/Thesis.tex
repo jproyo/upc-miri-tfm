@@ -17,6 +17,7 @@
 \usepackage{caption}
 \usepackage{authblk}
 \usepackage{longtable}
+\usepackage[square, numbers, comma, sort&compress]{natbib}
 \usepackage[ruled,linesnumbered,lined,boxed,commentsnumbered]{algorithm2e}
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
@@ -81,6 +82,9 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
+\newacronym{bt}{BT}{Bitriangle}
+\newacronym{bn}{BP}{Bipartite Graph}
+\newacronym{un}{UP}{Unipartite Graph}
 \newacronym{dp}{DPP}{Dynamic Pipeline Paradigm}
 \newacronym{dpf}{DPF}{Dynamic Pipeline Framework}
 \newacronym{dph}{DP-Haskell}{$DP_{WCC}$ in Haskell}
@@ -116,22 +120,23 @@
 
 \maketitle
 
-\quote{
-  \textit{.. when a Mathematical Reasoning can be had it's as great a folly to make use of any other, as to grope for a thing in the dark, when you have a Candle standing by you.}
-  \begin{flushright}
-    \textit{Of the Laws of Chance, John Arbuthnot (1662)}
-  \end{flushright}
-}
+\cleardoublepage
+% The "Quote Page"
+%%%\pagestyle{empty}  % No headers or footers for the following pages
+\null\vfill
+\textit{".. when a Mathematical Reasoning can be had it's as great a folly to make use of any other, as to grope for a thing in the dark, when you have a Candle standing by you."}
+\begin{flushright}
+	Of the Laws of Chance, John Arbuthnot (1662)\\
+\end{flushright}
+\vfill\vfill\vfill\vfill\vfill\vfill\null
+\cleardoublepage 
 
 \rhead{\thepage}
 \pagestyle{fancy}
-
 \tableofcontents
 \listoffigures
 \listoftables
-
 \mainmatter
-\pagestyle{fancy}
 
 \acknowledgements{
   Thanks to ...... % TODO
@@ -155,8 +160,6 @@ the conclusions that we arrive at based on these experiments' results.
 All these results are novel and cannot be compared with related works since they focused on counting problems and not enumeration.
 }
 
-\pagestyle{fancy}
-
 \input{chapters/chapter_1.tex}
 \input{chapters/chapter_2.tex}
 \input{chapters/chapter_3.tex}
@@ -165,7 +168,7 @@ All these results are novel and cannot be compared with related works since they
 \input{chapters/chapter_6.tex}
 \input{chapters/chapter_7.tex}
 
-\bibliographystyle{alpha}
+\bibliographystyle{unsrtnat}
 \bibliography{Thesis}
 
 \appendix

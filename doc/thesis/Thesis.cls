@@ -45,7 +45,6 @@
 \LoadClass[12pt,a4paper,oneside]{report}
 
 % Load required Packages
-\RequirePackage{natbib}
 \RequirePackage{fancyhdr}
 \RequirePackage[OT1]{fontenc}
 
@@ -80,9 +79,12 @@
   
 %  \vskip 15\p@
   \begin{center}%
-    {\Huge \@title \par}%
-    {\huge \@subtitle \par}%
-    \vskip 2.5em%
+    \smallskip
+    \hrule % Horizontal line
+    {\vspace*{0.5cm}\huge \bf \@title \par}
+    \bigskip
+    \hrule % Horizontal line
+    \bigskip
 	{\Large \textsc{\thesistype} \textsc{Thesis} }%
 	\vskip 1em%
 	{\Large \textsc{\@degree} \par}  
