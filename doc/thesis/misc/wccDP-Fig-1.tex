@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+	%Nodes
+	\node[indata]     (stream)                         {\mbox{{\small $eof\: (3,4) \: (4,5) \: (3,6)$}}};
+	\node[ionode,label=below:Source]     (in)      [right=of stream]      {$\iwcc$};
+	\node[gennode,label=below:Generator]    (gen)     [right=of in]          {$\gwcc$};
+	\node[ionode,label=below:Sink]     (out)     [right=of gen]         {$\owcc$};
+	\node[outdata]     (x)     [right=of out]                    {};
+	\node[filternode,label=above:Filter] (filter)  [above= 0.2mm of gen]  {$\fwcc$};
+	%Lines
+	\draw[ioedge] (stream) to (in);
+	\draw[edge] (in.15) to ["{\small $(1,2)$ }"] (gen.166);
+	\draw[edge] (in.-15) to (gen.195);
+	\draw[edge] (gen) to (out);
+	\draw[ioedge] (out) to (x);
+\end{tikzpicture}
+
