@@ -72,33 +72,33 @@
   \let\footnoterule\relax
   \let \footnote \thanks
   \begin{center}
-    \vspace*{.01\textheight}
     \includegraphics[width=0.7\textwidth]{images/upc_logo.png}
   \end{center}
   \null\vfil  
-  
-%  \vskip 15\p@
   \begin{center}%
     \smallskip
     \hrule % Horizontal line
     {\vspace*{0.5cm}\huge \bf \@title \par}
     \bigskip
     \hrule % Horizontal line
-    \bigskip
+    \smallskip
 	{\Large \textsc{\thesistype} \textsc{Thesis} }%
 	\vskip 1em%
 	{\Large \textsc{\@degree} \par}  
-	\vskip 1em%
+	\vskip 0.5em%
 	\Large
   	\vskip 0.5em%
     {\Large \@author \par}% 
-    \vskip 1.5em%
+    \vskip 1em%
     {\large \@@date \par}%       % Set date in \large size.
   \vfil
-  {\large Supervisor/a : \@supervisor}
+  {\normalsize FACULTAT D’INFORMÀTICA DE BARCELONA (FIB)}
+  {\normalsize UNIVERSITAT POLITÈCNICA DE CATALUNYA (UPC) – BarcelonaTech}
   \vskip 0.1em%
-  {\large Co-Supervisor/a : \@cosupervisor}
-  {\large Co-Supervisor/a : \@cosupervisorb}
+  {\normalsize Supervisor/a : \@supervisor}
+  \vskip 0.05em%
+  {\normalsize Co-Supervisor/a : \@cosupervisor}\\
+  {\normalsize Co-Supervisor/a : \@cosupervisorb}
   \end{center}\par
   \newpage
   \thispagestyle{empty}
