@@ -5,17 +5,49 @@ As we have stated on the \autoref{intro}, there is also no previous work done on
 A \acrshort{bt} is a Hamiltonian circuit as well, and finding Hamiltonian circuits in \acrshort{bg} is $NP$-hard~\cite{hamilbipartite-np}. On the other hand counting \acrshort{bt} is not in $NP$ 
 but in $P$ and there is are novel algorithms in $P$ for counting \acrshort{bt} using combinatorial algorithms presented on this work~\cite{btcount}.
 
-In that paper the authors present different concepts to calculate in a combinatorial algorithmic approach the counting problem of \acrshort{bt} in \acrshort{bg}. They present 3 global approaches to count
-all the \acrshort{bt} in the graph and 2 local algorithms: one that counts all the \acrshort{bt} given a particular vertex of the Graph and other for counting all the \acrshort{bt} given a particular edge.
+In that paper the authors present different concepts to calculate with a combinatorial algorithmic the counting problem of \acrshort{bt} in \acrshort{bg}. They present 3 algorithms to count
+all the \acrshort{bt} in the graph and 2 algorithms to count only locally \acrshort{bt}: this means that given a vertex or an edge the algorithms count only the number of \acrshort{bt} in which 
+that vertex or edge is participating into.
 
-Although the authors achieve not only empirically remarkable execution times for counting \acrshort{bt} in huge \acrshort{bg}, and quadratic worst case complexity they are counting and the scope of our work
-is enumerating. In that sense they use some specific gadgets (\emph{super-wedges}, \emph{swj-unit} and \emph{wj-unit}) that feed the final combinatorial counting algorithm. We are not going to use those because our 
-aim is to identify specific \acrshort{bt} with their component and not the global number.
+We are going to describe the most efficient algorithm of the first 3 that count all the \acrshort{bt} and the 2 local algorithms.
+
+\subsection{Counting all Bitriangles}
+\paragraph{Super-wedge based algorithm}.
+The principal idea of the combinatorial counting on this algorithm relies on \emph{swj-unit} counting, which is a novel 
+concept introduced in this work. A \emph{swj-unit} is a connected subgraph that is formed by two \emph{super-wedges}. A \emph{super-wedge}
+is a 3-hop path. The authors shows that a \acrshort{bt} is a \emph{swj-unit} but not every \emph{swj-unit} is a \acrshort{bt}. Those 
+are not \acrshort{bt} are \emph{acyclic swj-unit}. The main idea of the algorithm is to count all \emph{swj-unit} and the \emph{acyclic swj-unit}; therefore
+the number of \acrshort{bt} can be deduced straightforward.
+
+The authors present and do the analysis of the algorithm based on \emph{swj-unit} counting and they prove that the complexity is $O(\sum_{l \in L} (d(l)^2+d_3(l) + \sum_{x \in N_2(l)} d(x)) + \sum_{u \in U} d(u)^2)$.
+Recall that $L \cup U = E$, $d(v)$ is the degree of the vertex $v$, $d_k(v)$ is the number of $k$-hop neighbors of $v$ and $N_2(v)$ the set of $k$-hop neighbors of $v$.
+We can see that the complexity it is quadratic in the vertex with the highest degree in worst case.
+
+\subsection{Local Counting}
+Both algorithms to count locally \acrshort{bt} given a particular vertex or an edge, are based on the previous \emph{swj-unit} global algorithm, 
+but instead of check every vertex, it only calculate from the one that is requested. 
+In the case of vertex local counting given a vertex $v_0$, the complexity reduces to linear complexity worst case $O(d_3(v_0) \times \sum_{x \in N(v_0)} d(x) + \sum_{y \in N_2(v_0)} d(y))$.
+In the case of edge local counting given an edge $e_0$, the complexity also reduces to linear complexity worst case $O(\sum_{x \in N(u) \cup N(l)} d(x) + \sum_{y \in N_2(y)} d(y))$.
+
+\subsection{Conclusion}
+Although the authors achieve not only empirically remarkable execution times for counting \acrshort{bt} in huge \acrshort{bg}, the enumeration problem is not addressed. 
+Following that, we discarded the use some specific gadgets like \emph{super-wedges}, \emph{swj-unit} and \emph{wj-unit} because those hide the information of the \acrshort{bt}
+form which is essential for enumeration.
 
 \section{Incremental Computation}
+The ability to deliver incremental results without waiting for the whole computation to take place known as \emph{pay-as-you-go} model, plays a fundamental role in applications that needs to process huge amount of data. 
+There has been different use cases in which this approach has helped to obtained partial results in large data set structures in which not all the results are needed at the same moment.
+Some of this studies are related with \emph{Fact Checking Pay-as-you-go} models~\cite{factcatch} which use incremental quality estimation to provide fact checking over world wide web documents.
+
+On the other hand, there are as well an interesting research done~\cite{erpayasyougo} in big data analysis called \acrfull{er}, which tries to identify what are the records that belongs to the same entity.
+In big datasets, as for example people data in the Web, it would be extremely costly to process and wait for all the results to give an answer. with a \emph{pay-as-you-go} model that in this work~\cite{erpayasyougo} is called 
+\emph{hints}, the authors show how \acrshort{er} can be achieved with partial results and with a good accuracy.
+
+Finally, other important use of this model is found in \emph{motif-paths} work~\cite{Li2019MotifPA} like we discussed on previous \autoref{intro}.
+Because of the complexity of building a \emph{motif-graph} to establish the shortest path, this path is build incrementally in an algorithm called \emph{SMP Search}.
+The idea of this algorithm is to build the path from a seed finding \emph{motif-instances} incrementally expanding the seed.
 
 \section{Chapter Summary}
 In this chapter we have summarized all the \emph{State of the Art} of the aspects that our research work aims to solve.
-First we have shown the different Streaming processing computational models, then we have describe the \acrshort{dp} as we know it now and that is used 
-as the core paradigm to solve our problem. Then we have explored what is the related work on that aspect at this moment in \acrshort{hs}. Finally we have shown 
-a related novel work on \acrlong{bg} for counting \acrlong{bt} which droves our motivation on first place.
+First we have shown all the details of the most recent work regarding \acrlong{bt} in \acrlong{bg} and then we have explored
+also the what are the last explorations and uses of incremental computation models.
