@@ -35,7 +35,10 @@ A bipartite graph is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\
 \end{definition}
 
 Since the bipartite graph $G$ is an undirected graph, the edges in $E$ are bidirectional and although $E\subseteq U\times L$, in an abuse of notation, we indistinctly use $(u,l)$ and $(l,u)$ for edges in $E$. Additionally, 
-without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. 
+without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. We can see an example of a \acrshort{bg}
+in \autoref{fig:bipartite-graph-example}.
+
+\input{misc/bipartite.tex}
 
 %
 \begin{definition}[\acrlong{bt}]
@@ -47,7 +50,7 @@ In what follows, when convenient, the bi-triangle $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,
 
 \input{misc/bitriangle.tex}
 
-In \autoref{fig:bitriangle-example} we can see how a \acrshort{bt} is formed in a \acrshort{bg}.
+In \autoref{fig:bitriangle-example} we can see a correct \acrshort{bt} in a \acrshort{bg}, and in the other \autoref{fig:bitriangle-not} we can see what it is not a \acrshort{bt}.
 
 \begin{definition}[Query]
 Let $G=((U\cup L),E)$ be a bipartite graph. 
