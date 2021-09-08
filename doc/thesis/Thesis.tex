@@ -25,15 +25,6 @@
 \usepackage[acronym]{glossaries}
 \usepackage[nottoc]{tocbibind}
 \usepackage[cache=false]{minted}
-\usetikzlibrary{shapes.misc,shadows}
-\usetikzlibrary{quotes,positioning,arrows,decorations.markings}
-\usetikzlibrary{positioning} 
-\usemintedstyle{default}
-\newminted{haskell}{frame=lines,framerule=2pt}
-\newminted{R}{frame=lines,framerule=2pt}
-\graphicspath{{./images/}}
-
-\tikzstyle{bag} = [align=center]
 
 \title{An incremental algorithm for enumerating bi-triangles in large bi-partite networks}
 \setthesistype{Master}
@@ -48,88 +39,7 @@
 
 \date{Octuber 25th, 2021}
 
-\newcommand{\dw}{\mathbb{DW}}
-\newcommand{\aw}{\mathbb{AW}}
-\newcommand{\bt}{\mathbb{BT}}
-\newcommand{\bti}{BT_{(l_1, l_2,l_3)}^{(u_1, u_2, u_3)}}
-\newcommand{\at}{\mathbb{AT}}
-\newcommand{\st}{ST}
-\newcommand{\sw}{\mathtt{spawn}}
-\newcommand{\fd}{\mathtt{killFilter}}
-\newcommand{\fid}{\mathtt{filterIsDied}}
-\newcommand{\us}{\mathtt{updateState}}
-\newcommand{\gs}{\mathtt{getState}}
-\newcommand{\p}{\mathtt{push}}
-\newcommand{\mt}{\mathtt{matchQ}}
-\newcommand{\io}{\mathtt{indexOf}}
-\newcommand{\la}{\left\langle}
-\newcommand{\ra}{\right\rangle}
-\newcommand{\DP}{\mathsf{DP}}
-\newcommand{\dpwcc}{\mathsf{DP_{WCC}}}
-\newcommand{\iwcc}{\mathsf{Sr}}
-\newcommand{\iwc}{\mathsf{Sr_{WCC}}}
-\newcommand{\owcc}{\mathsf{Sk}}
-\newcommand{\owc}{\mathsf{Sk_{WCC}}}
-\newcommand{\fwcc}{\mathsf{F}} 
-\newcommand{\fwc}{\mathsf{F_{WCC}}} 
-\newcommand{\gwcc}{\mathsf{G}}
-\newcommand{\gwc}{\mathsf{G_{WCC}}}
-\newcommand{\ice}{\mathsf{IC_E}}
-\newcommand{\csofv}{\mathsf{IC_{set(V)}}}
-\newcommand{\sgen}{\mathsf{S_G}}
-\newcommand{\sfilter}{\mathsf{S_F}}
-\newcommand{\sinp}{\mathsf{S_I}}
-\newcommand{\sout}{\mathsf{S_O}}
-\newcommand{\istream}{\mathsf{D}}
-\newcommand{\wccout}{\mathsf{R}}
-\newcommand{\fmem}{\mathsf{M_F}}
-\newcommand{\eof}{\mathsf{eof}}
-\newcommand{\Act}{\mathsf{actor_1}}
-\newcommand{\Actt}{\mathsf{actor_2}}
-
-
-\DeclareMathOperator*{\argmax}{arg\,max}
-\DeclareMathOperator*{\argmin}{arg\,min}
-
-\newacronym{bt}{BT}{Bitriangle}
-\newacronym{bg}{BG}{Bipartite Graph}
-\newacronym{ug}{UG}{Unipartite Graph}
-\newacronym{dp}{DPP}{Dynamic Pipeline Paradigm}
-\newacronym{dpf}{DPF}{Dynamic Pipeline Framework}
-\newacronym{ds}{DS}{Data Streaming}
-\newacronym{dap}{DAP}{Data Parallelism}
-\newacronym{pip}{PIP}{Pipeline Parallelism}
-\newacronym{mr}{MR}{MapReduce}
-\newacronym{dpbt}{DP-BT-Haskell}{$DP_{BT}$ in Haskell}
-\newacronym{dpwcc}{DP-WCC-Haskell}{$DP_{WCC}$ in Haskell}
-\newacronym{dpl}{DPL}{dynamic-pipeline Library}
-\newacronym{bfs}{BFS}{Breadth-First Search}
-\newacronym{dfs}{DFS}{Depth-First Search}
-\newacronym{wcc}{WCC}{Weak Connected Components}
-\newacronym{hs}{Haskell}{Haskell Programming Language}
-\newacronym{fp}{FP}{Functional Programming}
-\newacronym{stm}{STM}{Software Transactional Memory}
-\newacronym{rl}{R}{R Language}
-\newacronym{os}{OS}{Operative System}
-\newacronym{dm}{Dm}{Diefficency Metrics}
-\newacronym{tfft}{TFFT}{Time for the first tuple}
-\newacronym{et}{ET}{Execution Time}
-\newacronym{comp}{Comp}{Completeness}
-\newacronym{tt}{T}{Throughput}
-\newacronym{dt}{dief$@$t}{Diefficiency first $t$ time units}
-\newacronym{snap}{SNAP}{Stanford Network Data Set Collection}
-\newacronym{ghc}{GHC}{Glasgow Haskell Compiler}
-\newacronym{dsl}{DSL}{Domain-specific Language}
-\newacronym{edsl}{EDSL}{Embedded Domain-specific Language}
-\newacronym{idl}{IDL}{Interpreter of DSL}
-\newacronym{rs}{RS}{Runtime System}
-\newacronym{go}{Go}{Go Programming Language}
-\newacronym{hl}{HL}{Host Language}
-
-\glsdisablehyper
-
-\newtheorem{hyp}{Hypothesis}
-
+\input{misc/header.tex}
 
 \begin{document}
 

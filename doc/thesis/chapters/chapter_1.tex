@@ -1,4 +1,4 @@
-\chapter{Introduction}\label{chapter:1}
+\chapter{Introduction}\label{intro}
 \section{Motivation}
 A \acrfull{bg} is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. 
 For instance, two different sets of objects can be modeled with a \acrshort{bg}, establishing the relationships between them.
@@ -79,9 +79,19 @@ Following that, we provide a correct pseudo-code algorithm for incrementally enu
 show the implementation of that pseudo-code using the \acrshort{dpf} in \acrshort{hs}, that we call \acrfull{dpbt}.
 
 \section{Contribution}
+One of the main contributions made, during the research of the present work, was the presentation of a paper in the \acrfull{prole21} Conference~\cite{prole21}. 
+On the first hand, the motivation that trigger this contribution was first to asses the suitability of \acrshort{hs} to implement \acrshort{dp}. 
+On the second hand, and in order to verify that \acrshort{hs} fits \acrshort{dp} requirements, we made a proof of concept solving \acrfull{wcc} of a Graph 
+using \acrshort{dp} with \acrshort{hs}.
+
+Finally another important contribution and, the harvest of that contribution to \acrshort{prole21}, was the development and publication of a \acrshort{hs} Framework 
+that we called \mintinline{shell}{dynamic-pipeline}~\cite{dynamic-pipeline}. In that framework published on \acrfull{hack}~\cite{hackage} at 2021-06-17 with its first version,
+we provide to any \acrshort{hs} Developer to build algorithms using \acrshort{dp}. This is a novel contribution since this is the first library published on \acrshort{hs}
+that encode this paradigm.
+
 
 \section{Document Overview}
-The structure of all this work is the following. In the following chapter, we present an important contribution that we made for PROLE21 Conference~\cite{prole21} related to 
+The structure of all this work is the following. In the following chapter, we present an important contribution that we made for \acrshort{prole21} Conference~\cite{prole21} related to 
 this work. Then we deeply describe the \acrshort{dpf} written in \acrshort{hs} with all the used techniques that the paradigm provides.
 After that we focus on the main problem of this work which is all the details related to the incremental algorithm for enumerate \acrshort{bt} in \acrshort{bg}.
 Moreover, in the chapter following the algorithm, we show how we implement that algorithm using the \acrshort{dpf} in \acrshort{hs}. After that we describe a set 
