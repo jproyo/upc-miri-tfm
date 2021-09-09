@@ -19,7 +19,7 @@ some intensive computation might delay processing next step of the pipeline beca
 Due to the nature of our problem where we need to incrementally generate \acrlong{bt} and the data needs to be aware of the context to compute those \acrshort{bt}, the stream processing model of our choice is \acrshort{pip}.
 We are going to see in the next section what is the specific \acrshort{pip} model of computation used for that purpose.
 
-\section{Dynamic Pipeline Paradigm}
+\section{Dynamic Pipeline Paradigm}\label{sec:dp}
 The \textit{Dynamic Pipeline Paradigm} (DPP) \cite{dpdef} is a data-driven computational model  based on a one-dimensional and unidirectional chain of stages connected by means of channels synchronized by data availability. 
 This chain of stages is a computational structure called \textit{Dynamic Pipeline} ($\DP$). A $\DP$ stretches and shrinks depending on the spawning and the lifetime of its stages, respectively. Modeling an algorithmic 
 solution as a $\DP$ corresponds to define a dynamic computational structure  in terms of four kinds of stages:  \textit{Source} ($\iwcc$),  \textit{Generator} ($\gwcc$),  \textit{Sink} ($\owcc$) and \textit{Filter} ($\fwcc$) stages. 

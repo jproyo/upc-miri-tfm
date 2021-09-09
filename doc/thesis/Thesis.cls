@@ -1,11 +1,11 @@
 %
-% This is file 'csthes.cls'
+% This is file 'Thesis.cls'
 %
 % Author: Bettina Finzel (bettina.finzel@uni-bamberg.de) and Michael Siebers (michael.siebers@uni-bamberg.de)
 %
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{csthes}[2019/05/21 thesis class from CogSys-Group at University of Bamberg]
+\ProvidesClass{Thesis}[]
 
 \RequirePackage{ifthen}
 
@@ -168,6 +168,7 @@
 \newcommand{\cref}[1]{Chapter~\ref{#1}}
 \newcommand{\sref}[1]{Section~\ref{#1}}
 \newcommand{\aref}[1]{Appendix~\ref{#1}}
+\newcommand{\lref}[1]{Source Code~\ref{#1}}
 \renewcommand{\topfraction}{0.85}
 \renewcommand{\bottomfraction}{.85}
 \renewcommand{\textfraction}{0.1}
