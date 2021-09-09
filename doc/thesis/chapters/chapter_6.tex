@@ -1,45 +1,56 @@
 \chapter{An Incremental algorithm to enumerate Bi-Triangles using DP}\label{incr-algo-bt-dp}
+In this chapter we describe first the overall idea of the algorithm for incrementally enumerate 
+\acrshort{bt} with some example and after that we formalize the pseudo-code that we design for implementing
+the algorithm as long as the proof correctness and the implementation using the \acrshort{dpfh}.  
+
 \section{Algorithm Definition}
+The algorithm focused on some novel elements definitions that we provide and use for enumerate \acrshort{bt} using \acrshort{dp}.
+First let start with some previous basic definition that are already defined in previous work~\cite{btcount}.
 
 \begin{definition}[Wedge]
 Let $G=((U\cup L),E)$ be a bipartite graph. A  \textit{wedge} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
-%   
+
 \begin{definition}[Aggregated wedge]
 Let $G=((U\cup L),E)$ be a bipartite graph. An  \textit{aggregated wedge} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u\in W_l$, the edge  $(u,l)\in E$. 
 \end{definition}
-%
+
 \begin{definition}[Double-wedge]
 Let $G=((U\cup L),E)$ be a bipartite graph. A \textit{double-wedge} in $G$ is a path of length 4 $u_1,l_1,u_2,l_2,u_3$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$, $u_2$ and $l_2$ are the middle vertices of the double-wedge. 
 \end{definition}
-%  
+  
 \begin{definition}[Aggregated double-wedge]
 Let $G=((U\cup L),E)$ be a bipartite graph and let $U_t = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
 An \textit{aggregated double-wedge}  is a pair  $\la (l_1, l_2), U_t \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
 \end{definition}
-%
-%\begin{definition}[Aggregated double-wedge]  //Definición original de Juan Pablo
-%Let $G=((U\cup L),E)$ be a bipartite graph. Let $U_t = \la I, J, K\ra$ be a triplet of subset of $U$, such that $I \subseteq U, J \subseteq U, K \subseteq U$. An \textit{aggregated double-wedge}  is a pair  $\la (l_1, l_2), U_t \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J \land u_k \in K$, where $u_i \neq u_j \neq u_k$, 
-%$\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
-%\end{definition}
-%
+
 \begin{definition}[Aggregated bi-triangle]
-Let $G=((U\cup L),E)$ be a bipartite graph and  $\hat{U}_t=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_t\rangle$, where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$ and $u_i \neq u_j \neq u_k$, $BT_{\ell}^{\mu}\in \bt$.
+Let $G=((U\cup L),E)$ be a bipartite graph and  $\hat{U}_t=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_t\rangle$, 
+where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\mu=(u_i, u_j, u_k)$ such that $I \cup J \cup K \subseteq U$, $u_i \in I, u_j \in J, u_k \in K$ and $u_i \neq u_j \neq u_k$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
-%
-%\begin{definition}[Aggregated bi-triangle] //Definición original de Juan Pablo
-%Let $G=((U\cup L),E)$ be a bipartite graph. Let $U_t$ be a set of triples on $U$. An \textit{aggregated bi-triangle}  is a pair  $\la \ell, U_t \ra$, where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $u_i \in I, u_j \in J \land u_k \in K$, where $u_i \neq u_j \neq u_k$,
-%\\$\{(u_i, l_1), (u_j, l_1), (u_j, l_3), (u_k, l_3), (u_i, l_2), (u_k, l_2)\} \in E$. If we take $\mu=(u_i, u_j, u_k)$, we can build bi-triangle $BT_{\ell}^{\mu}\in \bt$.
-%\end{definition}
-%
+
+Some examples of the previous definitions can be found in the following images.
+
+\input{misc/basic_def.tex}
+\input{misc/basic_def_1.tex}
+\input{misc/basic_def_2.tex}
+
+\paragraph{Algorithm sketch} \acrshort{dp} for enumerating \acrshort{bt} setup four actors. These four computations are going to 
+build incrementally all the object definitions exposed before: first aggregated wedges (\emph{actor1}), then aggregated double-wedges (\emph{actor2}), 
+after aggregated bi-triangles (\emph{actor3}) and finally in the \emph{actor4} a query command that arrives from an independent channel, 
+it could request a subset of bi-triangles to be enumerated that match some specific criteria of that command. Each filter which contains these four actors, 
+accumulates those object definitions based on a parameter vertex $l \in L$ on which that filter was created with. If there are some \acrshort{bt} that matches command criteria, 
+\emph{actor4} will enumerate those \acrshort{bt} extracted from Aggregated bi-triangles object and send to $\owcc$ of the pipeline.
+
+
+\subsection{Dynamic Pipeline for Enumerating Bi-triangles}
 \begin{definition}[Filter State]
 Let $G=((U\cup L),E)$ be a bipartite graph. 
 Let $\aw$ be a set of all possibles Aggregated wedges in $G$.
 Let $\dw$ be a set of all possibles Aggregated double-wedges in $G$.
 Let $\at$ be a set of all possibles Aggregated bi-triangles in $G$.
-An \textit{filter state} of DP is a sum type $\st = \aw + \dw + \at$
+An \textit{filter state} of DP is a sum type $\st = aw + dw + at$, such that $aw \subseteq \aw, dw \subseteq \dw, at \subseteq \at$.
 \end{definition}
-%
 
 \begin{table}[ht]
 \centering
@@ -50,15 +61,19 @@ $n,m$ & the number of vertices and edges in $G$, resp.\\  \hline
 $(u,l)$ & an edge between vertices $u$ and $l$\\  \hline
 $\bti$ & the bi-triangle $u_1,l_1,u_2,l_3,u_3,l_2,u_1$\\  \hline
 $\bt$ & the set of all the possible bi-triangles in $G$ \\  \hline
+$bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
 $\at$ & the set of all the possible Aggregated bi-triangles in $G$ \\  \hline
+$at$ & Subset of $\at$, such that $at \subseteq \at$ \\  \hline
 $(u_1,l,u_2)$ & a wedge with  middle vertex $l$\\  \hline
 $\la l, W_l \ra$ & an aggregated wedge\\  \hline
 $\aw$ & the set of all the possible aggregated wedges in $G$\\  \hline
+$aw$ & Subset of $\aw$, such that $aw \subseteq \aw$ \\  \hline
 $(u_1,l_1,u_2,l_2,u_3)$ & a double wedge with middle vertices $l_1$ and $l_2$\\  \hline 
 $\dw$ & the set of all the possible double-wedges in $G$\\  \hline
+$dw$ & Subset of $\dw$, such that $dw \subseteq \dw$ \\  \hline
 $\la (l_1, l_2), U_t \ra$ & an aggregated double wedge\\  \hline
 $\la (l_1, l_2,l_3), \hat{U}_t \ra$ & an aggregated bi-triangle\\  \hline
-$\aw + \dw + \at$ & $\st$ Filter State Sum Type\\  \hline
+$aw + dw + at$ & $\st$ Filter State Sum Type\\  \hline
 $Q_V + Q_E$ & $Q$ Query Sum Type\\  \hline
 \end{tabular}
 \caption{Summary of notations and their meanings.}
@@ -208,13 +223,13 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
 \BlankLine
 \PrC{$W_l \subseteq U, |W_l| > 1$}
-\PC{$|\dw| \geq 1 \lor \fid$}
+\PC{$dw \subseteq \dw, |dw| \geq 1 \lor \fid$}
 \df{\ab{}}{
 $\la l, W_l \ra \leftarrow \gs$\\
 \ForAll{$\la l', W_l' \ra \in IC_{W_1}$}{
       \tcp*[h]{By pass Wedges from previous filters to next ones}
       $\p(\la l', W_l \ra, OC_{W_1})$\\
-      $\dw \leftarrow \emptyset$\\
+      $dw \leftarrow \emptyset$\\
       \If{$l \neq l' \land W_l' \cap W_l \neq \emptyset$}{
             $(l_l, l_u) \leftarrow (\argmin_{l,l'}, \argmax_{l,l'})$\\
             \uIf{$l < l'$}{
@@ -225,13 +240,13 @@ $\la l, W_l \ra \leftarrow \gs$\\
             $I \leftarrow W_{l_l} \setminus W_{l_u}$\\
             $J \leftarrow W_{l_l} \cap W_{l_u}$\\
             $K \leftarrow W_{l_u} \setminus W_{l_l}$\\
-            $\dw \leftarrow \dw \cup \{\la (l, l'), \la I, J, K\ra \ra\}$
+            $dw \leftarrow dw \cup \{\la (l, l'), \la I, J, K\ra \ra\}$
       }
 }
-\uIf{$\dw = \emptyset$}{$\fd$}
-\Else{$\us(\mathbb{DW})$}
+\uIf{$dw = \emptyset$}{$\fd$}
+\Else{$\us(dw)$}
 }
-\caption{This actor tries to build a Set of all possible Aggregated double-wedges $\dw = \{\la (l,l'), U_t \ra\}$, which first component $l$ is the Parameter of the Filter}
+\caption{This actor tries to build a Set of all possible Aggregated double-wedges $dw = \{\la (l,l'), U_t \ra\}, dw \subseteq \dw$, which first component $l$ is the Parameter of the Filter}
 \end{algorithm}
 
 \begin{algorithm}
@@ -247,19 +262,19 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \SetAlgorithmName{Filter}{fa3}{}
 \SetAlgoRefName{actor3}
 \P{$l \in L$}
-\FS{$\dw$}
+\FS{$dw \subseteq \dw$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
 \BlankLine
-\PrC{$|\dw| \geq 1$}
-\PC{$|\at| \geq 1 \lor \fid$}
+\PrC{$dw \subseteq \dw, |dw| \geq 1$}
+\PC{$at \subseteq \at, |at| \geq 1 \lor \fid$}
 \df{\ac{}}{
-      $\dw \leftarrow \gs$\\
+      $dw \leftarrow \gs$\\
       \ForAll{$\la l', W_l' \ra \in IC_{W_2}$}{
             \tcp*[h]{By pass to be used by following Filters}
             $\p(\la l', W_l' \ra, OC_{W_2})$\\ 
             \tcp*[h]{For each double wedge in State}\\
-            \ForEach{$\la (l_l, l_u), \la I, J, K \ra \ra \in \dw, l_l < l' \land l_u > l'$}{
+            \ForEach{$\la (l_l, l_u), \la I, J, K \ra \ra \in dw, l_l < l' \land l_u > l'$}{
                   $I' \leftarrow I \cup J$\\
                   $K' \leftarrow K \cup J$\\
                   \If{$W_l' \cap I' \neq \emptyset \land W_l' \cap K' \neq \emptyset$}{
@@ -268,14 +283,14 @@ $\la l, W_l \ra \leftarrow \gs$\\
                         $U_t' \leftarrow U_t' \cup \{\la I', J, K' \ra\})$
                   }
                   \If{$U_t' \neq \la \emptyset,\emptyset,\emptyset \ra$}{
-                        $\at \leftarrow \at \cup \{\la (l_l, l', l_u), U_t' \ra\}$
+                        $at \leftarrow at \cup \{\la (l_l, l', l_u), U_t' \ra\}$
                   }
             }
       }
-      \uIf{$\at = \emptyset$}{$\fd$}
-      \Else{$\us(\at)$\\}
+      \uIf{$at = \emptyset$}{$\fd$}
+      \Else{$\us(at)$\\}
 }
-\caption{This actor try to build a Set of all possible Aggregated bi-triangles $\at = \{\la (l_l, l_m, l_u), U_t \ra\}$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter}
+\caption{This actor try to build a Set of all possible Aggregated bi-triangles $\at = \{\la (l_l, l_m, l_u), U_t \ra\}, at \subseteq \at$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter}
 \end{algorithm}
 
 \begin{algorithm}
@@ -292,20 +307,20 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \SetAlgorithmName{Filter}{fa4}{}
 \SetAlgoRefName{actor4}
 \P{$l \in L$}
-\FS{$\at$}
+\FS{$at \subseteq \at$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
 \BlankLine
-\PrC{$|\at| \geq 1$}
+\PrC{$at \subseteq \at, |at| \geq 1$}
 \df{\ad{}}{
-$\at \leftarrow \gs$\\
+$at \leftarrow \gs$\\
 \ForAll{$Q \in IC_Q$}{
-      \ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \at$}{
+      \ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in at$}{
             \Switch{$Q$}{
                   \Case{$Q_V$}{
                         \If{$Q_V \cap \{l_l, l_m, l_u\} \neq \emptyset \lor Q_V \cap (I \cup J \cup K) \neq \emptyset$}{
-                              $\bt \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), Q_V)$\\
-                              \ForAll{$\bti \in \bt$}{
+                              $bt \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), Q_V)$\\
+                              \ForAll{$\bti \in bt$}{
                                     $\p(\bti, OC_{BT})$
                               }
                         }
@@ -313,8 +328,8 @@ $\at \leftarrow \gs$\\
                   \Case{$Q_E$}{
                         \ForEach{$(u,l) \in Q_E$}{
                               \If{$(l = l_l \lor l = l_m \lor l = l_u) \land u \in (I \cup J \cup K)$}{
-                                    $\bt \leftarrow \butE(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), (u,l))$\\
-                                    \ForAll{$\bti \in \bt$}{
+                                    $bt \leftarrow \butE(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), (u,l))$\\
+                                    \ForAll{$\bti \in bt$}{
                                           $\p(\bti, OC_{BT})$
                                     }
                               }
@@ -335,17 +350,17 @@ $\at \leftarrow \gs$\\
 \SetKwProg{df}{def}{:}{end}
 \SetAlgorithmName{Function}{a1}{}
 \SetAlgoRefName{buildBtVertex}
-\I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$}
+\I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in at, at \subseteq \at$}
 \I{$Q_V$}
-\O{$\bt$ or $\emptyset$ if cannot build any $\bt$}
+\O{$bt \subseteq \bt$ or $\emptyset$ if cannot build any $bt$}
 \df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $Q_V$}}{
-      $\bt \leftarrow \emptyset$\\
+      $bt \leftarrow \emptyset$\\
       \uIf{$Q_V \cap \{l_l, l_m, l_u\}$}{
             \tcp*[h]{If it is in lower i need to build all for this lower triplet}\\
             \ForEach{$i \in I$}{
                   \ForEach{$j \in J, j \neq i$}{
                         \ForEach{$k \in K, k \neq i \land k \neq j$}{
-                              $\bt \leftarrow \bt \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
+                              $bt \leftarrow bt \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
                         }
                   }
             }
@@ -354,14 +369,14 @@ $\at \leftarrow \gs$\\
             \ForEach{$i \in I$}{
                   \ForEach{$j \in J, j \neq i$}{
                         \ForEach{$k \in K, k \neq i \land k \neq j \land (Q_V \cap \{i,j,k\} \neq \emptyset$}{
-                              $\bt \leftarrow \bt \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
+                              $bt \leftarrow bt \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
                         }
                   }
             }
       }
-      \Return{$\bt$}
+      \Return{$bt$}
 }
-\caption{Given a Set of Vertex Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\at$ param}
+\caption{Given a Set of Vertex Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in at, at \subseteq \at$ param}
 \end{algorithm}
 
 \begin{algorithm}
@@ -372,19 +387,19 @@ $\at \leftarrow \gs$\\
 \SetKwProg{df}{def}{:}{end}
 \SetAlgorithmName{Function}{a2}{}
 \SetAlgoRefName{buildBtEdge}
-\I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$}
+\I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in at, at \subseteq \at$}
 \I{$(u,l)$}
-\O{$\bt$ or $\emptyset$ if cannot build any $\bt$}
+\O{$bt \subseteq \bt$ or $\emptyset$ if cannot build any $bt$}
 \df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $Q_V$}}{
-      $\bt \leftarrow \emptyset$\\
+      $bt \leftarrow \emptyset$\\
       \ForEach{$i \in I$}{
             \ForEach{$j \in J, j \neq i$}{
                   \ForEach{$k \in K, k \neq i \land k \neq j \land \he((u,l), (l_l,l_m,l_u),(i,j,k))$}{
-                        $\bt \leftarrow \bt \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
+                        $bt \leftarrow bt \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
                   }
             }
       }
-      \Return{$\bt$}
+      \Return{$bt$}
 }
 \df{\he{$(u,l), (l_l,l_m,l_u), (i,j,k)$}}{
       \If{$(u,l) = (l_l, i) \lor (u,l) = (l_l, j) \lor (u,l) = (l_u, j) \lor (u,l) = (l_u, k) \lor (u,l) = (l_m, i) \lor (u,l) = (l_m, k)$}{
@@ -393,7 +408,7 @@ $\at \leftarrow \gs$\\
             \Return{False}
       }
 }
-\caption{Given a Set of Edges Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\at$ param}
+\caption{Given a Set of Edges Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in at, at \subseteq \at$ param}
 \end{algorithm}
       
 \clearpage
