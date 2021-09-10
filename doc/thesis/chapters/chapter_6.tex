@@ -3,28 +3,28 @@ In this chapter we describe first the overall idea of the algorithm for incremen
 \acrshort{bt} with some example and after that we formalize the pseudo-code that we design for implementing
 the algorithm as long as the proof correctness and the implementation using the \acrshort{dpfh}.  
 
-\section{Algorithm Definition}
+\section{Preliminaries Definitions}
 The algorithm focused on some novel elements definitions that we provide and use for enumerate \acrshort{bt} using \acrshort{dp}.
 First let start with some previous basic definition that are already defined in previous work~\cite{btcount}.
 
-\begin{definition}[Wedge]
+\begin{definition}[\acrfull{wg}]
 Let $G=((U\cup L),E)$ be a bipartite graph. A  \textit{wedge} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
 
-\begin{definition}[Aggregated wedge]
+\begin{definition}[\acrfull{awg}]
 Let $G=((U\cup L),E)$ be a bipartite graph. An  \textit{aggregated wedge} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u\in W_l$, the edge  $(u,l)\in E$. 
 \end{definition}
 
-\begin{definition}[Double-wedge]
+\begin{definition}[\acrfull{dwg}]
 Let $G=((U\cup L),E)$ be a bipartite graph. A \textit{double-wedge} in $G$ is a path of length 4 $u_1,l_1,u_2,l_2,u_3$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$, $u_2$ and $l_2$ are the middle vertices of the double-wedge. 
 \end{definition}
   
-\begin{definition}[Aggregated double-wedge]
+\begin{definition}[\acrfull{adwg}]
 Let $G=((U\cup L),E)$ be a bipartite graph and let $U_t = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
 An \textit{aggregated double-wedge}  is a pair  $\la (l_1, l_2), U_t \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
 \end{definition}
 
-\begin{definition}[Aggregated bi-triangle]
+\begin{definition}[\acrfull{abt}]
 Let $G=((U\cup L),E)$ be a bipartite graph and  $\hat{U}_t=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_t\rangle$, 
 where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\mu=(u_i, u_j, u_k)$ such that $I \cup J \cup K \subseteq U$, $u_i \in I, u_j \in J, u_k \in K$ and $u_i \neq u_j \neq u_k$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
@@ -35,24 +35,7 @@ Some examples of the previous definitions can be found in the following images.
 \input{misc/basic_def_1.tex}
 \input{misc/basic_def_2.tex}
 
-\paragraph{Algorithm sketch} \acrshort{dp} for enumerating \acrshort{bt} setup four actors. These four computations are going to 
-build incrementally all the object definitions exposed before: first aggregated wedges (\emph{actor1}), then aggregated double-wedges (\emph{actor2}), 
-after aggregated bi-triangles (\emph{actor3}) and finally in the \emph{actor4} a query command that arrives from an independent channel, 
-it could request a subset of bi-triangles to be enumerated that match some specific criteria of that command. Each filter which contains these four actors, 
-accumulates those object definitions based on a parameter vertex $l \in L$ on which that filter was created with. If there are some \acrshort{bt} that matches command criteria, 
-\emph{actor4} will enumerate those \acrshort{bt} extracted from Aggregated bi-triangles object and send to $\owcc$ of the pipeline.
-
-
-\subsection{Dynamic Pipeline for Enumerating Bi-triangles}
-\begin{definition}[Filter State]
-Let $G=((U\cup L),E)$ be a bipartite graph. 
-Let $\aw$ be a set of all possibles Aggregated wedges in $G$.
-Let $\dw$ be a set of all possibles Aggregated double-wedges in $G$.
-Let $\at$ be a set of all possibles Aggregated bi-triangles in $G$.
-An \textit{filter state} of DP is a sum type $\st = aw + dw + at$, such that $aw \subseteq \aw, dw \subseteq \dw, at \subseteq \at$.
-\end{definition}
-
-\begin{table}[ht]
+\begin{table}[!ht]
 \centering
 \begin{tabular}{|c|l|} \hline
 \textbf{Notation} & \textbf{Meaning}\\ \hline
@@ -73,12 +56,60 @@ $\dw$ & the set of all the possible double-wedges in $G$\\  \hline
 $dw$ & Subset of $\dw$, such that $dw \subseteq \dw$ \\  \hline
 $\la (l_1, l_2), U_t \ra$ & an aggregated double wedge\\  \hline
 $\la (l_1, l_2,l_3), \hat{U}_t \ra$ & an aggregated bi-triangle\\  \hline
-$aw + dw + at$ & $\st$ Filter State Sum Type\\  \hline
-$Q_V + Q_E$ & $Q$ Query Sum Type\\  \hline
 \end{tabular}
 \caption{Summary of notations and their meanings.}
 \label{table:notation}
 \end{table}
+      
+
+\subsection{Algorithm Sketch}
+Dynamic Pipeline Algorithm for Enumerating Bi-triangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
+\textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. The algorithm tries to collect all the previous object definitions 
+(\acrshort{awg}, \acrshort{adwg} and \acrshort{abt}) during the execution of the actors of $\fbt$ instance. Since we are dealing with different object representations,
+the following channels are connecting the stages in $\dpbt$.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|p{0.2\linewidth}|p{0.8\linewidth}|} \hline
+\textbf{Channel} & \textbf{Meaning}\\ \hline
+$IC$ & Set of Input Channels \\ \hline
+$OC$ & Set of Output Channels \\ \hline
+$IC_E$ & Input Channels carrying $e \in E$ \\ \hline
+$OC_E$ & Output Channels carrying $e \in E$ \\ \hline
+$IC_{W_1}$ & Input Channels carrying \acrshort{awg} \\ \hline
+$OC_{W_1}$ & Output Channels carrying \acrshort{awg} \\ \hline
+$IC_{W_2}$ & Input Channels carrying \acrshort{awg}, second round \\ \hline
+$OC_{W_2}$ & Output Channels carrying \acrshort{awg}, second round \\ \hline
+$IC_Q$ & Input Channels carrying $Q$ Command \\ \hline
+$OC_Q$ & Output Channels carrying $Q$ Command \\ \hline
+$IC_{BT}$ & Input Channels carrying $\bt$ \\ \hline
+$OC_{BT}$ & Output Channels carrying $\bt$ \\ \hline
+\end{tabular}
+\caption{Summary of Channels used in DP}
+\label{table:channels}
+\end{table}
+
+\begin{definition}[Filter State]
+Let $G=((U\cup L),E)$ be a bipartite graph. 
+Let $\aw$ be a set of all possibles Aggregated wedges in $G$.
+Let $\dw$ be a set of all possibles Aggregated double-wedges in $G$.
+Let $\at$ be a set of all possibles Aggregated bi-triangles in $G$.
+An \textit{filter state} of DP is a sum type $\st = aw + dw + at$, such that $aw \subseteq \aw, dw \subseteq \dw, at \subseteq \at$.
+\end{definition}
+ 
+\paragraph{Sketch} $\ibt$ reads from some input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfer to the following stage each $(u,l)$ using $OC_E$.
+For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. These four functions builds incrementally all the object definitions exposed before. 
+First \mintinline{shell}{actor1} will received from $IC_E$ all the rest of the edges of the original $G$ and tries to build \acrshort{awg} and downstream to $\fbt$ using $OC_{W1}$. 
+Then \mintinline{shell}{actor2} receives from $IC_{W1}$ aggregated wedges from previous $\fbt$, downstream to next $\fbt$ and $\gbt$ using $OC_{W1}$ and at the same time use its information to see 
+if it can build \acrshort{adwg}. If it can, it will store in its $\st$ those $dw \in \dw$.
+
+In \mintinline{shell}{actor2} we have exposed that it downstream the \acrshort{awg} to  $\fbt$ and $\gbt$. This is because we need to retro feed all the pipeline with all the \acrshort{awg}, in order to find 
+possible wedges for each $\fbt$ that connects some \acrshort{dwg}. Remember that by definition a \acrshort{bt} is a \acrshort{dwg} connected to a \acrshort{wg} in a cycle, with a particular disposition of the edges.
+Having said that, \mintinline{shell}{actor3} receives all the \acrshort{awg} again but in a different channel $IC_{W2}$ and builds \acrshort{abt} and store them in $\st$. If there is a match, 
+\mintinline{shell}{actor4} will enumerate those \acrshort{bt} extracted from $\st$ and downstream to $\obt$ through $OC_{BT}$.
+
+\subsection{Dynamic Pipeline for Enumerating Bi-triangles}
+
 %      
 \begin{table}[ht]
 \centering
@@ -96,26 +127,6 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \label{table:aux:fn}
 \end{table}
 %      
-\begin{table}[ht]
-\centering
-\begin{tabular}{|p{0.2\linewidth}|p{0.8\linewidth}|} \hline
-\textbf{Channel} & \textbf{Meaning}\\ \hline
-$IC$ & Set of Input Channels \\ \hline
-$OC$ & Set of Output Channels \\ \hline
-$IC_E$ & Input Channels carrying edges \\ \hline
-$OC_E$ & Output Channels carrying edges \\ \hline
-$IC_{W_1}$ & Input Channels carrying Aggregated Wedges \\ \hline
-$OC_{W_1}$ & Output Channels carrying Aggregated Wedges \\ \hline
-$IC_{W_2}$ & Input Channels carrying Aggregated Wedges, second round \\ \hline
-$OC_{W_2}$ & Output Channels carrying Aggregated Wedges, second round \\ \hline
-$IC_Q$ & Input Channels carrying Query Command \\ \hline
-$OC_Q$ & Output Channels carrying Query Command \\ \hline
-$IC_{BT}$ & Input Channels carrying Aggregated Bi-triangles \\ \hline
-$OC_{BT}$ & Input Channels carrying Aggregated Bi-triangles \\ \hline
-\end{tabular}
-\caption{Summary of Channels used in DP}
-\label{table:channels}
-\end{table}
 %
 %      
       
