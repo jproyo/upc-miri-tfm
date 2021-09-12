@@ -23,3 +23,4 @@ cabal.project.local~
 .ghc.environment.*
 bt-graph-dp/data/
 data/
+bt-graph-dp/diepfy/experiments/
