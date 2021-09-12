@@ -114,6 +114,11 @@
 
 \newtheorem{hyp}{Hypothesis}
 
+\newcommand{\inputtikz}[1]{%
+  \tikzsetnextfilename{#1}%
+  \input{tikz/#1.tikz}%
+}
+
 \makeatletter
 \pgfdeclareshape{datastore}{
   \inheritsavedanchors[from=rectangle]

@@ -38,7 +38,12 @@ Since the bipartite graph $G$ is an undirected graph, the edges in $E$ are bidir
 without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. We can see an example of a \acrshort{bg}
 in \autoref{fig:bipartite-graph-example}.
 
-\input{misc/bipartite.tex}
+\begin{figure}[ht]
+\centering	
+\inputtikz{bipartite}
+\caption{Example of \acrshort{bg}}
+\label{fig:bipartite-graph-example}
+\end{figure}
 
 %
 \begin{definition}[\acrlong{bt}]\label{def:bt}
@@ -48,7 +53,20 @@ The 6-cycle $u_1,l_1,u_2,l_3,u_3,l_2,u_1$  is a \textit{bi-triangle} in $G$, den
 
 In what follows, when convenient, the bi-triangle $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,u_3)}$  will be denoted by the set of edges $\{(u_1, l_1), (l_1,u_2), (u_2, l_3), (l_3,u_3), (u_3, l_2), (l_2,u_1)\} \subseteq E$
 
-\input{misc/bitriangle.tex}
+\begin{figure}[htp!]
+\begin{subfigure}[b]{0.5\textwidth}
+\centering
+\inputtikz{bitriangle}
+\caption{Example of \acrshort{bt} in \acrshort{bg}}
+\label{fig:bitriangle-example}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\centering
+\inputtikz{not-bitriangle}
+\caption{Not a \acrshort{bt} in \acrshort{bg}}
+\label{fig:bitriangle-not}
+\end{subfigure}
+\end{figure}
 
 In \autoref{fig:bitriangle-example} we can see a correct \acrshort{bt} in a \acrshort{bg}, and in the other \autoref{fig:bitriangle-not} we can see what it is not a \acrshort{bt}.
 

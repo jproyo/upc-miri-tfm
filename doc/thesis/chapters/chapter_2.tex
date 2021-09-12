@@ -31,7 +31,23 @@ In particular, when a stream data items arrives to the \textit{Source} stage. Du
 This evolution is illustrated in  \autoref{fig:activeDP}. If the stream  data is bounded, the computation finish when the lifetime of all the stages of the active $\DP$ have finished. Otherwise, if the stream data is unbounded, 
 the $\DP$ remains active and incremental results are output. 
 
-\input{misc/genericDP-Fig}  
+\begin{figure}[h]
+  \begin{subfigure}[b]{0.5\textwidth}
+   \centering  
+\inputtikz{genericDP-Initial}
+\caption{Initial configuration of a Dynamic Pipeline.  An initial DP consists of three stages: $\iwcc$, $\gwcc$ together its filter parameter $\fwcc$, and $\owcc$. These stages are connected through its channels --represented by right arrows-- as shown in this figure.}
+\label{fig:initialDP}
+\end{subfigure}
+\hspace{0.3cm}
+\begin{subfigure}[b]{0.5\textwidth}
+ \centering
+ \inputtikz{genericDP-Evol}
+ \caption{Evolution of a DP. After creating some filter instances (shadow Filter squares) of the filter parameter (light Filter square) in the Generator, the DP has stretched.}
+\label{fig:activeDP}
+\end{subfigure}
+\caption{Dynamic Pipeline configuration}
+\end{figure}
+
 
 \section{Streaming and Haskell Language}
 Streaming computational models have been implemented in \acrfull{hs} during the last 10 years with the first version of \mintinline{shell}{conduit}~\cite{conduit} library.

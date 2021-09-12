@@ -11,7 +11,7 @@ First let start with some previous basic definition that are already defined in 
 Let $G=((U\cup L),E)$ be a bipartite graph. A  \textit{wedge} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
 
-\begin{definition}[\acrfull{awg}]
+\begin{definition}[\acrfull{awg}]\label{def:awg}
 Let $G=((U\cup L),E)$ be a bipartite graph. An  \textit{aggregated wedge} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u\in W_l$, the edge  $(u,l)\in E$. 
 \end{definition}
 
@@ -36,9 +36,44 @@ where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $
 
 Some examples of the previous definitions can be found in the following images.
 
-\input{misc/basic_def.tex}
-\input{misc/basic_def_1.tex}
-\input{misc/basic_def_2.tex}
+\begin{figure}[htp!]
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\inputtikz{basic_def_wg}
+\caption{Wedge}
+\label{fig:wedge-example}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\inputtikz{basic_def_awg}
+\caption{Aggregated Wedge}
+\label{fig:agg-wedge-example}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\inputtikz{basic_def_adwg}
+\caption{Double Wedge}
+\label{fig:double-wedge-example}
+\end{subfigure}
+\end{figure}
+
+
+\begin{figure}[htp!]
+\centering
+\inputtikz{basic_def_1}
+\caption{Aggregated double-wedge}
+\label{fig:agg-double-wedge-example}
+\end{figure}
+
+\begin{figure}[htp!]
+\begin{subfigure}[b]{1\textwidth}
+\centering      
+\inputtikz{basic_def_2}
+\caption{Aggregated bi-triangle}
+\label{fig:agg-bt-example}
+\end{subfigure}
+\end{figure}
+
 
 \begin{table}[!ht]
 \centering
@@ -101,7 +136,12 @@ Let $\at$ be a set of all possibles Aggregated bi-triangles in $G$.
 An \textit{filter state} of DP is a sum type $\st = \la l, W_l \ra + \dwi + \ati$, such that $\la l, W_l \ra \in \aw, \dwi \subseteq \dw, \ati \subseteq \at$.
 \end{definition}
  
-\input{misc/btDP.tex}
+\begin{figure}[h]
+\centering  
+\inputtikz{btDP}
+\caption{$\dpbt$ Initial setup}
+\label{fig:btDP}
+\end{figure}
 
 \paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from some input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfer to the following stage each $(u,l)$ using $OC_E$.
 For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. These four functions builds incrementally all the object definitions exposed before. 
@@ -184,7 +224,12 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \label{algo:gen}
 \end{algorithm}
 
-\input{misc/btDP_actor1.tex}
+\begin{figure}[h]
+\centering  
+\inputtikz{btDP_actor1}
+\caption{$\dpbt$ With Filter instances}
+\label{fig:btDP_actor1}
+\end{figure}
 
 \paragraph{Generator $\gbt$} $\gbt$ also have three main loops. In \autoref{algo:gen:1} it receives each edge $(u,l)$ and 
 spawn a new $\fbt$ using $l \in L$ as filter parameter and initializing $\st = \la l, \{u\} \ra$ as it can be seen in \autoref{fig:btDP_actor1$}. 
@@ -476,11 +521,11 @@ from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
 \section{Complexity Analysis of the Algorithm}
 We are going to conduct the complexity analysis of the algorithm focusing on each, stage and taking filter with all its actor as a single stage.
 
-\begin{theorem}\label{theorem:awg}
-The size of all possible aggregated wedges $\la l, W_l \ra$ are upper bound by $|L|$.
+\begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
+The size of all possible aggregated wedges is upper bound by $|L|$.
 \end{theorem}
 \begin{proof}
-Obvious since at most each $l \in L$ is participating on a wedge.
+Obvious by \dref{def:awg} since at most each $l \in L$ is participating on a wedge.
 \end{proof}
 
 \begin{proposition}[Complexity on Source $\ibt$]\label{prop:comp-src}
@@ -513,12 +558,12 @@ Obvious by definition of \autoref{algo:sink}.
 \end{proof}
 
 \begin{proposition}[Complexity of Filter $\fbt$]
-The total complexity of $\fbt$ algorithm in worst-case is $O(\binom{|L|}{2} \times |L|^3 + \binom{|V|}{6})$.
+The total complexity of $\fbt$ algorithm in worst-case is $O(\binom{|L|}{2} \times 3|U| + \binom{|V|}{6})$.
 \end{proposition}
 \begin{proof}
 Since actors in filters are executed sequentially we have that complexity of $\aaa$ is $O(|E|)$ by \dref{algo:act-1}.
-Then for $\ab$ complexity is $O(|L|^3)$ because of intersection and diference operation on Set inside the for in the size of $L$ by \autoref{theorem:awg}. 
-The complexity of $\ac$ is $O(\binom{|L|}{2} \times |L|^3)$ and it is a little more complex to analize. For building all possible $\dw$ 
+Then for $\ab$ complexity is $O(3|U|)$ because of intersection and diference operation on Set inside the loop is $O(m+n)$ each. Since $|U| = m = n$ worst case, then the cost of each loop is $O(3|U|)$.  
+The complexity of $\ac$ is $O(\binom{|L|}{2} \times 3|U|)$ and it is a little more complex to analize. For building all possible $\dw$ 
 we need all possible combinations of $|L|$ taken by $2$ in worst case, times the complexity of build for each case the three set of indicents edges.
 Finally for building all possible $\bt$ in $\ad$ worst case is $O(\binom{|V|}{6})$.
 \end{proof}
