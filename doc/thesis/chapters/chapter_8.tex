@@ -1,4 +1,29 @@
 \chapter{Conclusions and Future Work}\label{conclusions}
+In this chapter we present the future work that we think it is interesting to address as a result of this work, 
+as well as the conclusions obtained.
+
 \section{Future Work}
+On the first thing that has been out of the scope of this work and it will be tremendously important to address is 
+the selection of better data structures for handling the search in the compress \acrshort{bt} once the query command arrives to the $\ad$.
+We have seen in \autoref{sub:sec:res:e3} how there is a memory bottleneck that is not allowing the execution of even bigger graphs, without 
+paying so much extra cost for that. Performing an indexing over the edges and vertices could lead to important improvements in search, although there
+is a trade of in terms of memory allocation.
+On the other hand and continuing with the same idea, an important work to be addressed in the future as well is the distribution of the stages not only between threads,
+but between machines as well. We believe that ramping up from a multithreading model to a distributed model will allow \acrlong{dp} to reduce the gap of memory consumption
+for bigger instance graphs as well. The same as before, there is a trade of in terms of transfer data and the delay that this kind of distributed computations brings, but 
+since we are delivering incremental results and we implement a \emph{pay-as-you-go} model the gain is bigger; without mentioning that the speed up and reliance in network communication
+is higher than ever.
+
+In other aspect of the computational model and more related with the \acrlong{hs} implementation, there are several improvements to be conducted there as well. One of them could be
+to delegate the distribution to other stream processing system like Kafka~\cite{kafka} for example, and do the parallel processing of the splitted data with \acrshort{hs} consuming from them.
+As well as more radical improvements can be done with \acrshort{dpfh}, there are some improvements that can be done to the framework itself. From more abstraction designed to help the user to write
+pipelines with less effort and errors, to helping the thread schedule and memory management to even perform better than it is, for example unboxing some Boxed types~\cite{hs-unbox} which reduce Memory
+footprint.
+
 \section{Conclusions}
-\section{Chapter Summary}
+\acrfull{dp} has shown to be a quite efficient model for building parallel algorithms for solving complex problem like Enumeration of Bi-triangles in Bi-partite graph.
+We have seen the strong of the paradigm in companion with a powerful language like \acrfull{hs} and the capabilities of combining both to not only implement the concepts
+but also we have empirically shown that can deal with big networks like the \acrlong{dbpedia} which contains more than $300$ millons of bi-triangles.
+In the experimental analysis we have also shown the capabilities to deliver incremental results that this solution offer. 
+In conclusion we believe that the achieve results open a wide range of possibilities not only to improve the existing framework and algorithm, as well as to implement 
+other complex problems where the use case does require a \emph{pay-as-you-go} model.
