@@ -1,5 +1,70 @@
 \chapter{Empirical Evaluation}\label{experiments}
+In this chapter we are going to focus on the analysis of the different experiments that we have conducted
+to respond our research questions that emerged from the motivation of this work. 
+
 \section{Research Questions}
+The fundamental part of this work is focus on incremental enumeration. Although this there are other areas that 
+it is important to explore beyond that: memory consumption, thread scheduling, execution time and query comparison.
+
+In that sense we have asked the following research question that we try to answer with the conducted experiments:
+\begin{inparaenum}[\bf {\bf RQ}1\upshape)]
+\label{res:question}
+    \item Does \acrshort{dpbt} generates incremental results regardless the size of the graph?
+    \item Does the type of query $Q$ impacts on either the execution of \acrshort{dpbt}?
+    \item Does \acrshort{dpbt} follows a \emph{pay-as-you-go} model?
+    \item Does \acrshort{dpbt} handle memory and threads efficiently?
+\end{inparaenum}
+  
 \section{Experiments and Results}
+
+We have conducted different kinds of experiments to test our assumptions and verify the correctness of the implementation.
+First, we have performed a \emph{Deficiency Metrics Analysis}~\cite{diefpaper} in order to asses the incremental capabilities of the solution. 
+Then we have performed a \emph{Benchmark Analysis} to identify how the algorithm varies depending of the type of query command selected for the user.
+Finally, we have executed a \textit{Performance Analysis} in which we have to gather profiling data from \acrfull{ghc} for one of the graphs, 
+to measure how the program performs regarding multithreading and memory allocation.
+
+\subsection{Running Architecture}
+All the experiments have been executed in a $x86$ $64$ bits architecture with a \textit{$6$-Core Intel Core i7} processor of $2,2$ GHz which can emulate up to $12$ virtual cores. 
+This processor has \emph{hyper-threading} enable. Regarding memory, the machine has $32 GB$ \emph{DDR4} of RAM, $256\ KB$ of L2 cache memory, and $9\ MB$ of L3 cache.
+
+\subsection{Haskell Setup}
+Regarding specific libraries and compilations flags used on \acrshort{hs}, we have used \acrshort{ghc} version $8.10.4$. We have also used the following set of libraries: 
+\mintinline{bash}{dyanmic-pipeline 0.3.2.0} \cite{dynamic-pipeline}, \mintinline{bash}{bytestring 0.10.12.0} \cite{bytestring}, \mintinline{bash}{containers 0.6.2.1} \cite{containers}, 
+\mintinline{bash}{relude 1.0.0.1} \cite{relude} and \mintinline{bash}{unagi-chan 0.4.1.3} \cite{unagi}. The use of \texttt{relude} library is because we disabled 
+\mintinline{haskell}{Prelude} from the project with the language extension \mintinline{haskell}{NoImplicitPrelude} \cite{extensions}. Regarding compilation flags 
+(\acrshort{ghc} options) we have compiled our program with \mintinline{bash}{-threaded}, \mintinline{bash}{-O3}, \mintinline{bash}{-rtsopts}, \mintinline{bash}{-with-rtsopts=-N}. 
+Since we have used \texttt{stack} version $2.5.1$ \cite{stack} as a building tool on top of \acrshort{ghc} the compilation command is \mintinline{bash}{stack build}\footnote{For more information about package.yaml or cabal file please check https://github.com/jproyo/upc-miri-tfm/tree/main/bt-graph-dp}.
+
+\subsection{DataSets}\label{data:set}
+
+For all the experiments, we have used the following networks taken from Konect Networks~\cite{konect}. In this particular experiment setup, we have selected the following specific data sets that can be found here \cite{konect:2017:dbpedia-recordlabel,konect:2017:moreno_crime,konect:2017:opsahl-ucforum,konect:2017:wang-amazon}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|p{0.25\linewidth}|c|c|c|c|c|}
+    \hline
+   \textbf{Network} & \textbf{$|U|$} & \textbf{$|L|$} & \textbf{$|E|$} & \textbf{Wedges} & \textbf{\#\acrshort{bt}} \\
+   \hline
+   Dbpedia & 18422 & 168338 & 233286 & $1.45 \times 10^8$ & $3.62 \times 10^8$\\
+   \hline
+   Moreno Crime & 829 & 551 & 1476 & 4816 & 211\\
+   \hline
+   Opsahl UC Forum  & 899 & 522 & 33720 & 174069 & $2.2 \times 10^7$ \\
+   \hline
+   Wang Amazon & 26112 & 799 & 29062 & $3.4 \times 10^6$ & 110269\\
+   \hline
+  \end{tabular}
+ \caption{DataSet of selected \acrlong{bg}}
+ \label{table:exp:data-set}
+ \end{table}
+ 
+The criteria for selecting those networks has followed the idea of first do the analysis over at least one for the big networks~\cite{konect:2017:dbpedia-recordlabel} used on the \acrshort{bt} counting work~\cite{btcount}.
+Then we selected some networks more from the same data source~\cite{konect} with different size and topology.
+
+\subsection{Experiments Definition}\label{sub:exp:exp-def}
+\paragraph{E1: Diefficency Metrics Analysis}\label{sub:sec:exp-1}
+\paragraph{E2: Benchmark Analysis}\label{sub:sec:exp-2}
+\paragraph{E3: Performance Analysis}\label{sub:sec:exp-3}
+
 \section{Chapter Summary}
 
