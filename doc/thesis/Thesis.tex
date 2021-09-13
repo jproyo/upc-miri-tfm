@@ -71,21 +71,22 @@
 }
 
 \abstract{
-A bipartite network is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. For instance, two different sets of objects can be modeled with this, establishing the relationships between them (e.g. a network of drugs and side effects of those drugs). 
-One of the metrics, that reflect accurately if the relationships are strong on particular elements of the sets, is bi-triangles of bipartite graphs. Although it is known that enumerating those bi-triangles is an NP-complete problem,
-having an incremental algorithm that provides incremental results for enumerating bi-triangles that matches specific criteria,
-are extremely useful for real networks and scenarios like expressed before. 
-On the other hand, streaming processing has given rise to new computation paradigms to provide effective and efficient data stream processing.
-The most important features of these new paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, 
+A bipartite network is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. 
+For instance, two different object sets can be modeled with a bipartite graph, establishing the relationships between them (e.g., a network of drugs and side effects of those drugs). 
+One of the metrics that reflect properly if the relationships are strong on particular elements of sets are bitriangles of bipartite graphs. 
+Although it is known that enumerating those bi-triangles is an NP-complete problem, having an algorithm that enumerates bi-triangles incrementally that matches specific criteria, 
+is extremely useful for real networks and scenarios like expressed before. 
+On the other hand, streaming processing has given rise to new computation paradigms processing data effectively.
+The most important features of these paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, 
 reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce incremental results. 
 The Dynamic Pipeline Paradigm (DPP) is a naturally functional approach to deal with stream processing. 
 This fact encourages us to use Haskell, a purely functional programming language, for DPP.  
-In this work, we tackle the problem of assessing the suitability of using (parallel) Haskell to implement a Dynamic Pipeline Framework (DPF). 
+In this work, we validate the suitability of (parallel) Haskell to implement a Dynamic Pipeline Framework (DPF). 
 After that, we show the abstraction and implementation details of the DP Framework written in Haskell and then, 
-we provide an algorithm for enumerating bi-triangles in a bi-partite graph given particular criteria. 
-At the end of the work, we empirically evaluate the implementation against large bipartite networks through a series of experiments and metrics and discuses
-the conclusions that we arrive at based on these experiments' results.
-All these results are novel and cannot be compared with related works since they focused on counting problems and not enumeration.
+we provide an algorithm for enumerating bi-triangles in a bipartite graph given particular criteria. 
+At the end of the work, we empirically evaluate the implementation against large bipartite networks through a series of experiments and metrics.
+We also discuses the conclusions that we arrive at based on these experiments' results.
+All these results are novel and cannot be compared with related works since they focus on counting problems and not enumeration.
 }
 
 \input{chapters/chapter_1.tex}
