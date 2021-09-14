@@ -1,70 +1,75 @@
 \chapter{Preliminaries}\label{prelim}
+Before moving forward with the core of the research, we describe the fundamental concepts that support the different parts of our study. That is Stream Processing in general, Dynamic Pipeline Paradigm and, Streaming Processing in the context of \acrshort{hs}.
+
 \section{Streaming Processing}
-The rise of massive data processing from data mining algorithms, traffic or signal monitoring systems and IoT could have not been 
-achieved without \acrfull{ds}. This kind of algorithms has been studied with different approaches~\cite{enumeratingsg, exploting, onthefly} and as
-it can be seen on those studies, processing large amount of data in an effective manner requires some level of parallelization.
+The rise of massive data processing for data mining algorithms and big data analysis could not have been possible without proper Streaming Processing techniques. 
+\acrfull{ds} has been studied using different approaches~\cite{enumeratingsg, exploiting, onthefly} allowing to process a large amount of data efficiently with an intensive level of parallelization.
 We can distinguished two different parallelization streaming computational models: \acrfull{dap} and \acrfull{pip}. 
 
-\paragraph{\acrlong{dap}} The data is split and processed in parallel and the computations that perform some action over that subset of data, does not have any dependency with other parallel computation. 
-A common model that has been proved successfully over the last decade is \acrfull{mr}~\cite{mapreduce}. Different frameworks or tools like Hadoop~\cite{hadoop}, Spark~\cite{apachespark}, etc, have supported this computational 
-model efficiently. One of main advantage of this kind of model is the ability to implement stateless algorithms where the data can be split without resorting on contextual information. On the other hand
-when there is a need to be aware about the context but without penalizing parallelism each computational step should be fully calculated before proceed with the others.
+\paragraph{\acrfull{dap}} The data is split and processed in parallel and, the computations that perform some action over that subset of data do not have any dependency with other parallel computation. 
+A common model that has been proved successful over the last decade is \acrfull{mr}~\cite{mapreduce}. Different frameworks or tools like Hadoop~\cite{hadoop}, Spark~\cite{apachespark}, etc., support this computational model efficiently. 
+One of the main advantages of this kind of model is the ability to implement stateless algorithms. Data can be split and treated in different threads or processors without the need for contextual information. 
+On the other hand, when there is a need to be aware of the context, parallelization is penalized, each computational step should be fully calculated before proceeding with the others. 
+For example, this is the case of \mintinline{shell}{reduce} operation on many of those frameworks or tools.
 
-\paragraph{\acrlong{pip}} A sequence of parallel computations that are acting over each item of the data stream. Each computation or \emph{pipeline Stage} could potentially
-treat each item of the whole data set and take some decision on it. At the same time it communicates with other stages through some mean, typically channels. One of the main advantage of this model is the non-blocking processing
-when contextual dependency between computations are needed, i.e. there is no need to wait to process all data to run the next computation. This enables incremental computational algorithms where the user does not need to 
-wait until the end of the whole data stream processing to get a result. On the other hand, disadvantage over \acrshort{dap} is that although pipeline stages are parallelized, 
-some intensive computation might delay processing next step of the pipeline because of its stream nature. 
+\paragraph{\acrfull{pip}} It break the computation in a series of sequential stage, where each stage takes the result of the previous stage as an input and downstream its results to the next. 
+Each \emph{pipeline Stage} is parallelized and, it could potentially exist one stage per data item of the stream. 
+The communication between stages takes place through some means, typically channels. One of the main advantages of this model is that the stages are non-blocking, meaning that there is no need to wait to process all data to run the next stage. 
+This kind of paradigm enables incremental computational algorithms, preventing the user waits until the end of the whole data stream processing to get a result. 
+On the other hand, the disadvantage over \acrshort{dap} is that although pipeline stages are parallelized, 
+some intensive computation in one stage might delay processing the next stage because of its sequential dependency nature. Therefore, the user must be sure each stage runs extremely fast computations on it.
 
-Due to the nature of our problem where we need to incrementally generate \acrlong{bt} and the data needs to be aware of the context to compute those \acrshort{bt}, the stream processing model of our choice is \acrshort{pip}.
-We are going to see in the next section what is the specific \acrshort{pip} model of computation used for that purpose.
+Due to the nature of our problem where we need to incrementally generate \acrlong{bt}s and the data needs to be aware of the context to compute those \acrshort{bt}, the stream processing model of our choice is \acrshort{pip}.
+We are going to see in the next section what is the specific \acrshort{pip} computation model used for that purpose.
 
 \section{Dynamic Pipeline Paradigm}\label{sec:dp}
-The \textit{Dynamic Pipeline Paradigm} (DPP) \cite{dpdef} is a data-driven computational model  based on a one-dimensional and unidirectional chain of stages connected by means of channels synchronized by data availability. 
+The \textit{Dynamic Pipeline Paradigm} (DPP) \cite{dpdef} is a \acrshort{pip} computational model based on a one-dimensional and unidirectional chain of stages connected by means of channels synchronized by data availability. 
 This chain of stages is a computational structure called \textit{Dynamic Pipeline} ($\DP$). A $\DP$ stretches and shrinks depending on the spawning and the lifetime of its stages, respectively. Modeling an algorithmic 
-solution as a $\DP$ corresponds to define a dynamic computational structure  in terms of four kinds of stages:  \textit{Source} ($\iwcc$),  \textit{Generator} ($\gwcc$),  \textit{Sink} ($\owcc$) and \textit{Filter} ($\fwcc$) stages. 
-To be concrete, the specific  behaviour of each stage to solve a particular problem must be defined as well as the number and the type of the I/O channels connecting them. Channels are unidirectional according to the flow of the data. 
-The \textit{Generator} stage is in charge of spawning \textit{Filter} stage instances. This particular behavior of the \textit{Generator}  gives the elastic capacity to DPs. \textit{Filter} stage instances are stateful operators in the 
+solution as a $\DP$ corresponds to define a dynamic computational structure in terms of four kinds of stages: \textit{Source} ($\iwcc$), \textit{Generator} ($\gwcc$), \textit{Sink} ($\owcc$) and \textit{Filter} ($\fwcc$) stages. 
+In particular, the specific behavior of each stage to solve a particular problem must be defined as well as the number and the type of channels connecting them. Channels are unidirectional according to the flow of the data. 
+The \textit{Generator} stage is in charge of spawning \textit{Filter} stage instances. This particular behavior of the \textit{Generator} gives the elastic capacity to DPs. \textit{Filter} stage instances are stateful operators in the 
 sense described in \cite{HR19}. This is, \textit{Filter} instances have a state.  
-The deployment of a $\DP$ consists in setting up the initial configuration depicted in \autoref{fig:initialDP}. The activation of a $\DP$ starts when a stream of data items arrives to the initial configuration of the $\DP$. 
-In particular, when a stream data items arrives to the \textit{Source} stage. During the execution, the  \textit{Generator} stage spawns \textit{Filter} stage instances according to incoming data and the \textit{Generator} defined behavior. 
-This evolution is illustrated in  \autoref{fig:activeDP}. If the stream  data is bounded, the computation finish when the lifetime of all the stages of the active $\DP$ have finished. Otherwise, if the stream data is unbounded, 
+The deployment of a $\DP$ consists in setting up the initial configuration depicted in \autoref{fig:initialDP}. 
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+\inputtikz{genericDP-Initial}
+\end{center}
+\caption{Initial configuration of a Dynamic Pipeline. An initial DP consists of three stages: $\iwcc$, $\gwcc$ together its filter parameter $\fwcc$, and $\owcc$. These stages are connected through its channels --represented by right arrows-- as shown in this figure.}
+\label{fig:initialDP}
+\end{wrapfigure}
+The activation of a $\DP$ starts when a stream of data items arrives at the initial configuration of the $\DP$. 
+In particular, when a data stream arrives to the \textit{Source} stage. During the execution, the \textit{Generator} stage spawns \textit{Filter} stage instances according to incoming data and the \textit{Generator} defined behavior. 
+This evolution is illustrated in  \autoref{fig:activeDP}. 
+If the data stream is bounded, the computation finishes when the lifetime of all the stages of $\DP$ has finished. Otherwise, if the stream data is unbounded, 
 the $\DP$ remains active and incremental results are output. 
 
+
 \begin{figure}[h]
-  \begin{subfigure}[b]{0.5\textwidth}
-   \centering  
-\inputtikz{genericDP-Initial}
-\caption{Initial configuration of a Dynamic Pipeline.  An initial DP consists of three stages: $\iwcc$, $\gwcc$ together its filter parameter $\fwcc$, and $\owcc$. These stages are connected through its channels --represented by right arrows-- as shown in this figure.}
-\label{fig:initialDP}
-\end{subfigure}
-\hspace{0.3cm}
-\begin{subfigure}[b]{0.5\textwidth}
  \centering
  \inputtikz{genericDP-Evol}
  \caption{Evolution of a DP. After creating some filter instances (shadow Filter squares) of the filter parameter (light Filter square) in the Generator, the DP has stretched.}
 \label{fig:activeDP}
-\end{subfigure}
-\caption{Dynamic Pipeline configuration}
 \end{figure}
 
 
-\section{Streaming and Haskell Language}
-Streaming computational models have been implemented in \acrfull{hs} during the last 10 years with the first version of \mintinline{shell}{conduit}~\cite{conduit} library.
-After this one several efforts on improving streaming processing on the language has been made not only at abstraction level for the user but as well as performance execution 
+\section{Streaming in Haskell Language}
+Streaming computational models have been implemented in \acrfull{hs} during the last $10$ years. One of the first libraries in the ecosystem was \mintinline{shell}{conduit}~\cite{conduit} in 2011.
+After that, several efforts on improving streaming processing on the language has been made not only at abstraction level for the user but as well as performance execution 
 improvements like \mintinline{shell}{pipes}~\cite{pipes} and \mintinline{shell}{streamly}~\cite{streamly} lately.
-Following that, there has also been studied, from an empirical aspect, how well those libraries perform and benchmark comparison between them has been conducted~\cite{benchstreamhs}.
+Moreover, there is an empirical comparison between those three, where a benchmark analysis has been conducted~\cite{benchstreamhs}.
 
-Althougth most of them offers the ability to implement both streaming model that we have discussed previously, none of them offer clear abstractions to create dynamic pipelining models, and
-the setup of the stages should be provided before hand. In the scope of this research we have conducted some proof of concept at the beginning and in the context of the contribution done, 
-but it was not possible to adapt those to \acrshort{dp}. The closest approach to this was using \mintinline{shell}{streamly} where \mintinline{haskell}{foldrS} combinator
-could have been served to the purpose of generate a dynamic pipeline of stages based on the data flow, but it was not possible to manipulate the channels between the stages to control the flow 
-of the data, although the library implements Channels but it is hide for the end user of it.
+Although most of those libraries offer the ability to implement \acrshort{dap} and \acrshort{pip}, none of them provide clear abstractions to create \acrshort{dp} models because
+the setup of the stages should be provided beforehand. In the context of this work, we have done a proof of concept at the beginning, 
+but it was not possible to adapt any of those libraries to implement properly \acrshort{dp}. 
+The closest we have been to implement \acrshort{dp} with some of those libraries was when we explored \mintinline{shell}{streamly}.
+In that case, there is a \mintinline{haskell}{foldrS} combinator that could have been proper to the purpose of generating a dynamic pipeline of stages based on the data flow, but it was not possible to manipulate the channels between the stages to control the flow of the data. 
+In spite of this, it is important to remark that the library implements Channels, but it is hidden from the end-user and, there is no clear way to manipulate them.
 
-No similar library with \acrshort{dp} approach up to the moment has been written in \acrlong{hs} and that was a trigger to write our Framework as a one of novelty of this work as well as a contribution
-with Haskell community to facilitate the implementation of algorithms using \acrshort{dp} for those who need it.
+No similar library with \acrshort{dp} approach has been written at the moment of this research in \acrlong{hs}. 
+This was another important motivation to write our own Framework, not only because we wanted to solve our research needs but, as a novel contribution, we wanted to deliver a \acrshort{dpf} to the \acrshort{hs} community as well, in order to help writing algorithms using \acrshort{dp}. 
+This was a novel contribution novelty of this work as well as a contribution
 
 \section{Chapter Summary}
-In this chapter we have summarized all the \emph{preliminary work} that has been done on the related areas that affects our research objective.
-First we have shown the different Streaming processing computational models, then we have describe the \acrshort{dp} as we know it now and that is used 
-as the core paradigm to solve our problem. Finally, we have explored what is the preliminary work on that aspect at this moment in \acrshort{hs}. 
+In this chapter, we have summarized all the \emph{preliminary work} that has been done on the related areas that affect our research objective.
+First, we have shown the different Streaming processing computational models. Then we have described the \acrshort{dp} as we know it now. 
+Finally, we have explored what is the preliminary work on that aspect at this moment in \acrshort{hs} regarding Stream processing. 
