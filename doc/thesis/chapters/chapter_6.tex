@@ -1,11 +1,12 @@
 \chapter{An Incremental algorithm to enumerate Bi-Triangles using DP}\label{incr-algo-bt-dp}
-In this chapter we describe first the overall idea of the algorithm for incrementally enumerate 
-\acrshort{bt} with some example and after that we formalize the pseudo-code that we design for implementing
-the algorithm as long as the proof correctness and the implementation using the \acrshort{dpfh}.  
+In this chapter, we first describe the overall idea of the algorithm for incrementally enumerate 
+\acrshort{bt}. After that, we formalize the algorithms in pseudo-code format that we design for the implementation.
+Athe the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
 
 \section{Preliminaries Definitions}
-The algorithm focused on some novel elements definitions that we provide and use for enumerate \acrshort{bt} using \acrshort{dp}.
-First let start with some previous basic definition that are already defined in previous work~\cite{btcount}.
+In order to understand how the algorithm works, we need to provide some basic definitions that are already exposed in previous work~\cite{btcount}, and
+at the same time, we define other novel definitions that we use for giving a solution to the problem.
+Let's enumerate all those definitions in the following paragraphs.
 
 \begin{definition}[\acrfull{wg}]
 Let $G=((U\cup L),E)$ be a bipartite graph. A  \textit{wedge} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
@@ -34,7 +35,7 @@ Let $G=((U\cup L),E)$ be a bipartite graph and  $\hat{U}_t=\{\la I, J, K\ra | I 
 where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\mu=(u_i, u_j, u_k)$ such that $I \cup J \cup K \subseteq U$, $u_i \in I, u_j \in J, u_k \in K$ and $u_i \neq u_j \neq u_k$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
 
-Some examples of the previous definitions can be found in the following images.
+Some examples of those definitions can be found in the following images.
 
 \begin{figure}[htp!]
 \begin{subfigure}[b]{0.3\textwidth}
@@ -144,19 +145,19 @@ An \textit{filter state} of DP is a sum type $\st = \la l, W_l \ra + \dwi + \ati
 \end{figure}
 
 \paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from some input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfer to the following stage each $(u,l)$ using $OC_E$.
-For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. These four functions builds incrementally all the object definitions exposed before. 
-First $\aaa$ will received from $IC_E$ all the rest of the edges of the original $G$ and tries to build \acrshort{awg} and downstream to $\fbt$ using $OC_{W1}$. 
+For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. These four functions build incrementally all the object definitions exposed before. 
+First, $\aaa$ receives from $IC_E$ all the rest of the edges of the original $G$ and tries to build \acrshort{awg} and downstream to $\fbt$ using $OC_{W1}$. 
 Then $\ab$ receives from $IC_{W1}$ aggregated wedges from previous $\fbt$, downstream to next $\fbt$ and $\gbt$ using $OC_{W1}$ and at the same time use its information to see 
 if it can build \acrshort{adwg}. If it can, it will store in its $\st$ those $dw \in \dw$.
 
-In $\ab$ we have exposed that it downstream the \acrshort{awg} to  $\fbt$ and $\gbt$. This is because we need to retro feed all the pipeline with all the \acrshort{awg}, in order to find 
-\acrshort{awgc} as we defined in \dref{def:awgc}.
-Having said that, $\ac$ receives all the \acrshort{awg} again but in a different channel $IC_{W2}$ and builds \acrshort{abt} and store them in $\st$. If there is a match, 
-$\ad$ will enumerate those \acrshort{bt} extracted from $\st$ and downstream to $\obt$ through $OC_{BT}$.
+$\ab$ downstream the \acrshort{awg} to  $\fbt$ and $\gbt$. This is because we need to retro feed all the pipeline with all the \acrshort{awg}, in order to find \acrshort{awgc} as we defined in \dref{def:awgc}.
+From retro feeding channel $IC_{W2}$, $\ac$ receives all the \acrshort{awg} again and builds \acrshort{abt} storing them in $\st$. 
+$Q$ Commands are downstream from $\ibt$ to $\ad$ using channel $IC_Q$. $\ad$ receives all the commands, and for each of them, if there is match according to \dref{def:query:match}, it enumerates those \acrshort{bt} extracted from $\st$ and downstream to $\obt$ through $OC_{BT}$.
 
 \subsection{Dynamic Pipeline for Enumerating Bi-triangles}
-In this section we present all the algorithms pseudo-code definitions of each of the stages described previously in ~\autoref{sub:sec:algo-sketch}. These algorithms are  independent of the language or technology used for implementing \acrshort{dp}.
-Before start with the details, we introduce in \autoref{table:aux:fn} auxiliary functions that are language specific, therefore there are only listed and not detailed.
+In this section, we present all the pseudo-code definitions of each of the stages described previously in ~\autoref{sub:sec:algo-sketch}. 
+In spite of this work has been implemented using \acrshort{hs}, and in particular \acrshort{dpfh}, the pseudo-code algorithms presented here are language independent.
+Before starting with the details, we introduce in \autoref{table:aux:fn} auxiliary functions that are language-specific, and therefore there are only listed and not detailed.
 
 \begin{table}[!htp]
 \centering
@@ -198,9 +199,9 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \label{algo:source}
 \end{algorithm}
 
-\paragraph{Source $\ibt$} In \autoref{algo:source} we can see in \autoref{algo:source:1} how edges input stream of the graph are downstream to the pipeline. 
-Another important part as well is \autoref{algo:source:2}, the $\ibt$ is retro feed with \acrshort{awg} stream that are generated during pipeline execution.
-This is important to finally build the \acrshort{bt} as we have describe in \autoref{sub:sec:algo-sketch}. Finally \autoref{algo:source:3} shows how all the query are downstream as well.
+\paragraph{Source $\ibt$} In \autoref{algo:source} we can see in \autoref{algo:source:1} how the edges arriving from the input stream of the graph, are downstream to the pipeline. 
+Another important part as well is \autoref{algo:source:2}, the $\ibt$ is retro feed with \acrshort{awg} stream that is generated during pipeline execution.
+This is important to finally build the \acrshort{bt} as we have describe in \autoref{sub:sec:algo-sketch}. Finally, \autoref{algo:source:3} shows how all the queries are downstream as well.
 
 \begin{algorithm}
 \SetKwInOut{P}{Filter Template}
@@ -232,12 +233,12 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \end{figure}
 
 \paragraph{Generator $\gbt$} $\gbt$ also have three main loops. In \autoref{algo:gen:1} it receives each edge $(u,l)$ and 
-spawn a new $\fbt$ using $l \in L$ as filter parameter and initializing $\st = \la l, \{u\} \ra$ as it can be seen in \autoref{fig:btDP_actor1$}. 
+spawn a new $\fbt$ using $l \in L$ as filter parameter and initializing $\st = \la l, \{u\} \ra$ as it can be seen in \autoref{fig:btDP_actor1}. 
 Spawn assumes that the implementation will connect the channels to keep the downstream correct: Connect all the input channels
 of $\gbt$ to send data to new $\fbt$ and connects all the output channels of this new spawn instance to send data to $\gbt$.
-In \autoref{algo:gen:2} it is receiving and retro feeding $\ibt$ with all the \acrshort{awg}. This also assume that $OC_{W2}$ in $\gbt$ 
+In \autoref{algo:gen:2} we can see how the algorithm is receiving and retro feeding $\ibt$ with all the \acrshort{awg}. This also assumes that $OC_{W2}$ in $\gbt$ 
 is connected with $IC_{W2}$ in $\ibt$.
-Finally \autoref{algo:gen:3} sends all the results that $Q$ matches in different filter to $\obt$.
+Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the different filters to $\obt$.
 
 \begin{algorithm}
 \SetKwInOut{IC}{Input Channels}
@@ -253,7 +254,7 @@ Finally \autoref{algo:gen:3} sends all the results that $Q$ matches in different
 \label{algo:sink}
 \end{algorithm}
 
-\paragraph{Sink $\obt$} In \autoref{algo:sink} shows a simple stage which receives all results and send to some output handler (file, standard output, etc). 
+\paragraph{Sink $\obt$} In \autoref{algo:sink} shows a simple stage that receives all results and sends them to some output handler (file, standard output, etc.). 
 
 \begin{algorithm}
 \SetKwInOut{P}{Parameter}
@@ -337,8 +338,8 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \paragraph{Filter $\ab$} In \autoref{algo:act-2} \acrshort{adwg} is built. Following that idea and according to the \dref{def:adwg}, this algorithm will collect all the \acrshort{awg} 
 from previous filters if an only if the condition in \autoref{algo:act-2:1} is met. The first check on $l$ and $l'$ would be avoided because by \acrshort{dp} nature
 only one filter instance is responsible of collecting \acrshort{awg} of its $l$. $W_l$ intersection check is mandatory since if \acrshort{awg} are disjoint, we cannot aggregate them.
-After this checking from \autoref{algo:act-2:2} to \autoref{algo:act-2:3}, the algorithm is buildint three disjoint set to separated upper edges in three subsets; those which are incident only of 
-$l$ and $l'$ which are $I$ and $K$ and those that are share by both lower layer vertex. This can be appreciated in \autoref{fig:agg-double-wedge-example}.
+After this checking from \autoref{algo:act-2:2} to \autoref{algo:act-2:3}, the algorithm is building three disjoint Sets to separate upper edges in three subsets; those which are incident only of 
+$l$ and $l'$ which are $I$ and $K$ and those that are shared by both lower layer vertex. This can be appreciated in \autoref{fig:agg-double-wedge-example}.
 Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$.
 
 \begin{algorithm}
@@ -441,8 +442,8 @@ $\ati \leftarrow \gs$\\
 \label{algo:act-4}
 \end{algorithm}
 
-\paragraph{Filter $\ad$} Once the filter reaches this actor it is ready for processing commands $Q$. Since we have a compress representation of \acrshort{bt}, which is a similar idea exposed here~\cite{Lai}, if a command $Q$ arrives in order 
-to enumerate incrementally \acrshort{bt} that matches the command we need to build them on deman with the format used on \dref{def:bt}
+\paragraph{Filter $\ad$} Once the execution reaches $\ad$, it is ready for processing $Q$ commands. Since we have a compress representation of \acrshort{bt}, which is a similar idea exposed here~\cite{Lai}, if a command $Q$ arrives in order 
+to enumerate incrementally \acrshort{bt} that matches the command, we need to build them on demand with the format used on \dref{def:bt}.
 
 The following pseudo-code definitions on \autoref{algo:buildBtVertex} and \autoref{algo:buildBtEdge} are auxiliary functions that are called
 from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
@@ -518,8 +519,9 @@ from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
 \end{algorithm}
 
 \clearpage
-\section{Complexity Analysis of the Algorithm}
-We are going to conduct the complexity analysis of the algorithm focusing on each, stage and taking filter with all its actor as a single stage.
+\section{Complexity Analysis of Algorithm}
+We are going to conduct the complexity analysis of the algorithm focusing on each stage. 
+$\fbt$ stage is going to be analyzed with all its actor as a single stage.
 
 \begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
 The size of all possible aggregated wedges is upper bound by $|L|$.
@@ -532,7 +534,7 @@ Obvious by \dref{def:awg} since at most each $l \in L$ is participating on a wed
 The total complexity of $\ibt$ algorithm in worst-case is $O(|E|)$.
 \end{proposition}
 \begin{proof}
-In the case of this stage we have three loops. The first one in the number of edges of the graph $|E|$, the second in the number 
+In the case of this stage we have three loops. The first one is the number of edges of the graph $|E|$, the second in the number 
 of possible \acrshort{awg} which is $|L|$ because of \autoref{theorem:awg}.
 And the last is the amount of $Q$, then worst-case complexity is $O(|E| + |L| + |Q|)$.
 Since $|L| \leq |E|$ by \dref{def:bt} and $|Q| << |E|$ because otherwise the user will be able to manually inspect the whole graph and we are in a \emph{pay-as-you-go} model
@@ -544,9 +546,9 @@ Therefore, $O(|E|)$
 The total complexity of $\gbt$ algorithm in worst-case is $O(|E| + |\bt|)$.
 \end{proposition}
 \begin{proof}
-Generator could receive potential all edges, then there is a worst case cost of $|E|$.
+$\gbt$ could receive potentially all edges, then there is a worst case cost of $|E|$.
 After that it will receive all $|L|$ worst case, as we have seen in \autoref{theorem:awg}.
-Finally will receive all possible $\bti \subseteq \bt$. Then worst-case complexity is $O(|E| + |\bt| + |L|)$.
+Finally, it will receive all possible $\bti \subseteq \bt$. Then worst-case complexity is $O(|E| + |\bt| + |L|)$.
 For same reason in \pref{prop:comp-src} $|L|$ can be discarded, therefore complexity is $O(|E| + |\bt|)$.
 \end{proof}
 
@@ -561,10 +563,10 @@ Obvious by definition of \autoref{algo:sink}.
 The total complexity of $\fbt$ algorithm in worst-case is $O(\binom{|L|}{2} \times 3|U| + \binom{|V|}{6})$.
 \end{proposition}
 \begin{proof}
-Since actors in filters are executed sequentially we have that complexity of $\aaa$ is $O(|E|)$ by \dref{algo:act-1}.
-Then for $\ab$ complexity is $O(3|U|)$ because of intersection and diference operation on Set inside the loop is $O(m+n)$ each. Since $|U| = m = n$ worst case, then the cost of each loop is $O(3|U|)$.  
-The complexity of $\ac$ is $O(\binom{|L|}{2} \times 3|U|)$ and it is a little more complex to analize. For building all possible $\dw$ 
-we need all possible combinations of $|L|$ taken by $2$ in worst case, times the complexity of build for each case the three set of indicents edges.
+Since actors in filters are executed sequentially, the complexity of $\aaa$ is $O(|E|)$ by \dref{algo:act-1}.
+Then for $\ab$ complexity is $O(3|U|)$ because of intersection and difference operation on Set inside the loop is $O(m+n)$ each. 
+Since $|U| = m = n$ worst case, then the cost of each loop is $O(3|U|)$.  
+The complexity of $\ac$ is $O(\binom{|L|}{2} \times 3|U|)$. For building all possible $\dw$ we need all possible combinations of $|L|$ taken by $2$ worst case, times the complexity of building for each case the three sets of incident edges.
 Finally for building all possible $\bt$ in $\ad$ worst case is $O(\binom{|V|}{6})$.
 \end{proof}
       
@@ -574,16 +576,15 @@ Finally for building all possible $\bt$ in $\ad$ worst case is $O(\binom{|V|}{6}
 
 A bi-triangle can be described as a sequence $(C,a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U\footnote{In the enumeration, L and $U$ be interchanged}$
 
-We need to prove that the algorithm can enumerate all   bi-triangle in the graph and also that there are not duplicates in the enumeration.
+We need to prove that the algorithm can enumerate all bi-triangle in the graph and also that there are no duplicates in the enumeration.
 
 \begin{quote}
 Very recently, Qiao
 et al. proposed CrystalJoin~\cite{Lai} that aims at resolving the
-output crisis by compressing the.
+output crisis by compressing them.
 \end{quote}
 
 We use the same technique, compressing a group of bi-triangles as $(a,b,c,(I,J,K))$ ($\aw$). 
-
  
 
 First we are going to prove that if we take all the triples $(a,b,c)$  such $a<b$ and $b<c$  and   $\la (a, b,c), \hat{U}_t \ra$ is an aggregate  bi-triangle, then it is not stored twice (theorem \ref{TH-unicity}).  We will show that we  store all the aggregate bi-triangles  where $A,B,C$  are distinct and $A$ is incident to $a$ and $b$, $B$is incident to $a$ and $c$ and $C$ is incident to $b$ and $C$ (theorem \ref{TH-all}). 
@@ -659,8 +660,8 @@ type DPBT = Source (Channel (Edge :<+> W :<+> Q :<+> BT :<+> BTResult :<+> W :<+
 In \autoref{src:dpbt:1} can be appreciated the use of retro feed channel in the highlighted line. 
 Automatically \acrshort{dpbt} is going to connect this with the $\ibt$.
 
-$\ibt, \obt, gbt$ are not going to be cover because they are straightforward to follow from the code. 
-The main part of the algorithmic complexity as we have seen in the pseudo-code relies on actors filter.
+$\ibt, \obt, gbt$ are not going to be covered because they are straightforward to follow from the code. 
+The main part of the algorithmic complexity, as we have seen in the pseudo-code, relies on actor filter.
 
 \begin{listing}[H]
 \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={16,21}]{haskell}
@@ -694,7 +695,7 @@ actor1 (_, l) redges _ _ _ _ _ we ww1 _ _ _ _ = do
 \end{listing}
 
 In \autoref{src:dpbt:2} $\aaa$ source code can be appreciated. Since all the actors are inside the same filter context, all of them has access to read and write
-channels of all the filters. That explain the number of parameters which is generated by the \acrshort{idl}.
+channels of all the filters. That explains the number of parameters which is generated by the \acrshort{idl}.
 The first highlighted line is the catamorphism (\mintinline{haskell}{foldM_}) of the $IC_E$ channel. 
 
 \begin{listing}[H]
@@ -838,10 +839,8 @@ of the final \acrshort{bt} to be downstream to the $\obt$. We are ommiting here 
 and \mintinline{haskell}{filterBTByVertex}.
 
 \section{Chapter Summary}
-This chapter presents the details of the \acrshort{dpbt} algorithm. In the first part of the chapter we introduce the algorithm in a succinct manner.
-Then, we describe each of the pseudo-code definitions of each component of the algorithm. After that we present a complexity analysis and a correctness proof.
-At the end of the chapter we show how we implement this using \acrshort{dpfh} explain in \autoref{dp-hs}.
-In the following highlighted line it is the update of the state if we can gather $W_l$ for that $l$.
-
-
+This chapter presents the details of the \acrshort{dpbt} algorithm. In the first part, we have introduced the sketch of the algorithm.
+Then, we have described each of the pseudo-code definitions of each component: $\ibt, \gbt, \fbt, \obt$ and actors. 
+After that, we have presented a complexity analysis and correctness proof of the pseudo-code algorithm.
+At the end of the chapter, we have shown how we implemented this using \acrshort{dpfh} explain in \autoref{dp-hs}.
 
