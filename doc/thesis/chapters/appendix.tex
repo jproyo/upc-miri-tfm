@@ -1,4 +1,53 @@
 \chapter{Appendix}
+\section{Source Code}
+All the source code of this research project can be found in \url{https://github.com/jproyo/upc-miri-tfm}, and it is publicly available for download.
+In that source code there are three folders:
+
+\begin{itemize}
+  \item \textbf{connected-comp}: This contains the \acrshort{hs} source code done for the \autoref{prole} contribution related to \acrfull{wcc} using \acrshort{dp}.
+  \item \textbf{bt-graph-dp}: This contains the \acrshort{hs} source code done for the especific problem of this work which is incremental enumeration of \acrlong{bt} in \acrlong{bg}.
+  \item \textbf{doc}: Contains this document in LaTex format as well as \acrshort{prole21} presentation and paper.
+\end{itemize}
+
+\section{Running Experiments}
+In order to run the experiments just do the following in each case.
+
+\begin{itemize}
+  \item \textbf{Experiment 1} Building the structure from scratch with different sizes.
+
+\begin{minted}{bash}
+stack build
+stack exec raz experiment-1
+\end{minted}
+
+\setlength{\rightskip}{0pt plus 1 fil}
+This is going to left the results in CSV file format under \mintinline{bash}{output/result_exp1_UNIX_TIME_IN_MILLIS.csv}.
+
+
+  \item \textbf{Experiment 2} Insert 1 million elements maintaining the same structure until reach 100 Millions elements.
+
+\begin{minted}{bash}
+stack build
+stack exec raz experiment-2
+\end{minted}
+
+\setlength{\rightskip}{0pt plus 1 fil}
+This is going to left the results in CSV file format under \mintinline{bash}{output/result_exp2_UNIX_TIME_IN_MILLIS.csv}.
+
+  \item \textbf{Benchmark} Benchmark general execution time for each combinator \mintinline{haskell}{insert},  \mintinline{haskell}{alter}, \mintinline{haskell}{remove}, \mintinline{haskell}{move}, \mintinline{haskell}{focus}, \mintinline{haskell}{unfocus}.
+
+\begin{minted}{bash}
+stack build
+stack exec raz bench
+\end{minted}
+
+\setlength{\rightskip}{0pt plus 1 fil}
+This is going to left an HTML report with the benchmark results in \mintinline{bash}{output/report_benchmark_UNIX_TIME_IN_MILLIS.html}.
+
+
+\end{itemize}
+
+
 \section{Experiments}
 \subsection{Benchmark Analysis}\label{app:exp:bench}
 \begin{longtable}{|l|c|c|}
