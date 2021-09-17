@@ -10,43 +10,46 @@ In that source code there are three folders:
 \end{itemize}
 
 \section{Running Experiments}
-In order to run the experiments just do the following in each case.
+All the scripts and data for running the experiments are under \mintinline{shell}{bt-graph-dp/experiments} folder.
+It is important to mention that we are not including in the source code distribution the networks itself, because you can search them on Konect~\cite{konect} by the reference in this work.
+We are going to describe how to run the different experiments exposed on \autoref{experiments}. 
 
-\begin{itemize}
-  \item \textbf{Experiment 1} Building the structure from scratch with different sizes.
-
-\begin{minted}{bash}
-stack build
-stack exec raz experiment-1
+\paragraph{E1} In this case we have different experiments setups and we are going to describe how to run one case only.
+For example for running the experiment setup $E-H$ on \acrshort{dbpedia} graph, assuming that you download the graph and call the file as 
+\mintinline{shell}{input.txt} and it is inside of folder \mintinline{shell}{bt-graph-dp/experiments/diepfy/dbpedia}.
+\begin{minted}[breaklines]{bash}
+>>> cd bt-graph-dp
+>>> stack build
+>>> stack exec bt-graph-dp -- +RTS -A1G -H1G -N6 -c -RTS -f ./experiments/diepfy/dbpedia/input.txt -c ./experiments/diepfy/dbpedia/c-edge-high.txt -e dbpedia
 \end{minted}
 
-\setlength{\rightskip}{0pt plus 1 fil}
-This is going to left the results in CSV file format under \mintinline{bash}{output/result_exp1_UNIX_TIME_IN_MILLIS.csv}.
 
-
-  \item \textbf{Experiment 2} Insert 1 million elements maintaining the same structure until reach 100 Millions elements.
-
+\paragraph{E2} In the case of benchmark analysis it is simple the following command
 \begin{minted}{bash}
-stack build
-stack exec raz experiment-2
+  >>> cd bt-graph-dp
+  >>> stack build
+  >>> stack exec benchmark
+  \end{minted}
+
+\setlength{\rightskip}{0pt plus 1 fil}
+This is going to left the results in HTML file format under \mintinline{bash}{benchmark}.
+
+
+\paragraph{E3} In the case of Memory and Thead Measurement you need to enable profiling flags.
+
+For Memory
+\begin{minted}[breaklines]{bash}
+>>> cd bt-graph-dp
+>>> stack build --profile
+>>> stack exec bt-graph-dp -- +RTS -A10G -H10G -c -N12 -hy -l-agu -RTS -f ./experiments/diepfy/moreno_crime/input.txt -c ./experiments/diepfy/moreno_crime/c-edge-high.txt -e moreno_crime
 \end{minted}
 
-\setlength{\rightskip}{0pt plus 1 fil}
-This is going to left the results in CSV file format under \mintinline{bash}{output/result_exp2_UNIX_TIME_IN_MILLIS.csv}.
-
-  \item \textbf{Benchmark} Benchmark general execution time for each combinator \mintinline{haskell}{insert},  \mintinline{haskell}{alter}, \mintinline{haskell}{remove}, \mintinline{haskell}{move}, \mintinline{haskell}{focus}, \mintinline{haskell}{unfocus}.
-
-\begin{minted}{bash}
-stack build
-stack exec raz bench
+For ThreadScope
+\begin{minted}[breaklines]{bash}
+>>> cd bt-graph-dp
+>>> stack build --profile
+>>> stack exec bt-graph-dp -- +RTS -A10G -H10G -c -N12 -l -s -RTS -f ./experiments/diepfy/moreno_crime/input.txt -c ./experiments/diepfy/moreno_crime/c-edge-high.txt -e moreno_crime
 \end{minted}
-
-\setlength{\rightskip}{0pt plus 1 fil}
-This is going to left an HTML report with the benchmark results in \mintinline{bash}{output/report_benchmark_UNIX_TIME_IN_MILLIS.html}.
-
-
-\end{itemize}
-
 
 \section{Experiments}
 \subsection{Benchmark Analysis}\label{app:exp:bench}
