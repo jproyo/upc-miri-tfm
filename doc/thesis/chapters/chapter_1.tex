@@ -68,7 +68,7 @@ Following that, we provide the formal definition of \acrshort{iebt} using \acrsh
 Finally, we provide correctness proof of the algorithm plus the implementation using the \acrshort{dpf} in \acrshort{hs}, that we call \acrfull{dpbt}.
 
 \section{Contribution}\label{sec:contrib}
-The main contribution of this work was to implement, formalize and empirically evaluate a novelty \acrlong{iebt} using \acrlong{dp} written in \acrshort{hs}.
+The main contribution of this work was to implement, formalize and empirically evaluate a \acrlong{iebt} using \acrlong{dp} written in \acrshort{hs}.
 We believe that this implementation is a step forward in the field, and we think our approach opens new research lines and improvements to be addressed in the future. 
 
 In order to assess the feasibility of \acrshort{dp} implemented in \acrshort{hs}, we made a proof of concept solving \acrfull{wcc} problem of a Graph 
@@ -79,6 +79,13 @@ Finally, and as a result of the proof of concept work, was the development and p
 The framework was published on \acrfull{hack}~\cite{hackage} on 2021 June 17th in its first version,
 providing to \acrshort{hs} community the ability to build algorithms using \acrshort{dp}. This is a novel contribution since it is the first library published on \acrshort{hs}
 that implements \acrshort{dp}.
+
+To summarize, our contributions are:
+\begin{itemize}
+  \item We implement, formalize and empirically evaluate an \acrlong{iebt} using \acrlong{dp}.
+  \item We conduct a proof of concept to evaluate the use of \acrlong{hs} as an implementation language for \acrlong{dp} solving the \acrlong{wcc} problem.
+  \item We develop a \acrshort{hs} framework to implement any algorithm using \acrlong{dp}.
+\end{itemize}
 
 \section{Document Overview}
 This document is organized as follows. In \autoref{prelim} we present and describe all the previous work that has been done on the related fields of Streaming Processing, Dynamic Pipeline Paradigm, and Streaming processing related to \acrshort{hs}. 
