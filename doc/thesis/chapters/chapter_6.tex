@@ -56,23 +56,22 @@ Some examples of those definitions can be found in the following images.
 \caption{Double Wedge}
 \label{fig:double-wedge-example}
 \end{subfigure}
+\caption[Definitions Examples: \acrshort{wg}, \acrshort{awg} and \acrshort{dwg}]{Definitions Examples: \acrshort{wg}, \acrshort{awg} and \acrshort{dwg}}
 \end{figure}
 
 
 \begin{figure}[htp!]
 \centering
 \inputtikz{basic_def_1}
-\caption{Aggregated double-wedge}
+\caption[Example Aggregated double-wedge]{Example Aggregated double-wedge}
 \label{fig:agg-double-wedge-example}
 \end{figure}
 
 \begin{figure}[htp!]
-\begin{subfigure}[b]{1\textwidth}
 \centering      
 \inputtikz{basic_def_2}
-\caption{Aggregated bi-triangle}
+\caption[Example Aggregated bi-triangle]{Example Aggregated bi-triangle}
 \label{fig:agg-bt-example}
-\end{subfigure}
 \end{figure}
 
 
@@ -97,7 +96,7 @@ $\dwi$ & Subset of $\dw$, such that $\dwi \subseteq \dw$ \\  \hline
 $\la (l_1, l_2), U_t \ra$ & an aggregated double wedge\\  \hline
 $\la (l_1, l_2,l_3), \hat{U}_t \ra$ & an aggregated bi-triangle\\  \hline
 \end{tabular}
-\caption{Summary of notations and their meanings.}
+\caption{Summary of notations and their meanings}
 \label{table:notation}
 \end{table}
       
@@ -125,7 +124,7 @@ $OC_Q$ & Output Channels carrying $Q$ Command \\ \hline
 $IC_{BT}$ & Input Channels carrying $\bt$ \\ \hline
 $OC_{BT}$ & Output Channels carrying $\bt$ \\ \hline
 \end{tabular}
-\caption{Summary of Channels used in DP}
+\caption{Summary of Channels used in \acrshort{dpbt}}
 \label{table:channels}
 \end{table}
 
@@ -171,7 +170,7 @@ $\us(\st)$ & Update Current State $\st$ for Filter Instance \\ \hline
 $\p(\mathtt{v}, OC_x)$ & push some value $\mathtt{v}$ to some Output Channel $OC_x$ \\\hline
 $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \end{tabular}
-\caption{Summary of auxiliary functions for handling DP internals.}
+\caption{Summary of auxiliary functions for handling \acrshort{dpbt} internals}
 \label{table:aux:fn}
 \end{table}
       
@@ -180,8 +179,8 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \SetKwInOut{Q}{Input Commands}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
-\SetAlgorithmName{Source}{src}{}
-\SetAlgoRefName{$Sr_{BT}$}
+\SetAlgorithmName{Source ($\ibt$)}{src}{}
+\SetAlgoRefName{[A1]}
 \P{$IO_E$: File or Input Stream with Set of Edges $E$}
 \Q{$IO_Q$: File or Input Stream with Commands $Q$}
 \IC{$IC = \la IC_{W_2} \ra$}
@@ -195,7 +194,7 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \ForAll(\tcp*[f]{Send Query Commands}){$Q \in IO_Q$}
 {$\p(Q, OC_Q)$ \label{algo:source:3}
 }
-\caption{This is the algorithm of the DP Source}
+\caption[Source ($\ibt$)]{This is the algorithm of the \acrshort{dpbt} Source}
 \label{algo:source}
 \end{algorithm}
 
@@ -207,8 +206,8 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \SetKwInOut{P}{Filter Template}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
-\SetAlgorithmName{Generator}{gen}{}
-\SetAlgoRefName{$G_{BT}$}
+\SetAlgorithmName{Generator ($\gbt$)}{gen}{}
+\SetAlgoRefName{[A2]}
 \P{$F$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_Q, IC_{BT} \ra$}
 \OC{$ OC = \la OC_{W_2}, OC_{BT} \ra$}
@@ -221,7 +220,7 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \ForAll{$\bti \in IC_{BT}$}
 {$\p(\bti, OC_{BT})$ \label{algo:gen:3}
 }
-\caption{This is the algorithm of the DP Generator}
+\caption[Generator ($\gbt$)]{This is the algorithm of the \acrshort{dpbt} Generator}
 \label{algo:gen}
 \end{algorithm}
 
@@ -243,14 +242,14 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \begin{algorithm}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{O}{Output}
-\SetAlgorithmName{Sink}{sink}{}
-\SetAlgoRefName{$Sk_{BT}$}
+\SetAlgorithmName{Sink ($\obt$)}{sink}{}
+\SetAlgoRefName{[A3]}
 \O{$IO_{BT}$: File or Output Stream with $BT$}
 \IC{$IC = \la IC_{BT} \ra$}
 \ForAll(\tcp*[f]{Read Results and put in $IO_{BT}$}){$\bti \in IC_{BT}$}
 {$put(\bti, IO_{BT})$
 }
-\caption{This is the algorithm of the DP Sink}
+\caption[Sink ($\obt$)]{This is the algorithm of the DP Sink}
 \label{algo:sink}
 \end{algorithm}
 
@@ -265,8 +264,8 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{acta}{actor1}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Filter}{fa1}{}
-\SetAlgoRefName{$actor_1$}
+\SetAlgorithmName{Actor1 ($actor_1$)}{fa1}{}
+\SetAlgoRefName{[A4]}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -283,7 +282,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
       $\p(\la l, W_l \ra, OC_{W_1})$\\
 }\Else{$\fd$}
 }
-\caption{This actor tries to build a Set of vertices $W_l \subseteq U$ adjancents to $l$ Filter parameter }
+\caption[Actor1 ($actor_1$)]{This actor tries to build a Set of vertices $W_l \subseteq U$ adjancents to $l$ Filter parameter }
 \label{algo:act-1}
 \end{algorithm}
 
@@ -300,8 +299,8 @@ In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{actb}{actor2}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Filter}{fa2}{}
-\SetAlgoRefName{$actor_2$}
+\SetAlgorithmName{Actor2 ($actor_2$)}{fa2}{}
+\SetAlgoRefName{[A5]}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -331,7 +330,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \uIf{$\dwi = \emptyset$}{$\fd$}
 \Else{$\us(\dwi)$}
 }
-\caption{This actor tries to build a Set of all possible Aggregated double-wedges $\dwi = \{\la (l,l'), U_t \ra\}, \dwi \subseteq \dw$, which first component $l$ is the Parameter of the Filter}
+\caption[Actor2 ($actor_2$)]{This actor tries to build a Set of all possible Aggregated double-wedges $\dwi = \{\la (l,l'), U_t \ra\}, \dwi \subseteq \dw$, which first component $l$ is the Parameter of the Filter}
 \label{algo:act-2}
 \end{algorithm}
 
@@ -352,8 +351,8 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{actc}{actor3}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Filter}{fa3}{}
-\SetAlgoRefName{$actor_3$}
+\SetAlgorithmName{Actor3 ($actor_3$)}{fa3}{}
+\SetAlgoRefName{[A6]}
 \P{$l \in L$}
 \FS{$\dwi \subseteq \dw$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -384,7 +383,7 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
       \uIf{$\ati = \emptyset$}{$\fd$}
       \Else{$\us(\ati)$\\}
 }
-\caption{This actor try to build a Set of all possible Aggregated bi-triangles $\ati = \{\la (l_l, l_m, l_u), U_t \ra\}, \ati \subseteq \at$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter}
+\caption[Actor3 ($actor_3$)]{This actor try to build a Set of all possible Aggregated bi-triangles $\ati = \{\la (l_l, l_m, l_u), U_t \ra\}, \ati \subseteq \at$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter}
 \label{algo:act-3}
 \end{algorithm}
 
@@ -403,8 +402,8 @@ This is because in order to build \acrshort{abt} finding all the possibles \acrs
 \SetKwFunction{butV}{buildBtVertex}
 \SetKwFunction{butE}{buildBtEdge}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Filter}{fa4}{}
-\SetAlgoRefName{$actor_4$}
+\SetAlgorithmName{Actor4 ($actor_4$)}{fa4}{}
+\SetAlgoRefName{[A7]}
 \P{$l \in L$}
 \FS{$\ati \subseteq \at$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -438,7 +437,7 @@ $\ati \leftarrow \gs$\\
       }
 }
 }
-\caption{This actor tries to process Query Commands $Q$ that arrives through Channel $IC_Q$. If they match with some Bi-triangles that are contained in this Filter, it will pass to the result Channel $OC_{BT}$ to be processed by the Sink}
+\caption[Actor4 ($actor_4$)]{This actor tries to process Query Commands $Q$ that arrives through Channel $IC_Q$. If they match with some Bi-triangles that are contained in this Filter, it will pass to the result Channel $OC_{BT}$ to be processed by the Sink}
 \label{algo:act-4}
 \end{algorithm}
 
@@ -453,8 +452,8 @@ from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
 \SetKwInOut{O}{Output}
 \SetKwFunction{but}{buildBtVertex}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Function}{a1}{}
-\SetAlgoRefName{buildBtVertex}
+\SetAlgorithmName{Function \mintinline{shell}{buildBtVertex}}{a1}{}
+\SetAlgoRefName{[A8]}
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
 \I{$Q_V$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
@@ -481,7 +480,7 @@ from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
       }
       \Return{$\btii$}
 }
-\caption{Given a Set of Vertex Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$ param}
+\caption[Function \mintinline{shell}{buildBtVertex}]{Given a Set of Vertex Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$ param}
 \label{algo:buildBtVertex}
 \end{algorithm}
 
@@ -491,8 +490,8 @@ from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
 \SetKwFunction{but}{buildBtEdge}
 \SetKwFunction{he}{hasEdge}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Function}{a2}{}
-\SetAlgoRefName{buildBtEdge}
+\SetAlgorithmName{Function \mintinline{shell}{buildBtEdge}}{a2}{}
+\SetAlgoRefName{[A9]}
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
 \I{$(u,l)$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
@@ -514,7 +513,7 @@ from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
             \Return{False}
       }
 }
-\caption{Given a Set of Edges Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$ param}
+\caption[Function \mintinline{shell}{buildBtEdge}]{Given a Set of Edges Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$ param}
 \label{algo:buildBtEdge}
 \end{algorithm}
 

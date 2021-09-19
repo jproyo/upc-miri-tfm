@@ -16,8 +16,6 @@
 \newcommand*{\@dateprefix}{}
 \newcommand*{\selectedlanguage}{}
 \newcommand*{\selectedtype}{}
-\newcommand*{\@cosupervisor}{}
-\newcommand*{\@cosupervisorb}{}
 \newboolean{isThesis}
 \setboolean{isThesis}{false}
 
@@ -59,8 +57,6 @@
 \newcommand*{\@degree}{\@latex@warning@no@line{No \protect\semester\space given}Enter the degree!}
 \newcommand*{\supervisor}[1]{\renewcommand*{\@supervisor}{#1}}
 \newcommand*{\@supervisor}{\@latex@warning@no@line{No \protect\supervisor\space given}Enter the supervisor!}
-\newcommand*{\cosupervisor}[1]{\renewcommand*{\@cosupervisor}{#1}}
-\newcommand*{\cosupervisorb}[1]{\renewcommand*{\@cosupervisorb}{#1}}
 
 \newcommand*{\@@date}{\@dateprefix\@date}
 
@@ -95,9 +91,7 @@
   {\normalsize FACULTAT D’INFORMÀTICA DE BARCELONA (FIB)}
   {\normalsize UNIVERSITAT POLITÈCNICA DE CATALUNYA (UPC) – BarcelonaTech}
   \vskip 0.1em%
-  {\normalsize Advisor: \@supervisor}\\
-  {\normalsize Advisor: \@cosupervisor}\\
-  {\normalsize Advisor: \@cosupervisorb}
+  {\normalsize Advisors: \@supervisor}\\
   \end{center}\par
   \newpage
   \thispagestyle{empty}
