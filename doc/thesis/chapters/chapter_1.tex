@@ -2,7 +2,7 @@
 This chapter presents the main motivation of our research, the problem statement that we gather from that motivation
 and what is the proposed solution to that.
 
-\section{Motivation}
+\section{Motivation}\label{sec:motivation}
 A \acrfull{bg} is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. 
 For instance, two different sets of objects can be modeled with a \acrshort{bg}, establishing the relationships between them.
 There are different use cases in which we can take advantage of a \acrshort{bg} representation and detect how the elements between the sets
@@ -10,7 +10,7 @@ are related. For example, coding theory~\cite{DBLP:journals/corr/WangL13} to rep
 For instance, an important field that can be modeled with \acrshort{bg} is pharmacology research, for establishing the relation between the drugs and side effects~\cite{drugs}.
 
 For detecting underlying relations of the components of the different sets in a \acrshort{bg} there exist the same metrics as we have in \acrfull{ug} like clustering coefficient, social analysis or triangle-based community computation~\cite{ccoef,detect_graph,Newman_2003}.
-The majority of those metrics in \acrshort{ug} are based on computing the number of triangles in the network. Obtaining those metrics on \acrshort{bg} requires to count \acrfull{bt} on \acrshort{bg}.
+The majority of those metrics in \acrshort{ug} are based on computing the number of triangles in the network. Obtaining those metrics on \acrshort{bg} requires to count \acrfull{bt}~\cite{opsahl} on \acrshort{bg}.
 In that matter, there has been a novel work that provides efficient algorithms to count \acrshort{bt} in $P$~\cite{btcount}.
 
 There exists a relationship in \acrshort{bg} that cannot be obtained only by counting \acrshort{bt} and requires knowing specific
@@ -30,27 +30,15 @@ This fact encourages us to use \acrlong{hs}, a purely functional programming lan
 In conclusion, taking advantage of this computational model (\acrshort{dp}) we can design an \acrshort{iebt} using \acrshort{hs}.
 
 \section{Problem Statement}
-Before presenting the statement problem, we should previously provide some definitions.
+A \acrlong{bt} in a \acrlong{bg} is defined as a cycle with three vertices from one vertex set and three for the other. We can also say that it is formed by two connected wedges closed by an additional wedge~\cite{btcount}.
+An example of what it is a \acrshort{bt} and what it is not, can be seen in \autoref{fig:bitriangle-example} and \autoref{fig:bitriangle-not}.
 
-\begin{definition}[\acrlong{bg}] 
-A bipartite graph is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.\cite{Bondy1976}
-\end{definition}
-
-Additionally, without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. We can see an example of a \acrshort{bg}
-in \autoref{fig:bipartite-graph-example}.
-
-\begin{figure}[ht]
-\centering	
-\inputtikz{bipartite}
-\caption[Example of \acrshort{bg}]{Example of \acrshort{bg}}
-\label{fig:bipartite-graph-example}
-\end{figure}
-
-%
-\begin{definition}[\acrlong{bt}]\label{def:bt}
-Let $G=((U\cup L),E)$ be a bipartite graph. Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
-The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{bi-triangle} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
-\end{definition}
+% \begin{figure}[ht]
+% \centering	
+% \inputtikz{bipartite}
+% \caption[Example of \acrshort{bg}]{Example of \acrshort{bg}}
+% \label{fig:bipartite-graph-example}
+% \end{figure}
 
 \begin{figure}[htp!]
 \begin{subfigure}[b]{0.5\textwidth}
@@ -68,48 +56,30 @@ The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{bi-triangle} in $G$, d
 \caption[Example of \acrshort{bt} in \acrshort{bg}]{Example of \acrshort{bt} in \acrshort{bg}}
 \end{figure}
 
-In \autoref{fig:bitriangle-example} we can see a correct \acrshort{bt} in a \acrshort{bg}, and in the other \autoref{fig:bitriangle-not} we can see what it is not a \acrshort{bt}.
-
-\begin{definition}[Query]
-Let $G=((U\cup L),E)$ be a bipartite graph. 
-A \textit{query} $Q$ is a sum type $Q = Q_V + Q_E$, where $Q_V \subseteq (U \cup L)$ and $Q_E \subseteq E$. 
-It could be a query of vertices or edges.
-\end{definition}
-
-\begin{definition}[Query Match]\label{def:query:match}
-  Let $G=((U\cup L),E)$ be a bipartite graph.
-  Let $Q$ be a query.
-  A query $Q$ matches in a bipartite graph $G$ if forall $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,u_3)}$ of $G$
-  \[
-    Q = \left\{\begin{array}{lr}
-      Q_V, & \forall\ v \in Q_V, v \in \{u_1,u_2,u_3,l_1,l_2,l_3\}\\
-      Q_E, & \forall\ (u,l) \in Q_E, (u,l) \in \{(u_1, l_1), (u_2,l_1), (u_2, l_3), (u_3,l_3), (u_3, l_2), (u_1,l_2)\} 
-      \end{array}\right\} 
-  \]
-  \end{definition}
-  
-\paragraph{Statement:}Given a \acrlong{bg} $G$ and a query $Q$, incrementally enumerate all the \acrlong{bt} $BT_{\ell}^{\mu}$ that matches query $Q$.
+As we can stated in the previous \autoref{sec:motivation}, enumerating all possible \acrshort{bt} it is not only computationally hard, but in general only partial results are needed.
+In that sense we can provide a query-based command to search all \acrshort{bt} that matches the query criteria, and incrementally deliver results to the user.
+In this work we are going to provide an \acrfull{iebt}, in which given a query command and a \acrlong{bg} incrementally returns all the \acrlong{bt} that matches the search criteria.
 
 \section{Proposed Solution}
-The solution proposed in this work is implementing this algorithm using \acrfull{dp} implemented in \acrfull{hs}.
+The solution proposed in this work is to implement an \acrfull{iebt} using \acrfull{dp} implemented in \acrfull{hs}.
 In order to achieve that goal, we first conduct a proof of concept to assess the feasibility of using \acrshort{hs} for implementing an algorithm with the \acrshort{dp}.
 In that assessment, we work on solving the problem of \acrfull{wcc} of a graph. Then, we develop a \acrlong{dpf} written in \acrlong{hs} that could help to implement any algorithm using \acrshort{dp}.
-Following that, we provide the formal definition of an algorithm for incrementally enumerate \acrshort{bt} using \acrshort{dp}, in a pseudo-code format. 
+Following that, we provide the formal definition of \acrshort{iebt} using \acrshort{dp}, in a pseudo-code format. 
 Finally, we provide correctness proof of the algorithm plus the implementation using the \acrshort{dpf} in \acrshort{hs}, that we call \acrfull{dpbt}.
 
 \section{Contribution}\label{sec:contrib}
-One of the main contributions we made was the presentation of a paper in the \acrfull{prole21} Conference~\cite{prole21}. 
+The main contribution of this work was to implement, formalize and empirically evaluate a novelty \acrlong{iebt} using \acrlong{dp} written in \acrshort{hs}.
+We believe that this implementation is a step forward on the field and we think our approach opens new research lines and improvements to be addressed in the future. 
+
+In order to asses the feasibility of \acrshort{dp} implemented in \acrshort{hs}, we have made as well another contribution with the presentation of a paper in the \acrfull{prole21} Conference~\cite{prole21}. 
 On the first hand, the motivation that triggers that contribution was to assess the suitability of \acrshort{hs} to implement \acrshort{dp}. 
 On the second hand, and in order to verify that \acrshort{hs} fits \acrshort{dp} requirements, we made a proof of concept solving \acrfull{wcc} of a Graph 
 using \acrshort{dp} with \acrshort{hs}.
 
-Moreover another important contribution, and as a result of \acrshort{prole21} work, was the development and publication of a \acrshort{hs} Framework 
+Finally, and as a result of \acrshort{prole21} work, was the development and publication of a \acrshort{hs} Framework 
 called \mintinline{shell}{dynamic-pipeline}~\cite{dynamic-pipeline}. The framework was published on \acrfull{hack}~\cite{hackage} on 2021 June 17th in its first version,
 providing to \acrshort{hs} community the ability to build algorithms using \acrshort{dp}. This is a novel contribution since it is the first library published on \acrshort{hs}
 that implements \acrshort{dp}.
-
-Finally, the novelty that provides an incremental algorithm for enumerating \acrshort{bt} is a step forward on the field and opens new research paths and improvements 
-to be addressed in the future. 
 
 \section{Document Overview}
 This document is organized as follows. In \autoref{prelim} we present and describe all the previous work that has been done on the related fields of Streaming Processing, Dynamic Pipeline Paradigm, and Streaming processing related to \acrshort{hs}. 

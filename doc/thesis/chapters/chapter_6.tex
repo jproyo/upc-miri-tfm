@@ -8,6 +8,18 @@ In order to understand how the algorithm works, we need to provide some basic de
 at the same time, we define other novel definitions that we use for giving a solution to the problem.
 Let's enumerate all those definitions in the following paragraphs.
 
+\begin{definition}[\acrlong{bg}] 
+A bipartite graph is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.\cite{Bondy1976}
+\end{definition}
+
+Additionally, without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. We can see an example of a \acrshort{bg}
+in \autoref{fig:bipartite-graph-example}.
+
+\begin{definition}[\acrlong{bt}]\label{def:bt}
+Let $G=((U\cup L),E)$ be a bipartite graph. Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
+The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{bi-triangle} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
+\end{definition}      
+
 \begin{definition}[\acrfull{wg}]
 Let $G=((U\cup L),E)$ be a bipartite graph. A  \textit{wedge} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
@@ -34,6 +46,32 @@ An Aggregated wedge $\la l_m, W_l \ra$ is an \textit{Aggregated wedge bi-triangl
 Let $G=((U\cup L),E)$ be a bipartite graph and  $\hat{U}_t=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_t\rangle$, 
 where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\mu=(u_i, u_j, u_k)$ such that $I \cup J \cup K \subseteq U$, $u_i \in I, u_j \in J, u_k \in K$ and $u_i \neq u_j \neq u_k$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
+
+\begin{definition}[Query]
+Let $G=((U\cup L),E)$ be a bipartite graph. 
+Let $C=\{BT_V, BT_E\}$ be the set of possible query commands.
+A \textit{query} $Q$ is an command $c \in C$, where 
+\[
+c = \left\{\begin{array}{lr}
+BT_V, & BT_E \subseteq E\\
+BT_E, & BT_V \subseteq U\cup L 
+\end{array}\right\} 
+\]
+It could be a command query of vertices or edges.
+\end{definition}
+
+\begin{definition}[Query Match]\label{def:query:match}
+Let $G=((U\cup L),E)$ be a bipartite graph.
+Let $Q$ be a query.
+A query $Q$ matches in a bipartite graph $G$ if forall $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,u_3)}$ of $G$
+\[
+Q = \left\{\begin{array}{lr}
+BT_V, & \forall\ v \in BT_V, v \in \{u_1,u_2,u_3,l_1,l_2,l_3\}\\
+BT_E, & \forall\ (u,l) \in BT_E, (u,l) \in \{(u_1, l_1), (u_2,l_1), (u_2, l_3), (u_3,l_3), (u_3, l_2), (u_1,l_2)\} 
+\end{array}\right\} 
+\]
+\end{definition}
+
 
 Some examples of those definitions can be found in the following images.
 
@@ -415,16 +453,16 @@ $\ati \leftarrow \gs$\\
 \ForAll{$Q \in IC_Q$}{
       \ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati$}{
             \Switch{$Q$}{
-                  \Case{$Q_V$}{
-                        \If{$Q_V \cap \{l_l, l_m, l_u\} \neq \emptyset \lor Q_V \cap (I \cup J \cup K) \neq \emptyset$}{
-                              $\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), Q_V)$\\
+                  \Case{$BT_V$}{
+                        \If{$BT_V \cap \{l_l, l_m, l_u\} \neq \emptyset \lor BT_V \cap (I \cup J \cup K) \neq \emptyset$}{
+                              $\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), BT_V)$\\
                               \ForAll{$\bti \in \btii$}{
                                     $\p(\bti, OC_{BT})$
                               }
                         }
                   }
-                  \Case{$Q_E$}{
-                        \ForEach{$(u,l) \in Q_E$}{
+                  \Case{$BT_E$}{
+                        \ForEach{$(u,l) \in BT_E$}{
                               \If{$(l = l_l \lor l = l_m \lor l = l_u) \land u \in (I \cup J \cup K)$}{
                                     $\btii \leftarrow \butE(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), (u,l))$\\
                                     \ForAll{$\bti \in \btii$}{
@@ -445,7 +483,7 @@ $\ati \leftarrow \gs$\\
 to enumerate incrementally \acrshort{bt} that matches the command, we need to build them on demand with the format used on \dref{def:bt}.
 
 The following pseudo-code definitions on \autoref{algo:buildBtVertex} and \autoref{algo:buildBtEdge} are auxiliary functions that are called
-from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
+from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
 
 \begin{algorithm}
 \SetKwInOut{I}{Input}
@@ -455,11 +493,11 @@ from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
 \SetAlgorithmName{Function \mintinline{shell}{buildBtVertex}}{a1}{}
 \SetAlgoRefName{[A8]}
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
-\I{$Q_V$}
+\I{$BT_V$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
-\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $Q_V$}}{
+\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $BT_V$}}{
       $\btii \leftarrow \emptyset$\\
-      \uIf{$Q_V \cap \{l_l, l_m, l_u\}$}{
+      \uIf{$BT_V \cap \{l_l, l_m, l_u\}$}{
             \tcp*[h]{If it is in lower i need to build all for this lower triplet}\\
             \ForEach{$i \in I$}{
                   \ForEach{$j \in J, j \neq i$}{
@@ -472,7 +510,7 @@ from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
             \tcp*[h]{Otherwise just build those that are in the this upper $v$}\\
             \ForEach{$i \in I$}{
                   \ForEach{$j \in J, j \neq i$}{
-                        \ForEach{$k \in K, k \neq i \land k \neq j \land (Q_V \cap \{i,j,k\} \neq \emptyset$}{
+                        \ForEach{$k \in K, k \neq i \land k \neq j \land (BT_V \cap \{i,j,k\} \neq \emptyset$}{
                               $\btii \leftarrow \btii \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
                         }
                   }
@@ -495,7 +533,7 @@ from $\ad$ if $Q$ pattern match either with $Q_V$ or $Q_E$.
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
 \I{$(u,l)$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
-\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $Q_V$}}{
+\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $BT_V$}}{
       $\btii \leftarrow \emptyset$\\
       \ForEach{$i \in I$}{
             \ForEach{$j \in J, j \neq i$}{
