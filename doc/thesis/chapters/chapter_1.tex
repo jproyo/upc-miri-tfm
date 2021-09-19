@@ -56,9 +56,9 @@ An example of what it is a \acrshort{bt} and what it is not, can be seen in \aut
 \caption[Example of \acrshort{bt} in \acrshort{bg}]{Example of \acrshort{bt} in \acrshort{bg}}
 \end{figure}
 
-As we can stated in the previous \autoref{sec:motivation}, enumerating all possible \acrshort{bt} it is not only computationally hard, but in general only partial results are needed.
-In that sense we can provide a query-based command to search all \acrshort{bt} that matches the query criteria, and incrementally deliver results to the user.
-In this work we are going to provide an \acrfull{iebt}, in which given a query command and a \acrlong{bg} incrementally returns all the \acrlong{bt} that matches the search criteria.
+As we have stated in the previous \autoref{sec:motivation}, enumerating all possible \acrshort{bt} it is not only computationally hard but, in general, only partial results are needed.
+In that sense, we can provide a query-based command to search all \acrshort{bt} that matches the query criteria and incrementally deliver results to the user.
+In this work, we are going to provide an \acrfull{iebt}, in which given a query command and a \acrlong{bg} incrementally returns all the \acrlong{bt} that matches the search criteria.
 
 \section{Proposed Solution}
 The solution proposed in this work is to implement an \acrfull{iebt} using \acrfull{dp} implemented in \acrfull{hs}.
@@ -69,15 +69,14 @@ Finally, we provide correctness proof of the algorithm plus the implementation u
 
 \section{Contribution}\label{sec:contrib}
 The main contribution of this work was to implement, formalize and empirically evaluate a novelty \acrlong{iebt} using \acrlong{dp} written in \acrshort{hs}.
-We believe that this implementation is a step forward on the field and we think our approach opens new research lines and improvements to be addressed in the future. 
+We believe that this implementation is a step forward in the field, and we think our approach opens new research lines and improvements to be addressed in the future. 
 
-In order to asses the feasibility of \acrshort{dp} implemented in \acrshort{hs}, we have made as well another contribution with the presentation of a paper in the \acrfull{prole21} Conference~\cite{prole21}. 
-On the first hand, the motivation that triggers that contribution was to assess the suitability of \acrshort{hs} to implement \acrshort{dp}. 
-On the second hand, and in order to verify that \acrshort{hs} fits \acrshort{dp} requirements, we made a proof of concept solving \acrfull{wcc} of a Graph 
-using \acrshort{dp} with \acrshort{hs}.
+In order to assess the feasibility of \acrshort{dp} implemented in \acrshort{hs}, we made a proof of concept solving \acrfull{wcc} problem of a Graph 
+using \acrshort{dp} with \acrshort{hs}. We have also empirically evaluated this implementation with interesting results that we are going to cover in \autoref{prole}. 
+This proof of concept and its results has been presented and accepted in the \acrfull{prole21} Conference~\cite{prole21}. 
 
-Finally, and as a result of \acrshort{prole21} work, was the development and publication of a \acrshort{hs} Framework 
-called \mintinline{shell}{dynamic-pipeline}~\cite{dynamic-pipeline}. The framework was published on \acrfull{hack}~\cite{hackage} on 2021 June 17th in its first version,
+Finally, and as a result of the proof of concept work, was the development and publication of a \acrshort{hs} framework called \mintinline{shell}{dynamic-pipeline}~\cite{dynamic-pipeline}. 
+The framework was published on \acrfull{hack}~\cite{hackage} on 2021 June 17th in its first version,
 providing to \acrshort{hs} community the ability to build algorithms using \acrshort{dp}. This is a novel contribution since it is the first library published on \acrshort{hs}
 that implements \acrshort{dp}.
 

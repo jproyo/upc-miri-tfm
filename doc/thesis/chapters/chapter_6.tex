@@ -33,18 +33,18 @@ Let $G=((U\cup L),E)$ be a bipartite graph. A \textit{double-wedge} in $G$ is a 
 \end{definition}
   
 \begin{definition}[\acrfull{adwg}]\label{def:adwg}
-Let $G=((U\cup L),E)$ be a bipartite graph and let $U_t = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
-An \textit{aggregated double-wedge}  is a pair  $\la (l_1, l_2), U_t \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
+Let $G=((U\cup L),E)$ be a bipartite graph and let $U_l = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
+An \textit{aggregated double-wedge}  is a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
 \end{definition}
 
 \begin{definition}[\acrfull{awgc}]\label{def:awgc}
-Let $G=((U\cup L),E)$ be a bipartite graph and let $\la (l_l, l_u), U_t \ra$ be an Aggregated double-wedge. 
+Let $G=((U\cup L),E)$ be a bipartite graph and let $\la (l_l, l_u), U_l \ra$ be an Aggregated double-wedge. 
 An Aggregated wedge $\la l_m, W_l \ra$ is an \textit{Aggregated wedge bi-triangle connector} \emph{if and only if} $l_m > l_l$ and $l_m < l_u$ and $W_l \cap (I \cup J) \neq \emptyset$ and $W_l \cap (K \cup J) \neq \emptyset$
 \end{definition}
       
 \begin{definition}[\acrfull{abt}]\label{def:abt}
-Let $G=((U\cup L),E)$ be a bipartite graph and  $\hat{U}_t=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_t\rangle$, 
-where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\mu=(u_i, u_j, u_k)$ such that $I \cup J \cup K \subseteq U$, $u_i \in I, u_j \in J, u_k \in K$ and $u_i \neq u_j \neq u_k$, $BT_{\ell}^{\mu}\in \bt$.
+Let $G=((U\cup L),E)$ be a bipartite graph and  $\hat{U}_l=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_l\rangle$, 
+where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$ and $u_i \neq u_j \neq u_k$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
 
 \begin{definition}[Query]
@@ -53,8 +53,8 @@ Let $C=\{BT_V, BT_E\}$ be the set of possible query commands.
 A \textit{query} $Q$ is an command $c \in C$, where 
 \[
 c = \left\{\begin{array}{lr}
-BT_V, & BT_E \subseteq E\\
-BT_E, & BT_V \subseteq U\cup L 
+BT_V, & BT_V \subseteq U\cup L\\
+BT_E, & BT_E \subseteq E
 \end{array}\right\} 
 \]
 It could be a command query of vertices or edges.
@@ -131,8 +131,8 @@ $\aw$ & the set of all the possible aggregated wedges in $G$\\  \hline
 $(u_1,l_1,u_2,l_2,u_3)$ & a double wedge with middle vertices $l_1$ and $l_2$\\  \hline 
 $\dw$ & the set of all the possible double-wedges in $G$\\  \hline
 $\dwi$ & Subset of $\dw$, such that $\dwi \subseteq \dw$ \\  \hline
-$\la (l_1, l_2), U_t \ra$ & an aggregated double wedge\\  \hline
-$\la (l_1, l_2,l_3), \hat{U}_t \ra$ & an aggregated bi-triangle\\  \hline
+$\la (l_1, l_2), U_l \ra$ & an aggregated double wedge\\  \hline
+$\la (l_1, l_2,l_3), \hat{U}_l \ra$ & an aggregated bi-triangle\\  \hline
 \end{tabular}
 \caption{Summary of notations and their meanings}
 \label{table:notation}
@@ -362,13 +362,14 @@ $\la l, W_l \ra \leftarrow \gs$\\
             $I \leftarrow W_{l_l} \setminus W_{l_u}$\\ \label{algo:act-2:2}
             $J \leftarrow W_{l_l} \cap W_{l_u}$\\
             $K \leftarrow W_{l_u} \setminus W_{l_l}$\\ \label{algo:act-2:3}
-            $\dwi \leftarrow dw \cup \{\la (l, l'), \la I, J, K\ra \ra\}$
+            $U_l \leftarrow \la I, J, K\ra$\\
+            $\dwi \leftarrow dw \cup \{\la (l, l'), U_l \ra\}$
       }
 }
 \uIf{$\dwi = \emptyset$}{$\fd$}
 \Else{$\us(\dwi)$}
 }
-\caption[Actor2 ($actor_2$)]{This actor tries to build a Set of all possible Aggregated double-wedges $\dwi = \{\la (l,l'), U_t \ra\}, \dwi \subseteq \dw$, which first component $l$ is the Parameter of the Filter}
+\caption[Actor2 ($actor_2$)]{This actor tries to build a Set of all possible Aggregated double-wedges $\dwi = \{\la (l,l'), U_l \ra\}, \dwi \subseteq \dw$, which first component $l$ is the Parameter of the Filter}
 \label{algo:act-2}
 \end{algorithm}
 
@@ -401,27 +402,27 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
 \df{\actc{}}{
       $\dwi \leftarrow \gs$\\
       $\ati \leftarrow \emptyset$\\
-      \ForAll{$\la l', W_l' \ra \in IC_{W_2}$}{
+      \ForAll{$\la l', W_l \ra \in IC_{W_2}$}{
             \tcp*[h]{By pass to be used by following Filters}
-            $\p(\la l', W_l' \ra, OC_{W_2})$\\ 
+            $\p(\la l', W_l \ra, OC_{W_2})$\\ 
             \tcp*[h]{For each double wedge in State}\\
             \ForEach{$\la (l_l, l_u), \la I, J, K \ra \ra \in \dwi, l_l < l' \land l_u > l'$}{
                   $I' \leftarrow I \cup J$\\
                   $K' \leftarrow K \cup J$\\
-                  \If{$W_l' \cap I' \neq \emptyset \land W_l' \cap K' \neq \emptyset$}{
-                        $I' \leftarrow I' \cap W_l'$\\
-                        $K' \leftarrow K' \cap W_l'$\\
-                        $U_t' \leftarrow U_t' \cup \{\la I', J, K' \ra\})$
+                  \If{$W_l \cap I' \neq \emptyset \land W_l \cap K' \neq \emptyset$}{
+                        $I' \leftarrow I' \cap W_l$\\
+                        $K' \leftarrow K' \cap W_l$\\
+                        $\hat{U}_l  \leftarrow \hat{U}_l \cup \{\la I', J, K' \ra\})$
                   }
-                  \If{$U_t' \neq \la \emptyset,\emptyset,\emptyset \ra$}{
-                        $\ati \leftarrow \ati \cup \{\la (l_l, l', l_u), U_t' \ra\}$
+                  \If{$\hat{U}_l \neq \la \emptyset,\emptyset,\emptyset \ra$}{
+                        $\ati \leftarrow \ati \cup \{\la (l_l, l', l_u), \hat{U}_l \ra\}$
                   }
             }
       }
       \uIf{$\ati = \emptyset$}{$\fd$}
       \Else{$\us(\ati)$\\}
 }
-\caption[Actor3 ($actor_3$)]{This actor try to build a Set of all possible Aggregated bi-triangles $\ati = \{\la (l_l, l_m, l_u), U_t \ra\}, \ati \subseteq \at$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter}
+\caption[Actor3 ($actor_3$)]{This actor try to build a Set of all possible Aggregated bi-triangles $\ati = \{\la (l_l, l_m, l_u), U_l \ra\}, \ati \subseteq \at$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter}
 \label{algo:act-3}
 \end{algorithm}
 
@@ -557,7 +558,10 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
 
 \clearpage
 \section{Complexity Analysis of Algorithm}
-We are going to conduct the complexity analysis of the algorithm focusing on each stage. 
+This complexity analysis does not provide an analysis of the algorithm as a whole with all the details of \acrshort{dp} model included.
+Just the opposite, we are only limiting the analysis to the specific functions without taking into consideration neither the context of the parallelization model nor \acrshort{dp}.
+
+Having said that, we are going to conduct the complexity analysis of the algorithm focusing on each stage. 
 $\fbt$ stage is going to be analyzed with all its actor as a single stage.
 
 \begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
@@ -624,7 +628,7 @@ output crisis by compressing them.
 We use the same technique, compressing a group of bi-triangles as $(a,b,c,(I,J,K))$ ($\aw$). 
  
 
-First we are going to prove that if we take all the triples $(a,b,c)$  such $a<b$ and $b<c$  and   $\la (a, b,c), \hat{U}_t \ra$ is an aggregate  bi-triangle, then it is not stored twice (theorem \ref{TH-unicity}).  We will show that we  store all the aggregate bi-triangles  where $A,B,C$  are distinct and $A$ is incident to $a$ and $b$, $B$is incident to $a$ and $c$ and $C$ is incident to $b$ and $C$ (theorem \ref{TH-all}). 
+First we are going to prove that if we take all the triples $(a,b,c)$  such $a<b$ and $b<c$  and   $\la (a, b,c), \hat{U}_l \ra$ is an aggregate  bi-triangle, then it is not stored twice (theorem \ref{TH-unicity}).  We will show that we  store all the aggregate bi-triangles  where $A,B,C$  are distinct and $A$ is incident to $a$ and $b$, $B$is incident to $a$ and $c$ and $C$ is incident to $b$ and $C$ (theorem \ref{TH-all}). 
 \begin{theorem} \label{TH-unicity}Every aggregated bi-triangle is stored  at most once 
 
 \end{theorem}
