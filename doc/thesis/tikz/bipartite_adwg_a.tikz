@@ -1,0 +1,23 @@
+\begin{tikzpicture}
+	\node[shape=circle,draw=blue,fill=blue,label=above:$1$] (1) {};
+	\node[shape=circle,draw=blue,fill=blue,label=above:$3$] (3) [right of=1] {};
+	\node[shape=circle,draw=blue,fill=blue,label=above:$7$] (7) [right of=3] {};
+	\node[shape=circle,draw=blue,fill=blue,label=above:$5$] (5) [right of=7] {};
+	\node[shape=circle,draw=blue,fill=blue,label=above:$9$] (9) [right of=5] {};
+	\node[shape=circle,draw=green,fill=green,label=below:$a$] (a) [below of=3] {};
+	\node[shape=circle,draw=green,fill=green,label=below:$c$] (c) [below of=5] {};
+
+	\node[draw=black,fit=(1)] {};
+	\node[draw=black!60!green,fit=(3) (7)] {};
+	\node[draw=black!30,fit=(5) (9)] {};
+
+	\draw (1) [line width=0.5mm] -- (a);
+	\draw (3) [line width=0.5mm] -- (a);
+	\draw (7) [line width=0.5mm] -- (a);
+	\draw (3) [line width=0.5mm] -- (c);
+	\draw (5) [line width=0.5mm] -- (c);
+	\draw (7) [line width=0.5mm] -- (c);
+	\draw (9) [line width=0.5mm] -- (c);
+\end{tikzpicture}
+
+ 

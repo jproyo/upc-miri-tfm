@@ -1,0 +1,10 @@
+	 \begin{tikzpicture}
+		\node[shape=circle,draw=blue,fill=blue,label=above:$u_1$] (u1) {};
+		\node[shape=circle,draw=blue,fill=blue,label=above:$u_2$] (u2) [right of=u1] {};
+		\node[shape=circle,draw=green,fill=green,label=below:$l$] (l) [midway, below of=u1] {};
+
+		\draw (u1) [line width=0.5mm] -- (l);
+		\draw (u2) [line width=0.5mm] -- (l);
+		\end{tikzpicture}
+
+ 

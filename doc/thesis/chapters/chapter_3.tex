@@ -1,56 +1,67 @@
 \chapter{Related Work}\label{relate-work}
 In this chapter, we present \emph{the state of the art} of \acrlong{bt} in \acrlong{bg} and incremental processing.
-In the case of \acrshort{bt} in \acrshort{bg}, we show the last novel work that has been conducted but related to counting \acrshort{bt},
-and in the case of incremental computations, we describe some of the last research that has been done in this model as well. 
+At the begining we explore some works related to subgraph enumeration problem, since a \acrshort{bt} is a subgraph. Then, in the case of \acrshort{bt} in \acrshort{bg}, we show the last novel work that has been conducted in \acrshort{bt} counting problem,
+and in the case of incremental computations, we describe some related researches that has been done lately. 
+
+\section{Subgraph Enumeration}\label{sec:rel-work:subgraph}
+\paragraph{Enumerating subgraphs using Map-Reduce} 
+Subgraph enumeration problem has been treated here~\cite{enumeratingsg} using a single round map-reduce.
+The problem presented on this work is enumerate all instances of a given subgraph (sample graph) in a very big graph using a single map-reduce round. 
+In the work all the examples are conducted with the smallest subgraph known which is the triangle.
+The solution proposed is presented as a special case of computing a multiway join but improving complexity reducing the communication cost and the computation cost.
+For achiving this, the authors present an improvement over the \emph{Partition Algorithm of Suri and Vassilvitskii}~\cite{partitionalgo} replicating all edges the same number of time
+reducing the communication cost to conciliate duplicated triangles. In regards to the computation cost an improvement over the \emph{multiway-join} algorithm is proposed using an ordering 
+of the buckets node. The main advantages of this work is the use of an stream parallelization model like Map-Reduce bringing the choice to exploit parallel and distributed computation to gain efficiency. 
+Moreover, the improvments done by the authors reduce even more the processing time for the enumeration. Another advantage is the use of sample graph for querying specific subgraphs and not all of them, 
+as we can see in the \autoref{sec:motivation}, to be able to process very big graphs in an efficient manner when the user does not need the whole results.
+The first limitation of this work is the use of an streaming model like Map-Reduce. Although it is a parallel and distributed model, incremental results are not possible until all the reducers are calculated; we can compute in parallel but we cannot produce in parallel.
+The other limitation is the adjustment of resources that in this work and due to the map-reduce nature of the model is done statically a priori. The partition needs to be done by the number of nodes and edges that you only know beforehand.
+As we have state in \autoref{sec:motivation}, \acrshort{dp} overcome both of these limitations providing a Dynamic Pipeline parallelization model. The first limitation of incrementally generates results is done by the nature of \acrshort{dp} model. 
+The other limitation regarding the runtime adjustment of resources is also done by the nature of the model because it does not need to know the structure of the graph beforehand. 
+
+\paragraph{Distributed subgraph matching on timely dataflow} In this work~\cite{Lai} the authors also covers the subgraph matching problem in big graphs using a distributed computational model. 
+The main contribution of this work is the optimization of four \emph{state of the art} strategies algorithms use on \mintinline{shell}{Timely} dataflow system~\cite{timelyflow}. 
+The sketch of the algorithm relies on randomly partition the vertices using hashing where the neighbors are going to be place in the same partition.
+Query vertices are attributes and results are relational tables, enabling the subgraph matching problem to be expressed with natural joins, where the solution is to find the optimal distributed join plan.
+The join algorithms improved are $\mathtt{BinJoin}$, $\mathtt{WOptJoin}$ and $\mathtt{ShrCube}$ using the following optimizations techniques: \mintinline{shell}{Batching},\mintinline{shell}{TrIndexing} and \mintinline{shell}{Compression}.
+In the case of \mintinline{shell}{Batching} the optimization relies on processing in batch mode the partial results that matches a subset of vertices in a way that each partial result can be batched in a single task to process against the whole result.
+\mintinline{shell}{TrIndexing} or Triangle Indexing precomputes triangles of a data graph and indices to prune unfeasible results beforehand. Finally \mintinline{shell}{Compression} maintains intermediate results in a compressed form to reduce communication and 
+maintenance. The results obtained on this work are efficient but it always depends on the machine characteristics and the topology of the graph. Some combinations are better with some optimizations techniques if there is a chance for examplle to have on each machine 
+all graph in memory, but for example the authors recommend to use always \mintinline{shell}{Compression} and when there is enough space \mintinline{shell}{TrIndexing} to achieve the best results. 
+We believe that the main limitations of this work is that although the authors claimed this analysis can be conducted against other distributed tools like Spark~\cite{apachespark} for example, they have conducted all the implementation and benchmarking with
+\mintinline{shell}{Timely}~\cite{timelyflow} and uses some of the optimizations that the tool already provide like \mintinline{shell}{HashJoin} for building the pipeline. It is not clear how this would can be replicated to other models.
+On a \acrshort{dp} model we offer a model that is unaware of specific tool or implementation. It is an abstract model that allows to build any pipeline parallelization algorithm.
+Having saying that, one of the things that we have gathered from this work to implement in our solution is the use of \mintinline{shell}{Compression} as technique for better maintenance and performance both on memory and computation time.
+
 
 \section{\acrlong{bt} Counting in \acrlong{bg}}\label{sec:rel-work:counting}
-As we have stated on the \autoref{intro}, there is neither a previous work done on \acrshort{bt} enumeration nor a \acrshort{hs} Framework or Library that implements \acrshort{dp}.
-A \acrshort{bt} is a Hamiltonian circuit as well, and finding Hamiltonian circuits in \acrshort{bg} is $NP$-complete~\cite{hamilbipartite-np}. On the other hand for counting \acrshort{bt} there is a novel \emph{polly-time} algorithm 
- in $P$ presented on this work~\cite{btcount}.
-
-In that paper, the authors present different concepts to calculate with a combinatorial algorithmic the counting problem of \acrshort{bt} in \acrshort{bg}. They present three algorithms to count
-all the \acrshort{bt} in the graph \emph{(Global Counting)}, and two algorithms to count only locally \acrshort{bt} \emph{(Local Counting)}: this means that given a vertex or an edge, the algorithms count only the number of \acrshort{bt} in which 
+The problem of Counting \acrshort{bt} have been deeply addressed in the work of Yang et al.~\cite{btcount} where they present several \emph{polly-time} algorithms to solve it.
+In that paper, the authors present different approaches to calculate with a combinatorial algorithmic the counting problem of \acrshort{bt} in \acrshort{bg}. 
+They show three algorithms to count all the \acrshort{bt} in the graph \emph{(Global Counting)}, and two algorithms to count only locally \acrshort{bt} \emph{(Local Counting)}: this means that given a vertex or an edge, the algorithms count only the number of \acrshort{bt} in which 
 that vertex or edge is participating.
 
-We are going to describe the most efficient algorithm of the first three that count all the \acrshort{bt} and the two local algorithms.
-
-\subsection{Global Counting}
-The first algorithmic approach authors introduced is \emph{wedge-based counting}. We do not cover this because it is discarded
-by the authors in the empirical analysis, because the complexity is the highest of three and, it did perform well in the experimentation phase.
-
-\paragraph{Super-wedge-based algorithm (SWJ-Count)}.
-The principal idea of this algorithm relies on \emph{swj-unit} counting, which is a novel 
-concept introduced in this work. A \emph{swj-unit} is a connected subgraph that is formed by two \emph{super-wedges}. A \emph{super-wedge}
+In the case of \emph{Global Counting}, the first algorithm the authors introduced is \emph{wedge-based counting}. We do not cover this because it is discarded
+by the authors in the empirical analysis since the complexity is the highest of three and, it did not perform well in the experimentation phase.
+The first important algorithm is Super-wedge based algorithm (SWJ-Count) and it relies on \emph{swj-unit} counting, which is a novel concept introduced in this work. A \emph{swj-unit} is a connected subgraph that is formed by two \emph{super-wedges}. A \emph{super-wedge}
 is a 3-hop path. The authors shows that a \acrshort{bt} is a \emph{swj-unit} but not every \emph{swj-unit} is a \acrshort{bt}. Those 
 are not \acrshort{bt} are \emph{acyclic swj-unit}. The main idea of the algorithm is to count all \emph{swj-unit} and the \emph{acyclic swj-unit}; therefore
 the number of \acrshort{bt} can be deduced straightforward.
-
-\paragraph{Results (SWJ-Count)} The authors present and do the analysis of the algorithm based on \emph{swj-unit} counting and they prove that the complexity is $O(\sum_{l \in L} (d(l)^2+d_3(l) + \sum_{x \in N_2(l)} d(x)) + \sum_{u \in U} d(u)^2)$.
-Recall that $L \cup U = E$, $d(v)$ is the degree of the vertex $v$, $d_k(v)$ is the number of $k$-hop neighbors of $v$ and $N_2(v)$ the set of $k$-hop neighbors of $v$.
-Therefore, the complexity is quadratic in the vertex with the highest degree, worst case.
-In terms of empirical analysis, it performs well up to graphs of $4 \times 10^20$ bi-triangles. After that, the algorithm does not terminate.
-
-\paragraph{Advantages (SWJ-Count)} The main advantage of this algorithm compared with the wedge-based is that it does not count wedges twice.
+The main advantage of SWJ-Count compared with the wedge-based is that it does not count wedges twice.
 Therefore the complexity is less although both \emph{polly-time}.
+In terms of empirical analysis, it performs well up to graphs of $4 \times 10^20$ bi-triangles. After that, the algorithm times out.
+The second algorithm they proposed is Ranked Super-wedge based algorithm (RSWJ-Count). This is a better approach compared with the previous in terms of complexity and running time because it takes the same gadget to count which is the \emph{swj-unit} but introducing ranking on the degree of the vertices. The main idea is that vertices with a higher degree have more super-wedges 
+and therefore \emph{swj-unit} can be count faster by sharing computations. RSWJ-Count is the best of all three algorithms for doing global counting.
+The main limitation of \emph{Global Counting} is that the user needs to wait for the whole calculation to complete and there is no partial result of it.
+We have stated previously that \acrshort{dp} model overcomes this limitation by its pipeline parallelization nature having the ability to output partial counts of the graph which is important for doing estimation counting.
 
-\paragraph{Ranked Super-wedge based algorithm (RSWJ-Count)} This is a better approach compared with the previous in terms of complexity and running time because it takes the same gadget to count which is the \emph{swj-unit} but introducing ranking on the degree of the vertices. The main idea is that vertices with a higher degree have more super-wedges 
-and therefore \emph{swj-unit} can be count faster by sharing computations.
 
-\paragraph{Results (RSWJ-Count)} The complexity of this algorithm is $O(m + n + \sum_{v \in V} d(v)(\phi(v) + \phi_2(v)))$, where $\phi_k(v)$ is the abbreviation of $\Phi_k(\sigma(v), v)$. $\Phi_k(r, v)$ describe the subsets of $v$'s $k$-hop neighbors with ranks smaller than $r$.
-In terms of empirical analysis, it performs slightly better than super-wedge-base but it cannot deal with graphs equal to or greater than $4 \times 10^20$ bi-triangles. The same as SWJ-Count.
-
-\paragraph{Advantages (RSWJ-Count)} This is the best of all three algorithms for doing global counting.
-
-\subsection{Local Counting}
-Both algorithms to count locally \acrshort{bt} given a particular vertex or an edge, is based on the previous \emph{swj-unit} global algorithm, 
-but instead of check every vertex, it only calculates from the one that is requested. 
-In the case of vertex local counting given a vertex $v_0$, the complexity reduces to linear complexity worst case $O(d_3(v_0) \times \sum_{x \in N(v_0)} d(x) + \sum_{y \in N_2(v_0)} d(y))$.
-In the case of edge local counting given an edge $e_0$, the complexity also reduces to linear complexity worst case $O(\sum_{x \in N(u) \cup N(l)} d(x) + \sum_{y \in N_2(y)} d(y))$.
-
-\subsection{Conclusion}
-Although the authors achieve both theoretical \emph{polly-time} complexity and empirical remarkable execution times for counting \acrshort{bt} in huge \acrshort{bg}, the enumeration problem is not addressed. 
-Following that, we discarded the use some specific gadgets like \emph{super-wedges}, \emph{swj-unit} and \emph{wj-unit} because those hide the information of the \acrshort{bt}
-form which is essential for enumeration.
+Regarding \emph{Local Counting} the work presents two strategies. 
+Both algorithms to count locally \acrshort{bt} given a particular vertex or an edge, are based on the previous \emph{swj-unit} global algorithm, but instead of check every vertex, it only calculates from the one that is requested. 
+The main advantage of doing \emph{Local Counting} is the ability to reduce processing time when the user does not need to analyze the whole network but just a partial of it, as we have seen in \autoref{sec:motivation}.
+The empirical analysis of these local algorithms obtained better results that global counting without any time out on any study case.
+The principal limitation of \emph{Local Counting}, apart to share the same limitation of \emph{Global Counting} regarding incremental results, is that it does not have the possibility to reuse previous calculations if 
+several vertices or edges search are requested. In this case the algorithm needs to recalculated locally for every edge or vertex request.
+Our model improve this limitation taking advantage again with the use of \acrshort{dp} model. In our model the computation of \acrshort{bt} is done once and multiple queries can be processed without need to recalculate again.
 
 \section{Incremental Computation}
 The ability to deliver incremental results without waiting for the whole results is known as the \emph{pay-as-you-go} model. This plays a fundamental role in applications that needs to process big data. 
@@ -76,5 +87,6 @@ Then, to deal with the optimal direction, \acrshort{dp} allows retro-feeding the
 
 \section{Chapter Summary}
 In this chapter, we have summarized all the \emph{State of the Art} that are related to our research.
-First, we have shown all the details of the most recent work regarding \acrlong{bt} in \acrlong{bg}.
+First, we have shown all the details of the most recent work regarding subgraph enumeration problem. 
+After that we analyze the latest and most important work on counting \acrlong{bt} in \acrlong{bg}.
 Then, we have also explored, what are the latest research and explorations in the use of incremental computational models (\emph{pay-as-you-go}).

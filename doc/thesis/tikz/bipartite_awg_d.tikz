@@ -1,0 +1,14 @@
+	 \begin{tikzpicture}
+		\node[shape=circle,draw=blue,fill=blue,label=above:$7$] (7) {};
+		\node[shape=circle,draw=blue,fill=blue,label=above:$9$] (9) [right of=7] {};
+		\node[shape=circle,draw=blue,fill=blue,label=above:$11$] (11) [right of=9] {};
+		\node[shape=circle,draw=green,fill=green,label=below:d] (d) [below of=9] {};
+
+		\draw (7) [line width=0.5mm] -- (d);
+		\draw (9) [line width=0.5mm] -- (d);
+		\draw (11) [line width=0.5mm] -- (d);
+
+		
+	\end{tikzpicture}
+
+ 

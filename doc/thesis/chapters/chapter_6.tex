@@ -5,7 +5,7 @@ Athe the end, we provide the proof of correctness and the implementation using t
 
 \section{Preliminaries Definitions}
 In order to understand how the algorithm works, we need to provide some basic definitions that are already exposed in previous work~\cite{btcount}, and
-at the same time, we define other strcutures that we use for giving a solution to the problem.
+at the same time, we define other structures that we use for giving a solution to the problem.
 Let's enumerate all those definitions in the following paragraphs.
 
 \begin{definition}[\acrlong{bg}] 
@@ -72,47 +72,6 @@ BT_E, & \forall\ (u,l) \in BT_E, (u,l) \in \{(u_1, l_1), (u_2,l_1), (u_2, l_3), 
 \]
 \end{definition}
 
-
-Some examples of those definitions can be found in the following images.
-
-\begin{figure}[htp!]
-\begin{subfigure}[b]{0.3\textwidth}
-\centering
-\inputtikz{basic_def_wg}
-\caption{Wedge}
-\label{fig:wedge-example}
-\end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
-\centering
-\inputtikz{basic_def_awg}
-\caption{Aggregated Wedge}
-\label{fig:agg-wedge-example}
-\end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
-\centering
-\inputtikz{basic_def_adwg}
-\caption{Double Wedge}
-\label{fig:double-wedge-example}
-\end{subfigure}
-\caption[Definitions Examples: \acrshort{wg}, \acrshort{awg} and \acrshort{dwg}]{Definitions Examples: \acrshort{wg}, \acrshort{awg} and \acrshort{dwg}}
-\end{figure}
-
-
-\begin{figure}[htp!]
-\centering
-\inputtikz{basic_def_1}
-\caption[Example Aggregated double-wedge]{Example Aggregated double-wedge}
-\label{fig:agg-double-wedge-example}
-\end{figure}
-
-\begin{figure}[htp!]
-\centering      
-\inputtikz{basic_def_2}
-\caption[Example Aggregated bi-triangle]{Example Aggregated bi-triangle}
-\label{fig:agg-bt-example}
-\end{figure}
-
-
 \begin{table}[!ht]
 \centering
 \begin{tabular}{|c|l|} \hline
@@ -138,6 +97,65 @@ $\la (l_1, l_2,l_3), \hat{U}_l \ra$ & an aggregated bi-triangle\\  \hline
 \label{table:notation}
 \end{table}
       
+
+\subsection{Examples of Definitions}
+Let us illustrate some of the previous definitions with a real \acrlong{bg} example. 
+Lets suppose that we have the following \acrshort{bg} as it is shown in the \autoref{fig:bipartite-graph-example}.
+
+\begin{figure}[ht]
+\centering	
+\inputtikz{bipartite}
+\caption[Example of \acrshort{bg}]{Example of \acrshort{bg}}
+\label{fig:bipartite-graph-example}
+\end{figure}
+
+As we can see, trying to identify the different \acrshort{bt} in this graph, it can be done manually, but in larger graphs can be more challenging.
+If we use the previous structure definitions, we can detect that \acrshort {bt} in an easier and automated manner.
+The first structure that we can detect is \acrshort{awg} as we can see on \autoref{fig:awedge-example}.
+
+\begin{figure}[htp!]
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\inputtikz{bipartite_awg_a}
+\caption{\acrshort{awg} on $a$}
+\label{fig:awedge-example-a}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\inputtikz{bipartite_awg_b}
+\caption{\acrshort{awg} on $b$}
+\label{fig:awedge-example-b}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\inputtikz{bipartite_awg_c}
+\caption{\acrshort{awg} on $c$}
+\label{fig:awedge-example-c}
+\end{subfigure}
+\caption[Definitions Examples \acrshort{awg}]{Definitions Examples \acrshort{awg}}
+\label{fig:awedge-example}
+\end{figure}
+
+As we can see on \autoref{fig:awedge-example}, we are only enumerating the first three lower layer vertices \acrshort{awg}.
+Following that we can build the \acrlong{adwg} as we can see in \autoref{fig:agg-double-wedge-example} to continue building the structure that lead us to the \acrshort{bt}.
+
+\begin{figure}[htp!]
+\centering
+\inputtikz{bipartite_adwg_a}
+\caption[Example Aggregated double-wedge]{Example Aggregated double-wedge}
+\label{fig:agg-double-wedge-example}
+\end{figure}
+
+In \autoref{fig:agg-double-wedge-example} we can see the \acrshort{adwg} built by $a$ and $c$ where according to \dref{def:adwg} $a = l_1$ and $c = l_2$.
+Now we can finally build our first \acrlong{abt} as we can see in the following \autoref{fig:agg-bt-example}.
+
+\begin{figure}[htp!]
+\centering      
+\inputtikz{bipartite_abt_a}
+\caption[Example Aggregated bi-triangle]{Example Aggregated bi-triangle}
+\label{fig:agg-bt-example}
+\end{figure}
+
 
 \subsection{Algorithm Sketch}\label{sub:sec:algo-sketch}
 Dynamic Pipeline Algorithm for Enumerating Bi-triangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
@@ -236,7 +254,7 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \label{algo:source}
 \end{algorithm}
 
-\paragraph{Source $\ibt$} In \autoref{algo:source} we can see in \autoref{algo:source:1} how the edges arriving from the input stream of the graph, are downstream to the pipeline. 
+\paragraph{Source $\ibt$} In \autoref{algo:source} we can see in \autoref{algo:source:1} how the edges arriving from the input stream of the graph are downstream to the pipeline. 
 Another important part as well is \autoref{algo:source:2}, the $\ibt$ is retro feed with \acrshort{awg} stream that is generated during pipeline execution.
 This is important to finally build the \acrshort{bt} as we have describe in \autoref{sub:sec:algo-sketch}. Finally, \autoref{algo:source:3} shows how all the queries are downstream as well.
 
@@ -294,6 +312,41 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \paragraph{Sink $\obt$} In \autoref{algo:sink} shows a simple stage that receives all results and sends them to some output handler (file, standard output, etc.). 
 
 \begin{algorithm}
+\SetKwInOut{P}{Filter Template}
+\SetKwInOut{IC}{Input Channels}
+\SetKwInOut{OC}{Output Channels}
+\SetKwFunction{actora}{actor1}
+\SetKwFunction{actorb}{actor2}
+\SetKwFunction{actorc}{actor3}
+\SetKwFunction{actord}{actor4}
+\SetKwFunction{filter}{filter}
+\SetKwProg{df}{def}{:}{end}
+\SetAlgorithmName{Filter ($\fbt$)}{fil}{}
+\SetAlgoRefName{[A4]}
+\P{$l \in L$}
+\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
+\df{\filter{}}{
+      $\actora()$\\
+      $\actorb()$\\
+      $\actorc()$\\
+      $\actord()$\\
+}
+\caption[Filter ($\fbt$)]{This is the algorithm of the \acrshort{dpbt} Filter}
+\label{algo:fil}
+\end{algorithm}
+
+\paragraph{Filter $\fbt$} In \autoref{algo:fil} shows the simple call sequence over all the actor functions of the filter template. 
+
+\begin{figure}[h]
+\centering  
+\inputtikz{btDP_actor1}
+\caption{$\dpbt$ With Filter instances}
+\label{fig:btDP_actor1}
+\end{figure}
+      
+
+\begin{algorithm}
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -303,7 +356,7 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \SetKwFunction{acta}{actor1}
 \SetKwProg{df}{def}{:}{end}
 \SetAlgorithmName{Actor1 ($actor_1$)}{fa1}{}
-\SetAlgoRefName{[A4]}
+\SetAlgoRefName{[A5]}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -338,7 +391,7 @@ In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if
 \SetKwFunction{actb}{actor2}
 \SetKwProg{df}{def}{:}{end}
 \SetAlgorithmName{Actor2 ($actor_2$)}{fa2}{}
-\SetAlgoRefName{[A5]}
+\SetAlgoRefName{[A6]}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -391,7 +444,7 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
 \SetKwFunction{actc}{actor3}
 \SetKwProg{df}{def}{:}{end}
 \SetAlgorithmName{Actor3 ($actor_3$)}{fa3}{}
-\SetAlgoRefName{[A6]}
+\SetAlgoRefName{[A7]}
 \P{$l \in L$}
 \FS{$\dwi \subseteq \dw$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -442,7 +495,7 @@ This is because in order to build \acrshort{abt} finding all the possibles \acrs
 \SetKwFunction{butE}{buildBtEdge}
 \SetKwProg{df}{def}{:}{end}
 \SetAlgorithmName{Actor4 ($actor_4$)}{fa4}{}
-\SetAlgoRefName{[A7]}
+\SetAlgoRefName{[A8]}
 \P{$l \in L$}
 \FS{$\ati \subseteq \at$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -492,7 +545,7 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
 \SetKwFunction{but}{buildBtVertex}
 \SetKwProg{df}{def}{:}{end}
 \SetAlgorithmName{Function \mintinline{shell}{buildBtVertex}}{a1}{}
-\SetAlgoRefName{[A8]}
+\SetAlgoRefName{[A9]}
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
 \I{$BT_V$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
@@ -530,7 +583,7 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
 \SetKwFunction{he}{hasEdge}
 \SetKwProg{df}{def}{:}{end}
 \SetAlgorithmName{Function \mintinline{shell}{buildBtEdge}}{a2}{}
-\SetAlgoRefName{[A9]}
+\SetAlgoRefName{[A10]}
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
 \I{$(u,l)$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
@@ -614,8 +667,9 @@ Finally for building all possible $\bt$ in $\ad$ worst case is $O(\binom{|V|}{6}
       
 \clearpage
 \section{Draft-Correctness of the Algorithm}
+Given a \acrshort{bt} $BT_{\ell}^{\mu} = \bti$ as we defined in \dref{def:bt}, where the 6-cycle is $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$.
 
-A bi-triangle can be described as a sequence $(C,a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U\footnote{In the enumeration, L and $U$ be interchanged}$
+%A bi-triangle can be described as a sequence $(C,a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U\footnote{In the enumeration, L and $U$ be interchanged}$
 
 We need to prove that the algorithm can enumerate all bi-triangle in the graph and also that there are no duplicates in the enumeration.
 
@@ -625,26 +679,27 @@ et al. proposed CrystalJoin~\cite{Lai} that aims at resolving the
 output crisis by compressing them.
 \end{quote}
 
-We use the same technique, compressing a group of bi-triangles as $(a,b,c,(I,J,K))$ ($\aw$). 
+We use the same technique, compressing a group of bi-triangles as we define in \dref{def:abt} $\langle \ell, \hat{U}_l\rangle$, where $\ell = (l_1,l_2,l_3,)$ and $\hat{U}_l=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$ ($\aw$).
  
 
-First we are going to prove that if we take all the triples $(a,b,c)$  such $a<b$ and $b<c$  and   $\la (a, b,c), \hat{U}_l \ra$ is an aggregate  bi-triangle, then it is not stored twice (theorem \ref{TH-unicity}).  We will show that we  store all the aggregate bi-triangles  where $A,B,C$  are distinct and $A$ is incident to $a$ and $b$, $B$is incident to $a$ and $c$ and $C$ is incident to $b$ and $C$ (theorem \ref{TH-all}). 
+First we are going to prove that if we take all the triples $(l_1,l_2,l_3)$  such $l_1<l_2$ and $l_2<l_3$  and  $\la (l_1,l_2,l_3,), \hat{U}_l \ra$ is an aggregate  bi-triangle, then it is not stored twice (theorem \ref{TH-unicity}). 
+We will show that we store all the aggregate bi-triangles where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $l_3$ (theorem \ref{TH-all}). 
 \begin{theorem} \label{TH-unicity}Every aggregated bi-triangle is stored  at most once 
 
 \end{theorem}
 \begin{proof}
-As a bi-triangle is a 6-closed cycle it can be described as a sequence of nodes  $(C,a,A,b,B,c,C)$, each one adjacent to its neighbour. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$ .  
+As a bi-triangle is a 6-closed cycle it can be described as a sequence of nodes  $(u_3,l_1,u_1,l_2,u_2,l_3,u_3)$, each one adjacent to its neighbour. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$ .  
 \begin{itemize}
-    \item $(A,b,C,c,B,a,A)$ not accepted because $c > a$
-    \item $(C,b,A,a,B,c,C)$ not accepted because $b > a$
-    \item $(C,c,B,a,A,b,C)$ not accepted because $c > a$ and $c > b$
-    \item $(B,c,C,b,A,a,B)$ not accepted because $c > a  $
-    \item $(B,a,A,b,C,c,B)$ is accepted because $a < c $ in actor 2 of filter $F_a$ or $F_c$ and $a < b <c$  in actor 3
-    \item $(A, a,B,c,C,b,A)$ not accepted because $c > a$
+    \item $(u_1,l_2,u_3,l_3,u_2,l_1,u_1)$ not accepted because $l_3 > l_1$
+    \item $(u_3,l_2,u_1,l_1,u_2,l_3,u_3)$ not accepted because $l_2 > l_1$
+    \item $(u_3,l_3,u_2,l_1,u_1,l_2,u_3)$ not accepted because $l_3 > l_1$ and $l_3 > l_2$
+    \item $(u_2,l_3,u_3,l_2,u_1,l_1,u_2)$ not accepted because $l_3 > l_1 $
+    \item $(u_2,l_1,u_1,l_2,u_3,l_3,u_2)$ is accepted because $l_1 < l_3 $ in actor 2 of filter $F_a$ or $F_c$ and $l_1 < l_2 <l_3$  in actor 3
+    \item $(u_1, l_1,u_2,l_3,u_3,l_2,u_1)$ not accepted because $l_3 > l_1$
 \end{itemize}
 
 
-Therefore the  only sequence constructed by the algorithm is the one that satisfies $a < b < c $ where $A,B,C$  are distinct and $A$ is incident to $a$ and $b$, $B$ is incident to $a$ and $c$ and $C$ is incident to $b$ and $C$.
+Therefore the  only sequence constructed by the algorithm is the one that satisfies $l_1 < l_2 < l_3$ where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $u_3$.
 \end{proof}
 
 
@@ -654,7 +709,7 @@ Therefore the  only sequence constructed by the algorithm is the one that satisf
 
 \begin{proof}
 
-Obvious  from the definition of $I,J,K$  and the algorithm of obtaining bi-triangles. 
+Obvious from the definition of $I,J,K$  and the algorithm of obtaining bi-triangles. 
 \iffalse
 Lets assume that a bi-triangle $(a,A,b,B,c,C)$   will assume that $a$ is the smallest element in the set $\{a,b,c\}$ and $c$ is the bigger.
 When actor 1 in fiter $F_a$1 ends reading all the edges, $\{A,B\} \subseteq W_a$. Also When actor 1 in fiter $F_c$1 ends reading all the edges, $\{B,C\} \subseteq W_c$. 
