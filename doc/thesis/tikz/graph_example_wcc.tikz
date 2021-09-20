@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+	\node[shape=circle,draw=blue] (1) {1};
+	\node[shape=circle,draw=blue] (2) [right of=1] {2};
+	\node[shape=circle,draw=blue] (3) [right of=2] {3};
+	\node[shape=circle,draw=blue] (4) [right of=3] {4};
+	\node[shape=circle,draw=blue] (5) [below of=4] {5};
+	\node[shape=circle,draw=blue] (6) [below of=3] {6};
+
+	\draw (1) -- (2);
+	\draw (3) -- (4);
+	\draw (3) -- (6);
+	\draw (4) -- (5);
+\end{tikzpicture}
+
+
+	

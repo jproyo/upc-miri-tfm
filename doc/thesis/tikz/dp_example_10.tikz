@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+	%Nodes
+	\node[source]      (in)                   {\hspace{1cm}};
+	\node[source]      (stream)                 [right=of in]    {\hspace{1cm}};
+	\node[ionode,label=below:Sink]   (gen)                 [right=of stream] {$\owc$};
+	\node[outdata]      (out)                 [right=of gen]    {\small $\{1,2\}$};
+	%Lines
+	\draw[edge] (in.-30) to  ["{\small$eof\:\{3,4,5,6\}$}",swap]   (gen.199);
+	\draw[ioedge] (gen) to (out);
+	\end{tikzpicture}	

@@ -1,14 +1,8 @@
 \chapter{\acrshort{wcc} - Proof of concept}\label{prole}
 In the context of this research, we have started approaching the problem first evaluating the suitability of \acrlong{hs}
-to implement the \acrlong{dp}. On the other hand and for test empirically this implementation, we develop a Proof of Concept solving the \acrlong{wcc} of a Graph using \acrlong{dp} with \acrshort{hs}.
-Since we have obtained positive results on this initial research, we decided to write a contribution that was accepted, and we presented in \acrshort{prole21}~\cite{prole21} conference in September of 2021.
-In this chapter, we are going to describe the details and results obtained in that contribution that plants the seed for the present work.
-
-\section{Motivation}
-Effective streaming processing of large amounts of data has been studied for several years~\cite{enumeratingsg, exploiting, onthefly} as a key factor providing fast and incremental results in big data algorithmic problems. 
-One of the most explored techniques, regardless of the approach, is the exploitation of parallel techniques to take advantage of the available computational power as much as possible. 
-In that regard, the \acrfull{dp} \cite{dpdef} has lately emerged as one of the models that exploit data streaming processing using a dynamic pipeline parallelism approach \cite{onthefly}. 
-This computational model has been designed with a functional focus, where the main components of the paradigm are functional stages or pipes which dynamically enlarge and shrink depending on incoming data.  
+to implement the Dynamic Pipeline. To test empirically this implementation, we develop a proof of concept solving the \acrlong{wcc} of a Graph using \acrlong{dp} with \acrshort{hs}.
+We have obtained results on this initial research to proceed using Haskell and DPP to enumerate bitriangles.
+In this chapter, we are going to describe that initial implementation of \acrshort{dp} for solving \acrshort{wcc} using \acrshort{hs} as well as the results obtained.
 
 One of the biggest challenges of implementing a \acrfull{dpf} is to find a proper set of tools and programming language which can take advantage of both of its primary aspects: \begin{inparaenum}[i\upshape)]
 \item  \emph{fast parallel} processing and 
@@ -17,33 +11,111 @@ One of the biggest challenges of implementing a \acrfull{dpf} is to find a prope
 \acrfull{hs} is a statically typed pure functional language which has been designed and evolved from its birth in 1987, on strong theoretical foundations where computations are primary entities, 
 and at the same time has been providing a powerful set of tools for writing multithreading and parallel programs with optimal performance \cite{parallelbook, monadpar}.
 
-The main objective of this contribution was to explore the feasibility of using a  \acrfull{fp} language to implement a \acrshort{dpf}. In particular, 
-we tackle the problem of establishing the basis of an implementation of a \acrshort{dpf}  in \acrshort{hs}, a pure functional language. This is,  our aim is to determine the particular features (i.e., versions and libraries) 
-of this language that will allow for an efficient implementation of the \acrshort{dpf}. To be concrete, through a particular and very relevant problem as the computation of the \acrfull{wcc} of a graph,  we study the critical features required in \acrshort{hs} for a \acrshort{dpf} implementation.
+The main objective was to explore the feasibility of using a  \acrfull{fp} language to implement a \acrshort{dpf}. 
+In particular, the basis of an implementation of a \acrshort{dpf}  in \acrshort{hs}, a pure functional language. 
+This is to determine the particular features (i.e., versions and libraries) of that will allow for an efficient implementation of the \acrshort{dpf}. To be concrete, through a particular and very relevant problem as the computation of the \acrfull{wcc} of a graph,  we study the critical features required in \acrshort{hs} for a \acrshort{dpf} implementation.
 
 \section{Implementation}
-Let us consider the problem of computing the (weak) connected components of a graph $G$ using \acrshort{dp}. A connected component of a graph is a subgraph in which any two vertices are connected by paths. Thus, finding connected components of a directed graph implies obtaining the minimal partition of the set of nodes induced by the relationship \textit{connected}, i.e., there is a path between each pair of nodes. The input of the Dynamic Pipeline for computing the WCC of a graph, $\dpwcc$, is a sequence of edges ending with $\eof$%$G=\{(v,w) | v,w\in V, v\neq w\}$, this is a graph given in terms of a stream of edges
-\footnote{Note that there are neither isolated vertices nor loops in the source graph $G$.}. The connected components are output as soon as they are computed, i.e., they are produced incrementally. 
+Let us consider the problem of computing the (weak) connected components of a graph $G$ using \acrshort{dp}. 
+A connected component of a graph is a subgraph in which any two vertices are connected by paths. 
+\begin{wrapfigure}{r}{0.3\textwidth}
+  \begin{center}
+\inputtikz{graph_example_wcc}
+\end{center}
+\caption[Graph WCC Example]{Example of Graph with two Connected Components}
+\label{fig:example_dp_graph}
+\end{wrapfigure}
+Thus, finding connected components of a undirected graph implies obtaining the minimal partition of the set of nodes induced by the relationship \textit{connected}, i.e., there is a path between each pair of nodes. An example of that graph can be seen in \autoref{fig:example_dp_graph}.
+The input of the Dynamic Pipeline for computing the WCC of a graph, $\dpwcc$, is a sequence of edges ending with $\eof$\footnote{Note that there are neither isolated vertices nor loops in the source graph $G$.}. The connected components are output as soon as they are computed, i.e., they are produced incrementally. 
 %
-$\dpwcc$ is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\iwc$),  \textit{Generator} ($\gwc$),  \textit{Sink} ($\owc$), and \textit{Filter}($\fwc$) stages. Additionally,  the channels connecting these stages must be defined. In $\dpwcc$, stages are connected linearly and unidirectionally through the channels $\ice$ and  $\csofv$. Channel $\ice$ carries edges while channel  $\csofv$ conveys sets of connected vertices. Both channels end by the $\eof$ mark. The initial configuration of $\dpwcc$ is $\iwc \:\rightrightarrows\:\gwc \:\rightarrow \: \owc$, where $\rightrightarrows$ represents  channels $\ice$ and $\csofv$ while $\rightarrow$ represents the channel $\csofv$.
- 
- Once activated the initial $\dpwcc$, the stream of edges is fed into $\iwc$ and $\owc$ produces the resulting connected components. 
- $\gwc$ has as parameter the template of the stage  $\fwc$. When an edge $(v,w)$ arrives to $\gwc$, it  spawns a new instance of $\fwc$ before $\gwc$. 
- For example, the first time a filter instance is spawned, the $\dpwcc$ evolves to this one: $\iwc \:\rightrightarrows\: \fwc \:\rightrightarrows\: \gwc \:\rightarrow \: \owc$. 
- The state of this new filter instance is initialized with the vertices $\{v,w\}$. When $\eof$ arrives to $\gwc$, it connects previous filter instance to $\owc$ through $\csofv$; then, $\gwc$ dies and the $\dpwcc$ evolves as follows: $\iwc \:\rightrightarrows\: \fwc \:\rightrightarrows\: \cdots \fwc \:\rightrightarrows \: \owc$. 
- The behavior of $\fwc$ is given by a sequence of two actors (scripts). In what follows, we denote these actors by $\Act$ and $\Actt$, respectively. 
- The script $\Act$ keeps a set of connected vertices ($CV$) in the state of the $\fwc$ instance. When an edge $e$ arrives, if an endpoint of $e$ is present in the state, then the other endpoint of $e$ is added to $CV$. 
- Edges without incident endpoints are passed to the next stage. When $\eof$ arrives at channel $\ice$, it is passed to the next stage, and the script $\Actt$ starts its execution. 
- If script $\Actt$ receives a set of connected vertices $CV$ in $\csofv$, it determines if the intersection between $CV$ and the nodes in its state is not empty. If so, it adds the nodes in $CV$  to its state. 
- Otherwise, the $CV$ is passed to the next stage.  Whenever $\eof$ is received, $\Actt$ passes--through $\csofv$-- the set of vertices in its state and the $\eof$ mark to the next stage; then, it dies.
- The behavior of $\iwc$ corresponds to the identity transformation over the data stream of edges.  As edges arrive, they are passed through  $\ice$ to the next stage. When receiving $\eof$ on $\ice$, this mark is put on both channels. 
- Then, $\iwc$ dies. 
+$\dpwcc$ is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\iwc$),  \textit{Generator} ($\gwc$),  \textit{Sink} ($\owc$), and \textit{Filter}($\fwc$) stages. Additionally,  the channels connecting these stages must be defined. 
+In $\dpwcc$, stages are connected linearly and unidirectionally through the channels $\ice$ and  $\csofv$. Channel $\ice$ carries edges while channel  $\csofv$ conveys sets of connected vertices. Both channels end by the $\eof$ mark. 
+The behavior of $\fwc$ is given by a sequence of two actors (scripts). In what follows, we denote these actors by $\Act$ and $\Actt$, respectively. 
+The script $\Act$ keeps a set of connected vertices ($CV$) in the state of the $\fwc$ instance. When an edge $e$ arrives, if an endpoint of $e$ is present in the state, then the other endpoint of $e$ is added to $CV$. 
+Edges without incident endpoints are passed to the next stage. When $\eof$ arrives at channel $\ice$, it is passed to the next stage, and the script $\Actt$ starts its execution. 
+If script $\Actt$ receives a set of connected vertices $CV$ in $\csofv$, it determines if the intersection between $CV$ and the nodes in its state is not empty. If so, it adds the nodes in $CV$  to its state. 
+Otherwise, the $CV$ is passed to the next stage.  Whenever $\eof$ is received, $\Actt$ passes--through $\csofv$-- the set of vertices in its state and the $\eof$ mark to the next stage; then, it dies.
+The behavior of $\iwc$ corresponds to the identity transformation over the data stream of edges.  As edges arrive, they are passed through  $\ice$ to the next stage. When receiving $\eof$ on $\ice$, this mark is put on both channels. 
+Then, $\iwc$ dies. 
 
+Lets describe this behavior with the example of the graph show in \autoref{fig:example_dp_graph}.
+
+\begin{figure}[h!]
+  \centering
+\inputtikz{dp_example_0}
+\caption[$\dpwcc$ Initial Setup]{$\dpwcc$ Initial Setup}
+\label{fig:dp_example_0}
+\end{figure}
+
+In \autoref{fig:dp_example_0} we can see the initial configuration of $\dpwcc$, where $\rightrightarrows$ represents channels $\ice$ and $\csofv$ while $\rightarrow$ represents the channel $\csofv$.
+Once activated the initial $\dpwcc$, the stream of edges is fed into $\iwc$ and $\owc$ produces the resulting connected components. 
+$\gwc$ has as parameter the template of the stage  $\fwc$. 
+ 
+ \begin{figure}[h!]
+  \centering
+  \inputtikz{dp_example_1}
+  \inputtikz{dp_example_2}
+  \caption[$\dpwcc$ Evolving first state]{$\dpwcc$ Evolving first state}
+  \label{fig:dp_example_1_2}
+\end{figure}
+ 
+When an edge $(1,2)$ arrives to $\gwc$, it  spawns a new instance of $\fwc$ before $\gwc$. 
+For example, the first time a filter instance is spawned, the $\dpwcc$ evolves to \autoref{fig:dp_example_1_2}. 
+The state of this new filter instance is initialized with the vertices $\{1,2\}$. 
+
+\begin{figure}[h!]
+  \centering
+  \inputtikz{dp_example_3}
+  \inputtikz{dp_example_4}
+  \caption[$\dpwcc$ Evolving second state]{$\dpwcc$ Evolving second state}
+  \label{fig:dp_example_3_4}
+\end{figure}
+
+When the second edge $(3,6)$ arrives to $\gwc$, it spawns again a new instance of $\fwc$ before $F_{\{1,2\}}$ and $\gwc$, where it connects previous filter instance $F_{\{1,2\}}$ with this new filter instance and new spawned filter with $\gwc$. 
+Then $\dpwcc$ evolves as we can see in \autoref{fig:dp_example_3_4}.
+
+\begin{figure}[h!]
+  \centering
+  \inputtikz{dp_example_5}
+  \inputtikz{dp_example_6}
+  \caption[$\dpwcc$ Evolving third state]{$\dpwcc$ Evolving second state}
+  \label{fig:dp_example_5_6}
+\end{figure}
+
+Now the rest of the edges downstream through the pipeline. When edge $(4,5)$ arrives to $\gwc$, it spawn a new filter and interposes it between it and $F_{\{3,6\}}$ as we can see in \autoref{fig:dp_example_5_6}.
+At the same time another edge $(3,4)$ is arriving to $F_{\{3,6\}}$. Since vertex $3$ belongs to the set of connected vertices $CV$ of the filter, it enlarge its set with the value $4$ having $\{3,4,6\}$ as a partial connected vertices $CV$ result inside filter $F_{\{3,6\}}$.
+
+\begin{figure}[h!]
+  \centering
+  \inputtikz{dp_example_7}
+  \inputtikz{dp_example_8}
+  \caption[$\dpwcc$ Evolving fourth state]{$\dpwcc$ Evolving fourth state}
+  \label{fig:dp_example_7_8}
+\end{figure}
+
+When $\eof$ mark arrives the filters instance start to downstream through $\csofv$ its partial set of $CV$ to activate $Actt$ and build a maximal connected components set. 
+As we can see in \autoref{fig:dp_example_7_8}, when partial $CV$ $\{3,4,6\}$ arrives to filter $F_{\{4,5\}}$ with partial set $\{4,5\}$, since both set intersect it can enlarge to form set $\{3,4,5,6\}$.
+
+\begin{figure}[h!]
+  \centering
+  \inputtikz{dp_example_9}
+  \vspace{0.5em}
+  \inputtikz{dp_example_10}
+  \vspace{1.5em}
+
+  \inputtikz{dp_example_11}
+  \vspace{0.5em}
+  \inputtikz{dp_example_12}
+  \caption[$\dpwcc$ Evolving last state]{$\dpwcc$ Evolving last state}
+  \label{fig:dp_example_9_10}
+\end{figure}
+
+As we can appreacite in \autoref{fig:dp_example_9_10}, $CV$ set $\{3,4,5,6\}$ of filter $F_{\{4,5\}}$ does not intersect with set $\{1,2\}$ arriving from $\csofv$. Then, $\{1,2\}$ it downstream to the end producing the 
+first connected component. After that the same happens with $CV$ set $\{3,4,5,6\}$ since there are no more filter instances and the second connected component $\{3,4,5,6\}$ is produced.
+Then, $\eof$ mark arrives to $\owc$ and therefore $\dpwcc$ terminates.
 
 \section{Empirical Evaluation}
-The empirical study aims at evaluating the performance of $\dpwcc$ when implemented in \acrshort{hs}. 
-Our goal is to answer the following research questions: 
-
+For the empirical evaluation we consider the following research questions: 
 \begin{inparaenum}[\bf {\bf RQ}1\upshape)]
 \label{res:question}
     \item Does $\dpwcc$ in \acrshort{hs} support the dynamic parallelization level that $\dpwcc$ requires?
@@ -185,15 +257,15 @@ This means that the amount of memory used for gathering the \acrshort{wcc} itsel
 It can be seen as well that as long the green area reduces the lighter blue (\mintinline{haskell}{MUT_ARR_PTRS_CLEAN} \cite{ghcheap}) increases at the same time indicating that the computations for the output (releasing results) is taking place. 
 Finally, according to what we have stated above, we can answer the question [Q3], showing that not only the memory management was efficient, but at the same time, the memory was not leaking or increasing across the running execution program.
 
-\section{Conclusions}
 The empirical evaluation of the \acrshort{dpwcc} implementation to compute weakly connected components of a graph, evidence suitability, 
 and robustness to provide a Dynamic Pipeline Framework in that language. Measuring using \acrshort{dt} metrics reveals some advantageous capability of $\dpwcc$ implementation to deliver incremental results compared with default containers library implementation. 
 Regarding the main aspects where DPP is strong, i.e., pipeline parallelism and time processing, the $\dpwcc$ performance shows that Haskell 
 can deal with the requirements for the \acrshort{wcc} problem without penalizing neither execution time nor memory allocation. 
-In particular, the $\dpwcc$ implementation outperforms in those cases where the topology of the graph is sparse and where the number of vertices in the largest \acrshort{wcc} is not big enough. We think this work has gathered enough evidence to show that the implementation of Dynamic Pipeline in Haskell Programming Language is feasible. 
+In particular, the $\dpwcc$ implementation outperforms in those cases where the topology of the graph is sparse and where the number of vertices in the largest \acrshort{wcc} is not big enough. 
+To conclude, the proof of concept has gathered enough evidence to show that the implementation of Dynamic Pipeline in Haskell Programming Language is feasible. 
 This fact opens a wide range of algorithms to be explored using the Dynamic Pipeline Paradigm, supported by purely functional programming language.
 
 \section{Chapter Summary}
-In this chapter we have presented an overview of the previous contribution done for \acrshort{prole21}~\cite{prole21} conference, in order to assess the 
-feasibility of implementing \acrshort{dp} using \acrshort{hs}. In that sense, we have presented an overview of the work, the experiments, and the conclusions.
+In this chapter we have presented a proof of concept that allow us to to assess the feasibility of implementing \acrshort{dp} using \acrshort{hs}. 
+The  obtained results gave us insights about how to proceed for implementing a first version of a DPF using (parallel) Haskell and, afterward, to implement our \acrshort{iebt}.
 
