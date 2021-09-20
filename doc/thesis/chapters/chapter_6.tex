@@ -1,6 +1,6 @@
 \chapter{An algorithm for incrementally enumerating Bi-Triangles using DP}\label{incr-algo-bt-dp}
 In this chapter, we first describe the overall idea of the algorithm for incrementally enumerate 
-\acrshort{bt}. After that, we formalize the algorithms in pseudo-code format that we design for the implementation.
+\acrshort{bt}. After that, we present the algorithms in pseudo-code format and then a complexity analysis of the principal functions of the algorithm.
 Athe the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
 
 \section{Preliminaries Definitions}
@@ -38,8 +38,8 @@ An \textit{aggregated double-wedge}  is a pair  $\la (l_1, l_2), U_l \ra$, where
 \end{definition}
 
 \begin{definition}[\acrfull{awgc}]\label{def:awgc}
-Let $G=((U\cup L),E)$ be a bipartite graph and let $\la (l_l, l_u), U_l \ra$ be an Aggregated double-wedge. 
-An Aggregated wedge $\la l_m, W_l \ra$ is an \textit{Aggregated wedge bi-triangle connector} \emph{if and only if} $l_m > l_l$ and $l_m < l_u$ and $W_l \cap (I \cup J) \neq \emptyset$ and $W_l \cap (K \cup J) \neq \emptyset$
+Let $G=((U\cup L),E)$ be a bipartite graph and let $\la (l_1, l_2), U_l \ra$ be an Aggregated double-wedge, where $\{l_1,l_2\}\subseteq L$ and $U_l = \la I, J, K\ra$.
+An Aggregated wedge $\la l, W_l \ra$ is an \textit{Aggregated wedge bi-triangle connector} \emph{if and only if} $l > l_1$ and $l < l_2$ and $W_l \cap (I \cup J) \neq \emptyset$ and $W_l \cap (K \cup J) \neq \emptyset$
 \end{definition}
       
 \begin{definition}[\acrfull{abt}]\label{def:abt}
@@ -79,19 +79,19 @@ BT_E, & \forall\ (u,l) \in BT_E, (u,l) \in \{(u_1, l_1), (u_2,l_1), (u_2, l_3), 
 $G=((U\cup L),E)$ & a bipartite graph\\  \hline
 $n,m$ & the number of vertices and edges in $G$, resp.\\  \hline
 $(u,l)$ & an edge between vertices $u$ and $l$\\  \hline
-$\bti$ & the bi-triangle $u_1,l_1,u_2,l_3,u_3,l_2,u_1$\\  \hline
-$\bt$ & the set of all the possible bi-triangles in $G$ \\  \hline
+$\bti$ & the \acrshort{bt} $u_1,l_1,u_2,l_3,u_3,l_2,u_1$\\  \hline
+$\bt$ & the set of all the possible \acrshort{bt} in $G$ \\  \hline
 $bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
-$\at$ & the set of all the possible Aggregated bi-triangles in $G$ \\  \hline
+$\at$ & the set of all the possible \acrshort{abt} in $G$ \\  \hline
 $\ati$ & Subset of $\at$, such that $\ati \subseteq \at$ \\  \hline 
 $(u_1,l,u_2)$ & a wedge with  middle vertex $l$\\  \hline
-$\la l, W_l \ra$ & an aggregated wedge\\  \hline
-$\aw$ & the set of all the possible aggregated wedges in $G$\\  \hline
+$\la l, W_l \ra$ & an \acrshort{awg}\\  \hline
+$\aw$ & the set of all the possible \acrshort{awg} in $G$\\  \hline
 $(u_1,l_1,u_2,l_2,u_3)$ & a double wedge with middle vertices $l_1$ and $l_2$\\  \hline 
-$\dw$ & the set of all the possible double-wedges in $G$\\  \hline
+$\dw$ & the set of all the possible \acrshort{adwg} in $G$\\  \hline
 $\dwi$ & Subset of $\dw$, such that $\dwi \subseteq \dw$ \\  \hline
-$\la (l_1, l_2), U_l \ra$ & an aggregated double wedge\\  \hline
-$\la (l_1, l_2,l_3), \hat{U}_l \ra$ & an aggregated bi-triangle\\  \hline
+$\la (l_1, l_2), U_l \ra$ & an \acrshort{adwg}\\  \hline
+$\la (l_1, l_2,l_3), \hat{U}_l \ra$ & an \acrshort{abt}\\  \hline
 \end{tabular}
 \caption{Summary of notations and their meanings}
 \label{table:notation}
@@ -137,7 +137,7 @@ The first structure that we can detect is \acrshort{awg} as we can see on \autor
 \end{figure}
 
 As we can see on \autoref{fig:awedge-example}, we are only enumerating the first three lower layer vertices \acrshort{awg}.
-Following that we can build the \acrlong{adwg} as we can see in \autoref{fig:agg-double-wedge-example} to continue building the structure that lead us to the \acrshort{bt}.
+Following that, we can build the \acrlong{adwg} as we can see in \autoref{fig:agg-double-wedge-example} to continue building the structure that lead us to the \acrshort{bt}.
 
 \begin{figure}[htp!]
 \centering
@@ -160,10 +160,10 @@ Now we can finally build our first \acrlong{abt} as we can see in the following 
 \subsection{Algorithm Sketch}\label{sub:sec:algo-sketch}
 Dynamic Pipeline Algorithm for Enumerating Bi-triangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
 \textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. The algorithm tries to collect all the previous object definitions 
-(\acrshort{awg}, \acrshort{adwg} and \acrshort{abt}) during the execution of the actors of $\fbt$ instance. Since we are dealing with different object representations,
-the following channels are connecting the stages in $\dpbt$.
+(\acrshort{awg}, \acrshort{adwg} and \acrshort{abt}) during the execution of the actors of $\fbt$ instance. 
+The following table describes the different channels that are connecting the stages in $\dpbt$.
 
-\begin{table}[ht]
+\begin{table}[ht!]
 \centering
 \begin{tabular}{|p{0.2\linewidth}|p{0.8\linewidth}|} \hline
 \textbf{Channel} & \textbf{Meaning}\\ \hline
@@ -199,9 +199,9 @@ An \textit{filter state} of DP is a sum type $\st = \la l, W_l \ra + \dwi + \ati
 \label{fig:btDP}
 \end{figure}
 
-\paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from some input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfer to the following stage each $(u,l)$ using $OC_E$.
-For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. These four functions build incrementally all the object definitions exposed before. 
-First, $\aaa$ receives from $IC_E$ all the rest of the edges of the original $G$ and tries to build \acrshort{awg} and downstream to $\fbt$ using $OC_{W1}$. 
+\paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfer to the following stage each $(u,l)$ using $OC_E$.
+For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. 
+First, $\aaa$ receives from $IC_E$ the edges and builds \acrshort{awg} downstreaming to $\fbt$ using $OC_{W1}$. 
 Then $\ab$ receives from $IC_{W1}$ aggregated wedges from previous $\fbt$, downstream to next $\fbt$ and $\gbt$ using $OC_{W1}$ and at the same time use its information to see 
 if it can build \acrshort{adwg}. If it can, it will store in its $\st$ those $dw \in \dw$.
 
@@ -220,7 +220,7 @@ Before starting with the details, we introduce in \autoref{table:aux:fn} auxilia
 \textbf{Function} & \textbf{Meaning}\\ \hline
 $\sw(F,l,\st)$ & Spawn new filter instance with parameters $F$ (Filter template), $l \in L$ and $\st$ as the State of the Filter\\\hline
 $\fd$ & Kill this filter instance because PostCondition does not fullfil\\ \hline
-$\fid$ & State after calling $\fd$ on filter. Indicates if Filter is die or not. If it is died, this filter instance does not participate anymore in the pipeline streaming processor\\ \hline
+$\fid$ & State after calling $\fd$ on filter. Indicates if Filter is die or not. If it is dead, this filter instance does not participate anymore in the pipeline streaming processor\\ \hline
 $\gs$ & Get Current State $\st$ for Filter Instance \\ \hline
 $\us(\st)$ & Update Current State $\st$ for Filter Instance \\ \hline
 $\p(\mathtt{v}, OC_x)$ & push some value $\mathtt{v}$ to some Output Channel $OC_x$ \\\hline
@@ -235,7 +235,7 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \SetKwInOut{Q}{Input Commands}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
-\SetAlgorithmName{Source ($\ibt$)}{src}{}
+\SetAlgorithmName{}{src}{}
 \SetAlgoRefName{[A1]}
 \P{$IO_E$: File or Input Stream with Set of Edges $E$}
 \Q{$IO_Q$: File or Input Stream with Commands $Q$}
@@ -250,7 +250,7 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \ForAll(\tcp*[f]{Send Query Commands}){$Q \in IO_Q$}
 {$\p(Q, OC_Q)$ \label{algo:source:3}
 }
-\caption[Source ($\ibt$)]{This is the algorithm of the \acrshort{dpbt} Source}
+\caption{Source ($\ibt$)}
 \label{algo:source}
 \end{algorithm}
 
@@ -262,7 +262,7 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \SetKwInOut{P}{Filter Template}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
-\SetAlgorithmName{Generator ($\gbt$)}{gen}{}
+\SetAlgorithmName{}{gen}{}
 \SetAlgoRefName{[A2]}
 \P{$F$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_Q, IC_{BT} \ra$}
@@ -276,7 +276,7 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \ForAll{$\bti \in IC_{BT}$}
 {$\p(\bti, OC_{BT})$ \label{algo:gen:3}
 }
-\caption[Generator ($\gbt$)]{This is the algorithm of the \acrshort{dpbt} Generator}
+\caption{Generator ($\gbt$)}
 \label{algo:gen}
 \end{algorithm}
 
@@ -289,8 +289,7 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 
 \paragraph{Generator $\gbt$} $\gbt$ also have three main loops. In \autoref{algo:gen:1} it receives each edge $(u,l)$ and 
 spawn a new $\fbt$ using $l \in L$ as filter parameter and initializing $\st = \la l, \{u\} \ra$ as it can be seen in \autoref{fig:btDP_actor1}. 
-Spawn assumes that the implementation will connect the channels to keep the downstream correct: Connect all the input channels
-of $\gbt$ to send data to new $\fbt$ and connects all the output channels of this new spawn instance to send data to $\gbt$.
+Spawn assumes that, the implementation will connect the channels to keep the downstream correct. Defines all the input channels of $\gbt$ as input channels of the newly spawn $\fbt$ and set $\fbt$'s output channels as $\gbt$ input channels.
 In \autoref{algo:gen:2} we can see how the algorithm is receiving and retro feeding $\ibt$ with all the \acrshort{awg}. This also assumes that $OC_{W2}$ in $\gbt$ 
 is connected with $IC_{W2}$ in $\ibt$.
 Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the different filters to $\obt$.
@@ -298,14 +297,14 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \begin{algorithm}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{O}{Output}
-\SetAlgorithmName{Sink ($\obt$)}{sink}{}
+\SetAlgorithmName{}{sink}{}
 \SetAlgoRefName{[A3]}
 \O{$IO_{BT}$: File or Output Stream with $BT$}
 \IC{$IC = \la IC_{BT} \ra$}
 \ForAll(\tcp*[f]{Read Results and put in $IO_{BT}$}){$\bti \in IC_{BT}$}
 {$put(\bti, IO_{BT})$
 }
-\caption[Sink ($\obt$)]{This is the algorithm of the DP Sink}
+\caption{Sink ($\obt$)}
 \label{algo:sink}
 \end{algorithm}
 
@@ -321,7 +320,7 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \SetKwFunction{actord}{actor4}
 \SetKwFunction{filter}{filter}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Filter ($\fbt$)}{fil}{}
+\SetAlgorithmName{}{fil}{}
 \SetAlgoRefName{[A4]}
 \P{$l \in L$}
 \IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
@@ -332,7 +331,7 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
       $\actorc()$\\
       $\actord()$\\
 }
-\caption[Filter ($\fbt$)]{This is the algorithm of the \acrshort{dpbt} Filter}
+\caption{Filter ($\fbt$)}
 \label{algo:fil}
 \end{algorithm}
 
@@ -355,7 +354,7 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{acta}{actor1}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Actor1 ($actor_1$)}{fa1}{}
+\SetAlgorithmName{}{fa1}{}
 \SetAlgoRefName{[A5]}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
@@ -373,13 +372,13 @@ $\la l, W_l \ra \leftarrow \gs$\\
       $\p(\la l, W_l \ra, OC_{W_1})$\\
 }\Else{$\fd$}
 }
-\caption[Actor1 ($actor_1$)]{This actor tries to build a Set of vertices $W_l \subseteq U$ adjancents to $l$ Filter parameter }
+\caption{Actor1 ($actor_1$)}
 \label{algo:act-1}
 \end{algorithm}
 
 \paragraph{Filter $\aaa$} As we have described in \autoref{sub:sec:algo-sketch} and it according to \autoref{algo:act-1:1}, $\aaa$ is receiving all edges 
 and if the $l' \in L$ of the new received edge is the same as the filer parameter $l$ then it will add to the list of \acrshort{awg} the $u' \in U$ received. 
-In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if and only if at least 1 wedge could be collected. 
+In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if and only if at least 1 wedge could be collected. Otherwise, the filter is marked as dead with $\fd$ function.
 
 \begin{algorithm}
 \SetKwInOut{P}{Parameter}
@@ -390,7 +389,7 @@ In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{actb}{actor2}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Actor2 ($actor_2$)}{fa2}{}
+\SetAlgorithmName{}{fa2}{}
 \SetAlgoRefName{[A6]}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
@@ -422,7 +421,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \uIf{$\dwi = \emptyset$}{$\fd$}
 \Else{$\us(\dwi)$}
 }
-\caption[Actor2 ($actor_2$)]{This actor tries to build a Set of all possible Aggregated double-wedges $\dwi = \{\la (l,l'), U_l \ra\}, \dwi \subseteq \dw$, which first component $l$ is the Parameter of the Filter}
+\caption{Actor2 ($actor_2$)}
 \label{algo:act-2}
 \end{algorithm}
 
@@ -443,7 +442,7 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
 \SetKwInOut{PrC}{Pre-Cond}
 \SetKwFunction{actc}{actor3}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Actor3 ($actor_3$)}{fa3}{}
+\SetAlgorithmName{}{fa3}{}
 \SetAlgoRefName{[A7]}
 \P{$l \in L$}
 \FS{$\dwi \subseteq \dw$}
@@ -475,7 +474,7 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
       \uIf{$\ati = \emptyset$}{$\fd$}
       \Else{$\us(\ati)$\\}
 }
-\caption[Actor3 ($actor_3$)]{This actor try to build a Set of all possible Aggregated bi-triangles $\ati = \{\la (l_l, l_m, l_u), U_l \ra\}, \ati \subseteq \at$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter}
+\caption{Actor3 ($actor_3$)}
 \label{algo:act-3}
 \end{algorithm}
 
@@ -494,7 +493,7 @@ This is because in order to build \acrshort{abt} finding all the possibles \acrs
 \SetKwFunction{butV}{buildBtVertex}
 \SetKwFunction{butE}{buildBtEdge}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Actor4 ($actor_4$)}{fa4}{}
+\SetAlgorithmName{}{fa4}{}
 \SetAlgoRefName{[A8]}
 \P{$l \in L$}
 \FS{$\ati \subseteq \at$}
@@ -529,7 +528,7 @@ $\ati \leftarrow \gs$\\
       }
 }
 }
-\caption[Actor4 ($actor_4$)]{This actor tries to process Query Commands $Q$ that arrives through Channel $IC_Q$. If they match with some Bi-triangles that are contained in this Filter, it will pass to the result Channel $OC_{BT}$ to be processed by the Sink}
+\caption{Actor4 ($actor_4$)}
 \label{algo:act-4}
 \end{algorithm}
 
@@ -544,7 +543,7 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
 \SetKwInOut{O}{Output}
 \SetKwFunction{but}{buildBtVertex}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Function \mintinline{shell}{buildBtVertex}}{a1}{}
+\SetAlgorithmName{}{a1}{}
 \SetAlgoRefName{[A9]}
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
 \I{$BT_V$}
@@ -572,7 +571,7 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
       }
       \Return{$\btii$}
 }
-\caption[Function \mintinline{shell}{buildBtVertex}]{Given a Set of Vertex Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$ param}
+\caption{Function \mintinline{shell}{buildBtVertex}}
 \label{algo:buildBtVertex}
 \end{algorithm}
 
@@ -582,7 +581,7 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
 \SetKwFunction{but}{buildBtEdge}
 \SetKwFunction{he}{hasEdge}
 \SetKwProg{df}{def}{:}{end}
-\SetAlgorithmName{Function \mintinline{shell}{buildBtEdge}}{a2}{}
+\SetAlgorithmName{}{a2}{}
 \SetAlgoRefName{[A10]}
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
 \I{$(u,l)$}
@@ -605,7 +604,7 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
             \Return{False}
       }
 }
-\caption[Function \mintinline{shell}{buildBtEdge}]{Given a Set of Edges Try to build the set of all possible bi-triangles based on Aggregated bi-triangles information in $\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$ param}
+\caption{Function \mintinline{shell}{buildBtEdge}}
 \label{algo:buildBtEdge}
 \end{algorithm}
 
