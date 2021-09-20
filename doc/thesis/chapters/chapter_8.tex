@@ -20,11 +20,11 @@ One of this speedup could be moving some types to be Unboxed types~\cite{hs-unbo
 \section{Conclusions}
 Dealing with $NP$-complete problems like Enumerating \acrlong{bt} in \acrlong{bg} is a task that, in general, is addressed using approximation algorithms or heuristics. 
 On the other hand, introducing algorithms in a \emph{pay-as-you-go} model approach combined with a model of computation that enables building incremental solutions like \acrshort{dp} brings exhaustive and exact results for the solution space that the user wants to obtain.    
-\acrfull{dp} has shown to be an efficient model for building an Incremental and parallel algorithm to enumerate \acrlong{bt} in \acrlong{bg}. 
+\acrfull{dp} has shown to be an efficient model for building a parallel algorithm to incrementally enumerate \acrlong{bt} in \acrlong{bg}. 
 In addition to that, and at the moment of writing this, we have given a novel solution for the enumeration problem, which has not been addressed in any other work at the time of writing this thesis.
 Moreover, we have also shown how strong this paradigm is in companion with a powerful language like \acrfull{hs}. 
 The capabilities of combining both not only for implementing the concepts but also for supporting intensive experiments with large size graphs and complex topologies. 
 Following that, the designed algorithm \acrshort{dpbt} can process and enumerate big networks like the \acrlong{dbpedia} which contains more than $300$ millions of \acrlong{bt}.
 In the experimental analysis, we have demonstrated as well if the implementation delivers incremental results using \acrlong{dm} giving support to our research assumptions and motivations. 
 
-In conclusion, we believe that the achieved results clearly show we have reached the goal on providing an \emph{Incremental Algorithm for Enumerating Bi-triangles on Bi-partite Graphs}, opening a wide range of possibilities not only to improve the existing framework and algorithm but also for implementing other complex problems where the use case requires a \emph{pay-as-you-go} model.
+In conclusion, we believe that the achieved results clearly show we have reached the goal on providing an \emph{Algorithm for Incrementally Enumerating Bi-triangles on Bi-partite Graphs}, opening a wide range of possibilities not only to improve the existing framework and algorithm but also for implementing other complex problems where the use case requires a \emph{pay-as-you-go} model.

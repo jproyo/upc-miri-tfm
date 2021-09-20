@@ -15,9 +15,8 @@ For example, this is the case of \mintinline{shell}{reduce} operation on many of
 \paragraph{\acrfull{pip}} It break the computation in a series of sequential stage, where each stage takes the result of the previous stage as an input and downstream its results to the next. 
 Each \emph{pipeline Stage} is parallelized and, it could potentially exist one stage per data item of the stream. 
 The communication between stages takes place through some means, typically channels. One of the main advantages of this model is that the stages are non-blocking, meaning that there is no need to wait to process all data to run the next stage. 
-This kind of paradigm enables incremental computational algorithms, preventing the user waits until the end of the whole data stream processing to get a result. 
-On the other hand, the disadvantage over \acrshort{dap} is that although pipeline stages are parallelized, 
-some intensive computation in one stage might delay processing the next stage because of its sequential dependency nature. Therefore, the user must be sure each stage runs extremely fast computations on it.
+This kind of paradigm enables computational algorithms that can generate incremental results, preventing the user waits until the end of the whole data stream processing to get a result. 
+On the other hand, the disadvantage over \acrshort{dap} is that although pipeline stages are parallelized, some intensive computation in one stage might delay processing the next stage because of its sequential dependency nature. Therefore, the user must be sure each stage runs extremely fast computations on it.
 
 Due to the nature of our problem where we need to incrementally generate \acrlong{bt}s and the data needs to be aware of the context to compute those \acrshort{bt}, the stream processing model of our choice is \acrshort{pip}.
 We are going to see in the next section what is the specific \acrshort{pip} computation model used for that purpose.

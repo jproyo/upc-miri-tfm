@@ -16,10 +16,10 @@ In that matter, there has been a novel work that provides efficient algorithms t
 There exists a relationship in \acrshort{bg} that cannot be obtained only by counting \acrshort{bt} and requires knowing specific
 structural details. One of those relations are motif-paths~\cite{Li2019MotifPA}, in particular, a \acrshort{bt} can be seen as a motif. To detect a path between different motifs, we could potentially enumerate \acrshort{bt} and check how they are connected.
 Moreover a \acrshort{bt} enumeration algorithm could lead to a timeout if it is required to enumerate all the \acrshort{bt} in a \acrshort{bg} with millions of them. For overcoming this problem, users might want to query or request some \acrshort{bt} that follows certain criteria, reducing the search space. 
-This leads us to the main motivation of this work which is to provide an \acrfull{iebt}. It should be \emph{incremental} because we want the user to be able to obtain \acrshort{bt} as long as the algorithm is capable of generate them. 
+This leads us to the main motivation of this work which is to provide an \acrfull{iebt}. It should generate \emph{incremental} results because we want the user to be able to obtain \acrshort{bt} as long as the algorithm is capable of computing them. 
 And, it should \emph{enumerate}, because it is suitable for a wide range of problems like motif-paths, in which the user needs to know the specific structure of the \acrshort{bt} as we stated before.
 
-The main question that arise is \emph{how to solve} the \acrshort{iebt}. The answer and the propose of this work is to implement this using a \emph{Streaming Processing} model that can fullfil this requirements.
+The main question that arise is \emph{how to solve} the \acrshort{iebt}. The answer and the purpose of this work are to implement this using a \emph{Streaming Processing} model that can fullfil this requirements.
 Streaming processing has given rise to new computation paradigms to provide effective and efficient data stream processing.
 The most important features of these new paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, 
 reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce incremental results. 
@@ -82,10 +82,10 @@ To summarize, our contributions are:
 
 \section{Document Overview}
 This document is organized as follows. In \autoref{prelim} we present and describe all the previous work that has been done on the related fields of Streaming Processing, Dynamic Pipeline Paradigm, and Streaming processing related to \acrshort{hs}. 
-Following that, in \autoref{relate-work} we describe the state of the art related \acrshort{bt} in \acrshort{bg} and incremental processing algorithms in general.
+Following that, in \autoref{relate-work} we describe the state of the art related \acrshort{bt} in \acrshort{bg}, \emph{pay-as-you-go} model and subgraph enumeration algorithms in general.
 In \autoref{prole} we show and describe with some level of details, an overview to the \acrshort{prole21} as well as the details of the results obtained. 
 Continuing with that, in \autoref{dp-hs} we deeply describe the \acrshort{dpf} written in \acrshort{hs}, the design of the framework, and all the used techniques for the implementation.
-After that chapter, we finally arrive at \autoref{incr-algo-bt-dp} where we focus on the main problem of this work. There we provide all the details related to the incremental algorithm for enumerating \acrshort{bt} in \acrshort{bg}, its pseudo-code,
+After that chapter, we finally arrive at \autoref{incr-algo-bt-dp} where we focus on the main problem of this work. There we provide all the details related to the algorithm for incrementally enumerating \acrshort{bt} in \acrshort{bg}, its pseudo-code,
 correctness proof and \acrshort{hs} implementation using the framework.
 In \autoref{experiments} we describe the experimental analysis conducted to assert our assumptions and answer our research questions.
 Finally, at the end of the document in \autoref{conclusions}, we present the future work and the conclusions obtained.
