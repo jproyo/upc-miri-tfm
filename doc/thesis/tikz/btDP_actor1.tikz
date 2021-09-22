@@ -1,20 +1,23 @@
 \begin{tikzpicture}
-	\node[indata]     (stream)                         {\mbox{{\small $eof\: \dots \: (u',l')$}}};
-	\node[ionode]     (in)      [right=.5cm of stream,minimum width=2cm, minimum height=3cm]      {$\ibt$};
-	\node[filternode,label=below:$F_l$] (filter1)  [right=1.5cm of in,minimum width=2cm, minimum height=3cm] {\small $\la l, \{u\} \ra$};
+	\node[ionode]     (in)      [minimum width=2cm, minimum height=3cm]      {$\ibt$};
+	\node[indata]     (stream)   [above left of=in] at (-2.5,0) {\mbox{{\small $eof\: \dots \: (u,l)$}}};
+	\node[indata]     (commands) [below left of=in] at (-3.5,0) {\mbox{{\small $eof\: \dots Q_V = \{u_1, \dots, l_n\}$}}};
+	\node[filternode,label=below:$F_l$] (filter1)  [right=1.5cm of in,minimum width=2cm, minimum height=3.5cm] {\small $\la l, \{u\} \ra$};
 	\node[gennode]    (gen)     [right=1.5cm of filter1,minimum width=2cm, minimum height=3cm]          {$\gbt$};
 	\node[ionode]     (out)     [right=1cm of gen]         {$\obt$};
 	\node[outdata]     (x)     [right=of out]                    {};
 	\node[filternode,label=above:Filter] (filter)  [above= 0.2mm of gen]  {$\fbt$};
-	\draw[ioedge] (stream) to (in);
-	\draw[edge] ([yshift=1 cm]in.east) to ["{\small$E$}"] ([yshift=1 cm]filter1.west);
-	\draw[edge] ([yshift=0 cm]in.east) to ["{\small$W_l$}"] ([yshift=0 cm]filter1.west);
-	\draw[edge] ([yshift=-1 cm]in.east) to ["{\small$Q$}"] ([yshift=-1 cm]filter1.west);
-	\draw[edge] ([yshift=1 cm]filter1.east) to ["{\small$E$}"] ([yshift=1 cm]gen.west);
-	\draw[edge] ([yshift=0 cm]filter1.east) to ["{\small$W_l$}"] ([yshift=0 cm]gen.west);
-	\draw[edge] ([yshift=-1 cm]filter1.east) to ["{\small$\bt$}"] ([yshift=-1 cm]gen.west);
-   \draw[edge] (gen) to [bend left=90,"{\small$W_l$}"] (in);
-	\draw[edge] (gen) to (out);
+	\draw[ioedge] ([yshift=-0.2 cm]stream.east) to ([yshift=.5 cm]in.west);
+	\draw[ioedge] ([yshift=0 cm]commands.east) to ([yshift=-0.7 cm]in.west);
+	\draw[edge] ([yshift=1.5 cm]in.east) to ["{\small$C_E$}"] ([yshift=1.5 cm]filter1.west);
+	\draw[edge] ([yshift=0.5 cm]in.east) to ["{\small$C_{W_l1}$}"] ([yshift=0.5 cm]filter1.west);
+	\draw[edge] ([yshift=-0.5 cm]in.east) to ["{\small$C_{W_l2}$}"] ([yshift=-0.5 cm]filter1.west);
+	\draw[edge] ([yshift=-1.5 cm]in.east) to ["{\small$C_Q$}"] ([yshift=-1.5 cm]filter1.west);
+	\draw[edge] ([yshift=1 cm]filter1.east) to ["{\small$C_E$}"] ([yshift=1 cm]gen.west);
+	\draw[edge] ([yshift=0 cm]filter1.east) to ["{\small$C_{W_l1}$}"] ([yshift=0 cm]gen.west);
+	\draw[edge] ([yshift=-1 cm]filter1.east) to ["{\small$C_{BT}$}"] ([yshift=-1 cm]gen.west);
+   \draw[edge] (gen) to [bend left=90,"{\small$C_{W_l2}$}"] (in);
+	\draw[edge] (gen) to ["{\small$C_{BT}$}"] (out);
 	\draw[ioedge] (out) to (x);
 \end{tikzpicture}
 

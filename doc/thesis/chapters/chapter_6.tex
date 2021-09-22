@@ -79,19 +79,19 @@ BT_E, & \forall\ (u,l) \in BT_E, (u,l) \in \{(u_1, l_1), (u_2,l_1), (u_2, l_3), 
 $G=((U\cup L),E)$ & a bipartite graph\\  \hline
 $n,m$ & the number of vertices and edges in $G$, resp.\\  \hline
 $(u,l)$ & an edge between vertices $u$ and $l$\\  \hline
-$\bti$ & the \acrshort{bt} $u_1,l_1,u_2,l_3,u_3,l_2,u_1$\\  \hline
-$\bt$ & the set of all the possible \acrshort{bt} in $G$ \\  \hline
-$bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
-$\at$ & the set of all the possible \acrshort{abt} in $G$ \\  \hline
-$\ati$ & Subset of $\at$, such that $\ati \subseteq \at$ \\  \hline 
 $(u_1,l,u_2)$ & a wedge with  middle vertex $l$\\  \hline
 $\la l, W_l \ra$ & an \acrshort{awg}\\  \hline
 $\aw$ & the set of all the possible \acrshort{awg} in $G$\\  \hline
-$(u_1,l_1,u_2,l_2,u_3)$ & a double wedge with middle vertices $l_1$ and $l_2$\\  \hline 
+$(u_1,l_1,u_2,l_2,u_3)$ & a \acrshort{dwg} with middle vertices $l_1$ and $l_2$\\  \hline 
+$\la (l_1, l_2), U_l \ra$ & an \acrshort{adwg}\\  \hline
 $\dw$ & the set of all the possible \acrshort{adwg} in $G$\\  \hline
 $\dwi$ & Subset of $\dw$, such that $\dwi \subseteq \dw$ \\  \hline
-$\la (l_1, l_2), U_l \ra$ & an \acrshort{adwg}\\  \hline
 $\la (l_1, l_2,l_3), \hat{U}_l \ra$ & an \acrshort{abt}\\  \hline
+$\at$ & the set of all the possible \acrshort{abt} in $G$ \\  \hline
+$\ati$ & Subset of $\at$, such that $\ati \subseteq \at$ \\  \hline 
+$\bti$ & the \acrshort{bt} $u_1,l_1,u_2,l_3,u_3,l_2,u_1$\\  \hline
+$\bt$ & the set of all the possible \acrshort{bt} in $G$ \\  \hline
+$bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
 \end{tabular}
 \caption{Summary of notations and their meanings}
 \label{table:notation}
@@ -159,24 +159,31 @@ Now we can finally build our first \acrlong{abt} as we can see in the following 
 
 \subsection{Algorithm Sketch}\label{sub:sec:algo-sketch}
 Dynamic Pipeline Algorithm for Enumerating Bi-triangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
-\textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. The algorithm tries to collect all the previous object definitions 
-(\acrshort{awg}, \acrshort{adwg} and \acrshort{abt}) during the execution of the actors of $\fbt$ instance. 
+\textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. 
+The algorithm considers a \acrlong{bt} as a convenient composition of three wedges.
+In order to reduce memory footprint, the algorithm aggregates results, i.e. the set of wedges having the same middle vertex is represented as a pair $\la l, W_l \ra$ where $l$ is the middle vertex and $W_l$ is the set of adjacent vertices of $l$ called \acrfull{awg} (see \dref{def:awg}).
+The algorithm first collects \acrshort{awg}, afterwards \acrshort{adwg} and finally \acrshort{abt} during the execution of the actors of $\fbt$ instance. 
 The following table describes the different channels that are connecting the stages in $\dpbt$.
 
 \begin{table}[ht!]
 \centering
 \begin{tabular}{|p{0.2\linewidth}|p{0.8\linewidth}|} \hline
 \textbf{Channel} & \textbf{Meaning}\\ \hline
-$IC$ & Set of Input Channels \\ \hline
+$C = \la IC, OC \ra$ & A Channel pair that connects input and output channel\\ \hline
 $OC$ & Set of Output Channels \\ \hline
+$C_E$ & Channel of $e \in E$ \\ \hline
 $IC_E$ & Input Channels carrying $e \in E$ \\ \hline
 $OC_E$ & Output Channels carrying $e \in E$ \\ \hline
-$IC_{W_1}$ & Input Channels carrying \acrshort{awg} \\ \hline
-$OC_{W_1}$ & Output Channels carrying \acrshort{awg} \\ \hline
-$IC_{W_2}$ & Input Channels carrying \acrshort{awg}, second round \\ \hline
-$OC_{W_2}$ & Output Channels carrying \acrshort{awg}, second round \\ \hline
+$C_{W_l1}$ & Channel of \acrshort{awg} \\ \hline
+$IC_{W_l1}$ & Input Channels carrying \acrshort{awg} \\ \hline
+$OC_{W_l1}$ & Output Channels carrying \acrshort{awg} \\ \hline
+$C_{W_l2}$ & Channel of \acrshort{awg} \\ \hline
+$IC_{W_l2}$ & Input Channels carrying \acrshort{awg} \\ \hline
+$OC_{W_l2}$ & Output Channels carrying \acrshort{awg} \\ \hline
+$C_Q$ & Channel of $Q$ Command \\ \hline
 $IC_Q$ & Input Channels carrying $Q$ Command \\ \hline
 $OC_Q$ & Output Channels carrying $Q$ Command \\ \hline
+$C_{BT}$ & Channel of $\bt$ \\ \hline
 $IC_{BT}$ & Input Channels carrying $\bt$ \\ \hline
 $OC_{BT}$ & Output Channels carrying $\bt$ \\ \hline
 \end{tabular}
@@ -189,7 +196,7 @@ Let $G=((U\cup L),E)$ be a bipartite graph.
 Let $\aw$ be a set of all possibles Aggregated wedges in $G$.
 Let $\dw$ be a set of all possibles Aggregated double-wedges in $G$.
 Let $\at$ be a set of all possibles Aggregated bi-triangles in $G$.
-An \textit{filter state} of DP is a sum type $\st = \la l, W_l \ra + \dwi + \ati$, such that $\la l, W_l \ra \in \aw, \dwi \subseteq \dw, \ati \subseteq \at$.
+An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ is a sum type $\st = \la l, W_l \ra + \dwi + \ati$, such that $\la l, W_l \ra \in \aw, \dwi \subseteq \dw, \ati \subseteq \at$.
 \end{definition}
  
 \begin{figure}[h]
@@ -199,7 +206,7 @@ An \textit{filter state} of DP is a sum type $\st = \la l, W_l \ra + \dwi + \ati
 \label{fig:btDP}
 \end{figure}
 
-\paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfer to the following stage each $(u,l)$ using $OC_E$.
+\paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfer to the following stage each $(u,l)$ using $C_E$.
 For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. 
 First, $\aaa$ receives from $IC_E$ the edges and builds \acrshort{awg} downstreaming to $\fbt$ using $OC_{W1}$. 
 Then $\ab$ receives from $IC_{W1}$ aggregated wedges from previous $\fbt$, downstream to next $\fbt$ and $\gbt$ using $OC_{W1}$ and at the same time use its information to see 
@@ -239,13 +246,13 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \SetAlgoRefName{[A1]}
 \P{$IO_E$: File or Input Stream with Set of Edges $E$}
 \Q{$IO_Q$: File or Input Stream with Commands $Q$}
-\IC{$IC = \la IC_{W_2} \ra$}
-\OC{$OC = \la OC_E, OC_{W_2}, OC_Q \ra$}
+\IC{$IC = \la IC_{W_l2} \ra$}
+\OC{$OC = \la OC_E, OC_{W_l2}, OC_Q \ra$}
 \ForAll(\tcp*[f]{Edges to Generator/Filter}){$(u,l) \in IO_E$}
 {$\p((u,l), OC_E)$ \label{algo:source:1}
 }
-\ForAll(\tcp*[f]{Feedback from Generator to Filter}){$\la l, W_l \ra \in IC_{W_2}$}
-{$\p(\la l, W_l \ra, OC_{W_2})$ \label{algo:source:2}
+\ForAll(\tcp*[f]{Feedback from Generator to Filter}){$\la l, W_l \ra \in IC_{W_l2}$}
+{$\p(\la l, W_l \ra, OC_{W_l2})$ \label{algo:source:2}
 }
 \ForAll(\tcp*[f]{Send Query Commands}){$Q \in IO_Q$}
 {$\p(Q, OC_Q)$ \label{algo:source:3}
@@ -265,13 +272,13 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \SetAlgorithmName{}{gen}{}
 \SetAlgoRefName{[A2]}
 \P{$F$}
-\IC{$ IC = \la IC_E, IC_{W_1}, IC_Q, IC_{BT} \ra$}
-\OC{$ OC = \la OC_{W_2}, OC_{BT} \ra$}
+\IC{$ IC = \la IC_E, IC_{W_l1}, IC_Q, IC_{BT} \ra$}
+\OC{$ OC = \la OC_{W_l2}, OC_{BT} \ra$}
 \ForAll{$(u,l) \in IC_E$}
 {$\sw(F, l, \la l, \{u\} \ra)$ \label{algo:gen:1}
 }
-\ForAll(\tcp*[f]{Feedback channel to retrofit Source}){$\la l, W_l \ra \in IC_{W_1}$}
-{$\p(\la l, W_l \ra, OC_{W_2})$ \label{algo:gen:2}
+\ForAll(\tcp*[f]{Feedback channel to retrofit Source}){$\la l, W_l \ra \in IC_{W_l1}$}
+{$\p(\la l, W_l \ra, OC_{W_l2})$ \label{algo:gen:2}
 }
 \ForAll{$\bti \in IC_{BT}$}
 {$\p(\bti, OC_{BT})$ \label{algo:gen:3}
@@ -287,8 +294,8 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \label{fig:btDP_actor1}
 \end{figure}
 
-\paragraph{Generator $\gbt$} $\gbt$ also have three main loops. In \autoref{algo:gen:1} it receives each edge $(u,l)$ and 
-spawn a new $\fbt$ using $l \in L$ as filter parameter and initializing $\st = \la l, \{u\} \ra$ as it can be seen in \autoref{fig:btDP_actor1}. 
+\paragraph{Generator $\gbt$} $\gbt$ also have three main loops. In \autoref{algo:gen:1} it receives each edge $(u,l)$ not consumed by any $\fbt$, and 
+spawns a new $\fbt$ using $l \in L$ as filter parameter and initializing $\st = \la l, \{u\} \ra$ as it can be seen in \autoref{fig:btDP_actor1}. 
 Spawn assumes that, the implementation will connect the channels to keep the downstream correct. Defines all the input channels of $\gbt$ as input channels of the newly spawn $\fbt$ and set $\fbt$'s output channels as $\gbt$ input channels.
 In \autoref{algo:gen:2} we can see how the algorithm is receiving and retro feeding $\ibt$ with all the \acrshort{awg}. This also assumes that $OC_{W2}$ in $\gbt$ 
 is connected with $IC_{W2}$ in $\ibt$.
@@ -323,8 +330,8 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \SetAlgorithmName{}{fil}{}
 \SetAlgoRefName{[A4]}
 \P{$l \in L$}
-\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
-\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
+\IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
 \df{\filter{}}{
       $\actora()$\\
       $\actorb()$\\
@@ -358,8 +365,8 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \SetAlgoRefName{[A5]}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
-\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
-\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
+\IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
 \PC{$|W_l| > 1 \lor \fid$}
 \BlankLine
 \df{\acta{}}{
@@ -369,7 +376,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
 }
 \uIf{$|W_l| > 1$}{
       $\us(\la l, W_l \ra)$\\ \label{algo:act-1:2}
-      $\p(\la l, W_l \ra, OC_{W_1})$\\
+      $\p(\la l, W_l \ra, OC_{W_l1})$\\
 }\Else{$\fd$}
 }
 \caption{Actor1 ($actor_1$)}
@@ -393,16 +400,16 @@ In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if
 \SetAlgoRefName{[A6]}
 \P{$l \in L$}
 \FS{$\la l, W_l \ra$}
-\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
-\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}
+\IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
 \BlankLine
 \PrC{$W_l \subseteq U, |W_l| > 1$}
 \PC{$|\dwi| \geq 1 \lor \fid$}
 \df{\actb{}}{
 $\la l, W_l \ra \leftarrow \gs$\\
-\ForAll{$\la l', W_l' \ra \in IC_{W_1}$}{
+\ForAll{$\la l', W_l' \ra \in IC_{W_l1}$}{
       \tcp*[h]{By pass Wedges from previous filters to next ones}
-      $\p(\la l', W_l \ra, OC_{W_1})$\\
+      $\p(\la l', W_l \ra, OC_{W_l1})$\\
       $\dwi \leftarrow \emptyset$\\
       \If{$l \neq l' \land W_l' \cap W_l \neq \emptyset$}{ \label{algo:act-2:1}
             $(l_l, l_u) \leftarrow (\argmin_{l,l'}, \argmax_{l,l'})$\\
@@ -446,17 +453,17 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
 \SetAlgoRefName{[A7]}
 \P{$l \in L$}
 \FS{$\dwi \subseteq \dw$}
-\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
-\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
+\IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}  
 \BlankLine
 \PrC{$|\dwi| \geq 1$}
 \PC{$|\ati| \geq 1 \lor \fid$}
 \df{\actc{}}{
       $\dwi \leftarrow \gs$\\
       $\ati \leftarrow \emptyset$\\
-      \ForAll{$\la l', W_l \ra \in IC_{W_2}$}{
+      \ForAll{$\la l', W_l \ra \in IC_{W_l2}$}{
             \tcp*[h]{By pass to be used by following Filters}
-            $\p(\la l', W_l \ra, OC_{W_2})$\\ 
+            $\p(\la l', W_l \ra, OC_{W_l2})$\\ 
             \tcp*[h]{For each double wedge in State}\\
             \ForEach{$\la (l_l, l_u), \la I, J, K \ra \ra \in \dwi, l_l < l' \land l_u > l'$}{
                   $I' \leftarrow I \cup J$\\
@@ -497,8 +504,8 @@ This is because in order to build \acrshort{abt} finding all the possibles \acrs
 \SetAlgoRefName{[A8]}
 \P{$l \in L$}
 \FS{$\ati \subseteq \at$}
-\IC{$ IC = \la IC_E, IC_{W_1}, IC_{W_2}, IC_Q, IC_{BT} \ra $}
-\OC{$ OC = \la OC_E, OC_{W_1}, OC_{W_2}, OC_Q, OC_{BT} \ra $}  
+\IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
+\OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}  
 \BlankLine
 \PrC{$|\ati| \geq 1$}
 \df{\actc{}}{
@@ -937,5 +944,5 @@ and \mintinline{haskell}{filterBTByVertex}.
 This chapter presents the details of the \acrshort{dpbt} algorithm. In the first part, we have introduced the sketch of the algorithm.
 Then, we have described each of the pseudo-code definitions of each component: $\ibt, \gbt, \fbt, \obt$ and actors. 
 After that, we have presented a complexity analysis and correctness proof of the pseudo-code algorithm.
-At the end of the chapter, we have shown how we implemented this using \acrshort{dpfh} explain in \autoref{dp-hs}.
+At the end of the chapter, we have shown how we implemented this using \acrshort{dpfh} is described in \autoref{dp-hs}.
 
