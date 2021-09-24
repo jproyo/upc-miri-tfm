@@ -468,7 +468,7 @@
       \item The specification of \textbf{DP} in the Language is compile time checked (\textit{Type-safe})
     \end{itemize}    
     \begin{exampleblock}{Type Level DSL}
-      \begin{minted}[fontsize=\tiny,highlightlines={7-17}]{shell}      
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={7-17}]{shell}      
 ghci> import DynamicPipeline
 ghci> type DPExample = Source (Channel (Int :<+> Eof)) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
 type DPExample :: *
@@ -497,7 +497,7 @@ mkDP @DPExample
 %       \item Otherwise the compiler warns us about \textbf{Grammar Verification Error}
 %     \end{itemize}    
 %     \begin{alertblock}{Type Level DSL}
-%     \begin{minted}[fontsize=\tiny,highlightlines={8-17},highlightcolor=titaniumyellow]{shell}      
+%     \begin{minted}[fontsize=\small,breaklines,highlightlines={8-17},highlightcolor=titaniumyellow]{shell}      
 % ghci> type DPExample2 = Source (Channel Int) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
 % type DPExample2 :: *
 % type DPExample2 =
@@ -599,7 +599,7 @@ mkDP @DPExample
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{block}{IDL}
-      \begin{minted}[fontsize=\tiny]{shell}      
+      \begin{minted}[fontsize=\small,breaklines]{shell}      
 ghci> type DPExample = Source (Channel (Int :<+> Eof)) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
 type DPExample :: *
 type DPExample =
@@ -611,7 +611,7 @@ type DPExample =
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{block}{IDL}
-      \begin{minted}[fontsize=\tiny,highlightlines={7-11}]{shell}      
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={7-11}]{shell}      
 ghci> type DPExample = Source (Channel (Int :<+> Eof)) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
 type DPExample :: *
 type DPExample =
@@ -629,7 +629,7 @@ withSource @DPExample
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{block}{IDL}
-      \begin{minted}[fontsize=\tiny,highlightlines={7-9}]{shell}      
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={7-9}]{shell}      
 ghci> :t withSource @DPExample
 withSource @DPExample
   :: forall k (st :: k).
@@ -645,17 +645,7 @@ source' :: forall k (st :: k). Stage (WriteChannel Int -> DP st ())
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{block}{IDL}
-      \begin{minted}[fontsize=\tiny,highlightlines={11-16}]{shell}      
-ghci> :t withSource @DPExample
-withSource @DPExample
-  :: forall k (st :: k).
-      (WriteChannel Int -> DP st ())
-      -> Stage (WriteChannel Int -> DP st ())
-      
-ghci> let source' = withSource @DPExample  $ \wc -> unfoldT ([1..10] <> [1..10]) wc identity
-ghci> :t source'
-source' :: forall k (st :: k). Stage (WriteChannel Int -> DP st ())
-
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={2-8}]{shell}      
 ghci> :t withGenerator @DPExample
 withGenerator @DPExample
   :: forall k filter (st :: k).
@@ -668,17 +658,7 @@ withGenerator @DPExample
 
   \begin{frame}[fragile]{DP Framework: Haskell}
     \begin{block}{IDL}
-      \begin{minted}[fontsize=\tiny,highlightlines={11-16}]{shell}      
-ghci> :t withSource @DPExample
-withSource @DPExample
-  :: forall k (st :: k).
-      (WriteChannel Int -> DP st ())
-      -> Stage (WriteChannel Int -> DP st ())
-      
-ghci> let source' = withSource @DPExample  $ \wc -> unfoldT ([1..10] <> [1..10]) wc identity
-ghci> :t source'
-source' :: forall k (st :: k). Stage (WriteChannel Int -> DP st ())
-
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={2-8}]{shell}      
 ghci> :t withGenerator @DPExample
 withGenerator @DPExample
   :: forall k filter (st :: k).
@@ -714,7 +694,7 @@ withGenerator @DPExample
 
   \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
     \begin{block}{Program}
-      \begin{minted}[fontsize=\tiny,highlightlines={5-6}]{haskell}      
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={5-6}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Sink
@@ -728,7 +708,7 @@ program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
 
   \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
     \begin{block}{Program}
-      \begin{minted}[fontsize=\tiny,highlightlines={5-9}]{haskell}      
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={5-9}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Sink
@@ -747,7 +727,7 @@ program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
 
   \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
     \begin{block}{Program}
-      \begin{minted}[fontsize=\tiny,highlightlines={5-7}]{haskell}      
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={5-7}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Sink
@@ -763,7 +743,7 @@ program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
 
   \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
     \begin{block}{Program}
-      \begin{minted}[fontsize=\tiny,highlightlines={7-8,11-11}]{haskell}      
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={7-8,11-11}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Sink
@@ -784,7 +764,7 @@ program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
 
   \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
     \begin{block}{Program}
-      \begin{minted}[fontsize=\tiny,highlightlines={11-14}]{haskell}      
+      \begin{minted}[fontsize=\small,breaklines,highlightlines={11-14}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
 :=> Sink
@@ -799,16 +779,13 @@ genAction filter' readEdge readCC _ writeCC = do
   let unfoldFilter = mkUnfoldFilterForAll filter' toConnectedComp readEdge (readCC .*. HNil) 
   results <- unfoldF unfoldFilter
   foldM_ (hHead results) (`push` writeCC)
-
-program :: FilePath -> IO ()
-program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
       \end{minted}
     \end{block}
   \end{frame}
 
   \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
     \begin{block}{Program}
-      \begin{minted}[fontsize=\tiny,highlightlines={7-12,20-28}]{haskell}      
+      \begin{minted}[fontsize=\tiny,breaklines,highlightlines={7-12,20-28}]{haskell}      
 actor1 :: Edge
        -> ReadChannel Edge
        -> ReadChannel ConnectedComponents
@@ -838,18 +815,6 @@ actor2 _ _ readCC _ writeCC = do
     | cc `intersect` conn = modify (cc <>)
     | otherwise = push cc writeCC
       \end{minted}
-    \end{block}
-  \end{frame}
-
-  \begin{frame}[fragile]{DP Framework: Haskell}
-    \begin{center}
-      \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3-4}
-    \end{center}
-  \end{frame}
-
-  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
-    \begin{block}{Demo Time}
-      \movie[width=12cm,height=4.5cm,poster,externalviewer]{}{screen_2.mp4}
     \end{block}
   \end{frame}
 

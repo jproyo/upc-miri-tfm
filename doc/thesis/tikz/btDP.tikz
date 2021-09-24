@@ -1,7 +1,7 @@
 \begin{tikzpicture}
 	\node[ionode]     (in)      [minimum width=2cm, minimum height=3cm]      {$\ibt$};
 	\node[indata]     (stream)   [above left of=in] at (-2.5,0) {\mbox{{\small $eof\: \dots \: (u,l)$}}};
-	\node[indata]     (commands) [below left of=in] at (-3.5,0) {\mbox{{\small $eof\: \dots Q_V = \{u_1, \dots, l_n\}$}}};
+	\node[indata]     (commands) [below left of=in] at (-3,0) {\mbox{{\small $eof\: \dots \{u_1, \dots, l_n\}$}}};
 	\node[gennode]    (gen)     [right=2cm of in,minimum width=2cm, minimum height=3cm]          {$\gbt$};
 	\node[ionode]     (out)     [right=1.5cm of gen]         {$\obt$};
 	\node[outdata]     (x)     [right=of out]                    {};

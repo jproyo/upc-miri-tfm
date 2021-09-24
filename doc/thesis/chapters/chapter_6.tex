@@ -1,7 +1,7 @@
 \chapter{An algorithm for incrementally enumerating Bi-Triangles using DP}\label{incr-algo-bt-dp}
 In this chapter, we first describe the overall idea of the algorithm for incrementally enumerate 
 \acrshort{bt}. After that, we present the algorithms in pseudo-code format and then a complexity analysis of the principal functions of the algorithm.
-Athe the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
+At the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
 
 \section{Preliminaries Definitions}
 In order to understand how the algorithm works, we need to provide some basic definitions that are already exposed in previous work~\cite{btcount}, and
@@ -29,7 +29,7 @@ Let $G=((U\cup L),E)$ be a bipartite graph. An  \textit{aggregated wedge} is a p
 \end{definition}
 
 \begin{definition}[\acrfull{dwg}]
-Let $G=((U\cup L),E)$ be a bipartite graph. A \textit{double-wedge} in $G$ is a path of length 4 $u_1,l_1,u_2,l_2,u_3$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$, $u_2$ and $l_2$ are the middle vertices of the double-wedge. 
+Let $G=((U\cup L),E)$ be a bipartite graph. A \textit{double-wedge} in $G$ is a path of length 4 $u_1,l_1,u_2,l_2,u_3$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$ and $l_2$ are the middle vertices of the double-wedge. 
 \end{definition}
   
 \begin{definition}[\acrfull{adwg}]\label{def:adwg}
@@ -44,7 +44,7 @@ An Aggregated wedge $\la l, W_l \ra$ is an \textit{Aggregated wedge bi-triangle 
       
 \begin{definition}[\acrfull{abt}]\label{def:abt}
 Let $G=((U\cup L),E)$ be a bipartite graph and  $\hat{U}_l=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_l\rangle$, 
-where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$ and $u_i \neq u_j \neq u_k$, $BT_{\ell}^{\mu}\in \bt$.
+where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
 
 \begin{definition}[Query]
@@ -52,7 +52,7 @@ Let $G=((U\cup L),E)$ be a bipartite graph.
 Let $C=\{BT_V, BT_E\}$ be the set of possible query commands.
 A \textit{query} $Q$ is an command $c \in C$, where 
 \[
-c = \left\{\begin{array}{lr}
+C = \left\{\begin{array}{lr}
 BT_V, & BT_V \subseteq U\cup L\\
 BT_E, & BT_E \subseteq E
 \end{array}\right\} 
@@ -64,12 +64,12 @@ It could be a command query of vertices or edges.
 Let $G=((U\cup L),E)$ be a bipartite graph.
 Let $Q$ be a query.
 A query $Q$ matches in a bipartite graph $G$ if forall $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,u_3)}$ of $G$
-\[
-Q = \left\{\begin{array}{lr}
-BT_V, & \forall\ v \in BT_V, v \in \{u_1,u_2,u_3,l_1,l_2,l_3\}\\
-BT_E, & \forall\ (u,l) \in BT_E, (u,l) \in \{(u_1, l_1), (u_2,l_1), (u_2, l_3), (u_3,l_3), (u_3, l_2), (u_1,l_2)\} 
-\end{array}\right\} 
-\]
+\footnotesize\begin{align*}
+    Q = \left\{\begin{array}{lr}
+    BT_V, & \forall\ v \in BT_V, v \in \{u_1,u_2,u_3,l_1,l_2,l_3\}\\
+    BT_E, & \forall\ (u,l) \in BT_E, (u,l) \in \{(u_1, l_1), (u_2,l_1), (u_2, l_3), (u_3,l_3), (u_3, l_2), (u_1,l_2)\} 
+    \end{array}\right\} 
+    \end{align*}
 \end{definition}
 
 \begin{table}[!ht]
@@ -193,15 +193,17 @@ $OC_{BT}$ & Output Channels carrying $\bt$ \\ \hline
 
 \begin{definition}[Filter State]
 Let $G=((U\cup L),E)$ be a bipartite graph. 
-Let $\aw$ be a set of all possibles Aggregated wedges in $G$.
-Let $\dw$ be a set of all possibles Aggregated double-wedges in $G$.
-Let $\at$ be a set of all possibles Aggregated bi-triangles in $G$.
+Let $\aw$ be a set of all possibles \acrlong{awg} in $G$.
+Let $\dw$ be a set of all possibles \acrlong{adwg} in $G$.
+Let $\at$ be a set of all possibles \acrlong{abt} in $G$.
 An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ is a sum type $\st = \la l, W_l \ra + \dwi + \ati$, such that $\la l, W_l \ra \in \aw, \dwi \subseteq \dw, \ati \subseteq \at$.
 \end{definition}
  
 \begin{figure}[h]
 \centering  
+\resizebox{1\textwidth}{!}{%
 \inputtikz{btDP}
+}
 \caption{$\dpbt$ Initial setup}
 \label{fig:btDP}
 \end{figure}
@@ -289,7 +291,9 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 
 \begin{figure}[h]
 \centering  
+\resizebox{1\textwidth}{!}{%
 \inputtikz{btDP_actor1}
+}
 \caption{$\dpbt$ With Filter instances}
 \label{fig:btDP_actor1}
 \end{figure}
@@ -384,7 +388,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \end{algorithm}
 
 \paragraph{Filter $\aaa$} As we have described in \autoref{sub:sec:algo-sketch} and it according to \autoref{algo:act-1:1}, $\aaa$ is receiving all edges 
-and if the $l' \in L$ of the new received edge is the same as the filer parameter $l$ then it will add to the list of \acrshort{awg} the $u' \in U$ received. 
+and if the $l' \in L$ of the new received edge is the same as the filer parameter $l$ then it will add to the list of \acrshort{awg} the $u' \in U$ received. Otherwise the edge is downstream to the next stage.
 In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if and only if at least 1 wedge could be collected. Otherwise, the filter is marked as dead with $\fd$ function.
 
 \begin{algorithm}
@@ -422,7 +426,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
             $J \leftarrow W_{l_l} \cap W_{l_u}$\\
             $K \leftarrow W_{l_u} \setminus W_{l_l}$\\ \label{algo:act-2:3}
             $U_l \leftarrow \la I, J, K\ra$\\
-            $\dwi \leftarrow dw \cup \{\la (l, l'), U_l \ra\}$
+            $\dwi \leftarrow dw \cup \{\la (l_l, l_u), U_l \ra\}$
       }
 }
 \uIf{$\dwi = \emptyset$}{$\fd$}
