@@ -16,39 +16,38 @@ Additionally, without loss of generality, we assume that  $U\subseteq \mathbb{N}
 in \autoref{fig:bipartite-graph-example}.
 
 \begin{definition}[\acrlong{bt}]\label{def:bt}
-Let $G=((U\cup L),E)$ be a bipartite graph. Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
+Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
 The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{bi-triangle} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
 \end{definition}      
 
 \begin{definition}[\acrfull{wg}]
-Let $G=((U\cup L),E)$ be a bipartite graph. A  \textit{wedge} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
+A \textit{wedge} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
 
 \begin{definition}[\acrfull{awg}]\label{def:awg}
-Let $G=((U\cup L),E)$ be a bipartite graph. An  \textit{aggregated wedge} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u\in W_l$, the edge  $(u,l)\in E$. 
+An \textit{aggregated wedge} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u\in W_l$, the edge  $(u,l)\in E$. 
 \end{definition}
 
 \begin{definition}[\acrfull{dwg}]
-Let $G=((U\cup L),E)$ be a bipartite graph. A \textit{double-wedge} in $G$ is a path of length 4 $u_1,l_1,u_2,l_2,u_3$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$ and $l_2$ are the middle vertices of the double-wedge. 
+A \textit{double-wedge} in $G$ is a path of length 4 $u_1,l_1,u_2,l_2,u_3$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$ and $l_2$ are the middle vertices of the double-wedge. 
 \end{definition}
   
 \begin{definition}[\acrfull{adwg}]\label{def:adwg}
-Let $G=((U\cup L),E)$ be a bipartite graph and let $U_l = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
+Let $U_l = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
 An \textit{aggregated double-wedge}  is a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
 \end{definition}
 
 \begin{definition}[\acrfull{awgc}]\label{def:awgc}
-Let $G=((U\cup L),E)$ be a bipartite graph and let $\la (l_1, l_2), U_l \ra$ be an Aggregated double-wedge, where $\{l_1,l_2\}\subseteq L$ and $U_l = \la I, J, K\ra$.
+Let $\la (l_1, l_2), U_l \ra$ be an Aggregated double-wedge, where $\{l_1,l_2\}\subseteq L$ and $U_l = \la I, J, K\ra$.
 An Aggregated wedge $\la l, W_l \ra$ is an \textit{Aggregated wedge bi-triangle connector} \emph{if and only if} $l > l_1$ and $l < l_2$ and $W_l \cap (I \cup J) \neq \emptyset$ and $W_l \cap (K \cup J) \neq \emptyset$
 \end{definition}
       
 \begin{definition}[\acrfull{abt}]\label{def:abt}
-Let $G=((U\cup L),E)$ be a bipartite graph and  $\hat{U}_l=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_l\rangle$, 
+Let $\hat{U}_l=\la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_l\rangle$, 
 where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
 
-\begin{definition}[Query]
-Let $G=((U\cup L),E)$ be a bipartite graph. 
+\begin{definition}[Query] 
 Let $C=\{BT_V, BT_E\}$ be the set of possible query commands.
 A \textit{query} $Q$ is an command $c \in C$, where 
 \[
@@ -61,7 +60,6 @@ It could be a command query of vertices or edges.
 \end{definition}
 
 \begin{definition}[Query Match]\label{def:query:match}
-Let $G=((U\cup L),E)$ be a bipartite graph.
 Let $Q$ be a query.
 A query $Q$ matches in a bipartite graph $G$ if forall $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,u_3)}$ of $G$
 \footnotesize\begin{align*}
@@ -192,11 +190,10 @@ $OC_{BT}$ & Output Channels carrying $\bt$ \\ \hline
 \end{table}
 
 \begin{definition}[Filter State]
-Let $G=((U\cup L),E)$ be a bipartite graph. 
 Let $\aw$ be a set of all possibles \acrlong{awg} in $G$.
 Let $\dw$ be a set of all possibles \acrlong{adwg} in $G$.
 Let $\at$ be a set of all possibles \acrlong{abt} in $G$.
-An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ is a sum type $\st = \la l, W_l \ra + \dwi + \ati$, such that $\la l, W_l \ra \in \aw, \dwi \subseteq \dw, \ati \subseteq \at$.
+An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ has a sum type $\st = \la l, W_l \ra + \dwi + \ati$, such that $\la l, W_l \ra \in \aw, \dwi \subseteq \dw, \ati \subseteq \at$.
 \end{definition}
  
 \begin{figure}[h]
@@ -376,7 +373,9 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \df{\acta{}}{
 $\la l, W_l \ra \leftarrow \gs$\\
 \ForAll{$(u',l') \in IC_E$}
-{\uIf{$l = l'$}{$W_l \leftarrow W_l \cup \{u'\}$}\label{algo:act-1:1}
+{\uIf{$l = l'$}{
+      $W_l \leftarrow W_l \cup \{u'\}$\label{algo:act-1:1}
+}\Else{$\p((u',l'),OC_E)$}
 }
 \uIf{$|W_l| > 1$}{
       $\us(\la l, W_l \ra)$\\ \label{algo:act-1:2}
@@ -475,10 +474,8 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
                   \If{$W_l \cap I' \neq \emptyset \land W_l \cap K' \neq \emptyset$}{
                         $I' \leftarrow I' \cap W_l$\\
                         $K' \leftarrow K' \cap W_l$\\
-                        $\hat{U}_l  \leftarrow \hat{U}_l \cup \{\la I', J, K' \ra\})$
-                  }
-                  \If{$\hat{U}_l \neq \la \emptyset,\emptyset,\emptyset \ra$}{
-                        $\ati \leftarrow \ati \cup \{\la (l_l, l', l_u), \hat{U}_l \ra\}$
+                        $\hat{U}_l  \leftarrow \la I', J, K' \ra$\\
+                        $\ati \leftarrow \ati \cup \big\{\la (l_l, l', l_u), \hat{U}_l \ra\big\}$
                   }
             }
       }
@@ -676,20 +673,16 @@ Finally for building all possible $\bt$ in $\ad$ worst case is $O(\binom{|V|}{6}
       
       
 \clearpage
-\section{Draft-Correctness of the Algorithm}
+\section{Correctness of the Algorithm}
 Given a \acrshort{bt} $BT_{\ell}^{\mu} = \bti$ as we defined in \dref{def:bt}, where the 6-cycle is $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$.
 
 %A bi-triangle can be described as a sequence $(C,a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U\footnote{In the enumeration, L and $U$ be interchanged}$
 
 We need to prove that the algorithm can enumerate all bi-triangle in the graph and also that there are no duplicates in the enumeration.
 
-\begin{quote}
-Very recently, Qiao
-et al. proposed CrystalJoin~\cite{Lai} that aims at resolving the
-output crisis by compressing them.
-\end{quote}
+Very recently, Qiao et al. proposed CrystalJoin~\cite{Lai} that aims at resolving the output crisis by compressing the intermediate results.
 
-We use the same technique, compressing a group of bi-triangles as we define in \dref{def:abt} $\langle \ell, \hat{U}_l\rangle$, where $\ell = (l_1,l_2,l_3,)$ and $\hat{U}_l=\{\la I, J, K\ra | I \subseteq U, J \subseteq U, K \subseteq U\}$ ($\aw$).
+We use the same technique, compressing a group of bi-triangles as we define in \dref{def:abt} $\langle \ell, \hat{U}_l\rangle$, where $\ell = (l_1,l_2,l_3,)$ and $\hat{U}_l= \la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$ ($\aw$).
  
 
 First we are going to prove that if we take all the triples $(l_1,l_2,l_3)$  such $l_1<l_2$ and $l_2<l_3$  and  $\la (l_1,l_2,l_3,), \hat{U}_l \ra$ is an aggregate  bi-triangle, then it is not stored twice (theorem \ref{TH-unicity}). 
@@ -698,14 +691,14 @@ We will show that we store all the aggregate bi-triangles where $u_1,u_2,u_3$  a
 
 \end{theorem}
 \begin{proof}
-As a bi-triangle is a 6-closed cycle it can be described as a sequence of nodes  $(u_3,l_1,u_1,l_2,u_2,l_3,u_3)$, each one adjacent to its neighbour. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$ .  
+As a bi-triangle is a 6-closed cycle it can be described as a sequence of nodes  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, each one adjacent to its neighbour. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$ .  
 \begin{itemize}
-    \item $(u_1,l_2,u_3,l_3,u_2,l_1,u_1)$ not accepted because $l_3 > l_1$
-    \item $(u_3,l_2,u_1,l_1,u_2,l_3,u_3)$ not accepted because $l_2 > l_1$
-    \item $(u_3,l_3,u_2,l_1,u_1,l_2,u_3)$ not accepted because $l_3 > l_1$ and $l_3 > l_2$
-    \item $(u_2,l_3,u_3,l_2,u_1,l_1,u_2)$ not accepted because $l_3 > l_1 $
-    \item $(u_2,l_1,u_1,l_2,u_3,l_3,u_2)$ is accepted because $l_1 < l_3 $ in actor 2 of filter $F_a$ or $F_c$ and $l_1 < l_2 <l_3$  in actor 3
-    \item $(u_1, l_1,u_2,l_3,u_3,l_2,u_1)$ not accepted because $l_3 > l_1$
+      \item $(u_1,l_2,u_3,l_3,u_2,l_1,u_1)$ not accepted because $l_3 > l_1$
+      \item $(u_3,l_2,u_1,l_1,u_2,l_3,u_3)$ not accepted because $l_2 > l_1$
+      \item $(u_3,l_3,u_2,l_1,u_1,l_2,u_3)$ not accepted because $l_3 > l_1$ and $l_3 > l_2$
+      \item $(u_2,l_3,u_3,l_2,u_1,l_1,u_2)$ not accepted because $l_3 > l_1 $
+      \item $(u_2,l_1,u_1,l_2,u_3,l_3,u_2)$ is accepted because $l_1 < l_3 $ in actor 2 of filter $F_{l_1}$ or $F_{l_3}$ and $l_1 < l_2 <l_3$  in actor 3
+      \item $(u_1, l_1,u_2,l_3,u_3,l_2,u_1)$ not accepted because $l_3 > l_1$
 \end{itemize}
 
 
@@ -713,39 +706,36 @@ Therefore the  only sequence constructed by the algorithm is the one that satisf
 \end{proof}
 
 
-\begin{theorem}\label{TH-all}Every bi-triangle present in the graph is listed.
+\begin{theorem}\label{TH-all}Every bi-triangle present in the graph can be  listed.
 
 \end{theorem}
 
 \begin{proof}
-
-Obvious from the definition of $I,J,K$  and the algorithm of obtaining bi-triangles. 
 \iffalse
+Obvious from the definition of $I,J,K$  and the algorithm of obtaining bi-triangles. 
+
 Lets assume that a bi-triangle $(a,A,b,B,c,C)$   will assume that $a$ is the smallest element in the set $\{a,b,c\}$ and $c$ is the bigger.
 When actor 1 in fiter $F_a$1 ends reading all the edges, $\{A,B\} \subseteq W_a$. Also When actor 1 in fiter $F_c$1 ends reading all the edges, $\{B,C\} \subseteq W_c$. 
 
 AS $a < c$  in filter $F_a$ the pair $(a,c)$  will be added to D
 $DW$. When actor 3 in filter $F_a$ receives $(b, W_b)$ will add to $BT$ because of the non empty intersection. Therefore the bi-triangle $(a,A,b,B,c,C)$ can be recognized
 \fi
+
+So we are going to talk from now on about the bi-triangles stored in filter $F_a$.
+
+At the end of the execution of $\ac$ $F_a$ constructs the sets where to choose $A,B,C$ $\at$
+
+Actor 1 collects in $F_a$ all the nodes in $U$ adjacent to $a$ i.e. all the candidates to choose $A$. Afterward this set will be reduced. 
+
+Actor 2 receives pairs $(c,V)$ where $V$ are all the nodes adjacent to $c$ in order to test the possibility of constructing a new double wedge.  If the conditions are fulfilled, it adds the double wedge $\la (a,c), l_2), U_{t_1} \ra$,  or $\la (c, a), U_{t_2} \ra$. 
+
+In each filter, the pair of lower vertices in the double edges are pairs constructed by $a$ and vertices that are parameters of filters that are before the filter $F_a$. Therefore, the double edges recorded are present in at most one filter.
+
+Actor 3 receives pairs $(b,M) $ where $M$ are all the nodes adjacent to $b$ and has in memory a set of double wedges $\la (a,c), l_2), U_{t_1} \ra$
+
+$\ac$ accepts b as a candidate to construct an element of the set of aggregate bi-triangles if $a < b < c$. Therefore the aggregated bi-triangles so constructed are recorded in a single filter due to the fact that that the pair $(a,c)$ is present in a single filter.
 \end{proof}
-
-----------------
-
-Second version
- So we are going to talk from now on of the bi-triangles stored in  filter $F_a$.
-
- At the end of the execution of actor 3 $F_a$ constructs the sets where to choose $A,B,C$
- 
- Actor 1 collects in $F_a$ all the nodes in $U$ adjacent to $a$ i.e. all the candidates to choose $A$. Afterwards this set will be reduced . 
- 
- Actor 2 receives pairs $(c,V)$ where $V$ are all the nodes adjacent to $c$ in order to test the possibility of constructing a new double wedge.  If the conditions are fulfilled, it adds the double wedge $\la (a,c), l_2), U_{t_1} \ra$,  or $\la (c, a), U_{t_2} \ra$. 
- 
- In each filter, the pair of lower vertices in the double edges are pairs constructed by $a$ and vertices that are parameters of filters that are before the filter $F_a$. Therefore, the double edges recorded are present in at most one filter.
- 
- Actor 3 receives pairs $(b,M) $ where $M$ are all the nodes adjacent to $b$ and has in memory a set of double wedges $\la (a,c), l_2), U_{t_1} \ra$
- 
- $\ab$ accepts b as a candidate to construct an element of the set of aggregate bi-triangles if $a < b < c$. Therefore the aggregated bi-triangles so constructed are recorded in a single filter due to the fact that that the pair $(a,c)$ is present in a single filter.
- 
+        
  
 \section{\acrshort{dpbt} implementation}
 As we have seen in the previous \autoref{dp-hs}, first we need to define the \acrshort{dp} using the \acrshort{dsl}.
