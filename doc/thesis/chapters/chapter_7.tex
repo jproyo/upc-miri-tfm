@@ -29,14 +29,18 @@ Regarding memory, the allocated nodes have been requested from $40 GB$ up to $12
 \subsection{Haskell Setup}
 Regarding specific libraries and compilations flags used on \acrshort{hs}, \acrshort{ghc} version $8.10.4$ has been used plus the following set of libraries: 
 \begin{inparaenum}[]
-      \item \mintinline{bash}{dyanmic-pipeline 0.3.2.0} \cite{dynamic-pipeline},
-      \item \mintinline{bash}{bytestring 0.10.12.0} \cite{bytestring},
-      \item \mintinline{bash}{containers 0.6.2.1} \cite{containers}, 
-      \item \mintinline{bash}{relude 1.0.0.1} \cite{relude}
-      \item and \mintinline{bash}{unagi-chan 0.4.1.3} \cite{unagi} 
+      \item \mintinline[breaklines]{bash}{dyanmic-pipeline 0.3.2.0} \cite{dynamic-pipeline},
+      \item \mintinline[breaklines]{bash}{bytestring 0.10.12.0} \cite{bytestring},
+      \item \mintinline[breaklines]{bash}{containers 0.6.2.1} \cite{containers}, 
+      \item \mintinline[breaklines]{bash}{relude 1.0.0.1} \cite{relude}
+      \item and \mintinline[breaklines]{bash}{unagi-chan 0.4.1.3} \cite{unagi} 
   \end{inparaenum}. The use of \texttt{relude} library is because we disabled 
-\mintinline{haskell}{Prelude} from the project with the language extension \mintinline{haskell}{NoImplicitPrelude} \cite{extensions}. 
-We have compiled our program using \texttt{stack} version $2.5.1$ \cite{stack} with the following command and option flags\\ \mintinline{bash}{stack build --ghc-options "-threaded -O3 -rtsopts -with-rtsopts=-N"}.\footnote{For more information about package.yaml or cabal file please check https://github.com/jproyo/upc-miri-tfm/tree/main/bt-graph-dp}.
+\mintinline[breaklines]{haskell}{Prelude} from the project with the language extension \mintinline[breaklines]{haskell}{NoImplicitPrelude} \cite{extensions}. 
+We have compiled our program using \texttt{stack} version $2.5.1$ \cite{stack} with the following command and option flags\footnote{For more information about package.yaml or cabal file please check https://github.com/jproyo/upc-miri-tfm/tree/main/bt-graph-dp}:
+
+\begin{minted}[fontsize=\small]{bash}
+>> stack build --ghc-options "-threaded -O3 -rtsopts -with-rtsopts=-N"
+\end{minted}
 
 \subsection{DataSets}\label{data:set}
 
