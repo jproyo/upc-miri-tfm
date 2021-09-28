@@ -3,17 +3,17 @@
 	\node[source]      (stream)                  {\hspace{1cm}};
 	\node[filternode,label=below:$F_{\{1,2\}}$]  (filter1)               [right=of stream] {\small $\{1,2\}$};
 	\node[filternode,label=below:$F_{\{3,6\}}$]  (filter2)               [right=of filter1] {\small $\{3,6\}$};
-	\node[gennode,label=below:Generator]   (gen)                 [right=of filter2] {$\gwc$};
-	\node[paramnode,label=above:Filter]  (param)          [above= 0.2mm of gen] {$\fwc$};
-	\node[ionode,label=below:Sink]      (out)                  [right=of gen] {$\owc$};
+	\node[gennode]   (gen)                 [right=of filter2] {$\gwc$};
+	\node[paramnode]  (param)          [above= 0.2mm of gen] {$\fwc$};
+	\node[ionode]      (out)                  [right=of gen] {$\owc$};
 	\node[outdata]     (x)     [right=of out]                    {};
 	%Lines
-	\draw[edge] (stream.16) to ["{\small$eof$}"] (filter1.167);
-	\draw[edge] (stream.-16) to ["{\small$eof$}",swap] (filter1.191);
-	\draw[edge] (filter1.11) to ["{\small$(3,4)$}"] (filter2.170);
-	\draw[edge] (filter1.-13) to (filter2.194);
-	\draw[edge] (filter2.11) to ["{\small$(4,5)$}"] (gen.167);
-	\draw[edge] (filter2.-13) to (gen.196);
+	\draw[edge] (stream.17) to ["{\small$eof$}"] (filter1.168);
+	\draw[edge] (stream.-22) to ["{\small$eof$}",swap] (filter1.195);
+	\draw[edge] (filter1.15) to ["{\small$(3,4)$}"] (filter2.165);
+	\draw[edge] (filter1.-15) to (filter2.195);
+	\draw[edge] (filter2.15) to ["{\small$(4,5)$}"] (gen.165);
+	\draw[edge] (filter2.-15) to (gen.195);
 	\draw[edge] (gen) to (out);
 	\draw[ioedge] (out) to (x);
 	\end{tikzpicture}

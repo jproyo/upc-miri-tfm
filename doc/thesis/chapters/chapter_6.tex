@@ -9,7 +9,7 @@ at the same time, we define other structures that we use for giving a solution t
 Let's enumerate all those definitions in the following paragraphs.
 
 \begin{definition}[\acrlong{bg}] 
-A bipartite graph is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.\cite{Bondy1976}
+A \acrfull{bg} is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.\cite{Bondy1976}
 \end{definition}
 
 Additionally, without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. We can see an example of a \acrshort{bg}
@@ -17,33 +17,33 @@ in \autoref{fig:bipartite-graph-example}.
 
 \begin{definition}[\acrlong{bt}]\label{def:bt}
 Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
-The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{bi-triangle} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
+The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{\acrfull{bt}} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
 \end{definition}      
 
 \begin{definition}[\acrfull{wg}]
-A \textit{wedge} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
+A \textit{\acrfull{wg}} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
 
 \begin{definition}[\acrfull{awg}]\label{def:awg}
-An \textit{aggregated wedge} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u\in W_l$, the edge  $(u,l)\in E$. 
+An \textit{\acrfull{awg}} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u\in W_l$, the edge  $(u,l)\in E$. 
 \end{definition}
 
 \begin{definition}[\acrfull{dwg}]
-A \textit{double-wedge} in $G$ is a path of length 4 $u_1,l_1,u_2,l_2,u_3$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$ and $l_2$ are the middle vertices of the double-wedge. 
+A \textit{\acrfull{dwg}} in $G$ is a path of length 4 $u_1,l_1,u_2,l_2,u_3$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$ and $l_2$ are the middle vertices of \acrshort{dwg}. 
 \end{definition}
   
 \begin{definition}[\acrfull{adwg}]\label{def:adwg}
 Let $U_l = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
-An \textit{aggregated double-wedge}  is a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
+An \textit{\acrfull{adwg}}  is a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
 \end{definition}
 
 \begin{definition}[\acrfull{awgc}]\label{def:awgc}
-Let $\la (l_1, l_2), U_l \ra$ be an Aggregated double-wedge, where $\{l_1,l_2\}\subseteq L$ and $U_l = \la I, J, K\ra$.
-An Aggregated wedge $\la l, W_l \ra$ is an \textit{Aggregated wedge bi-triangle connector} \emph{if and only if} $l > l_1$ and $l < l_2$ and $W_l \cap (I \cup J) \neq \emptyset$ and $W_l \cap (K \cup J) \neq \emptyset$
+Let $\la (l_1, l_2), U_l \ra$ be an \acrshort{adwg}, where $\{l_1,l_2\}\subseteq L$ and $U_l = \la I, J, K\ra$.
+An \acrshort{awg} $\la l, W_l \ra$ is an \textit{\acrfull{awgc}} \emph{if and only if} $l > l_1$ and $l < l_2$ and $W_l \cap (I \cup J) \neq \emptyset$ and $W_l \cap (K \cup J) \neq \emptyset$
 \end{definition}
       
 \begin{definition}[\acrfull{abt}]\label{def:abt}
-Let $\hat{U}_l=\la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$. An \textit{aggregated bi-triangle}  is a pair  $\langle \ell, \hat{U}_l\rangle$, 
+Let $\hat{U}_l=\la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$. An \textit{\acrfull{abt}}  is a pair  $\langle \ell, \hat{U}_l\rangle$, 
 where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
 
@@ -345,14 +345,6 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 
 \paragraph{Filter $\fbt$} In \autoref{algo:fil} shows the simple call sequence over all the actor functions of the filter template. 
 
-\begin{figure}[h]
-\centering  
-\inputtikz{btDP_actor1}
-\caption{$\dpbt$ With Filter instances}
-\label{fig:btDP_actor1}
-\end{figure}
-      
-
 \begin{algorithm}
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
@@ -388,7 +380,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
 
 \paragraph{Filter $\aaa$} As we have described in \autoref{sub:sec:algo-sketch} and it according to \autoref{algo:act-1:1}, $\aaa$ is receiving all edges 
 and if the $l' \in L$ of the new received edge is the same as the filer parameter $l$ then it will add to the list of \acrshort{awg} the $u' \in U$ received. Otherwise the edge is downstream to the next stage.
-In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if and only if at least 1 wedge could be collected. Otherwise, the filter is marked as dead with $\fd$ function.
+In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if and only if at least 1 wedge was collected. Otherwise, the filter is marked as dead with $\fd$ function.
 
 \begin{algorithm}
 \SetKwInOut{P}{Parameter}
@@ -682,7 +674,7 @@ We need to prove that the algorithm can enumerate all bi-triangle in the graph a
 
 Very recently, Qiao et al. proposed CrystalJoin~\cite{Lai} that aims at resolving the output crisis by compressing the intermediate results.
 
-We use the same technique, compressing a group of bi-triangles as we define in \dref{def:abt} $\langle \ell, \hat{U}_l\rangle$, where $\ell = (l_1,l_2,l_3,)$ and $\hat{U}_l= \la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$ ($\aw$).
+We use the same technique, compressing a group of bi-triangles as we define in \dref{def:abt} $\langle \ell, \hat{U}_l\rangle$, where $\ell = (l_1,l_2,l_3,)$ and $\hat{U}_l= \la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$ ($\at$).
  
 
 First we are going to prove that if we take all the triples $(l_1,l_2,l_3)$  such $l_1<l_2$ and $l_2<l_3$  and  $\la (l_1,l_2,l_3,), \hat{U}_l \ra$ is an aggregate  bi-triangle, then it is not stored twice (theorem \ref{TH-unicity}). 

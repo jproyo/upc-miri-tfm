@@ -1,36 +1,39 @@
-\chapter{\acrshort{wcc} - Proof of concept}\label{prole}
-In the context of this research, we have started approaching the problem first evaluating the suitability of \acrlong{hs}
-to implement the Dynamic Pipeline. To test empirically this implementation, we develop a proof of concept solving the \acrlong{wcc} of a Graph using \acrlong{dp} with \acrshort{hs}.
-We have obtained results on this initial research to proceed using Haskell and DPP to enumerate bitriangles.
-In this chapter, we are going to describe that initial implementation of \acrshort{dp} for solving \acrshort{wcc} using \acrshort{hs} as well as the results obtained.
+\chapter{Proof of concept: Weakly Connected Components of a Graph}\label{prole}
 
-One of the biggest challenges of implementing a \acrfull{dpf} is to find a proper set of tools and programming language which can take advantage of both of its primary aspects: \begin{inparaenum}[i\upshape)]
-\item  \emph{fast parallel} processing and 
-\item  \emph{strong theoretical} foundations that manage computations as first-class citizens.
+One of the biggest challenges of implementing a Dynamic Pipeline is to find  a programming language with a proper set of tools supporting both of the  primary features of the \acrshort{dp}: \begin{inparaenum}[i\upshape)]
+\item  \emph{parallel} processing and 
+\item  \emph{strong theoretical} foundations to manage computations as first-class citizens.
  \end{inparaenum}
-\acrfull{hs} is a statically typed pure functional language which has been designed and evolved from its birth in 1987, on strong theoretical foundations where computations are primary entities, 
-and at the same time has been providing a powerful set of tools for writing multithreading and parallel programs with optimal performance \cite{parallelbook, monadpar}.
+Haskell is a statically typed pure functional language designed on strong theoretical foundations where computations are primary entities.
+This pure functional language has evolved from its birth in 1987 and nowadays provides a powerful set of tools for writing multithreading and parallel programs with optimal performance \cite{parallelbook, monadpar}. 
 
-The main objective was to explore the feasibility of using a  \acrfull{fp} language to implement a \acrshort{dpf}. 
-In particular, the basis of an implementation of a \acrshort{dpf}  in \acrshort{hs}, a pure functional language. 
-This is to determine the particular features (i.e., versions and libraries) of that will allow for an efficient implementation of the \acrshort{dpf}. To be concrete, through a particular and very relevant problem as the computation of the \acrfull{wcc} of a graph,  we study the critical features required in \acrshort{hs} for a \acrshort{dpf} implementation.
-
-\section{Implementation}
-Let us consider the problem of computing the (weak) connected components of a graph $G$ using \acrshort{dp}. 
+In the context of this research, we first assessed the suitability of \acrfull{hs}  to implement a Dynamic Pipeline. 
+To be concrete, we conducted a proof of concept implementing a Dynamic Pipeline in  Haskell for solving a particular and very relevant problem as the computation/enumeration of the Weakly Connected Components of a graph.
+In particular, the main objective of our proof of concept was to study the critical features required in \acrshort{hs} for a \acrshort{dpf} implementation,  the real possibilities of emitting incrementally results, and the performance of such kinds of implementations. 
+Indeed, we explored the basis of an implementation of a \acrshort{dpf}  in a pure (parallel) functional language as Haskell.
+This is, we determined the particular features (i.e., versions and libraries) that will allow for an efficient implementation of a \acrshort{dpf}. 
+Moreover, we conducted an empirical evaluation to analyze the performance of the Dynamic Pipeline implemented in Haskell for enumerating \acrshort{wcc} with special attention to the emission of results, i.e. \acrshort{wcc}, incrementally. 
+In this chapter, we focus on the presentation of our algorithm for enumerating \acrshort{wcc} using \acrshort{hs} as well as the results obtained in the empirical evaluation of its implementation. Almost all the content of this chapter is published in \cite{prole21}. 
+The details of the specific requirements of the Haskell system according to the results of the proof of concept will be presented in \autoref{dp-hs}.
+ 
+\section{$\dpwcc$ Algorithm}
+Let us consider the problem of computing/enumerating the (weak) connected components of a graph $G$ using \acrshort{dp}. 
 A connected component of a graph is a subgraph in which any two vertices are connected by paths. 
-\begin{wrapfigure}{r}{0.3\textwidth}
+\begin{wrapfigure}{r}{0.4\textwidth}
   \begin{center}
 \inputtikz{graph_example_wcc}
 \end{center}
-\caption[Graph WCC Example]{Example of Graph with two Connected Components}
+\caption[Graph WCC Example]{Example of a graph with two weakly connected components: $\{1,2\}$ and $\{3,4,5,6\}$}
 \label{fig:example_dp_graph}
 \end{wrapfigure}
-Thus, finding connected components of a undirected graph implies obtaining the minimal partition of the set of nodes induced by the relationship \textit{connected}, i.e., there is a path between each pair of nodes. An example of that graph can be seen in \autoref{fig:example_dp_graph}.
+Thus, finding connected components of an undirected graph implies obtaining the minimal partition of the set of nodes induced by the relationship \textit{connected}, i.e., there is a path between each pair of nodes. An example of that graph can be seen in \autoref{fig:example_dp_graph}.
 The input of the Dynamic Pipeline for computing the WCC of a graph, $\dpwcc$, is a sequence of edges ending with $\eof$\footnote{Note that there are neither isolated vertices nor loops in the source graph $G$.}. The connected components are output as soon as they are computed, i.e., they are produced incrementally. 
+Roughly speaking the idea of the algorithm is that the weakly connected components are built in two phases. In the first phase filter instance stages receive the edges of the input graph and create sets of connected vertices. 
+During the second phase, these filter instances construct maximal subsets of connected vertices, i.e. the vertices corresponding to (weakly) connected components.
 %
 $\dpwcc$ is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\iwc$),  \textit{Generator} ($\gwc$),  \textit{Sink} ($\owc$), and \textit{Filter}($\fwc$) stages. Additionally,  the channels connecting these stages must be defined. 
 In $\dpwcc$, stages are connected linearly and unidirectionally through the channels $\ice$ and  $\csofv$. Channel $\ice$ carries edges while channel  $\csofv$ conveys sets of connected vertices. Both channels end by the $\eof$ mark. 
-The behavior of $\fwc$ is given by a sequence of two actors (scripts). In what follows, we denote these actors by $\Act$ and $\Actt$, respectively. 
+The behavior of $\fwc$ is given by a sequence of two actors (scripts). Each actor corresponds to a phase of the algorithm. In what follows, we denote these actors by $\Act$ and $\Actt$, respectively. 
 The script $\Act$ keeps a set of connected vertices ($CV$) in the state of the $\fwc$ instance. When an edge $e$ arrives, if an endpoint of $e$ is present in the state, then the other endpoint of $e$ is added to $CV$. 
 Edges without incident endpoints are passed to the next stage. When $\eof$ arrives at channel $\ice$, it is passed to the next stage, and the script $\Actt$ starts its execution. 
 If script $\Actt$ receives a set of connected vertices $CV$ in $\csofv$, it determines if the intersection between $CV$ and the nodes in its state is not empty. If so, it adds the nodes in $CV$  to its state. 
@@ -38,81 +41,143 @@ Otherwise, the $CV$ is passed to the next stage.  Whenever $\eof$ is received, $
 The behavior of $\iwc$ corresponds to the identity transformation over the data stream of edges.  As edges arrive, they are passed through  $\ice$ to the next stage. When receiving $\eof$ on $\ice$, this mark is put on both channels. 
 Then, $\iwc$ dies. 
 
-Lets describe this behavior with the example of the graph show in \autoref{fig:example_dp_graph}.
+Let us describe this behavior with the example of the graph shown in \autoref{fig:example_dp_graph}.
 
 \begin{figure}[h!]
   \centering
 \inputtikz{dp_example_0}
-\caption[$\dpwcc$ Initial Setup]{$\dpwcc$ Initial Setup}
+\caption[$\dpwcc$ Initial Setup]{$\dpwcc$ Initial setup. Stages Source, Generator, and Sink are represented by the squares labeled by $\mathsf{Sr_{WCC}}$, $\mathsf{G_{WCC}}$ and $\mathsf{Sk_{WCC}}$, respectively.  The square $\fwc$ corresponding to the Filter stage template is the parameter of $\gwc$. Arrows $\rightrightarrows$ between represents the connection of stages through two channels, $\ice$, and $\csofv$. The arrow  $\rightarrow$ represents the channel $\csofv$ connecting the stages $\mathsf{G_{WCC}}$ and $\mathsf{Sk_{WCC}}$. The arrow $\Longrightarrow$ stands for I/O data flow. Finally, the input stream comes between the dotted lines on the left and the WCC computed incrementally will be placed between the solid lines on the right.}
 \label{fig:dp_example_0}
 \end{figure}
 
-In \autoref{fig:dp_example_0} we can see the initial configuration of $\dpwcc$, where $\rightrightarrows$ represents channels $\ice$ and $\csofv$ while $\rightarrow$ represents the channel $\csofv$.
-Once activated the initial $\dpwcc$, the stream of edges is fed into $\iwc$ and $\owc$ produces the resulting connected components. 
-$\gwc$ has as parameter the template of the stage  $\fwc$. 
+\autoref{fig:dp_example_0} depicts the initial configuration of $\dpwcc$. 
+The interaction of $\dpwcc$ with the "external" world is done through the stages $\iwc$ and $\owc$. 
+Indeed, once activated the initial $\dpwcc$, the input stream -- consisting of a sequence containing all the edges in the graph in \autoref{fig:example_dp_graph} -- feeds $\iwc$ while  $\owc$ emits incrementally the resulting weakly connected components.  
+In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \autoref{fig:dp_example_5_6}, \autoref{fig:dp_example_7_8} and \autoref{fig:dp_example_9_10} depict the evolution of the $\dpwcc$.
  
- \begin{figure}[h!]
-  \centering
+\begin{figure}[h!]
+\centering
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_1}
+  \caption{The edge $(1,2)$ is arriving to $\gwc$.}
+  \label{fig:dp_example_1_2a}
+\end{subfigure}
+\vspace{.3cm}
+
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_2}
-  \caption[$\dpwcc$ Evolving first state]{$\dpwcc$ Evolving first state}
-  \label{fig:dp_example_1_2}
+  \caption{When the edge $(1,2)$ arrives to $\gwc$, it  spawns a new instance of $\fwc$ before $\gwc$. Filter instance $F_{\{1,2\}}$ is connected to  $\gwc$ through channels $\ice$ and  $\csofv$. The state of the new filter instance $F_{\{1,2\}}$ is initialized with the set of vertices $\{1,2\}$. The edge $(3,6)$ arrives to the new filter instance $F_{\{1,2\}}$.}
+  \label{fig:dp_example_1_2b}
+\end{subfigure}
+\caption[$\dpwcc$ Evolving first state]{Evolution of the $\dpwcc$: First state}
+\label{fig:dp_example_1_2}
 \end{figure}
- 
-When an edge $(1,2)$ arrives to $\gwc$, it  spawns a new instance of $\fwc$ before $\gwc$. 
-For example, the first time a filter instance is spawned, the $\dpwcc$ evolves to \autoref{fig:dp_example_1_2}. 
-The state of this new filter instance is initialized with the vertices $\{1,2\}$. 
+\vspace{.5cm}
 
 \begin{figure}[h!]
-  \centering
+\centering
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_3}
+  \caption{None of the vertices in the edge $(3,6)$ is in the set of vertices $\{1,2\}$ in the state of $F_{\{1,2\}}$, hence it is passed through $\ice$ to $\gwc$.}
+  \label{fig:dp_example_3_4a}
+\end{subfigure}
+\vspace{.3cm}
+
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_4}
-  \caption[$\dpwcc$ Evolving second state]{$\dpwcc$ Evolving second state}
-  \label{fig:dp_example_3_4}
+  \caption{When the edge $(3,6)$ arrives to $\gwc$, it spawns the filter instance $F_{\{3,6\}}$  between $F_{\{1,2\}}$ and $\gwc$. Filter instance $F_{\{1,2\}}$ is connected to the new filter instance $F_{\{3,6\}}$ and this one is connected to  $\gwc$ through channels $\ice$ and  $\csofv$. The state of the new filter instance $F_{\{3,6\}}$ is initialized with the set of vertices $\{3,6\}$. The edge $(3,4)$ arrives to $F_{\{1,2\}}$  and $\mathsf{Sr_{WCC}}$ is fed with the mark $\eof$. Edges $(3,4)$ and $(4,5)$ remain passing through $\ice$.}
+  \label{fig:dp_example_3_4b}
+\end{subfigure}
+\caption[$\dpwcc$ Evolving second state]{Evolution of the $\dpwcc$: Second state}
+\label{fig:dp_example_3_4}
 \end{figure}
-
-When the second edge $(3,6)$ arrives to $\gwc$, it spawns again a new instance of $\fwc$ before $F_{\{1,2\}}$ and $\gwc$, where it connects previous filter instance $F_{\{1,2\}}$ with this new filter instance and new spawned filter with $\gwc$. 
-Then $\dpwcc$ evolves as we can see in \autoref{fig:dp_example_3_4}.
+\vspace{.5cm}
 
 \begin{figure}[h!]
-  \centering
+\centering
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_5}
+  \caption{$\mathsf{Sr_{WCC}}$  fed both, $\ice$ and $\csofv$, channels with the mark $\eof$ received from the input stream in previous state and then, it died. The edge $(4,5)$ is arriving to $\gwc$ and the edge $(3,4)$ is arriving to $F_{\{3,6\}}$. }
+  \label{fig:dp_example_5_6a}
+\end{subfigure}
+\vspace{.3cm}
+
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_6}
-  \caption[$\dpwcc$ Evolving third state]{$\dpwcc$ Evolving second state}
-  \label{fig:dp_example_5_6}
+  \caption{When the edge $(4,5)$ arrives to $\gwc$, it spawns the filter instance $F_{\{4,5\}}$  between $F_{\{3,6\}}$ and $\gwc$. Filter instance $F_{\{3,6\}}$ is connected to the new filter instance $F_{\{4,5\}}$ and this one is connected to  $\gwc$ through channels $\ice$ and  $\csofv$.  Since the edge $(3,4)$ arrived to $F_{\{3,6\}}$ at the same time and  vertex $3$ belongs to the set of connected vertices of the filter $F_{\{3,6\}}$,  the vertex $4$ is added to the state of $F_{\{3,6\}}$. Now, the state of $F_{\{3,6\}}$ is the connected set of vertices $\{3,4,6\}$. When the mark $\eof$ arrives to the first filter instance, $F_{\{1,2\}}$, through  $\csofv$, this stage passes  its partial set of connected vertices,  $\{1,2\}$, through $\csofv$ and dies.  This action will activate $\Actt$ in next  filter instances to start building  maximal connected components. In this example, the state in  $F_{\{3,6\}}$, $\{3,4,6\}$, and the arriving set $\{1,2\}$ do not intersect and, hence, both sets of vertices, $\{1,2\}$ and $\{3,4,6\}$ will be passed  to the next filter instance through $\csofv$.}
+  \label{fig:dp_example_5_6b}
+\end{subfigure}
+\caption[$\dpwcc$ Evolving third state]{Evolution of the $\dpwcc$: Third state}
+\label{fig:dp_example_5_6}
 \end{figure}
-
-Now the rest of the edges downstream through the pipeline. When edge $(4,5)$ arrives to $\gwc$, it spawn a new filter and interposes it between it and $F_{\{3,6\}}$ as we can see in \autoref{fig:dp_example_5_6}.
-At the same time another edge $(3,4)$ is arriving to $F_{\{3,6\}}$. Since vertex $3$ belongs to the set of connected vertices $CV$ of the filter, it enlarge its set with the value $4$ having $\{3,4,6\}$ as a partial connected vertices $CV$ result inside filter $F_{\{3,6\}}$.
+\vspace{.5cm}
 
 \begin{figure}[h!]
-  \centering
+\centering
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_7}
-  \inputtikz{dp_example_8}
-  \caption[$\dpwcc$ Evolving fourth state]{$\dpwcc$ Evolving fourth state}
-  \label{fig:dp_example_7_8}
-\end{figure}
+  \caption{The set of connected vertices  $\{3,4,6\}$ is arriving to $F_{\{4,5\}}$. The mark $\eof$ continues passing to next stages through the channel $\ice$.}
+  \label{fig:dp_example_7_8a}
+\end{subfigure}
+\vspace{.3cm}
 
-When $\eof$ mark arrives the filters instance start to downstream through $\csofv$ its partial set of $CV$ to activate $Actt$ and build a maximal connected components set. 
-As we can see in \autoref{fig:dp_example_7_8}, when partial $CV$ $\{3,4,6\}$ arrives to filter $F_{\{4,5\}}$ with partial set $\{4,5\}$, since both set intersect it can enlarge to form set $\{3,4,5,6\}$.
+\begin{subfigure}[b]{\textwidth}
+ \centering
+  \inputtikz{dp_example_8}
+  \caption{Since the intersection of the set of connected vertices $\{3,4,6\}$ arrived to  $F_{\{4,5\}}$ and its state is not empty, this state is enlarged to be $\{3,4,5,6\}$. The set of connected vertices $\{1,2\}$ is arriving to  $F_{\{4,5\}}$}
+  \label{fig:dp_example_7_8b}
+\end{subfigure}
+\caption[$\dpwcc$ Evolving fourth state]{Evolution of the $\dpwcc$:  Fourth state}
+\label{fig:dp_example_7_8}
+\end{figure}
+\vspace{.5cm}
 
 \begin{figure}[h!]
-  \centering
+\centering
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_9}
-  \vspace{0.5em}
-  \inputtikz{dp_example_10}
-  \vspace{1.5em}
+  \caption{$F_{\{4,5\}}$ has passed the set of connected vertices  $\{1,2\}$ and it is arriving to $\mathsf{Sk_{WCC}}$. The mark $\eof$ is arriving to  $F_{\{4,5\}}$ through $\csofv$.}
+  \label{fig:dp_example_9_10a}
+\end{subfigure}
+\vspace{.3cm}
 
+\begin{subfigure}[b]{\textwidth}
+ \centering
+  \inputtikz{dp_example_10}
+  \caption{Since the mark $\eof$ arrived to $F_{\{4,5\}}$ through $\csofv$, it passes its state, the set $\{3,4,5,6\}$ through $\csofv$ to next stages and died. The set of connected vertices  $\{1,2\}$ arrived to $\mathsf{Sk_{WCC}}$ and this implies  that $\{1,2\}$ is a maximal set of connected vertices, i.e. a connected component of the input graph. Hence,  $\mathsf{Sk_{WCC}}$ output this first weakly connected component.}
+ \label{fig:dp_example_9_10b}
+\end{subfigure}
+\vspace{.5cm}
+
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_11}
-  \vspace{0.5em}
+  \caption{Finally, the set of connected vertices  $\{3,4,5,6\}$ arrived to $\mathsf{Sk_{WCC}}$ and was output as a new weakly connected component. Besides, the mark $\eof$ also arrived to $\mathsf{Sk_{WCC}}$ through $\csofv$ and thus, it dies.}
+  \label{fig:dp_example_9_10c}
+\end{subfigure}
+\vspace{.3cm}
+
+\begin{subfigure}[b]{\textwidth}
+ \centering
   \inputtikz{dp_example_12}
-  \caption[$\dpwcc$ Evolving last state]{$\dpwcc$ Evolving last state}
-  \label{fig:dp_example_9_10}
+  \caption{The weakly connected component of in the graph \autoref{fig:example_dp_graph} such as they have been emitted by $\dpwcc$.}
+  \label{fig:dp_example_9_10d}
+\end{subfigure}
+\caption[$\dpwcc$ Evolving last state]{Last states in the evolution of the $\dpwcc$}
+\label{fig:dp_example_9_10}
 \end{figure}
 
-As we can appreacite in \autoref{fig:dp_example_9_10}, $CV$ set $\{3,4,5,6\}$ of filter $F_{\{4,5\}}$ does not intersect with set $\{1,2\}$ arriving from $\csofv$. Then, $\{1,2\}$ it downstream to the end producing the 
-first connected component. After that the same happens with $CV$ set $\{3,4,5,6\}$ since there are no more filter instances and the second connected component $\{3,4,5,6\}$ is produced.
-Then, $\eof$ mark arrives to $\owc$ and therefore $\dpwcc$ terminates.
+It is importat to highlight that during the states shown in \autoref{fig:dp_example_1_2a},  \autoref{fig:dp_example_1_2b},  \autoref{fig:dp_example_3_4a},  \autoref{fig:dp_example_3_4b} and  \autoref{fig:dp_example_5_6a} the only actor executed in any filter instance is $\Act$ (constructing sets of connected vertices). Afterwards, although $\Act$ can continue being executed in some filter instances, there are some instances that start executing $\Actt$ (constructing sets of maximal connected vertices). This is shown from \autoref{fig:dp_example_5_6a}  to \autoref{fig:dp_example_9_10a}.
+
+\clearpage
 
 \section{Empirical Evaluation}
 For the empirical evaluation we consider the following research questions: 
@@ -136,6 +201,7 @@ Finally, we have executed a \textit{Performance Analysis} in which we have to ga
 
 \begin{table}[H]
   \centering
+  \resizebox{\textwidth}{!}{
   \begin{tabular}{|l|r|r|r|r|}
    \hline
    \textbf{Network} & \textbf{Exec Param} & \textbf{MUT Time} & \textbf{GC Time} & \textbf{Total Time}\\
@@ -147,6 +213,7 @@ Finally, we have executed a \textit{Performance Analysis} in which we have to ga
    Google Web Graph & \mintinline{bash}{+RTS -N8 -s} & 137.127s & 218.913s & 356.058s \\
    \hline
   \end{tabular}
+  }
  \caption{Execution times}
  \label{table:5}
  \end{table}
@@ -161,6 +228,7 @@ for \textit{web-Google} due to the topology of the graph; it is denser in terms 
 
 \begin{table}[H]
   \centering
+  \resizebox{\textwidth}{!}{
   \begin{tabular}{|l|l|l|l|}
    \hline
    \textbf{Network} & \textbf{\acrshort{dpwcc}} & \textbf{\acrshort{hs} \texttt{containers}} & \textbf{Speed-up}\\
@@ -172,6 +240,7 @@ for \textit{web-Google} due to the topology of the graph; it is denser in terms 
    Google Web Graph & 386s & 106s & 0.27\\
    \hline
   \end{tabular}
+  }
  \caption{Mean Execution times}
  \label{table:6}
  \end{table}
@@ -236,15 +305,16 @@ The numbers inside green bars represent the number of threads that are being exe
 Thus, the number of threads varies among slot execution times, because as it is already known, \acrshort{ghc} implements \emph{Preemptive Scheduling} \cite{lightweightghc}.
 It can be appreciated in \autoref{fig:4} our first assumption that the load is evenly distributed because the mean number of executing threads per core is $571$.
 
-\paragraph{Memory allocation} Another important aspect in our case is how the memory is being managed to avoid memory leaks or other non-desired behavior that increases memory allocation during the execution time. This is even more important in the particular implementation of \acrshort{wcc} using \acrshort{dp} model because it requires to maintain the set of connected components in memory throughout the execution of the program or at least until we can output the calculated \acrshort{wcc} if we reach to the last \textit{Filter} and we know that this \acrshort{wcc} cannot be enlarged anymore.
-In order to verify this, we measure memory allocation with \textit{eventlog2html} \cite{eventlog2html} which converts generated profiling memory eventlog files into graphical HTML representation. 
-\begin{wrapfigure}{rt!}{0.5\textwidth}
+\paragraph{Memory allocation} Another important aspect in our case is how the memory is being managed to avoid memory leaks or other non-desired behavior that increases memory allocation during the execution time. 
+\begin{wrapfigure}{rh!}{0.5\textwidth}
   \begin{center}
-     \includegraphics[width=0.48\textwidth, height=0.2\textheight] {visualization}
-       \end{center}
-     \caption[Memory Metrics: Allocation by Data Type]{Memory Allocation}
-     \label{fig:5}
- \end{wrapfigure}
+    \includegraphics[width=0.48\textwidth, height=0.2\textheight] {visualization}
+  \end{center}
+  \caption[Memory Metrics: Allocation by Data Type]{Memory Allocation}
+  \label{fig:5}
+\end{wrapfigure}
+This is even more important in the particular implementation of \acrshort{wcc} using \acrshort{dp} model because it requires to maintain the set of connected components in memory throughout the execution of the program or at least until we can output the calculated \acrshort{wcc} if we reach to the last \textit{Filter} and we know that this \acrshort{wcc} cannot be enlarged anymore.
+In order to verify this, we measure memory allocation with \textit{eventlog2html} \cite{eventlog2html} which converts generated profiling memory eventlog files into graphical HTML representation. 
 
 As we can see in \autoref{fig:5}, \acrshort{dpwcc} does efficient work on allocating memory since we are not using more than $57$ MB of memory during the whole execution of the program.
 On the other hand, if we analyze how the memory is allocated during the execution of the program, it can also be appreciated that most of the memory is allocated at the beginning of the program and steadily decrease over time, with a small peak at the end that does not overpass even half of the initial peak of $57$ MB. 
@@ -258,7 +328,7 @@ It can be seen as well that as long the green area reduces the lighter blue (\mi
 Finally, according to what we have stated above, we can answer the question [Q3], showing that not only the memory management was efficient, but at the same time, the memory was not leaking or increasing across the running execution program.
 
 The empirical evaluation of the \acrshort{dpwcc} implementation to compute weakly connected components of a graph, evidence suitability, 
-and robustness to provide a Dynamic Pipeline Framework in that language. Measuring using \acrshort{dt} metrics reveals some advantageous capability of $\dpwcc$ implementation to deliver incremental results compared with default containers library implementation. 
+and robustness to provide a Dynamic Pipeline Framework in that language. Measuring using \par\bigskip metrics reveals some advantageous capability of $\dpwcc$ implementation to deliver incremental results compared with default containers library implementation. 
 Regarding the main aspects where DPP is strong, i.e., pipeline parallelism and time processing, the $\dpwcc$ performance shows that Haskell 
 can deal with the requirements for the \acrshort{wcc} problem without penalizing neither execution time nor memory allocation. 
 In particular, the $\dpwcc$ implementation outperforms in those cases where the topology of the graph is sparse and where the number of vertices in the largest \acrshort{wcc} is not big enough. 
@@ -266,6 +336,6 @@ To conclude, the proof of concept has gathered enough evidence to show that the 
 This fact opens a wide range of algorithms to be explored using the Dynamic Pipeline Paradigm, supported by purely functional programming language.
 
 \section{Chapter Summary}
-In this chapter we have presented a proof of concept that allow us to to assess the feasibility of implementing \acrshort{dp} using \acrshort{hs}. 
-The  obtained results gave us insights about how to proceed for implementing a first version of a DPF using (parallel) Haskell and, afterward, to implement our \acrshort{iebt}.
+In this chapter, we have presented a proof of concept that allows us to assess the feasibility of implementing \acrshort{dp} using \acrshort{hs}. 
+The obtained results gave us insights about how to proceed for implementing a first version of a DPF using (parallel) Haskell and, afterward, to implement an algorithm for enumerating incrementally the bi-triangles of a bipartite graph based on the  \acrshort{dp}.
 
