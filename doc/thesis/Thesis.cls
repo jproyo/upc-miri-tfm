@@ -91,8 +91,8 @@
   {\normalsize FACULTAT D’INFORMÀTICA DE BARCELONA (FIB)}
   {\normalsize UNIVERSITAT POLITÈCNICA DE CATALUNYA (UPC) – BarcelonaTech}
   \vskip 0.1em%
-  {\normalsize Advisors: \@supervisor}\\
-  \end{center}\par
+  {\normalsize Advisors: \@supervisor}
+  \end{center}
   \newpage
   \thispagestyle{empty}
   \vfil

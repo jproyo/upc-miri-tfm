@@ -47,27 +47,8 @@ Let $\hat{U}_l=\la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subs
 where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
 
-\begin{definition}[Query] 
-Let $C=\{BT_V, BT_E\}$ be the set of possible query commands.
-A \textit{query} $Q$ is an command $c \in C$, where 
-\[
-C = \left\{\begin{array}{lr}
-BT_V, & BT_V \subseteq U\cup L\\
-BT_E, & BT_E \subseteq E
-\end{array}\right\} 
-\]
-It could be a command query of vertices or edges.
-\end{definition}
-
-\begin{definition}[Query Match]\label{def:query:match}
-Let $Q$ be a query.
-A query $Q$ matches in a bipartite graph $G$ if forall $BT_{(l_1,l_2,l_3)}^{(u_1,u_2,u_3)}$ of $G$
-\footnotesize\begin{align*}
-    Q = \left\{\begin{array}{lr}
-    BT_V, & \forall\ v \in BT_V, v \in \{u_1,u_2,u_3,l_1,l_2,l_3\}\\
-    BT_E, & \forall\ (u,l) \in BT_E, (u,l) \in \{(u_1, l_1), (u_2,l_1), (u_2, l_3), (u_3,l_3), (u_3, l_2), (u_1,l_2)\} 
-    \end{array}\right\} 
-    \end{align*}
+\begin{definition}[\acrfull{qo}] 
+$Q$ is a \emph{\acrfull{qo}} acting on a \textit{sum type} $BT_V + BT_E$ such that $BT_V \subseteq U\cup L$ and $BT_E \subseteq E$, producing as a result a set of \acrshort{bt}.
 \end{definition}
 
 \begin{table}[!ht]
@@ -178,9 +159,9 @@ $OC_{W_l1}$ & Output Channels carrying \acrshort{awg} \\ \hline
 $C_{W_l2}$ & Channel of \acrshort{awg} \\ \hline
 $IC_{W_l2}$ & Input Channels carrying \acrshort{awg} \\ \hline
 $OC_{W_l2}$ & Output Channels carrying \acrshort{awg} \\ \hline
-$C_Q$ & Channel of $Q$ Command \\ \hline
-$IC_Q$ & Input Channels carrying $Q$ Command \\ \hline
-$OC_Q$ & Output Channels carrying $Q$ Command \\ \hline
+$C_Q$ & Channel of \acrshort{qo} \\ \hline
+$IC_Q$ & Input Channels carrying \acrshort{qo} \\ \hline
+$OC_Q$ & Output Channels carrying \acrshort{qo} \\ \hline
 $C_{BT}$ & Channel of $\bt$ \\ \hline
 $IC_{BT}$ & Input Channels carrying $\bt$ \\ \hline
 $OC_{BT}$ & Output Channels carrying $\bt$ \\ \hline
@@ -230,7 +211,7 @@ $\fid$ & State after calling $\fd$ on filter. Indicates if Filter is die or not.
 $\gs$ & Get Current State $\st$ for Filter Instance \\ \hline
 $\us(\st)$ & Update Current State $\st$ for Filter Instance \\ \hline
 $\p(\mathtt{v}, OC_x)$ & push some value $\mathtt{v}$ to some Output Channel $OC_x$ \\\hline
-$\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
+$\mt(Q, BT)$ & Check if a \acrshort{qo} $Q$ produces $\bt$ \\ \hline
 \end{tabular}
 \caption{Summary of auxiliary functions for handling \acrshort{dpbt} internals}
 \label{table:aux:fn}
@@ -244,7 +225,7 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \SetAlgorithmName{}{src}{}
 \SetAlgoRefName{[A1]}
 \P{$IO_E$: File or Input Stream with Set of Edges $E$}
-\Q{$IO_Q$: File or Input Stream with Commands $Q$}
+\Q{$IO_Q$: File or Input Stream with \acrlong{qo} $Q$}
 \IC{$IC = \la IC_{W_l2} \ra$}
 \OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
 \ForAll(\tcp*[f]{Edges to Generator/Filter}){$(u,l) \in IO_E$}
@@ -532,7 +513,7 @@ $\ati \leftarrow \gs$\\
 \label{algo:act-4}
 \end{algorithm}
 
-\paragraph{Filter $\ad$} Once the execution reaches $\ad$, it is ready for processing $Q$ commands. Since we have a compress representation of \acrshort{bt}, which is a similar idea exposed here~\cite{Lai}, if a command $Q$ arrives in order 
+\paragraph{Filter $\ad$} Once the execution reaches $\ad$, it is ready for processing $Q$ \acrlong{qo}. Since we have a compress representation of \acrshort{bt}, which is a similar idea exposed here~\cite{Lai}, if a \acrlong{qo} $Q$ arrives in order 
 to enumerate incrementally \acrshort{bt} that matches the command, we need to build them on demand with the format used on \dref{def:bt}.
 
 The following pseudo-code definitions on \autoref{algo:buildBtVertex} and \autoref{algo:buildBtEdge} are auxiliary functions that are called
