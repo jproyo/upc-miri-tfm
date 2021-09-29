@@ -205,7 +205,7 @@ An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ has a sum ty
 \label{fig:btDP}
 \end{figure}
 
-\paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfer to the following stage each $(u,l)$ using $C_E$.
+\paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfers to the following stage each $(u,l)$ using $C_E$.
 For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. 
 First, $\aaa$ receives from $IC_E$ the edges and builds \acrshort{awg} downstreaming to $\fbt$ using $OC_{W1}$. 
 Then $\ab$ receives from $IC_{W1}$ aggregated wedges from previous $\fbt$, downstream to next $\fbt$ and $\gbt$ using $OC_{W1}$ and at the same time use its information to see 
@@ -246,7 +246,7 @@ $\mt(Q, BT)$ & Check if a Query $Q$ matches over $BT$ \\ \hline
 \P{$IO_E$: File or Input Stream with Set of Edges $E$}
 \Q{$IO_Q$: File or Input Stream with Commands $Q$}
 \IC{$IC = \la IC_{W_l2} \ra$}
-\OC{$OC = \la OC_E, OC_{W_l2}, OC_Q \ra$}
+\OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
 \ForAll(\tcp*[f]{Edges to Generator/Filter}){$(u,l) \in IO_E$}
 {$\p((u,l), OC_E)$ \label{algo:source:1}
 }
@@ -271,7 +271,7 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \SetAlgorithmName{}{gen}{}
 \SetAlgoRefName{[A2]}
 \P{$F$}
-\IC{$ IC = \la IC_E, IC_{W_l1}, IC_Q, IC_{BT} \ra$}
+\IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_{W_l2}, OC_{BT} \ra$}
 \ForAll{$(u,l) \in IC_E$}
 {$\sw(F, l, \la l, \{u\} \ra)$ \label{algo:gen:1}
