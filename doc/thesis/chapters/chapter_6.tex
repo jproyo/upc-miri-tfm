@@ -1,4 +1,4 @@
-\chapter{An algorithm for incrementally enumerating Bi-Triangles using DP}\label{incr-algo-bt-dp}
+\chapter{An algorithm for incrementally enumerating Bi-triangles using DP}\label{incr-algo-bt-dp}
 In this chapter, we first describe the overall idea of the algorithm for incrementally enumerate 
 \acrshort{bt}. After that, we present the algorithms in pseudo-code format and then a complexity analysis of the principal functions of the algorithm.
 At the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
@@ -48,7 +48,10 @@ where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $
 \end{definition}
 
 \begin{definition}[\acrfull{qo}] 
-$Q$ is a \emph{\acrfull{qo}} acting on a \textit{sum type} $BT_V + BT_E$ such that $BT_V \subseteq U\cup L$ and $BT_E \subseteq E$, producing as a result a set of \acrshort{bt}.
+$Q$ is a \emph{\acrfull{qo}} is a value from the  \textit{sum type} %$BT_V + BT_E$ 
+$\mathbb{P}(U) + \mathbb{P}(L + E) $
+%such that $BT_V \subseteq U\cup L$ and $BT_E \subseteq E$,
+producing as a result a set of \acrshort{bt} that include  all the vertices or edges given in $Q$.
 \end{definition}
 
 \begin{table}[!ht]
@@ -78,19 +81,19 @@ $bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
       
 
 \subsection{Examples of Definitions}
-Let us illustrate some of the previous definitions with a real \acrlong{bg} example. 
+Let us illustrate some of the previous definitions with a \acrlong{bg}. 
 Lets suppose that we have the following \acrshort{bg} as it is shown in the \autoref{fig:bipartite-graph-example}.
 
 \begin{figure}[ht]
 \centering	
 \inputtikz{bipartite}
-\caption[Example of \acrshort{bg}]{Example of \acrshort{bg}}
+\caption[Example of \acrlong{bg}]{Example of \acrlong{bg}}
 \label{fig:bipartite-graph-example}
 \end{figure}
 
 As we can see, trying to identify the different \acrshort{bt} in this graph, it can be done manually, but in larger graphs can be more challenging.
-If we use the previous structure definitions, we can detect that \acrshort {bt} in an easier and automated manner.
-The first structure that we can detect is \acrshort{awg} as we can see on \autoref{fig:awedge-example}.
+If we use the previous  definitions, we can detect that \acrshort {bt} in an easier and automated manner.
+The first structure that we can detect is \acrlong{awg} as we can see on \autoref{fig:awedge-example}.
 
 \begin{figure}[htp!]
 \begin{subfigure}[b]{0.3\textwidth}
@@ -111,7 +114,7 @@ The first structure that we can detect is \acrshort{awg} as we can see on \autor
 \caption{\acrshort{awg} on $c$}
 \label{fig:awedge-example-c}
 \end{subfigure}
-\caption[Definitions Examples \acrshort{awg}]{Definitions Examples \acrshort{awg}}
+\caption[Definitions Examples \acrlong{awg}]{ \acrlong{awg} of nodes $a,b,c$ of \autoref{fig:bipartite-graph-example}}
 \label{fig:awedge-example}
 \end{figure}
 
@@ -121,17 +124,16 @@ Following that, we can build the \acrlong{adwg} as we can see in \autoref{fig:ag
 \begin{figure}[htp!]
 \centering
 \inputtikz{bipartite_adwg_a}
-\caption[Example Aggregated double-wedge]{Example Aggregated double-wedge}
+\caption[Example Aggregated double-wedge]{\acrlong{adwg} of the pair of nodes $(a,c)$ \\of \autoref{fig:bipartite-graph-example}}
 \label{fig:agg-double-wedge-example}
 \end{figure}
 
 In \autoref{fig:agg-double-wedge-example} we can see the \acrshort{adwg} built by $a$ and $c$ where according to \dref{def:adwg} $a = l_1$ and $c = l_2$.
 Now we can finally build our first \acrlong{abt} as we can see in the following \autoref{fig:agg-bt-example}.
-
 \begin{figure}[htp!]
 \centering      
 \inputtikz{bipartite_abt_a}
-\caption[Example Aggregated bi-triangle]{Example Aggregated bi-triangle}
+\caption[Example Aggregated bi-triangle]{Aggregated bi-triangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}}
 \label{fig:agg-bt-example}
 \end{figure}
 
@@ -139,10 +141,10 @@ Now we can finally build our first \acrlong{abt} as we can see in the following 
 \subsection{Algorithm Sketch}\label{sub:sec:algo-sketch}
 Dynamic Pipeline Algorithm for Enumerating Bi-triangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
 \textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. 
-The algorithm considers a \acrlong{bt} as a convenient composition of three wedges.
+The algorithm considers a \acrlong{bt} as a convenient composition of three wedges as we can see the example in \autoref{fig:bitriangle-example}.
 In order to reduce memory footprint, the algorithm aggregates results, i.e. the set of wedges having the same middle vertex is represented as a pair $\la l, W_l \ra$ where $l$ is the middle vertex and $W_l$ is the set of adjacent vertices of $l$ called \acrfull{awg} (see \dref{def:awg}).
-The algorithm first collects \acrshort{awg}, afterwards \acrshort{adwg} and finally \acrshort{abt} during the execution of the actors of $\fbt$ instance. 
-The following table describes the different channels that are connecting the stages in $\dpbt$.
+The algorithm first collects \acrshort{awg} for every vertex in the $L$ set of the graph. Afterwards \acrshort{adwg} for every pair of distinct vertices, Finally  constructs \acrshort{abt}  for selected triples of vertices. 
+The following \autoref{table:channels} describes the different channels that are connecting the stages in $\dpbt$.
 
 \begin{table}[ht!]
 \centering
@@ -188,16 +190,17 @@ An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ has a sum ty
 
 \paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfers to the following stage each $(u,l)$ using $C_E$.
 For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. 
-First, $\aaa$ receives from $IC_E$ the edges and builds \acrshort{awg} downstreaming to $\fbt$ using $OC_{W1}$. 
+First, $\aaa$ receives from $IC_E$ the edges and builds \acrshort{awg}, when there are no more edges it downstreams it to it's neighbour $\fbt$ using $OC_{W1}$. 
 Then $\ab$ receives from $IC_{W1}$ aggregated wedges from previous $\fbt$, downstream to next $\fbt$ and $\gbt$ using $OC_{W1}$ and at the same time use its information to see 
-if it can build \acrshort{adwg}. If it can, it will store in its $\st$ those $dw \in \dw$.
+if it can build an \acrshort{adwg}. If it can, it will store in its $\st$ those $dw \in \dw$.
 
-$\ab$ downstream the \acrshort{awg} to  $\fbt$ and $\gbt$. This is because we need to retro feed all the pipeline with all the \acrshort{awg}, in order to find \acrshort{awgc} as we defined in \dref{def:awgc}.
-From retro feeding channel $IC_{W2}$, $\ac$ receives all the \acrshort{awg} again and builds \acrshort{abt} storing them in $\st$. 
+$\ab$ downstream the \acrshort{awg} to  it's neighbour $\fbt$ or to $\gbt$ if it is the last $\fbt$. This is because we need to retro feed all the pipeline with all the \acrshort{awg}, in order to find \acrshort{awgc} as we defined in \dref{def:awgc}.
+From retro feeding channel $IC_{W2}$, $\ac$ receives all the \acrshort{awg}  and builds \acrshort{abt} storing them in $\st$. 
+
 $Q$ Commands are downstream from $\ibt$ to $\ad$ using channel $IC_Q$. $\ad$ receives all the commands, and for each of them, if there is match according to \dref{def:query:match}, it enumerates those \acrshort{bt} extracted from $\st$ and downstream to $\obt$ through $OC_{BT}$.
 
 \subsection{Dynamic Pipeline for Enumerating Bi-triangles}
-In this section, we present all the pseudo-code definitions of each of the stages described previously in ~\autoref{sub:sec:algo-sketch}. 
+In this section, we present all the pseudo-code definitions of each of the stages described  in ~\autoref{sub:sec:algo-sketch}. 
 In spite of this work has been implemented using \acrshort{hs}, and in particular \acrshort{dpfh}, the pseudo-code algorithms presented here are language independent.
 Before starting with the details, we introduce in \autoref{table:aux:fn} auxiliary functions that are language-specific, and therefore there are only listed and not detailed.
 
@@ -276,10 +279,10 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \label{fig:btDP_actor1}
 \end{figure}
 
-\paragraph{Generator $\gbt$} $\gbt$ also have three main loops. In \autoref{algo:gen:1} it receives each edge $(u,l)$ not consumed by any $\fbt$, and 
+\paragraph{Generator $\gbt$} $\gbt$ also have three main loops. In \autoref{algo:gen:1} it receives each edge $(u,l)$ not consumed by any already spawn  $\fbt$, and 
 spawns a new $\fbt$ using $l \in L$ as filter parameter and initializing $\st = \la l, \{u\} \ra$ as it can be seen in \autoref{fig:btDP_actor1}. 
 Spawn assumes that, the implementation will connect the channels to keep the downstream correct. Defines all the input channels of $\gbt$ as input channels of the newly spawn $\fbt$ and set $\fbt$'s output channels as $\gbt$ input channels.
-In \autoref{algo:gen:2} we can see how the algorithm is receiving and retro feeding $\ibt$ with all the \acrshort{awg}. This also assumes that $OC_{W2}$ in $\gbt$ 
+In \autoref{algo:gen:2} we can see how the algorithm is receiving and retro feeding $\ibt$ with all the \acrshort{awg} produced by the $\fbt$ . This also assumes that $OC_{W2}$ in $\gbt$ 
 is connected with $IC_{W2}$ in $\ibt$.
 Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the different filters to $\obt$.
 
@@ -324,7 +327,7 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \label{algo:fil}
 \end{algorithm}
 
-\paragraph{Filter $\fbt$} In \autoref{algo:fil} shows the simple call sequence over all the actor functions of the filter template. 
+\paragraph{Filter $\fbt$} In \autoref{algo:fil} we can see the simple call sequence over all the actor functions of the filter template. 
 
 \begin{algorithm}
 \SetKwInOut{P}{Parameter}
@@ -359,9 +362,10 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \label{algo:act-1}
 \end{algorithm}
 
-\paragraph{Filter $\aaa$} As we have described in \autoref{sub:sec:algo-sketch} and it according to \autoref{algo:act-1:1}, $\aaa$ is receiving all edges 
-and if the $l' \in L$ of the new received edge is the same as the filer parameter $l$ then it will add to the list of \acrshort{awg} the $u' \in U$ received. Otherwise the edge is downstream to the next stage.
-In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if and only if at least 1 wedge was collected. Otherwise, the filter is marked as dead with $\fd$ function.
+\paragraph{Filter $\aaa$} %As we have described in \autoref{sub:sec:algo-sketch} and it according to \autoref{algo:act-1:1}, 
+$\aaa$ receives all edges not consumed by previous $\fbt$.
+If the received edge $(u',l')$ is incident to l i.e. $l = l'$,  then $u'$ will be added to the list of \acrshort{awg}. Otherwise the edge is downstream to the next stage.
+In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if and only if at least 1 wedge was collected. Otherwise, the filter is marked as dead using the  $\fd$ function.
 
 \begin{algorithm}
 \SetKwInOut{P}{Parameter}
@@ -384,7 +388,7 @@ In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if
 \df{\actb{}}{
 $\la l, W_l \ra \leftarrow \gs$\\
 \ForAll{$\la l', W_l' \ra \in IC_{W_l1}$}{
-      \tcp*[h]{By pass Wedges from previous filters to next ones}
+      \tcp*[h]{Send Wedge from previous filters to next one}
       $\p(\la l', W_l \ra, OC_{W_l1})$\\
       $\dwi \leftarrow \emptyset$\\
       \If{$l \neq l' \land W_l' \cap W_l \neq \emptyset$}{ \label{algo:act-2:1}
@@ -409,11 +413,11 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \end{algorithm}
 
 \paragraph{Filter $\ab$} In \autoref{algo:act-2} \acrshort{adwg} is built. Following that idea and according to the \dref{def:adwg}, this algorithm will collect all the \acrshort{awg} 
-from previous filters if an only if the condition in \autoref{algo:act-2:1} is met. The first check on $l$ and $l'$ would be avoided because by \acrshort{dp} nature
-only one filter instance is responsible of collecting \acrshort{awg} of its $l$. $W_l$ intersection check is mandatory since if \acrshort{awg} are disjoint, we cannot aggregate them.
-After this checking from \autoref{algo:act-2:2} to \autoref{algo:act-2:3}, the algorithm is building three disjoint Sets to separate upper edges in three subsets; those which are incident only of 
+from previous filters if an only if the condition in \autoref{algo:act-2:1} is met. Note that the two \acrshort{awg}, $W_l$ and $W_l'$ have different vertices from the set $L$. $W_l$ intersection check is mandatory since if \acrshort{awg} are disjoint, we cannot aggregate them.
+After this checking from \autoref{algo:act-2:2} to \autoref{algo:act-2:3}, the algorithm builds three disjoint Sets to separate upper edges in three subsets; those which are incident only of 
 $l$ and $l'$ which are $I$ and $K$ and those that are shared by both lower layer vertex. This can be appreciated in \autoref{fig:agg-double-wedge-example}.
 Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$.
+
 
 \begin{algorithm}
 \DontPrintSemicolon
@@ -513,8 +517,11 @@ $\ati \leftarrow \gs$\\
 \label{algo:act-4}
 \end{algorithm}
 
-\paragraph{Filter $\ad$} Once the execution reaches $\ad$, it is ready for processing $Q$ \acrlong{qo}. Since we have a compress representation of \acrshort{bt}, which is a similar idea exposed here~\cite{Lai}, if a \acrlong{qo} $Q$ arrives in order 
-to enumerate incrementally \acrshort{bt} that matches the command, we need to build them on demand with the format used on \dref{def:bt}.
+\paragraph{Filter $\ad$} Once the execution reaches $\ad$, it is ready for processing $Q$ \acrlong{qo}. 
+Since we have a compress representation of \acrshort{bt}, which is a similar idea exposed here~\cite{Lai}, we need to enumerate incrementally all the \acrshort{bt} present in the compressed format and filter the ones that match the command.
+The matches proceeds in the following manner. Given a \acrshort{abt} with the form $\la \ell, \hat{U}_l \ra$, such that $\ell = (l_1,l_2,l_3)$ and $\hat{U}_l = \la I,J,K \ra$, where $I \subseteq U, J \subseteq U, K \subseteq U$, if the \acrshort{qo} contains a command with vertices, those vertices are search on $\ell$ and $\hat{U}_l$. 
+If at least one of them matches, forall $u_i \in I, u_j \in J, u_k \in K$ where $ u_i \neq u_j \neq u_k$, a \acrshort{bt} is built using a 6-cycle $(u_i, l_1, u_j, l_3, u_k, l_2, u_i)$ path.
+Using the same construction process a \acrshort{bt} is built if \acrshort{qo} contains a command with edges and any of those edges matches with any of the possible \acrshort{bt} 6-cycle path.
 
 The following pseudo-code definitions on \autoref{algo:buildBtVertex} and \autoref{algo:buildBtEdge} are auxiliary functions that are called
 from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
