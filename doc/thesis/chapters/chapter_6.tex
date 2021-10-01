@@ -48,10 +48,8 @@ where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $
 \end{definition}
 
 \begin{definition}[\acrfull{qo}] 
-$Q$ is a \emph{\acrfull{qo}} is a value from the  \textit{sum type} %$BT_V + BT_E$ 
-$\mathbb{P}(U) + \mathbb{P}(L + E) $
-%such that $BT_V \subseteq U\cup L$ and $BT_E \subseteq E$,
-producing as a result a set of \acrshort{bt} that include  all the vertices or edges given in $Q$.
+$Q$ is a \emph{\acrfull{qo}} is a value from the  \textit{sum type}
+$\mathbb{P}(U + L) + \mathbb{P}(E)$ producing as a result a possible set of \acrshort{bt} that include any of the vertices or edges given in $Q$.
 \end{definition}
 
 \begin{table}[!ht]
@@ -200,16 +198,16 @@ From retro feeding channel $IC_{W2}$, $\ac$ receives all the \acrshort{awg}  and
 $Q$ Commands are downstream from $\ibt$ to $\ad$ using channel $IC_Q$. $\ad$ receives all the commands, and for each of them, if there is match according to \dref{def:query:match}, it enumerates those \acrshort{bt} extracted from $\st$ and downstream to $\obt$ through $OC_{BT}$.
 
 \subsection{Dynamic Pipeline for Enumerating Bi-triangles}
-In this section, we present all the pseudo-code definitions of each of the stages described  in ~\autoref{sub:sec:algo-sketch}. 
+In this section, we present all the pseudo-code definitions of each of the stages described in ~\autoref{sub:sec:algo-sketch}. 
 In spite of this work has been implemented using \acrshort{hs}, and in particular \acrshort{dpfh}, the pseudo-code algorithms presented here are language independent.
-Before starting with the details, we introduce in \autoref{table:aux:fn} auxiliary functions that are language-specific, and therefore there are only listed and not detailed.
+Before starting with the details, we introduce in \autoref{table:aux:fn} auxiliary functions that we use in \acrshort{hs} implementation.
 
 \begin{table}[!htp]
 \centering
 \begin{tabular}{|p{0.3\linewidth}|p{0.7\linewidth}|} \hline
 \textbf{Function} & \textbf{Meaning}\\ \hline
 $\sw(F,l,\st)$ & Spawn new filter instance with parameters $F$ (Filter template), $l \in L$ and $\st$ as the State of the Filter\\\hline
-$\fd$ & Kill this filter instance because PostCondition does not fullfil\\ \hline
+$\fd$ & Kill this filter instance because PostCondition is not satisfied\\ \hline
 $\fid$ & State after calling $\fd$ on filter. Indicates if Filter is die or not. If it is dead, this filter instance does not participate anymore in the pipeline streaming processor\\ \hline
 $\gs$ & Get Current State $\st$ for Filter Instance \\ \hline
 $\us(\st)$ & Update Current State $\st$ for Filter Instance \\ \hline
@@ -391,7 +389,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
       \tcp*[h]{Send Wedge from previous filters to next one}
       $\p(\la l', W_l \ra, OC_{W_l1})$\\
       $\dwi \leftarrow \emptyset$\\
-      \If{$l \neq l' \land W_l' \cap W_l \neq \emptyset$}{ \label{algo:act-2:1}
+      \If{$W_l' \cap W_l \neq \emptyset$}{ \label{algo:act-2:1}
             $(l_l, l_u) \leftarrow (\argmin_{l,l'}, \argmax_{l,l'})$\\
             \uIf{$l < l'$}{
                   $(W_{l_l}, W_{l_u}) \leftarrow (W_l, W_l')$
@@ -491,16 +489,16 @@ $\ati \leftarrow \gs$\\
 \ForAll{$Q \in IC_Q$}{
       \ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati$}{
             \Switch{$Q$}{
-                  \Case{$BT_V$}{
-                        \If{$BT_V \cap \{l_l, l_m, l_u\} \neq \emptyset \lor BT_V \cap (I \cup J \cup K) \neq \emptyset$}{
-                              $\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), BT_V)$\\
+                  \Case{$\mathbb{P}(U + L)$}{
+                        \If{$\mathbb{P}(U + L) \cap \{l_l, l_m, l_u\} \neq \emptyset \lor \mathbb{P}(U + L) \cap (I \cup J \cup K) \neq \emptyset$}{
+                              $\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), \mathbb{P}(U + L))$\\
                               \ForAll{$\bti \in \btii$}{
                                     $\p(\bti, OC_{BT})$
                               }
                         }
                   }
-                  \Case{$BT_E$}{
-                        \ForEach{$(u,l) \in BT_E$}{
+                  \Case{$\mathbb{P}(E)$}{
+                        \ForEach{$(u,l) \in \mathbb{P}(E)$}{
                               \If{$(l = l_l \lor l = l_m \lor l = l_u) \land u \in (I \cup J \cup K)$}{
                                     $\btii \leftarrow \butE(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), (u,l))$\\
                                     \ForAll{$\bti \in \btii$}{
@@ -524,7 +522,7 @@ If at least one of them matches, forall $u_i \in I, u_j \in J, u_k \in K$ where 
 Using the same construction process a \acrshort{bt} is built if \acrshort{qo} contains a command with edges and any of those edges matches with any of the possible \acrshort{bt} 6-cycle path.
 
 The following pseudo-code definitions on \autoref{algo:buildBtVertex} and \autoref{algo:buildBtEdge} are auxiliary functions that are called
-from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
+from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E)$.
 
 \begin{algorithm}
 \SetKwInOut{I}{Input}
@@ -534,11 +532,11 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
 \SetAlgorithmName{}{a1}{}
 \SetAlgoRefName{[A9]}
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
-\I{$BT_V$}
+\I{$\mathbb{P}(U + L)$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
-\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $BT_V$}}{
+\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $\mathbb{P}(U + L)$}}{
       $\btii \leftarrow \emptyset$\\
-      \uIf{$BT_V \cap \{l_l, l_m, l_u\}$}{
+      \uIf{$\mathbb{P}(U + L) \cap \{l_l, l_m, l_u\}$}{
             \tcp*[h]{If it is in lower i need to build all for this lower triplet}\\
             \ForEach{$i \in I$}{
                   \ForEach{$j \in J, j \neq i$}{
@@ -551,7 +549,7 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
             \tcp*[h]{Otherwise just build those that are in the this upper $v$}\\
             \ForEach{$i \in I$}{
                   \ForEach{$j \in J, j \neq i$}{
-                        \ForEach{$k \in K, k \neq i \land k \neq j \land (BT_V \cap \{i,j,k\} \neq \emptyset$}{
+                        \ForEach{$k \in K, k \neq i \land k \neq j \land (\mathbb{P}(U + L) \cap \{i,j,k\} \neq \emptyset$}{
                               $\btii \leftarrow \btii \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
                         }
                   }
@@ -574,7 +572,7 @@ from $\ad$ if $Q$ pattern match either with $BT_V$ or $BT_E$.
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
 \I{$(u,l)$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
-\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $BT_V$}}{
+\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $\mathbb{P}(U + L)$}}{
       $\btii \leftarrow \emptyset$\\
       \ForEach{$i \in I$}{
             \ForEach{$j \in J, j \neq i$}{
@@ -602,13 +600,13 @@ This complexity analysis does not provide an analysis of the algorithm as a whol
 Just the opposite, we are only limiting the analysis to the specific functions without taking into consideration neither the context of the parallelization model nor \acrshort{dp}.
 
 Having said that, we are going to conduct the complexity analysis of the algorithm focusing on each stage. 
-$\fbt$ stage is going to be analyzed with all its actor as a single stage.
+$\fbt$ stage is going to be analyzed with all its actors as a single stage.
 
 \begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
 The size of all possible aggregated wedges is upper bound by $|L|$.
 \end{theorem}
 \begin{proof}
-Obvious by \dref{def:awg} since at most each $l \in L$ is participating on a wedge.
+This can be deduced by \dref{def:awg}, because exactly each $l \in L$ is participating on a wedge.
 \end{proof}
 
 \begin{proposition}[Complexity on Source $\ibt$]\label{prop:comp-src}
