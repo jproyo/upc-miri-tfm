@@ -164,6 +164,7 @@
 \newcommand{\lref}[1]{Source Code~\ref{#1}}
 \newcommand{\dref}[1]{Definition~\ref{#1}}
 \newcommand{\pref}[1]{Proposition~\ref{#1}}
+\newcommand{\qref}[1]{Research Questions~\ref{#1}}
 \renewcommand{\topfraction}{0.85}
 \renewcommand{\bottomfraction}{.85}
 \renewcommand{\textfraction}{0.1}

@@ -1,7 +1,7 @@
-\chapter{An algorithm for incrementally enumerating Bi-triangles using DP}\label{incr-algo-bt-dp}
+\chapter[An \acrshort{iebt} using DP]{An algorithm for incrementally enumerating Bitriangles using DP}\label{incr-algo-bt-dp}
 In this chapter, we first describe the overall idea of the algorithm for incrementally enumerate 
 \acrshort{bt}. After that, we present the algorithms in pseudo-code format and then a complexity analysis of the principal functions of the algorithm.
-At the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
+In the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
 
 \section{Preliminaries Definitions}
 In order to understand how the algorithm works, we need to provide some basic definitions that are already exposed in previous work~\cite{btcount}, and
@@ -29,7 +29,7 @@ An \textit{\acrfull{awg}} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \sub
 \end{definition}
 
 \begin{definition}[\acrfull{dwg}]
-A \textit{\acrfull{dwg}} in $G$ is a path of length 4 $u_1,l_1,u_2,l_2,u_3$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$ and $l_2$ are the middle vertices of \acrshort{dwg}. 
+A \textit{\acrfull{dwg}} in $G$ is a path of length 4 $(u_1,l_1,u_2,l_2,u_3)$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$ and $l_2$ are the middle vertices of \acrshort{dwg}. 
 \end{definition}
   
 \begin{definition}[\acrfull{adwg}]\label{def:adwg}
@@ -47,7 +47,7 @@ Let $\hat{U}_l=\la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subs
 where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
 
-\begin{definition}[\acrfull{qo}] 
+\begin{definition}[\acrfull{qo}]\label{def:query:match} 
 $Q$ is a \emph{\acrfull{qo}} is a value from the  \textit{sum type}
 $\mathbb{P}(U + L) + \mathbb{P}(E)$ producing as a result a possible set of \acrshort{bt} that include any of the vertices or edges given in $Q$.
 \end{definition}
@@ -90,7 +90,7 @@ Lets suppose that we have the following \acrshort{bg} as it is shown in the \aut
 \end{figure}
 
 As we can see, trying to identify the different \acrshort{bt} in this graph, it can be done manually, but in larger graphs can be more challenging.
-If we use the previous  definitions, we can detect that \acrshort {bt} in an easier and automated manner.
+If we use the previous definitions, we can detect that \acrshort {bt} in an easier and automated manner.
 The first structure that we can detect is \acrlong{awg} as we can see on \autoref{fig:awedge-example}.
 
 \begin{figure}[htp!]
@@ -117,7 +117,7 @@ The first structure that we can detect is \acrlong{awg} as we can see on \autore
 \end{figure}
 
 As we can see on \autoref{fig:awedge-example}, we are only enumerating the first three lower layer vertices \acrshort{awg}.
-Following that, we can build the \acrlong{adwg} as we can see in \autoref{fig:agg-double-wedge-example} to continue building the structure that lead us to the \acrshort{bt}.
+Following that, we can build the \acrlong{adwg} as we can see in \autoref{fig:agg-double-wedge-example} to continue building the structure that leads us to the \acrshort{bt}.
 
 \begin{figure}[htp!]
 \centering
@@ -141,7 +141,7 @@ Dynamic Pipeline Algorithm for Enumerating Bi-triangles ($\dpbt$) is defined in 
 \textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. 
 The algorithm considers a \acrlong{bt} as a convenient composition of three wedges as we can see the example in \autoref{fig:bitriangle-example}.
 In order to reduce memory footprint, the algorithm aggregates results, i.e. the set of wedges having the same middle vertex is represented as a pair $\la l, W_l \ra$ where $l$ is the middle vertex and $W_l$ is the set of adjacent vertices of $l$ called \acrfull{awg} (see \dref{def:awg}).
-The algorithm first collects \acrshort{awg} for every vertex in the $L$ set of the graph. Afterwards \acrshort{adwg} for every pair of distinct vertices, Finally  constructs \acrshort{abt}  for selected triples of vertices. 
+The algorithm first collects \acrshort{awg} for every vertex in the $L$ set of the graph. Afterwards it constructs \acrfull{adwg} for every pair of distinct vertices, Finally  constructs \acrshort{abt}  for selected triples of vertices. 
 The following \autoref{table:channels} describes the different channels that are connecting the stages in $\dpbt$.
 
 \begin{table}[ht!]
@@ -192,7 +192,7 @@ First, $\aaa$ receives from $IC_E$ the edges and builds \acrshort{awg}, when the
 Then $\ab$ receives from $IC_{W1}$ aggregated wedges from previous $\fbt$, downstream to next $\fbt$ and $\gbt$ using $OC_{W1}$ and at the same time use its information to see 
 if it can build an \acrshort{adwg}. If it can, it will store in its $\st$ those $dw \in \dw$.
 
-$\ab$ downstream the \acrshort{awg} to  it's neighbour $\fbt$ or to $\gbt$ if it is the last $\fbt$. This is because we need to retro feed all the pipeline with all the \acrshort{awg}, in order to find \acrshort{awgc} as we defined in \dref{def:awgc}.
+$\ab$ downstream the \acrshort{awg} to  it's neighbour $\fbt$ or to $\gbt$ if it is the last $\fbt$. This is because we need to retro feed all the pipeline with all the \acrshort{awg}, in order to find an \acrfull{awgc} as we defined in \dref{def:awgc}.
 From retro feeding channel $IC_{W2}$, $\ac$ receives all the \acrshort{awg}  and builds \acrshort{abt} storing them in $\st$. 
 
 $Q$ Commands are downstream from $\ibt$ to $\ad$ using channel $IC_Q$. $\ad$ receives all the commands, and for each of them, if there is match according to \dref{def:query:match}, it enumerates those \acrshort{bt} extracted from $\st$ and downstream to $\obt$ through $OC_{BT}$.
@@ -691,28 +691,30 @@ Therefore the  only sequence constructed by the algorithm is the one that satisf
 \begin{proof}
 \iffalse
 Obvious from the definition of $I,J,K$  and the algorithm of obtaining bi-triangles. 
-
-Lets assume that a bi-triangle $(a,A,b,B,c,C)$   will assume that $a$ is the smallest element in the set $\{a,b,c\}$ and $c$ is the bigger.
-When actor 1 in fiter $F_a$1 ends reading all the edges, $\{A,B\} \subseteq W_a$. Also When actor 1 in fiter $F_c$1 ends reading all the edges, $\{B,C\} \subseteq W_c$. 
-
-AS $a < c$  in filter $F_a$ the pair $(a,c)$  will be added to D
-$DW$. When actor 3 in filter $F_a$ receives $(b, W_b)$ will add to $BT$ because of the non empty intersection. Therefore the bi-triangle $(a,A,b,B,c,C)$ can be recognized
 \fi
+Lets assume that a bi-triangle $(C,a,A,b,B,c,C)$ is present in the graph. We will assume that $a$ is the smallest element in the set $\{a,b,c\}$ and $c$ is the bigger.
 
+When $\aaa$ acting in filter $F_a$ ends reading all the edges, $\{A,B\} \subseteq W_a$. Also when $\aaa$ in filter $F_c$ ends reading all the edges, $\{B,C\} \subseteq W_c$. 
+
+As $a < c$  in filter $F_a$ the pair $(a,c)$  will be added to 
+$DW$. When $\ac$ in filter $F_a$ receives $(b, W_b)$ will add to $BT$ because of the non empty intersection. Therefore the bi-triangle $(a,A,b,B,c,C)$ can be recognized
+\end{proof}
+\iffalse
 So we are going to talk from now on about the bi-triangles stored in filter $F_a$.
 
 At the end of the execution of $\ac$ $F_a$ constructs the sets where to choose $A,B,C$ $\at$
 
 Actor 1 collects in $F_a$ all the nodes in $U$ adjacent to $a$ i.e. all the candidates to choose $A$. Afterward this set will be reduced. 
 
-Actor 2 receives pairs $(c,V)$ where $V$ are all the nodes adjacent to $c$ in order to test the possibility of constructing a new double wedge.  If the conditions are fulfilled, it adds the double wedge $\la (a,c), l_2), U_{t_1} \ra$,  or $\la (c, a), U_{t_2} \ra$. 
+Actor 2 receives pairs $(c,V)$ where $V$ are all the nodes adjacent to $c$ in order to test the possibility of constructing a new double wedge.  If the conditions are fulfilled, it adds the double wedge $\la (a,c), U_{t_1} \ra$,  or $\la (c, a), U_{t_2} \ra$. 
 
 In each filter, the pair of lower vertices in the double edges are pairs constructed by $a$ and vertices that are parameters of filters that are before the filter $F_a$. Therefore, the double edges recorded are present in at most one filter.
 
 Actor 3 receives pairs $(b,M) $ where $M$ are all the nodes adjacent to $b$ and has in memory a set of double wedges $\la (a,c), l_2), U_{t_1} \ra$
 
 $\ac$ accepts b as a candidate to construct an element of the set of aggregate bi-triangles if $a < b < c$. Therefore the aggregated bi-triangles so constructed are recorded in a single filter due to the fact that that the pair $(a,c)$ is present in a single filter.
-\end{proof}
+\fi
+
         
  
 \section{\acrshort{dpbt} implementation}
