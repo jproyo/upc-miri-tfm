@@ -137,7 +137,7 @@ Flag \texttt{threaded} indicates \acrshort{ghc} to compile the program with thre
 Regarding \texttt{-with-rtsopts=-N}, it allows us to change dynamically on each runtime execution command, the number of processors and other execution flags that we will explain in \autoref{par:ex:param}. 
 
 \paragraph{Optimal Execution Parameters}\label{par:ex:param} \acrshort{ghc} enables different flags parameters to speed up the execution. Unfortunately there is no recipe to tune those parameters in the correct way and each program needs to be analyze to take advantage of \acrshort{ghc} capabilities.\footnote{Execution parameters details are explained in \aref{apx:running:experiments}}
-The most important parameters to be tune in our case are memory and number of processor. In the case of number of processors we have run all the experiments between 6 and 12 cores. The detail of each run can be found in \autoref{sub:exp:exp-def}.
+The most important parameters to be tune in our case are memory and number of processor. In the case of number of processors we have run all the experiments between 6 and 12 cores. The detail of each run can be found in \autoref{table:e1:def}.
 Setting up memory allocation is not a straightforward task, because we have at our disposal the combination of two parameters. \texttt{-A} flag which indicates the allocation area for the garbage collector, which is fixed and never resize and \texttt{-H} which is the heap size. There is no program or algorithm to find the optimal values for this two flags combined, but there exist a tool \texttt{ghc-gc-tune} \cite{ghctune} 
 which implements an heuristic algorithm that tries different setup until it finds an optimal combination.
 We have run \acrshort{dpbt} with that tool obtaining the following result that can be appreciated in \autoref{fig:exp:opt-mem}
@@ -154,7 +154,7 @@ We have run \acrshort{dpbt} with that tool obtaining the following result that c
 In \autoref{fig:exp:opt-mem} we can appreciate that the tool runs serval time the same program with different configurations on flags \texttt{-A} and \texttt{-H} until if finds a minimum. The dark blue shows the better performance where the curve find its minimum execution time. 
 This indicates two possible optimal setup, either when \texttt{-A} is equal to \texttt{-H}, or either when \texttt{-A} is $\frac{1}{4}$ of the \texttt{-H}. For all our experiments we have selected the first option which \texttt{-A} is equal to \texttt{-H}.
 
-\section{Experiments Results}\label{sec:exp:observed-results}\label{sub:exp:exp-def}
+\section{Experiments Results}\label{sec:exp:observed-results}
 \subsection{E1: Diefficiency Metric Analysis}\label{sub:sec:exp-1} 
 \paragraph{Goal} In this experiment, we asses the ability of \acrshort{dpbt} to generate results incrementally.
 In order to do that, we use \acrfull{dm} Tool \emph{diefpy}~\cite{diefpy} which implements \emph{Diefficiency Metric}~\cite{diefpaper} measurement analysis.
@@ -419,6 +419,8 @@ One of the proposed solutions for future work is to reduce the number of $\fbt$ 
 On the other hand, for completely answering the research question regarding memory consumption, we need to take into consideration the size of the graph.
 Because of the algorithm proposed for solving the enumeration problem, there is a linear increase of the complexity on the size of the graph. In spite of this, we believe that this aspect can be improved by reducing the number of $\fbt$ instances. Moreover, choosing suitable data structures used for searching and deliver \acrshort{bt} are going to improve the execution time as well. 
 It was out of the scope of this work to solve the efficiency of the queries, as well as the underlying data structures improvements. 
+
+\section{Discussion}\label{sec:exp:discussion}
 
 \section{Chapter Summary}
 In this chapter, we have explained in extended detail all the experiments conducted in order to answer the research question exposed.
