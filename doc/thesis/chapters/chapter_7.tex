@@ -41,7 +41,7 @@ Specifically, the networks used in the literature have been selected \cite{konec
    Wang Amazon & 26112 & 799 & 29062 & $3.4 \times 10^6$ & 110269\\
    \hline
   \end{tabular}
- \caption[Selected Networks of \acrlong{bg}]{This tables shows the different networks used in the experiments. We provide some metrics of the networks used in order to understand a little more about the topology of each \acrshort{bg}. In particular we are showing in the last column $2$ metrics that are important and could affect results which are number of wedges and bi-triangles}
+ \caption[{[EE] Selected Networks of \acrlong{bg}}]{This tables shows the different networks used in the experiments. We provide some metrics of the networks used in order to understand a little more about the topology of each \acrshort{bg}. In particular we are showing in the last column $2$ metrics that are important and could affect results which are number of wedges and bi-triangles}
  \label{table:exp:data-set}
  \end{table}
  
@@ -109,7 +109,7 @@ Having the previous \dref{def:exp:incidence}, we define the following scenarios 
     VU-M & $u \in U$ Medium & vertex in upper layer with medium incidence \\
     \hline
   \end{tabular}
-  \caption[Experiment Data Setup for experiments]{In the first column of the table we assign an identifier to be reference in the rest of the section. $E$ and $V$ indicates if the \acrshort{qo} scenario contains edges or vertices query respectively. $VL$ or $VU$ indicates if those vertices belongs to $L$ (lower layer) or $U$ upper layer. After the $-$ symbol the letter $L,M,H$ indicates the incidence level defined in \dref{def:exp:incidence}}
+  \caption[{[EE] Experiment Data Setup for experiments}]{In the first column of the table we assign an identifier to be reference in the rest of the section. $E$ and $V$ indicates if the \acrshort{qo} scenario contains edges or vertices query respectively. $VL$ or $VU$ indicates if those vertices belongs to $L$ (lower layer) or $U$ upper layer. After the $-$ symbol the letter $L,M,H$ indicates the incidence level defined in \dref{def:exp:incidence}}
   \label{table:exp:data-setup}
   \end{table}
 
@@ -148,7 +148,7 @@ We have run \acrshort{dpbt} with that tool obtaining the following result that c
   \resizebox{1\textwidth}{!}{%
   \includegraphics{bt-graph-dp-time-gc-space}
   }
-\caption[$\dpbt$ Finding Optimal Memory Setup]{This figure shows the results obtained after running \acrshort{dpbt} with \texttt{ghc-gc-tune} tool in order to find the optimal configuration for Memory allocation. $y$ axis shows the total execution time, $x$ axis is the \texttt{-A} configuration flag and $z$ axis is the \texttt{-H} configuration flag.}
+\caption[{[EE] $\dpbt$ Finding Optimal Memory Setup}]{This figure shows the results obtained after running \acrshort{dpbt} with \texttt{ghc-gc-tune} tool in order to find the optimal configuration for Memory allocation. $y$ axis shows the total execution time, $x$ axis is the \texttt{-A} configuration flag and $z$ axis is the \texttt{-H} configuration flag.}
 \label{fig:exp:opt-mem}
 \end{figure}
 
@@ -215,7 +215,7 @@ In the following \autoref{table:e1:def} we detail the different configurations t
    \hline
   \end{tabular}
   }
- \caption[E1 Procedure]{This tables shows all the different experiments setups that we have conducted for E1. Execution flags are the Runtime execution flags which needs to be set on the execution command as it is detailed in \autoref{apx:running:experiments}. On the last column we can see for each case the query command executed for \acrshort{bt} enumeration}
+ \caption[{[EE] E1 Procedure}]{This tables shows all the different experiments setups that we have conducted for E1. Execution flags are the Runtime execution flags which needs to be set on the execution command as it is detailed in \autoref{apx:running:experiments}. On the last column we can see for each case the query command executed for \acrshort{bt} enumeration}
  \label{table:e1:def}
  \end{table}
 
@@ -224,31 +224,31 @@ In the following \autoref{table:e1:def} we detail the different configurations t
 
  \begin{figure}[!htb]
   \centering
-  \begin{minipage}{0.5\textwidth}
+  \begin{subfigure}{0.5\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/diepfy/dbpedia.png}
-    \caption{\acrshort{dm} Results: \acrshort{dbpedia}}
+    \caption{{[EE] \acrshort{dm} Results: \acrshort{dbpedia}}}
     \label{fig:dief:dbpedia}
-  \end{minipage}%
-  \begin{minipage}{0.5\textwidth}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/diepfy/moreno_crime.png}
-    \caption{\acrshort{dm} Results: Moreno Crime}
+    \caption{{[EE] \acrshort{dm} Results: Moreno Crime}}
     \label{fig:dief:moreno}
-  \end{minipage}
+  \end{subfigure}
 \end{figure}
 %
 \begin{figure}[!htb]
   \centering
-  \begin{minipage}{0.5\textwidth}
+  \begin{subfigure}{0.5\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/diepfy/opsahl-ucforum.png}
-    \caption{\acrshort{dm} Results: Opsahl UC Forum}
+    \caption{{[EE] \acrshort{dm} Results: Opsahl UC Forum}}
     \label{fig:dief:opsahl}
-  \end{minipage}%
-  \begin{minipage}{0.5\textwidth}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/diepfy/wang-amazon.png}
-     \caption{\acrshort{dm} Results: Wang Amazon}
+     \caption{{[EE] \acrshort{dm} Results: Wang Amazon}}
      \label{fig:dief:wang}
-   \end{minipage}
-   \caption[\acrshort{dm} General Results]{This figures shows \acrshort{dm} observed results after running all the scenarios described in \autoref{table:e1:def} for each network. $y$ axis represents the number of Answers produced and $x$ axis is the $t$ time of the \acrshort{dm} metric describe in \autoref{sub:metric}}
+   \end{subfigure}
+   \caption[{[EE] \acrshort{dm} General Results}]{These figures show \acrshort{dm} observed results after running all the scenarios described in \autoref{table:e1:def} for each network. $y$ axis represents the number of Answers produced and $x$ axis is the $t$ time of the \acrshort{dm} metric describe in \autoref{sub:metric}}
  \end{figure}
 
 This can be appreciated in the plots having the fact that any of those points draw a straight vertical line. If that were the case, the graphic would have indicated that all the $t$ times in \acrshort{dm} metric, is being produced at the same $t$.
@@ -259,31 +259,31 @@ Moreover, it is observed how Moreno Crime in \autoref{fig:dief:moreno} seems the
 
 \begin{figure}[!htb]
   \centering
-  \begin{minipage}{0.5\textwidth}
+  \begin{subfigure}{0.5\textwidth}
   \includegraphics[width=1\linewidth, height=0.3\textheight]{experiments/diepfy/dbpedia_radial.png}
-    \caption{\acrshort{dm} Results (Radial): \acrshort{dbpedia}}
+    \caption{{[EE] \acrshort{dm} Results (Radial): \acrshort{dbpedia}}}
     \label{fig:dief:dbpedia-radial}
-  \end{minipage}%
-  \begin{minipage}{0.5\textwidth}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
   \includegraphics[width=1\linewidth, height=0.3\textheight]{experiments/diepfy/moreno_crime_radial.png}
-    \caption{\acrshort{dm} Results (Radial): Moreno Crime}
+    \caption{{[EE] \acrshort{dm} Results (Radial): Moreno Crime}}
     \label{fig:dief:moreno-radial}
-  \end{minipage}
+  \end{subfigure}
 \end{figure}
 %
 \begin{figure}[!htb]
   \centering
-  \begin{minipage}{0.5\textwidth}
+  \begin{subfigure}{0.5\textwidth}
   \includegraphics[width=1\linewidth, height=0.3\textheight]{experiments/diepfy/opsahl-ucforum_radial.png}
-    \caption{\acrshort{dm} Results (Radial): Opsahl UC Forum}
+    \caption{{[EE] \acrshort{dm} Results (Radial): Opsahl UC Forum}}
     \label{fig:dief:opsahl-radial}
-  \end{minipage}%
-  \begin{minipage}{0.5\textwidth}
+  \end{subfigure}%
+  \begin{subfigure}{0.5\textwidth}
     \includegraphics[width=1\linewidth, height=0.3\textheight]{experiments/diepfy/wang-amazon_radial.png}
-    \caption{\acrshort{dm} Results (Radial): Wang Amazon}
+    \caption{{[EE] \acrshort{dm} Results (Radial): Wang Amazon}}
     \label{fig:dief:wang-radial}
-  \end{minipage}
-  \caption[\acrshort{dm} General Results (Radial)]{Radial plot shows how the different metrics provided by \acrshort{dm} tool such as \acrfull{tt}, \acrfull{tfft}, \acrfull{dt}, \acrfull{et} and \acrfull{comp} are related each other for each experimental case. This figures shows radial plot observed results after running all the scenarios described in \autoref{table:e1:def} for each network. \acrshort{dm} is described in \autoref{sub:metric}.}
+  \end{subfigure}
+  \caption[{[EE] \acrshort{dm} General Results (Radial)}]{Radial plots show how the different metrics provided by \acrshort{dm} tool such as \acrfull{tt}, \acrfull{tfft}, \acrfull{dt}, \acrfull{et} and \acrfull{comp} are related each other for each experimental case. This figures shows radial plot observed results after running all the scenarios described in \autoref{table:e1:def} for each network. \acrshort{dm} is described in \autoref{sub:metric}.}
 \end{figure}
 
 Another plots that \acrshort{dm} tool provides are shown in \autoref{fig:dief:dbpedia-radial}, \autoref{fig:dief:moreno-radial}, \autoref{fig:dief:opsahl-radial} and \autoref{fig:dief:wang-radial}.
@@ -337,7 +337,7 @@ The command run for \texttt{criterion} benchmark analysis is is \mintinline[font
   & VU-M & \texttt{by-vertex 73} & 48 hours \\
   \hline
 \end{tabular}
-\caption[E2 Procedure]{This tables shows all the different experiments setups that we have conducted for E2. Execution command is the same for each experiment because it is handle by \texttt{criterion} tool. On the last column we can see for each case the query command executed for \acrshort{bt} enumeration, although the output is not used in this case, because we focus on average running time}
+\caption[{[EE] E2 Procedure}]{This tables shows all the different experiments setups that we have conducted for E2. Execution command is the same for each experiment because it is handle by \texttt{criterion} tool. On the last column we can see for each case the query command executed for \acrshort{bt} enumeration, although the output is not used in this case, because we focus on average running time}
 \label{table:e2:def}
 \end{table}
 
@@ -353,7 +353,7 @@ There is only one scenario that behaves different, which is edges (see \autoref{
  \begin{center}
     \includegraphics[width=1\textwidth] {experiments/bench_1}
       \end{center}
-    \caption[Benchmark Results: Criterion Plot]{This plot are the results after running \texttt{criterion} tool over the experiments setup described in \autoref{table:e2:def}. Yellow bars are the experiments over Opsahl UC Forum network. Blue light bars represents the experiments on Moreno Crime network, and red bars on Wang Amazon}
+    \caption[{[EE] Benchmark Results: Criterion Plot}]{This plot are the results after running \texttt{criterion} tool over the experiments setup described in \autoref{table:e2:def}. Yellow bars are the experiments over Opsahl UC Forum network. Blue light bars represents the experiments on Moreno Crime network, and red bars on Wang Amazon}
     \label{fig:exp:bench}
 \end{figure}
 
@@ -363,7 +363,7 @@ The other metric that we measure as we describe in the procedure paragraph is th
   \begin{center}
      \includegraphics[width=1\textwidth] {experiments/execution_time_by_experiments}
        \end{center}
-     \caption[Total Execution Time: Comparison between all setups]{This plot shows all the experiment scenarios run in \autoref{table:e1:def} and the comparison of the Total running execution time for each case. $y$ axis shows the total time in $\ln$ scale and $x$ axis is each Scenario ID describe in \autoref{table:exp:data-setup}}
+     \caption[{[EE] Total Execution Time: Comparison between all setups}]{This plot shows all the experiment scenarios run in \autoref{table:e1:def} and the comparison of the Total running execution time for each case. $y$ axis shows the total time in $\ln$ scale and $x$ axis is each Scenario ID describe in \autoref{table:exp:data-setup}}
      \label{fig:exp:bench:2}
  \end{figure}
 
@@ -390,7 +390,7 @@ For both cases we have run these tools using one network only and one scenario. 
   \hline
 \end{tabular}
 }
-\caption[E3 Procedure]{This tables shows the experiments scenario run for each of the tools. Notice the increase of \texttt{-A} and \texttt{-H} to support more memory allocation due to the profiling analysis}
+\caption[{[EE] E3 Procedure}]{This tables shows the experiments scenario run for each of the tools. Notice the increase of \texttt{-A} and \texttt{-H} to support more memory allocation due to the profiling analysis}
 \label{table:e3:def}
 \end{table}
 
@@ -405,7 +405,7 @@ As we can see in the overview, execution in \autoref{fig:exp:perf:1} all the cor
   \begin{center}
      \includegraphics[width=0.48\textwidth] {experiments/thread/general_overview}
        \end{center}
-     \caption[Thread Metrics: General overview]{This is a general overview of ThreadScope results over the experiments running. Green bar indicates \acrshort{mut} time. The distribution between different 8 green bars means that it is executing on the 8 assigned cores.}
+     \caption[{[EE] Thread Metrics: General overview}]{This is a general overview of ThreadScope results over the experiments running. Green bar indicates \acrshort{mut} time. The distribution between different 8 green bars means that it is executing on the 8 assigned cores.}
      \label{fig:exp:perf:1}
  \end{wrapfigure}
 This indicates that there are few GC pauses, and running time is overtaken by \acrshort{mut} time and not GC. In fact, \acrshort{ghc} productivity on this run indicated $99.8\%$.
@@ -417,22 +417,22 @@ At the middle of the execution, we are seeing more processing distributing evenl
   \centering
   \begin{minipage}{0.3\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/thread/init}
-   \caption{Thread Metrics: Initial execution}
+   \caption{{[EE] Thread Metrics: Initial execution}}
    \label{fig:exp:perf:2}
   \end{minipage}%
   \hspace{.3cm}%
   \begin{minipage}{0.3\textwidth}
     \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/thread/middle}
-    \caption{Thread Metrics: Middle of execution}
+    \caption{{[EE] Thread Metrics: Middle of execution}}
     \label{fig:exp:perf:4}
    \end{minipage}% 
    \hspace{.3cm}%
   \begin{minipage}{0.3\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/thread/end}
-   \caption{Thread Metrics: End of execution}
+   \caption{{[EE] Thread Metrics: End of execution}}
    \label{fig:exp:perf:3}
   \end{minipage}%
-  \caption[Thread Metrics: Partitioned]{In this 3 images we can see different moments of the execution of the program after doing a zoom of the images allowing to scale down execution time view. The left image indicates the beginning of the execution. Middle image is the middle of the execution and right image is the end of the execution.}
+  \caption[{[EE] Thread Metrics: Partitioned}]{In this 3 images we can see different moments of the execution of the program after doing a zoom of the images allowing to scale down execution time view. The left image indicates the beginning of the execution. Middle image is the middle of the execution and right image is the end of the execution.}
 \end{figure}
 
 \paragraph{Memory Consumption} In the case of memory consumption, we have been able to measure the memory consumption for the biggest graph, \acrshort{dbpedia}. 
@@ -442,7 +442,7 @@ As it is known, enabling profiling downgrades performance of execution time. Bec
   \begin{center}
      \includegraphics[width=1\textwidth] {experiments/mem/overview}
        \end{center}
-     \caption[Memory Metrics: Allocation by Data Type]{This plot is showing the accumulated memory allocation size of each \acrshort{hs} Data Type throughout the execution of the program.}
+     \caption[{[EE] Memory Metrics: Allocation by Data Type}]{This plot is showing the accumulated memory allocation size of each \acrshort{hs} Data Type throughout the execution of the program.}
      \label{fig:exp:mem:1}
  \end{figure}
 

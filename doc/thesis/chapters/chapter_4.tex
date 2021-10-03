@@ -23,7 +23,7 @@ A connected component of a graph is a subgraph in which any two vertices are con
   \begin{center}
 \inputtikz{graph_example_wcc}
 \end{center}
-\caption[Graph WCC Example]{Example of a graph with two weakly connected components: $\{1,2\}$ and $\{3,4,5,6\}$}
+\caption[{[PoC] Graph WCC Example}]{Example of a graph with two weakly connected components: $\{1,2\}$ and $\{3,4,5,6\}$}
 \label{fig:example_dp_graph}
 \end{wrapfigure}
 Thus, finding connected components of an undirected graph implies obtaining the minimal partition of the set of nodes induced by the relationship \textit{connected}, i.e., there is a path between each pair of nodes. An example of that graph can be seen in \autoref{fig:example_dp_graph}.
@@ -46,7 +46,7 @@ Let us describe this behavior with the example of the graph shown in \autoref{fi
 \begin{figure}[h!]
   \centering
 \inputtikz{dp_example_0}
-\caption[$\dpwcc$ Initial Setup]{$\dpwcc$ Initial setup. Stages Source, Generator, and Sink are represented by the squares labeled by $\mathsf{Sr_{WCC}}$, $\mathsf{G_{WCC}}$ and $\mathsf{Sk_{WCC}}$, respectively.  The square $\fwc$ corresponding to the Filter stage template is the parameter of $\gwc$. Arrows $\rightrightarrows$ between represents the connection of stages through two channels, $\ice$, and $\csofv$. The arrow  $\rightarrow$ represents the channel $\csofv$ connecting the stages $\mathsf{G_{WCC}}$ and $\mathsf{Sk_{WCC}}$. The arrow $\Longrightarrow$ stands for I/O data flow. Finally, the input stream comes between the dotted lines on the left and the WCC computed incrementally will be placed between the solid lines on the right.}
+\caption[{[PoC] $\dpwcc$ Initial Setup}]{$\dpwcc$ Initial setup. Stages Source, Generator, and Sink are represented by the squares labeled by $\mathsf{Sr_{WCC}}$, $\mathsf{G_{WCC}}$ and $\mathsf{Sk_{WCC}}$, respectively.  The square $\fwc$ corresponding to the Filter stage template is the parameter of $\gwc$. Arrows $\rightrightarrows$ between represents the connection of stages through two channels, $\ice$, and $\csofv$. The arrow  $\rightarrow$ represents the channel $\csofv$ connecting the stages $\mathsf{G_{WCC}}$ and $\mathsf{Sk_{WCC}}$. The arrow $\Longrightarrow$ stands for I/O data flow. Finally, the input stream comes between the dotted lines on the left and the WCC computed incrementally will be placed between the solid lines on the right.}
 \label{fig:dp_example_0}
 \end{figure}
 
@@ -71,7 +71,7 @@ In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \aut
   \caption{When the edge $(1,2)$ arrives to $\gwc$, it  spawns a new instance of $\fwc$ before $\gwc$. Filter instance $F_{\{1,2\}}$ is connected to  $\gwc$ through channels $\ice$ and  $\csofv$. The state of the new filter instance $F_{\{1,2\}}$ is initialized with the set of vertices $\{1,2\}$. The edge $(3,6)$ arrives to the new filter instance $F_{\{1,2\}}$.}
   \label{fig:dp_example_1_2b}
 \end{subfigure}
-\caption[$\dpwcc$ Evolving first state]{Evolution of the $\dpwcc$: First state}
+\caption[{[PoC] $\dpwcc$ Evolving first state}]{Evolution of the $\dpwcc$: First state}
 \label{fig:dp_example_1_2}
 \end{figure}
 \vspace{.5cm}
@@ -92,7 +92,7 @@ In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \aut
   \caption{When the edge $(3,6)$ arrives to $\gwc$, it spawns the filter instance $F_{\{3,6\}}$  between $F_{\{1,2\}}$ and $\gwc$. Filter instance $F_{\{1,2\}}$ is connected to the new filter instance $F_{\{3,6\}}$ and this one is connected to  $\gwc$ through channels $\ice$ and  $\csofv$. The state of the new filter instance $F_{\{3,6\}}$ is initialized with the set of vertices $\{3,6\}$. The edge $(3,4)$ arrives to $F_{\{1,2\}}$  and $\mathsf{Sr_{WCC}}$ is fed with the mark $\eof$. Edges $(3,4)$ and $(4,5)$ remain passing through $\ice$.}
   \label{fig:dp_example_3_4b}
 \end{subfigure}
-\caption[$\dpwcc$ Evolving second state]{Evolution of the $\dpwcc$: Second state}
+\caption[{[PoC] $\dpwcc$ Evolving second state}]{Evolution of the $\dpwcc$: Second state}
 \label{fig:dp_example_3_4}
 \end{figure}
 \vspace{.5cm}
@@ -113,7 +113,7 @@ In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \aut
   \caption{When the edge $(4,5)$ arrives to $\gwc$, it spawns the filter instance $F_{\{4,5\}}$  between $F_{\{3,6\}}$ and $\gwc$. Filter instance $F_{\{3,6\}}$ is connected to the new filter instance $F_{\{4,5\}}$ and this one is connected to  $\gwc$ through channels $\ice$ and  $\csofv$.  Since the edge $(3,4)$ arrived to $F_{\{3,6\}}$ at the same time and  vertex $3$ belongs to the set of connected vertices of the filter $F_{\{3,6\}}$,  the vertex $4$ is added to the state of $F_{\{3,6\}}$. Now, the state of $F_{\{3,6\}}$ is the connected set of vertices $\{3,4,6\}$. When the mark $\eof$ arrives to the first filter instance, $F_{\{1,2\}}$, through  $\csofv$, this stage passes  its partial set of connected vertices,  $\{1,2\}$, through $\csofv$ and dies.  This action will activate $\Actt$ in next  filter instances to start building  maximal connected components. In this example, the state in  $F_{\{3,6\}}$, $\{3,4,6\}$, and the arriving set $\{1,2\}$ do not intersect and, hence, both sets of vertices, $\{1,2\}$ and $\{3,4,6\}$ will be passed  to the next filter instance through $\csofv$.}
   \label{fig:dp_example_5_6b}
 \end{subfigure}
-\caption[$\dpwcc$ Evolving third state]{Evolution of the $\dpwcc$: Third state}
+\caption[{[PoC] $\dpwcc$ Evolving third state}]{Evolution of the $\dpwcc$: Third state}
 \label{fig:dp_example_5_6}
 \end{figure}
 \vspace{.5cm}
@@ -134,7 +134,7 @@ In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \aut
   \caption{Since the intersection of the set of connected vertices $\{3,4,6\}$ arrived to  $F_{\{4,5\}}$ and its state is not empty, this state is enlarged to be $\{3,4,5,6\}$. The set of connected vertices $\{1,2\}$ is arriving to  $F_{\{4,5\}}$}
   \label{fig:dp_example_7_8b}
 \end{subfigure}
-\caption[$\dpwcc$ Evolving fourth state]{Evolution of the $\dpwcc$:  Fourth state}
+\caption[{[PoC] $\dpwcc$ Evolving fourth state}]{Evolution of the $\dpwcc$:  Fourth state}
 \label{fig:dp_example_7_8}
 \end{figure}
 \vspace{.5cm}
@@ -171,7 +171,7 @@ In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \aut
   \caption{The weakly connected component of in the graph \autoref{fig:example_dp_graph} such as they have been emitted by $\dpwcc$.}
   \label{fig:dp_example_9_10d}
 \end{subfigure}
-\caption[$\dpwcc$ Evolving last state]{Last states in the evolution of the $\dpwcc$}
+\caption[{[PoC] $\dpwcc$ Evolving last state}]{Last states in the evolution of the $\dpwcc$}
 \label{fig:dp_example_9_10}
 \end{figure}
 
@@ -214,7 +214,7 @@ Finally, we have executed a \textit{Performance Analysis} in which we have to ga
    \hline
   \end{tabular}
   }
- \caption{Execution times}
+ \caption[{[PoC] Execution times}]{This table shows the \acrshort{ghc} execution time measurement of selected networks, as well as the execution flags used for running each of the networks.}
  \label{table:5}
  \end{table}
 
@@ -241,7 +241,7 @@ for \textit{web-Google} due to the topology of the graph; it is denser in terms 
    \hline
   \end{tabular}
   }
- \caption{Mean Execution times}
+ \caption[{[PoC] Mean Execution times}]{Mean execution time of each network running under \texttt{criterion} library comparing both implementations in \acrshort{hs}: \acrshort{dpwcc} and \texttt{containers} lib. \texttt{criterion} runs $1000$ times each implementations and takes mean execution times of each.}
  \label{table:6}
  \end{table}
 
@@ -263,40 +263,42 @@ All the details about these metrics are explained here \cite{diefpaper}.
 
 \begin{figure}[!htb]
     \centering
-    \begin{minipage}{0.33\textwidth}
+    \begin{subfigure}{0.33\textwidth}
      \includegraphics[width=1\linewidth, height=0.2\textheight]{email_enron}
-      \caption[\acrshort{dm} Results: email-Enron]{email-Enron \acrshort{dm}}
+      \caption[{[PoC] \acrshort{dm} Results: email-Enron}]{email-Enron \acrshort{dm}}
       \label{fig:dief:1}
-    \end{minipage}%
-    \begin{minipage}{0.33\textwidth}
+    \end{subfigure}%
+    \begin{subfigure}{0.33\textwidth}
      \includegraphics[width=1\linewidth, height=0.2\textheight]{ca_astroph}
-      \caption[\acrshort{dm} Results: ca-AstroPh]{ca-AstroPh \acrshort{dm}}
+      \caption[{[PoC] \acrshort{dm} Results: ca-AstroPh}]{ca-AstroPh \acrshort{dm}}
       \label{fig:dief:2}
-    \end{minipage}%
-    \begin{minipage}{0.33\textwidth}
+    \end{subfigure}%
+    \begin{subfigure}{0.33\textwidth}
      \includegraphics[width=1\linewidth, height=0.2\textheight]{web_google}
-      \caption[\acrshort{dm} Results: web-Google]{web-Google \acrshort{dm}}
+      \caption[{[PoC] \acrshort{dm} Results: web-Google}]{web-Google \acrshort{dm}}
       \label{fig:dief:3}
-    \end{minipage}
+    \end{subfigure}
+    \caption[{[PoC] \acrshort{dm} Metrics}]{This plots are showing the \acrshort{dm} on the three networks comparing both \acrshort{hs} implementations \acrshort{dpwcc} and \texttt{containers} lib. Red lines indicates \texttt{containers} \acrshort{hs} \acrshort{dm} metric. Yellow points indicates \acrshort{dpwcc} \acrshort{dm} metric}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
-  \begin{minipage}{0.33\textwidth}
+  \begin{subfigure}{0.33\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{email_enron_radar}
-    \caption[\acrshort{dm} Results: email-Enron radar]{email-Enron \acrshort{dm}}
+    \caption[{[PoC] \acrshort{dm} Results: email-Enron radar}]{email-Enron \acrshort{dm}}
     \label{fig:dief:rad:1}
-  \end{minipage}%
-  \begin{minipage}{0.33\textwidth}
+  \end{subfigure}%
+  \begin{subfigure}{0.33\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{ca_astroph_radar}
-    \caption[\acrshort{dm} Results: ca-AstroPh radar]{ca-AstroPh \acrshort{dm}}
+    \caption[{[PoC] \acrshort{dm} Results: ca-AstroPh radar}]{ca-AstroPh \acrshort{dm}}
     \label{fig:dief:rad:2}
-  \end{minipage}%
-  \begin{minipage}{0.33\textwidth}
+  \end{subfigure}%
+  \begin{subfigure}{0.33\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{web_google_radar}
-    \caption[\acrshort{dm} Results: web-Google radar]{web-Google \acrshort{dm}}
+    \caption[{[PoC] \acrshort{dm} Results: web-Google radar}]{web-Google \acrshort{dm}}
     \label{fig:dief:rad:3}
-  \end{minipage}
+  \end{subfigure}
+  \caption[{[PoC] \acrshort{dm} Metrics (Radial)}]{Radial plot shows how the different metrics provided by \acrshort{dm} tool such as \acrfull{tt}, \acrfull{tfft}, \acrfull{dt}, \acrfull{et} and \acrfull{comp} are related each other for each \acrshort{hs} implementation: \acrshort{dpwcc} and \texttt{containers}. Red area indicates \texttt{containers} \acrshort{hs} \acrshort{dm} metric. Yellow area indicates \acrshort{dpwcc} \acrshort{dm} metric}
 \end{figure}
 
 Based on the results shown in all the figures above, all the solutions in \acrshort{dpwcc} are being generated incrementally, 
@@ -309,31 +311,32 @@ it is retaining results until the biggest \acrshort{wcc} can be solved, which ta
 
 
 \paragraph{Multithreading} For analyzing parallelization and multithreading we have used \textit{ThreadScope} \cite{threadscope} which allows us to see how the parallelization is taking place on \acrshort{ghc} at a fine grained level and how the threads are distributed throughout the different cores requested with the \mintinline{bash}{-N} execution \texttt{ghc-option} flag.
-The distribution of the load is more intensive at the end of the execution, where \mintinline{haskell}{actor2} filter stage 
-of the algorithm is taking place and different filters are reaching execution of that second actor.
-\begin{wrapfigure}{r}{0.5\textwidth}
-  \begin{center}
-     \includegraphics[width=0.48\textwidth, height=0.2\textheight] {screen_2}
-    \end{center}
-    \caption[Thread Metrics: Fraction of Time]{Threadscope Image of Zoomed Fraction}
-    \label{fig:4}
- \end{wrapfigure}
-~\autoref{fig:4} zooms in on \textit{ThreadScope} output in a particular moment, approximately in the middle of the execution. 
+The distribution of the load is more intensive at the end of the execution, where \mintinline{haskell}{actor2} filter stage of the algorithm is taking place and different filters are reaching execution of that second actor.
 We can appreciate how many threads are being spawned and by the tool and if they are evenly distributed among cores. 
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.7\textwidth, height=0.3\textheight]{screen_2}
+  \caption[{[PoC] Thread Metrics: Fraction of Time}]{Threadscope Image of Zoomed Fraction of $10$ nanoseconds. Upper green area shows the amount of core used during that fraction of time. The lower are where it shows four separated green bars describe the behavior on each core. The number inside the green bar show the amount of threads running on that core at that moment. Finally orange bars are GC time.}
+  \label{fig:4}
+ \end{figure}
+
+~\autoref{fig:4} zooms in on \textit{ThreadScope} output in a particular moment, approximately in the middle of the execution. 
 The numbers inside green bars represent the number of threads that are being executed on that particular core (horizontal line) at that execution slot. 
 Thus, the number of threads varies among slot execution times, because as it is already known, \acrshort{ghc} implements \emph{Preemptive Scheduling} \cite{lightweightghc}.
 It can be appreciated in \autoref{fig:4} our first assumption that the load is evenly distributed because the mean number of executing threads per core is $571$.
 
+
 \paragraph{Memory allocation} Another important aspect in our case is how the memory is being managed to avoid memory leaks or other non-desired behavior that increases memory allocation during the execution time. 
-\begin{wrapfigure}{rh!}{0.5\textwidth}
-  \begin{center}
-    \includegraphics[width=0.48\textwidth, height=0.2\textheight] {visualization}
-  \end{center}
-  \caption[Memory Metrics: Allocation by Data Type]{Memory Allocation}
-  \label{fig:5}
-\end{wrapfigure}
 This is even more important in the particular implementation of \acrshort{wcc} using \acrshort{dp} model because it requires to maintain the set of connected components in memory throughout the execution of the program or at least until we can output the calculated \acrshort{wcc} if we reach to the last \textit{Filter} and we know that this \acrshort{wcc} cannot be enlarged anymore.
 In order to verify this, we measure memory allocation with \textit{eventlog2html} \cite{eventlog2html} which converts generated profiling memory eventlog files into graphical HTML representation. 
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\linewidth, height=0.3\textheight]{visualization}
+  \caption[{[PoC] Memory Metrics: Allocation by Data Type}]{This plot is showing the accumulated memory allocation size of each \acrshort{hs} Data Type throughout the execution of the program.}
+  \label{fig:5}
+\end{figure}
 
 As we can see in \autoref{fig:5}, \acrshort{dpwcc} does efficient work on allocating memory since we are not using more than $57$ MB of memory during the whole execution of the program.
 On the other hand, if we analyze how the memory is allocated during the execution of the program, it can also be appreciated that most of the memory is allocated at the beginning of the program and steadily decrease over time, with a small peak at the end that does not overpass even half of the initial peak of $57$ MB. 

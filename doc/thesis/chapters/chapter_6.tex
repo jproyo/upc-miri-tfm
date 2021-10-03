@@ -3,7 +3,7 @@ In this chapter, we first describe the overall idea of the algorithm for increme
 \acrshort{bt}. After that, we present the algorithms in pseudo-code format and then a complexity analysis of the principal functions of the algorithm.
 In the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
 
-\section{Preliminaries Definitions}
+\section{Preliminaries Definitions}\label{sec:prem:def}
 In order to understand how the algorithm works, we need to provide some basic definitions that are already exposed in previous work~\cite{btcount}, and
 at the same time, we define other structures that we use for giving a solution to the problem.
 Let's enumerate all those definitions in the following paragraphs.
@@ -73,7 +73,7 @@ $\bti$ & the \acrshort{bt} $u_1,l_1,u_2,l_3,u_3,l_2,u_1$\\  \hline
 $\bt$ & the set of all the possible \acrshort{bt} in $G$ \\  \hline
 $bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
 \end{tabular}
-\caption{Summary of notations and their meanings}
+\caption[{[\acrshort{iebt}] Summary of notations and their meanings}]{This table summarizes all the different object definitions that we have detailed in \autoref{sec:prem:def}}
 \label{table:notation}
 \end{table}
       
@@ -85,7 +85,7 @@ Lets suppose that we have the following \acrshort{bg} as it is shown in the \aut
 \begin{figure}[ht]
 \centering	
 \inputtikz{bipartite}
-\caption[Example of \acrlong{bg}]{Example of \acrlong{bg}}
+\caption[{[\acrshort{iebt}] Example of \acrlong{bg}}]{Example of \acrlong{bg} which has $5$ (five) \acrshort{bt}. We are going to use this example to show how to build the different objects definitions presented in \autoref{sec:prem:def}}
 \label{fig:bipartite-graph-example}
 \end{figure}
 
@@ -112,7 +112,7 @@ The first structure that we can detect is \acrlong{awg} as we can see on \autore
 \caption{\acrshort{awg} on $c$}
 \label{fig:awedge-example-c}
 \end{subfigure}
-\caption[Definitions Examples \acrlong{awg}]{ \acrlong{awg} of nodes $a,b,c$ of \autoref{fig:bipartite-graph-example}}
+\caption[{[\acrshort{iebt}] Definitions Examples \acrlong{awg}}]{ \acrlong{awg} of nodes $a,b,c$ of \autoref{fig:bipartite-graph-example}. $d, e$ are omitted because of the propose of the example.}
 \label{fig:awedge-example}
 \end{figure}
 
@@ -122,7 +122,7 @@ Following that, we can build the \acrlong{adwg} as we can see in \autoref{fig:ag
 \begin{figure}[htp!]
 \centering
 \inputtikz{bipartite_adwg_a}
-\caption[Example Aggregated double-wedge]{\acrlong{adwg} of the pair of nodes $(a,c)$ \\of \autoref{fig:bipartite-graph-example}}
+\caption[{[\acrshort{iebt}] Example Aggregated double-wedge}]{\acrlong{adwg} of the pair of nodes $(a,c)$ of \autoref{fig:bipartite-graph-example}. Upper layer nodes $1,3,7$ and $5,9$ are enclosed in a Square indicating the set that they belong to. Remember in \dref{def:adwg} we are forming three sets $U_l = \la I, J, K \ra$. $I = \emptyset$ in ths case because they should be disjointed sets and $a$ and $c$ share the same upper layer nodes in $J$.}
 \label{fig:agg-double-wedge-example}
 \end{figure}
 
@@ -131,7 +131,7 @@ Now we can finally build our first \acrlong{abt} as we can see in the following 
 \begin{figure}[htp!]
 \centering      
 \inputtikz{bipartite_abt_a}
-\caption[Example Aggregated bi-triangle]{Aggregated bi-triangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}}
+\caption[{[\acrshort{iebt}] Example Aggregated bi-triangle}]{Aggregated bi-triangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}. In this case as the \dref{def:abt} states, $\hat{U}_l$ does not contains disjoint sets, because we are using a compressing mechanism similar as described in \cite{Lai}. We can appreciate in the image that we can built an \acrshort{abt} with $b$ which has incidents edges in $1,5$. Note that not all of combinations are going to form a \acrshort{bt}.}
 \label{fig:agg-bt-example}
 \end{figure}
 
@@ -166,7 +166,7 @@ $C_{BT}$ & Channel of $\bt$ \\ \hline
 $IC_{BT}$ & Input Channels carrying $\bt$ \\ \hline
 $OC_{BT}$ & Output Channels carrying $\bt$ \\ \hline
 \end{tabular}
-\caption{Summary of Channels used in \acrshort{dpbt}}
+\caption[{[\acrshort{iebt}] Summary of Channels used in \acrshort{dpbt}}]{Summary of Channels used in \acrshort{dpbt}. The subindex on the Channel name indicates the element type this channel is carrying, either producing or consuming. Channels prefixed with $C$ are a generic form of denominating a channel independently of it is a producing or consuming. Channels prefixed with $IC$ are Input Channels or Consumers. Channels prefixed with $OC$ are Output Channels or Producers.}
 \label{table:channels}
 \end{table}
 
@@ -182,7 +182,7 @@ An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ has a sum ty
 \resizebox{1\textwidth}{!}{%
 \inputtikz{btDP}
 }
-\caption{$\dpbt$ Initial setup}
+\caption[{[\acrshort{iebt}] $\dpbt$ Initial setup}]{Example of an initial setup of $\dpbt$. The text between dotted lines indicates the incoming data from an external source such as a file, socket, or any other. There are two incoming sources because one of them is carrying the edges and the other the commands \acrshort{qo}. Thick black double lines at the most right indicate the output targe that can be file, socket, screen, or any other. There is no data there because it is the initial step of \acrshort{dpbt}. At this initial step only $\ibt$, $\gbt$, and $\obt$ are set up with initial channels.}
 \label{fig:btDP}
 \end{figure}
 
@@ -200,7 +200,7 @@ $Q$ Commands are downstream from $\ibt$ to $\ad$ using channel $IC_Q$. $\ad$ rec
 \subsection{Dynamic Pipeline for Enumerating Bi-triangles}
 In this section, we present all the pseudo-code definitions of each of the stages described in ~\autoref{sub:sec:algo-sketch}. 
 In spite of this work has been implemented using \acrshort{hs}, and in particular \acrshort{dpfh}, the pseudo-code algorithms presented here are language independent.
-Before starting with the details, we introduce in \autoref{table:aux:fn} auxiliary functions that we use in \acrshort{hs} implementation.
+Before starting with the details, we introduce in \autoref{table:aux:fn} auxiliary functions that we use in the pseudo-code to help understanding better the desired behavior of the algorithm.
 
 \begin{table}[!htp]
 \centering
@@ -214,7 +214,7 @@ $\us(\st)$ & Update Current State $\st$ for Filter Instance \\ \hline
 $\p(\mathtt{v}, OC_x)$ & push some value $\mathtt{v}$ to some Output Channel $OC_x$ \\\hline
 $\mt(Q, BT)$ & Check if a \acrshort{qo} $Q$ produces $\bt$ \\ \hline
 \end{tabular}
-\caption{Summary of auxiliary functions for handling \acrshort{dpbt} internals}
+\caption[{[\acrshort{iebt}] Summary of auxiliary functions for handling \acrshort{dpbt} internals}]{This table shows some auxiliary functions that are used to help understanding the pseudo-code general behavior. Depending on the language implementation chosen these functions might not exists at all, but we generalize here in order to describe a pseudo-code language-independent. For example in our \acrshort{hs} implementation there is not $\fd$ because functions in \acrshort{hs} clean after execution finish automatically by \acrshort{ghc}}
 \label{table:aux:fn}
 \end{table}
       
@@ -273,7 +273,7 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \resizebox{1\textwidth}{!}{%
 \inputtikz{btDP_actor1}
 }
-\caption{$\dpbt$ With Filter instances}
+\caption[{[\acrshort{iebt}] ]$\dpbt$ With Filter instances}]{This is the evolving state of the $\dpbt$ shows in \autoref{fig:btDP}. This image is showing what happen when a $\fbt$ is spawned. We can see how all the channels are set up in the middle of the spawned $\fbt$ and also between $\fbt$ and $\gbt$.}
 \label{fig:btDP_actor1}
 \end{figure}
 
