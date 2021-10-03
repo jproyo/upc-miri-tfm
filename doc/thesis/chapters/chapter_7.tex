@@ -15,7 +15,7 @@ Regarding that, we have asked ourselves the following research question that gui
   
 \section{Experiments Configuration}
 We have conducted different kinds of experiments to answer our \qref{res:bt:question} and verify the correctness of the implementation.
-First, we have performed a \emph{Continuous beahvior Analysis} using \acrfull{dm}~\cite{diefpaper} in order to assess the continuous behavior capabilities of the implemented algorithm (generation of incremental results). 
+First, we have performed a \emph{Continuous behavior Analysis} using \acrfull{dm}~\cite{diefpaper} in order to assess the continuous behavior capabilities of the implemented algorithm (generation of incremental results). 
 Then, we have performed a \emph{Benchmark Analysis} to identify how the behavior of \acrshort{dpbt} varies depending on the type of query command selected for the user.
 Finally, we have executed a \textit{Performance Analysis} in which we have to gather profiling data from \acrfull{ghc} for one of the graphs, 
 to measure how the program performs regarding multithreading and memory allocation.
@@ -82,7 +82,7 @@ A \emph{low, medium, or high incidence level} for edges is defined as following:
 \end{definition}
 
 
-Having the previous \dref{def:exp:incidence}, we define the following scenarios to conduct all the experiments regardless the network used.
+Having the previous \dref{def:exp:incidence}, we define the following scenarios to conduct all the experiments regardless of the network used.
 
 \begin{table}[H]
   \centering
@@ -134,12 +134,12 @@ Regarding memory, the allocated nodes have been requested from $40 GB$ up to $12
 We have compiled our program using \texttt{stack} version $2.5.1$ \cite{stack} with the following command and option flags\footnote{For more information about package.yaml or cabal file please check https://github.com/jproyo/upc-miri-tfm/tree/main/bt-graph-dp}:
 \mintinline[fontsize=\small, breaklines]{bash}{stack build --ghc-options "-threaded -O3 -rtsopts -with-rtsopts=-N"}.
 Flag \texttt{threaded} indicates \acrshort{ghc} to compile the program with thread support enable. \texttt{-O3} is the highest optimization level for the compiler.
-Regarding \texttt{-with-rtsopts=-N}, it allows us to change dynamically on each runtime execution command, the number of processors and other execution flags that we will explain in \autoref{par:ex:param}. 
+Regarding \texttt{-with-rtsopts=-N}, it allows us to change dynamically on each runtime execution command, the number of processors, and other execution flags that we will explain in \autoref{par:ex:param}. 
 
 \paragraph{Optimal Execution Parameters}\label{par:ex:param} \acrshort{ghc} enables different flags parameters to speed up the execution. Unfortunately there is no recipe to tune those parameters in the correct way and each program needs to be analyze to take advantage of \acrshort{ghc} capabilities.\footnote{Execution parameters details are explained in \aref{apx:running:experiments}}
-The most important parameters to be tune in our case are memory and number of processor. In the case of number of processors we have run all the experiments between 6 and 12 cores. The detail of each run can be found in \autoref{table:e1:def}.
-Setting up memory allocation is not a straightforward task, because we have at our disposal the combination of two parameters. \texttt{-A} flag which indicates the allocation area for the garbage collector, which is fixed and never resize and \texttt{-H} which is the heap size. There is no program or algorithm to find the optimal values for this two flags combined, but there exist a tool \texttt{ghc-gc-tune} \cite{ghctune} 
-which implements an heuristic algorithm that tries different setup until it finds an optimal combination.
+The most important parameters to be tune in our case are memory and the number of processors. In the case of the number of processors, we have run all the experiments between 6 and 12 cores. The detail of each run can be found in \autoref{table:e1:def}.
+Setting up memory allocation is not a straightforward task, because we have at our disposal the combination of two parameters. \texttt{-A} flag which indicates the allocation area for the garbage collector, which is fixed and never resize, and \texttt{-H} which is the heap size. There is no program or algorithm to find the optimal values for these two flags combined, but there exists a tool \texttt{ghc-gc-tune} \cite{ghctune} 
+which implements a heuristic algorithm that tries different setups until it finds an optimal combination.
 We have run \acrshort{dpbt} with that tool obtaining the following result that can be appreciated in \autoref{fig:exp:opt-mem}
 
 \begin{figure}[h!]
@@ -162,7 +162,7 @@ This experiment allows us to answer research questions [R1] and [R3] defined in 
 
 \paragraph{Procedure} We execute this experiment for each of the networks described in \autoref{data:set} and for each scenario described in \autoref{sub:exp:exp-data-setup}.
 This experiment has been executed five times on each case until we found the proper vertex of edges in the selection described in \autoref{sub:exp:sel-vals}.
-The metric  \acrfull{dt}-described in \autoref{sub:metric}- is used to measure the continuous behavior of the proposed approach in a give time frame.
+The metric  \acrfull{dt}-described in \autoref{sub:metric}- is used to measure the continuous behavior of the proposed approach in a given time frame.
 \autoref{table:e1:def} depcts the different configurations evaluated in this experiment.
 
 \begin{table}[H]
@@ -221,80 +221,78 @@ The metric  \acrfull{dt}-described in \autoref{sub:metric}- is used to measure t
  \paragraph{Observed Results}\label{sub:sec:res:e1}
  As observed in the results above in \autoref{fig:dief:dbpedia}, \autoref{fig:dief:moreno}, \autoref{fig:dief:opsahl} and \autoref{fig:dief:wang} in all the networks and experiments setups, \acrshort{bt} are incrementally enumerated and delivered. 
 
- \begin{figure}[!htb]
+ \begin{figure}[!htp]
   \centering
-  \begin{subfigure}{0.5\textwidth}
+  \begin{subfigure}[t]{0.45\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/diepfy/dbpedia.png}
-    \caption{{[EE] \acrshort{dm} Results: \acrshort{dbpedia}}}
+    \caption[{[EE] \acrshort{dm} Results: \acrshort{dbpedia}}]{\acrshort{dm} metric results after running all experiment scenarios described in \autoref{table:e1:def} on dbpedia network. Each color represents one scenario}
     \label{fig:dief:dbpedia}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\textwidth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.45\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/diepfy/moreno_crime.png}
-    \caption{{[EE] \acrshort{dm} Results: Moreno Crime}}
+    \caption[{[EE] \acrshort{dm} Results: Moreno Crime}]{\acrshort{dm} metric results after running all experiment scenarios described in \autoref{table:e1:def} on Moreno Crime network. Each color represents one scenario}
     \label{fig:dief:moreno}
   \end{subfigure}
-\end{figure}
-%
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{0.5\textwidth}
+  \vspace{0.5cm}
+
+  \begin{subfigure}[t]{0.45\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/diepfy/opsahl-ucforum.png}
-    \caption{{[EE] \acrshort{dm} Results: Opsahl UC Forum}}
+    \caption[{[EE] \acrshort{dm} Results: Opsahl UC Forum}]{\acrshort{dm} metric results after running all experiment scenarios described in \autoref{table:e1:def} on Opsahl UC Forum network. Each color represents one scenario}
     \label{fig:dief:opsahl}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\textwidth}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.45\textwidth}
     \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/diepfy/wang-amazon.png}
-     \caption{{[EE] \acrshort{dm} Results: Wang Amazon}}
+     \caption[{[EE] \acrshort{dm} Results: Wang Amazon}]{\acrshort{dm} metric results after running all experiment scenarios described in \autoref{table:e1:def} on Wang Amazon network. Each color represents one scenario}
      \label{fig:dief:wang}
    \end{subfigure}
-   \caption[{[EE] \acrshort{dm} General Results}]{These figures show \acrshort{dm} observed results after running all the scenarios described in \autoref{table:e1:def} for each network. $y$ axis represents the number of Answers produced and $x$ axis is the $t$ time of the \acrshort{dm} metric describe in \autoref{sub:metric}}
+   \caption[{[EE] \acrshort{dm} General Results}]{These figures show \acrshort{dm} observed results after running all the scenarios described in \autoref{table:e1:def} for each network. $y$ axis represents the number of Answers produced and $x$ axis is the $t$ time of the \acrshort{dm} metric describe in \autoref{sub:metric}. For example in \autoref{fig:dief:dbpedia} we can see that dark green color shows VL-H scenario on dbpedia network. The more data points distributed throughout the $x$ axis the more continuos the behavior is.}
    \label{fig:dief:all}
  \end{figure}
 
-The continuous behavior can be appreciated in \autoref{fig:dief:all} having the fact that any of those points draw a straight vertical line. If that were the case, the graphic would have indicated that all the $t$ times in \acrshort{dm} metric, is being produced at the same $t$.
+The continuous behavior can be appreciated in \autoref{fig:dief:all} having the fact that any of those points draw a straight vertical line. 
+If that were the case, the graphic would have indicated that all the $t$ times in \acrshort{dm} metric, is being produced at the same $t$.
 Since this is not the case for these observed results, we can ensure that all the results are continuously generated by \acrshort{dpbt}.
 We can also observe how the results obtained in the experiment \emph{Vertex Lower with High Incidence}(VL-H) (see \autoref{table:exp:data-setup}), are more continuous compare to the rest of the experiments setups. 
 The only experiment setup that cannot be appreciated with the same level of continuous results as the rest is \emph{Opsahl UC Forum} (see \autoref{fig:dief:opsahl}). 
-Moreover, it is observed how Moreno Crime in \autoref{fig:dief:moreno} that between time $100$ and $150$, scenarios VU-H, VL-M and E-H are plotting in the same $t$ all the enumerated \acrshort{bt}, indicating low continuous behavior. This networks is the only one exhibiting that behavior in more than 2 scenarios.
+Moreover, it is observed how Moreno Crime in \autoref{fig:dief:moreno} that between time $100$ and $150$, scenarios VU-H, VL-M, and E-H are plotting in the same $t$ all the enumerated \acrshort{bt}, indicating low continuous behavior. 
+This network is the only one exhibiting that behavior in more than two scenarios.
 
-\begin{figure}[!htb]
+\begin{figure}[!htp]
   \centering
-  \begin{subfigure}{0.5\textwidth}
-  \includegraphics[width=1\linewidth, height=0.3\textheight]{experiments/diepfy/dbpedia_radial.png}
-    \caption{{[EE] \acrshort{dm} Results (Radial): \acrshort{dbpedia}}}
+  \begin{subfigure}[t]{0.45\textwidth}
+  \includegraphics[width=1\linewidth, height=0.25\textheight]{experiments/diepfy/dbpedia_radial.png}
+    \caption[{[EE] \acrshort{dm} Results (Radial): \acrshort{dbpedia}}]{\acrshort{dm} metric results in radial plot after running all experiment scenarios described in \autoref{table:e1:def} on dbpedia network. Each color represents one scenario. Each dimension of the radial represents an observed result for that scenario on that dimension}
     \label{fig:dief:dbpedia-radial}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\textwidth}
-  \includegraphics[width=1\linewidth, height=0.3\textheight]{experiments/diepfy/moreno_crime_radial.png}
-    \caption{{[EE] \acrshort{dm} Results (Radial): Moreno Crime}}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.45\textwidth}
+  \includegraphics[width=1\linewidth, height=0.25\textheight]{experiments/diepfy/moreno_crime_radial.png}
+    \caption[{[EE] \acrshort{dm} Results (Radial): Moreno Crime}]{\acrshort{dm} metric results in radial plot after running all experiment scenarios described in \autoref{table:e1:def} on Moreno Crime network. Each color represents one scenario. Each dimension of the radial represents an observed result for that scenario on that dimension}
     \label{fig:dief:moreno-radial}
   \end{subfigure}
-\end{figure}
-%
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{0.5\textwidth}
-  \includegraphics[width=1\linewidth, height=0.3\textheight]{experiments/diepfy/opsahl-ucforum_radial.png}
-    \caption{{[EE] \acrshort{dm} Results (Radial): Opsahl UC Forum}}
+  \vspace{0.5cm}
+  %
+  \begin{subfigure}[t]{0.45\textwidth}
+  \includegraphics[width=1\linewidth, height=0.25\textheight]{experiments/diepfy/opsahl-ucforum_radial.png}
+    \caption[{[EE] \acrshort{dm} Results (Radial): Opsahl UC Forum}]{\acrshort{dm} metric results in radial plot after running all experiment scenarios described in \autoref{table:e1:def} on Opsahl UC Forum network. Each color represents one scenario. Each dimension of the radial represents an observed result for that scenario on that dimension}
     \label{fig:dief:opsahl-radial}
-  \end{subfigure}%
-  \begin{subfigure}{0.5\textwidth}
-    \includegraphics[width=1\linewidth, height=0.3\textheight]{experiments/diepfy/wang-amazon_radial.png}
-    \caption{{[EE] \acrshort{dm} Results (Radial): Wang Amazon}}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.45\textwidth}
+    \includegraphics[width=1\linewidth, height=0.25\textheight]{experiments/diepfy/wang-amazon_radial.png}
+    \caption[{[EE] \acrshort{dm} Results (Radial): Wang Amazon}]{\acrshort{dm} metric results in radial plot after running all experiment scenarios described in \autoref{table:e1:def} on Wang Amazon network. Each color represents one scenario. Each dimension of the radial represents an observed result for that scenario on that dimension}
     \label{fig:dief:wang-radial}
   \end{subfigure}
-  \caption[{[EE] \acrshort{dm} General Results (Radial)}]{Radial plots show how the different metrics provided by \acrshort{dm} tool such as \acrfull{tt}, \acrfull{tfft}, \acrfull{dt}, \acrfull{et} and \acrfull{comp} are related each other for each experimental case. These figures show radial plot observed results after running all the scenarios described in \autoref{table:e1:def} for each network. \acrshort{dm} is described in \autoref{sub:metric}.}
+  \caption[{[EE] \acrshort{dm} General Results (Radial)}]{Radial plots show how the different dimensions values provided by \acrshort{dm} tool such as \acrfull{tt}, \acrfull{tfft}, \acrfull{dt}, \acrfull{et} and \acrfull{comp} are related each other for each experimental case. These figures show radial plot observed results after running all the scenarios described in \autoref{table:e1:def} for each network. \acrshort{dm} is described in \\ \autoref{sub:metric}.}
 \end{figure}
 
 Another plots that \acrshort{dm} tool provides are shown in \autoref{fig:dief:dbpedia-radial}, \autoref{fig:dief:moreno-radial}, \autoref{fig:dief:opsahl-radial} and \autoref{fig:dief:wang-radial}.
-Here we can observed how all the networks under VL-H scenario cover \acrshort{dt} metrics with the dark green area, which indicates that it is continuously delivering results for each network. 
+Here we can observe how all the networks under the VL-H scenario cover \acrshort{dt} metrics with the dark green area, which indicates that it is continuously delivering results for each network. 
 The rest of the data setup experiments indicates that the level of throughput, completeness, and execution time is less than \acrfull{dt}, and the results can be delivered faster without appreciating continuous behavior properly in the plot. 
 These radial plots obtained from \acrshort{dm} shows how \acrfull{et}, \acrfull{tfft}, \acrfull{comp}, \acrfull{tt} and \acrshort{dm} measured by tool, relate each other in the same setup. 
 For our case analysis, the higher the area that is cover in \acrfull{dt} the better, indicating a high level of continuous behavior.
 
 \subsection{E2: Benchmark Analysis}\label{sub:sec:exp-2} 
 \paragraph{Goal} Regarding benchmarking, we aim at answering research question [R2] and assess  the impact of the type of command query $Q$ on the  \acrshort{bt} enumeration.
-The results of this evaluation will also provide evidence to answer [R3], since we have provided evidence with the benchmarking that the execution time varies depending on the command query $q$ proving that we are effectively implemented a \emph{pay-as-you-go} model. 
+The results of this evaluation will also provide evidence to answer [R3] since we have provided evidence with the benchmarking that the execution time varies depending on the command query $q$ proving that we are effectively implemented a \emph{pay-as-you-go} model. 
 
 \paragraph{Procedure} This experiment measures \emph{Average Running Time} and \emph{Total Running Time} as  described in \autoref{sub:metric}. 
 For gathering \emph{Average Running Time}, the experiment scenarios described in \autoref{table:e2:def} were conducted; the \emph{\acrshort{dbpedia}} network was not considered, but the \mintinline{shell}{criterion} \cite{criterion} benchmark tool were followed.
@@ -341,13 +339,13 @@ The command run for \texttt{criterion} benchmark analysis is \mintinline[fontsiz
 \label{table:e2:def}
 \end{table}
 
-Furthermore, \emph{Total Running Time} is gathered with the time measured after running all the scenarios describe in \autoref{table:e1:def}.
+Furthermore, \emph{Total Running Time} is gathered with the time measured after running all the scenarios described in \autoref{table:e1:def}.
 
 
 \paragraph{Observed Results}\label{sub:sec:res:e2} As it can be seen in \autoref{fig:exp:bench}, yellow bars are all the experiments related to Lower Layer vertices, blue bars are related to Upper Layer, and red bars are the experiments related to edge search. 
-The longest bars are from network opsahl-ucforum, which we already know by \autoref{table:exp:data-set}, it is the biggest of the four networks in terms of the number of \acrshort{bt} and wedges. So, it needs to enumerate more \acrshort{bt}. 
+The longest bars are from network opsahl-ucforum, which we already know by \autoref{table:exp:data-set} it is the biggest of the four networks in terms of the number of \acrshort{bt} and wedges. So, it needs to enumerate more \acrshort{bt}. 
 Further, almost all the high incidence vertices and edges queries are taken longer as well. 
-There is only one scenario that behaves different, which is edges (see \autoref{table:exp:data-setup}) for opsahl-ucforum, where execution time is not proportional to incidence level.
+There is only one scenario that behaves differently, which is edges (see \autoref{table:exp:data-setup}) for opsahl-ucforum, where execution time is not proportional to incidence level.
 
 \begin{figure}[!htb]
  \begin{center}
@@ -369,16 +367,16 @@ There is only one scenario that behaves different, which is edges (see \autoref{
 
 Regarding \autoref{fig:exp:bench:2}, it is observed with the red bars that \acrshort{dbpedia} was the one which took more time in all scenarios.
 We can also see in \autoref{fig:exp:bench:2} that scenario E-H took $8756$ seconds in \acrshort{dbpedia} network compare with the E-L and E-M, which took $596$ seconds and $577$ seconds respectively. 
-Also, in \autoref{fig:exp:bench:2} we can see that Opsahl UC Forum took $1660$ seconds for VL-H scenario, $11$ seconds for VL-L and $22$ seconds for VL-M, also showing the same behavior as \acrshort{dbpedia}.
-Moreover, in \autoref{fig:exp:bench:2} it can also be appreciated how Wang Amazon network and Moreno Crime are showing the same behavior for VL-H, VL-L, and VL-M scenarios, where Wang Amazon networks reports $21, 8$ and $8$ seconds respectively and Moreno Crime $3, 3$ and $2$ seconds.
-The same behavior repeats for all networks and all scenarios indicating that the experiments with higher Incidence take more time to finalize the execution compared to the experiments with lower incidence.
+Also, in \autoref{fig:exp:bench:2} we can see that Opsahl UC Forum took $1660$ seconds for VL-H scenario, $11$ seconds for VL-L, and $22$ seconds for VL-M, also showing the same behavior as \acrshort{dbpedia}.
+Moreover, in \autoref{fig:exp:bench:2} it can also be appreciated how Wang Amazon network and Moreno Crime are showing the same behavior for VL-H, VL-L, and VL-M scenarios, where Wang Amazon networks report $21, 8$ and $8$ seconds respectively and Moreno Crime $3, 3$ and $2$ seconds.
+The same behavior repeats for all networks and all scenarios indicating that the experiments with higher incidence take more time to finalize the execution compared to the experiments with lower incidence.
 
 \subsection{E3: Performance Analysis}\label{sub:sec:exp-3} 
 \paragraph{Goal} In this experiment, we take measurements on one network, to gather data about the use of memory allocation and threads on \acrshort{ghc} during the execution of \acrshort{dpbt}.
 
 \paragraph{Procedure} This experiment gathers three metrics describe in \autoref{sub:metric}: \emph{GHC Productivity}, \emph{Distribution of Threads per Core} and \emph{Distribution of Allocated Memory per Data Type}.
 Using \mintinline{shell}{ThreadScope} \cite{threadscope} tool we measure \emph{GHC Productivity}, \emph{Distribution of Threads per Core}, and using \mintinline{shell}{eventlog2html} \cite{eventlog2html} tool we measure \emph{Distribution of Allocated Memory per Data Type}.
-For both cases we have run these tools using one network only and one scenario. This is because both tools enables profiling flags at compilation level on \acrshort{ghc}, penalizing performance.
+For both cases, we have run these tools using one network only and one scenario. This is because both tools enable profiling flags at compilation level on \acrshort{ghc}, penalizing performance.
 
 \begin{table}[H]
 \centering
@@ -440,7 +438,7 @@ At the middle of the execution, we are seeing more processing distributing evenl
 \end{figure}
 
 \paragraph{Memory Consumption} In the case of memory consumption, we have been able to measure the memory consumption for the biggest graph, \acrshort{dbpedia}. 
-As it is known, enabling profiling downgrades performance of execution time. Because of that, the program runs out of memory as we are going to see in the image. Although this, we have still been able to gather interesting data to analyze memory allocation.
+As it is known, enabling profiling downgrades the performance of execution time. Because of that, the program runs out of memory as we are going to see in the image. Although this, we have still been able to gather interesting data to analyze memory allocation.
 
 \begin{figure}[!htb]
   \begin{center}
@@ -450,29 +448,29 @@ As it is known, enabling profiling downgrades performance of execution time. Bec
      \label{fig:exp:mem:1}
  \end{figure}
 
-As we can appreciate in \autoref{fig:exp:mem:1} the darkest blue space belongs to \texttt{MUT\_ARR\_PTRS\_CLEAN}. This type of objects are pointers to function.
+As we can appreciate in \autoref{fig:exp:mem:1} the darkest blue space belongs to \texttt{MUT\_ARR\_PTRS\_CLEAN}. These types of objects are pointers to function.
 The rest of the memory that is shown in the image is alive data objects such as \mintinline{haskell}{Maybe} and state of the filters instance \mintinline{haskell}{IntSet}. 
 
 \section{Discussion}\label{sec:exp:discussion}
-\paragraph{E1: Continuous behavior} \autoref{sub:sec:res:e1} reports on cases where the continuous behavior can be appreciated better in some scenarios and networks compare to others. This is the case for example of VL-H scenario in general. 
+\paragraph{E1: Continuous behavior} \autoref{sub:sec:res:e1} reports on cases where the continuous behavior can be appreciated better in some scenarios and networks compared to others. This is the case for example of VL-H scenario in general. 
 The behavior of this case can be explained because bi-triangles are aggregated based on some triple $\ell = (l_l,l_m,l_u)$ (see \dref{def:abt}) if the requested $l \in L$ matches with some of these triple elements, all the $\hat{U}_l$ Cartesian product need to be enumerated in a 6-cycle path \acrshort{bt} (see \dref{def:bt}). Therefore, there are many \acrshort{bt} as a result of combining all $\hat{U}_l$ with $\ell$.
 The only case of VL-H that exhibits less continuous behavior is the Opsahl UF Forum network. That is explained because the selection of the command $Q$ value (vertex or edge) for the different experimental scenario is \emph{pseudo-random} as it is explained in \autoref{sub:exp:sel-vals}. 
 We have detected that for this particular experiment setup, even when the \emph{pseudo-randomly} chosen vertex belongs to the Lower Layer $L$, it is not a vertex with a high incidence as it should be.
 In fact, it can be seen that for \emph{Vertex Upper with High Incidence}(VU-H) scenario in the same network, the \emph{pseudo-random} selection is a vertex that has high incidence which matches with the desired semantic of the scenario. 
-Moreno Crime network, which shows the less continuous behavior, it could be explained by the fact of the topology of the graph, which is the smallest of all the graphs used, both in terms of the number of \acrshort{bt} and the number of wedges.
-Therefore, results are delivery extremely fast and incremental results only can be appreciated in the vertices with high incidence.
-In conclusion, we are able to answer [R1], and asses that we have built an incremental algorithm for enumerating \acrlong{bt}. 
+Moreno Crime network, which shows the less continuous behavior, could be explained by the fact of the topology of the graph, which is the smallest of all the graphs used, both in terms of the number of \acrshort{bt} and the number of wedges.
+Therefore, results are delivered extremely fast and incremental results only can be appreciated in the vertices with high incidence.
+In conclusion, we are able to answer [R1] and asses that we have built an incremental algorithm for enumerating \acrlong{bt}. 
 The same conclusion can be obtained regarding question [R3]. We verify that depending on the incidence of the vertex or edge, \acrshort{dpbt} is enumerating \acrshort{bt} in a continuous manner. This shows us \acrshort{dpbt} effectively implements a \emph{pay-as-you-go} model.
 
-\paragraph{E2: Benchmark} Regarding \autoref{sub:sec:res:e2} we have noticed that for the case of edges scenarios in Opshal UC Forum network, the execution time is not consistent to what we expected regarding the incidence level. This could be explained by the \emph{pseudo-randomly} selection detailed in \autoref{sub:exp:sel-vals}.
+\paragraph{E2: Benchmark} Regarding \autoref{sub:sec:res:e2} we have noticed that for the case of edges scenarios in Opshal UC Forum network, the execution time is not consistent with what we expected regarding the incidence level. This could be explained by the \emph{pseudo-randomly} selection detailed in \autoref{sub:exp:sel-vals}.
 In what relates to \emph{Total Execution time}, we have pointed out that Dbpedia network is the one taking longer. This is perfectly explained by the characteristics and topology of the graph, since it is both the biggest graph in terms of edges and vertex, and it is the graph which proportionally has more \acrshort{bt}. 
 We can answer the question [R2] because it can clearly be seen in the benchmark analysis and in \autoref{fig:exp:bench:2} that as long as the user request for command queries $Q$ that have more incidence in the graph and participates in more \acrshort{bt},
 the execution time increases.
 
 
 \paragraph{E3: Performance} In \autoref{sub:sec:res:e3} we have noticed the suitable distribution of threads among cores during the execution time. 
-That exhibits a perfect fit with the \acrshort{dp} model since at the beginning, it setups all the filters and starts reading the input file, where there are less distribution of threads among core. 
-After that we can see an even distribution and all cores busy when \acrshort{dp} is executing the filters. Remember that each stage runs on its own thread. At the end, we appreciate again a reduction in the distribution of the cores because all the last part of the execution is done by $\obt$.
+That exhibits a perfect fit with the \acrshort{dp} model since at the beginning, it setups all the filters and starts reading the input file, where there is less distribution of threads among the core. 
+After that, we can see an even distribution and all cores busy when \acrshort{dp} is executing the filters. Remember that each stage runs on its own thread. In the end, we appreciate a reduction in the distribution of the cores because all the last part of the execution is done by $\obt$.
 Regarding memory allocation, we have seen that most of the allocation is on \texttt{MUT\_ARR\_PTRS\_CLEANER}.
 In \acrlong{hs} \acrshort{mut} is the acronym of a thread evaluating an \acrshort{hs} expression.
 That means that there are many pointers allocated waiting for evaluating expressions. This is explained by \acrshort{dpbt} implementation, in which we are spawning one
@@ -493,8 +491,8 @@ We first started presenting a summary of the research questions. After that, we 
 Then, the experimental procedure and results are reported. Finally, we have discussed the observed outcomes in terms of the main properties of our proposed approach.
 To summarize, the main points observed during the experimentation are:
 \begin{itemize}
-  \item We could observe results gathered with \acrshort{dm} tool, that are indicating the continuous behavior of \acrshort{dpbt} exhibiting its capability of incrementally enumerates \acrshort{bt}.
-  \item We could observe in benchmark comparison analysis between different scenarios and networks, results that are indicating an effectively implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt}.
-  \item We could obtain results gathered by \texttt{ThreadScope} tool, that are indicating an evenly distribution of the threads among processors, showing an efficient use of the parallel model.
-  \item We could obtain results gathered by \texttt{eventlog2html} tool, that are indicating that memory consumption depends on the size of the graph, which a potential user can address for larger graphs assigning more memory (\emph{pay-as-you-go} model). A proposal on how also improve this part was exposed in \autoref{sec:exp:discussion}.
+  \item We could observe results gathered with \acrshort{dm} tool that is indicating the continuous behavior of \acrshort{dpbt} exhibiting its capability of incrementally enumerates \acrshort{bt}.
+  \item We could observe in benchmark comparison analysis between different scenarios and networks results that are indicating an effective implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt}.
+  \item We could obtain results gathered by \texttt{ThreadScope} tool that is indicating an even distribution of the threads among processors, showing efficient use of the parallel model.
+  \item We could obtain results gathered by \texttt{eventlog2html} tool that is indicating that memory consumption depends on the size of the graph, which a potential user can address for larger graphs assigning more memory (\emph{pay-as-you-go} model). A proposal on how also improve this part was exposed in \autoref{sec:exp:discussion}.
 \end{itemize} 

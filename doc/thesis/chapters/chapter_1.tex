@@ -1,36 +1,55 @@
 \chapter{Introduction}\label{intro}
-This chapter presents the main motivation of our research, the problem statement that we gather from that motivation
-and what is the proposed solution to that.
+%This chapter presents the main motivation of our research, the problem statement that we gather from that motivation
+%and what is the proposed solution to that.
+%
+%\section{Motivation}\label{sec:motivation}
 
-\section{Motivation}\label{sec:motivation}
-A \acrfull{bg} is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. 
-For instance, two different sets of objects can be modeled with a \acrshort{bg}, establishing the relationships between them.
-There are different use cases in which we can take advantage of a \acrshort{bg} representation and detect how the elements between the sets
-are related. For example, coding theory~\cite{DBLP:journals/corr/WangL13} to represent the relationships between words in code or graphs in hypergraph theory~\cite{hypergraph}. 
-For instance, an important field that can be modeled with \acrshort{bg} is pharmacology research, for establishing the relation between the drugs and side effects~\cite{drugs}.
+In many real-world applications, the relationships among two different types of entities can be modeled by means of bipartite graphs. 
+This is a graph in which the set of vertices is formed by the union of two disjoint sets of vertices corresponding to the two different types of entities in the relationship. 
+In this kind of bipartite graph or network, edges only connect vertices from each one of the different entities or vertices. In the literature, we can find many examples of bipartite networks (also called affiliation networks or two-mode networks) in different domains. 
+Just for mentioning some few examples we have  phenotype-disease gene associations network (\textit{diseasome} bipartite network) \cite{goh2007human}, drugs-side effects network ~\cite{drugs}, customer–product network, author-paper network, the Netflix subscribers-TV shows etc.
+%There are different use cases in which we can take advantage of a \acrshort{bg} representation and detect how the elements between the sets are related. For example, coding theory~\cite{DBLP:journals/corr/WangL13} to represent the relationships between nwords in code or graphs in hypergraph theory~\cite{hypergraph}. 
+%For instance, an important field that can be modeled with \acrshort{bg} is pharmacology research, for establishing the relation between the drugs and side effects~\cite{drugs}. A \acrfull{bg} is a graph with two disjoint vertex sets where its edges only connect vertices from these two different sets. 
+%For instance, two different sets of objects can be modeled with a \acrshort{bg}, establishing the relationships between them.
 
-For detecting underlying relations of the components of the different sets in a \acrshort{bg} there exist the same metrics as we have in \acrfull{ug} like clustering coefficient, social analysis, or triangle-based community computation~\cite{ccoef,detect_graph,Newman_2003}.
-The majority of those metrics in \acrshort{ug} are based on computing the number of triangles in the network. Obtaining those metrics on \acrshort{bg} requires to count \acrfull{bt}~\cite{opsahl} on \acrshort{bg}.
-In that matter, there has been a novel work that provides efficient algorithms to count \acrshort{bt} in $P$~\cite{btcount}.
+%For computing some interesting parameters in a \acrshort{bg} there exist the same metrics as we have in \acrfull{ug} like clustering coefficient, social analysis, or triangle-based community computation~\cite{ccoef,detect_graph,Newman_2003}.
+%The majority of those metrics in \acrshort{ug} are based on computing the number of triangles in the network. Obtaining those metrics on \acrshort{bg} requires  instead to count \acrfull{bt}~\cite{opsahl} on \acrshort{bg}.
+%
+In general, the majority of metrics used for analyzing unipartite graphs, for instance, clustering coefficient, social analysis, or triangle-based community computation~\cite{ccoef,detect_graph,Newman_2003} are based on computing the number of triangles in the network. 
+One of the most common techniques to analyze bipartite networks, i.e. to compute graph parameters as clustering coefficient, etc., is to transform them into classical unipartite graphs by means of a method called projection. 
+However, the projection of the bipartite graph distorts the relationships represented in the original networks. Among other problems caused by transforming bipartite networks to unipartite ones, there is the upgrowth of the number of links and hence the distortion of some properties of the original graph such as the number of triangles, the density, etc. (see \cite{latapy2008basic} for more details). 
+In particular, this problem impacts the in-memory manipulation of the graph and distorts the link prediction for bipartite networks.
 
-There exists a relationship in \acrshort{bg} that cannot be obtained only by counting \acrshort{bt} and requires knowing specific
-structural details. One of those relations are motif-paths~\cite{Li2019MotifPA}, in particular, a \acrshort{bt} can be seen as a motif. To detect a path between different motifs, we could potentially enumerate \acrshort{bt} and check how they are connected.
-Moreover a \acrshort{bt} enumeration algorithm could lead to a timeout if it is required to enumerate all the \acrshort{bt} in a \acrshort{bg} with millions of them. For overcoming this problem, users might want to query or request some \acrshort{bt} that follows certain criteria, reducing the search space. 
-This leads us to the main motivation of this work which is to provide an \acrfull{iebt}. It should generate \emph{incremental} results because we want the user to be able to obtain \acrshort{bt} as long as the algorithm is capable of computing them. 
-And, it should \emph{enumerate}, because it is suitable for a wide range of problems like motif-paths, in which the user needs to know the specific structure of the \acrshort{bt} as we stated before.
+Discarding the transformation of bipartite graphs into unipartite graphs, in a bipartite graph, there are no triangles as classically defined for graphs. Thus, since computing and using triangles do not fit well for the case of bipartite graphs, Opsahl~\cite{opsahl} proposes to use another locality graph pattern or motif, the bitriangle or closed 4-path, as the smallest unit of cohesion of a bipartite graph. 
+Bitriangles generate triangles in the projection of bipartite graphs. Yang et al.~\cite{btcount}  study the problem of counting bitriangles and, propose and analyze, different algorithms to do it. In particular, they propose an algorithm for local counting bitriangles. 
+This is, counting bitriangles in a bipartite graph in which a given vertex/edge occurs.
 
-The main question that arise is \emph{how to solve} the \acrshort{iebt}. The answer and the purpose of this work are to implement this using a \emph{Streaming Processing} model that can fulfill these requirements.
+For example, in \cite{liben2007link} the link prediction problem in a social network is stated as, given a snapshot of a social graph,  inferring which new interactions among its members are likely to occur in the near future. 
+In that work, authors develop approaches to link prediction based on measures of the "proximity" of nodes in a network. In \cite{kunegis2010link} the local link prediction problem is addressed for the specific case of bipartite graph. In this work, according to the way in which the network is analyzed, the authors described the link prediction problem twofold, the local link prediction problem and the latent link prediction problem. 
+The local link prediction problem only considers the immediate neighborhood --in particular, the triangle model -- of vertices. On the contrary, in the latent link prediction problem, the whole model of the network is used. Local link prediction in bipartite networks can be revisited using a bitriangle model approach. Link prediction problem considers evolving networks. 
+However, depending on the nature of the addressed problem, counting bitriangles in a (possibly persistent) bipartite graph is not enough to establish underlying relationships among its vertices. This happens because establishing these relationships could require knowing specific structural details. We mean that not only the number of bitriangles is important but which are these bitriangles. 
+This is, problems that require the enumeration of bitriangles in a bipartite graph. For example, in the  \textit{diseasome} bipartite network presented \cite{goh2007human} two disorders are connected if there is a gene that is implicated in both. In order to make decisions, a scientist not only could need to know how many bitriangles are in that graph but --an even more specific question-- given a disorder which genes are involved (connected) to it. 
+Another example could be when considering the Netflix subscribers -TV Shows bipartite network where two vertices are connected if a subscriber watches or follows a TV show. Knowing which bitriangles containing a  specific TV Show could help to make decisions about finishing or creating new seasons of that TV Show.
+
+%Counting bitriangles  in a BG is not enough to detecting underlying relationships among the vertices of the different  set of vertices in a \acrshort{bg}. This is because to establish these relationships requiere knowing specific structural details. One of those relations <intuitivo> %are motif-paths~\cite{Li2019MotifPA}, in particular, a \acrshort{bt} can be seen as a motif. To detect a path between different motifs, we could potentially enumerate \acrshort{bt} and check how they are connected.
+%Moreover a \acrshort{bt} enumeration algorithm could lead to a timeout if it is required to enumerate all the \acrshort{bt} in a \acrshort{bg} with millions of them. For overcoming this problem, users might want to query or request some \acrshort{bt} that follows certain criteria, reducing the search space. 
+Depending on the size of the considered bipartite graph, enumerating bitriangles can be a high resource-consuming process and an "all-or-nothing" computation approach can lead to a timeout or memory stuck. 
+This is why, for overcoming this problem, instead of considering a classical enumerating algorithm where computation produces "all-or-nothing" results, an iterative "pay-as-you-go" approach \cite{guo2012does} can be followed. 
+From our point of view, this means that bitriangles can be incrementally emitted as results. Users continuously receive answers from the algorithm as long as the provided resources support the computation.
+%This leads us to the main motivation of this work which is to provide an Algorithm for Incrementally Enumerating Bitriangles in Large Bipartite Networks. The algorithm must emit  results in an \emph{incremental} way because we want the user to be able to obtain \acrshort{bt} as long as the algorithm is capable of computing them. And, it should \emph{enumerate}, because it is suitable for a wide range of problems like <motif-paths>, in which the user needs to know the specific structure of the \acrshort{bt} as we stated before.
+
+In this work we tackled the problem of providing and implementing an Algorithm for Incrementally Enumerating Bitriangles in Large Bipartite Networks. The algorithm must emit  results in an \emph{incremental} way because we want the user to be able to obtain bitriangles as they are computed.   
+%The main question that arise is \emph{how to solve} the \acrshort{iebt}. The answer and the purpose of this work are to implement this using a \emph{Streaming Processing} model that can fulfill these requirements.
 Effective streaming processing of large amounts of data has been studied for several years~\cite{enumeratingsg, exploiting, onthefly} as a key factor providing fast and incremental results in big data algorithmic problems. 
 One of the most explored techniques, regardless of the approach, is the exploitation of parallel techniques to take advantage of the available computational power as much as possible. 
-In that regard, the \acrfull{dp} \cite{dpdef} has lately emerged as one of the models that exploit data streaming processing using a dynamic pipeline parallelism approach \cite{onthefly}. 
-This computational model has been designed with a functional focus, where the main components of the paradigm are functional stages or pipes which dynamically enlarge and shrink depending on incoming data and generates incremental results.  
+In this regard, the \acrfull{dp} \cite{dpdef} has lately emerged as one of the models that exploit data streaming processing using a dynamic pipeline parallelism approach \cite{onthefly}. 
+This computational model relies on a functional approach, where the building blocks are functional stages to construct pipelines that dynamically enlarge and shrink depending on incoming data.  Besides,  the implementation of an algorithm according to the \acrshort{dp} is suitable to generate incremental results. 
+%This computational model has been designed with a functional focus, where the main components of the paradigm are functional stages or pipes which dynamically enlarge and shrink depending on incoming data and generates incremental results.  
 %Streaming processing has given rise to new computation paradigms to provide effective and efficient data stream processing.
 %The most important features of these new paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, 
 %reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce incremental results. 
 %The \acrfull{dp} is a naturally functional approach to deal with stream processing. 
-Therefore we believe that \acrshort{dp} is the proper model for solving the \acrshort{iebt}. Moreover as \acrshort{dp} is focused on dynamic functional units, it encourages us to use \acrlong{hs}, a purely functional programming language where functions are first class citizens, for implementing \acrshort{iebt} using \acrshort{dp}.
-
-
+We believe that \acrshort{dp} is the proper model for solving the \acrshort{iebt}. Moreover, since   \acrshort{dp} is focused on dynamic functional units, it encourages us to use \acrlong{hs}, a purely functional programming language where functions are first class citizens, for implementing \acrshort{iebt} under the  \acrshort{dp}.
 
 \section{Problem Statement}
 A \acrlong{bt} in a \acrlong{bg} is defined as a cycle with three vertices from one vertex set and three for the other. We can also say that it is formed by two connected wedges closed by an additional wedge~\cite{btcount}.
@@ -52,38 +71,33 @@ An example of what it is a \acrshort{bt} and what it is not, can be seen in \aut
 \caption[{[Int] Example of \acrshort{bt} in \acrshort{bg}}]{Example of \acrshort{bt} in \acrshort{bg}. In the left image we see a bi-triangle well form by 3-cycle wedges. In the right image the figure does not form a bi-triangle because $l_2$ is only connected with $u_3$ breaking the cycle}
 \end{figure}
 
-As we have stated in the previous \autoref{sec:motivation}, enumerating all possible \acrshort{bt} it is not only computationally hard but, in general, only partial results are needed.
-In that sense, we can provide a query-based command to search all \acrshort{bt} that matches the query criteria and incrementally deliver results to the user.
-In this work, we are going to provide an \acrfull{iebt}, in which given a query command and a \acrlong{bg} incrementally returns all the \acrlong{bt} that matches the search criteria.
+As we have stated above, enumerating all possible \acrshort{bt} it is not only computationally hard but, in general, only partial results are needed. In that sense, we can provide a query-based command to search all \acrshort{bt} that matches the query criteria and incrementally deliver results to the user. In this work, we provide an \acrfull{iebt} and its implementation. 
 
 \section{Proposed Solution}
 The solution proposed in this work is to implement an \acrfull{iebt} using \acrfull{dp} implemented in \acrfull{hs}.
-In order to achieve that goal, we first conduct a proof of concept to assess the feasibility of using \acrshort{hs} for implementing an algorithm with the \acrshort{dp}.
-In that assessment, we work on solving the problem of \acrfull{wcc} of a graph. Then, we develop a \acrlong{dpf} written in \acrlong{hs} that could help to implement any algorithm using \acrshort{dp}.
-Following that, we provide the formal definition of \acrshort{iebt} using \acrshort{dp}, in a pseudo-code format. 
-Finally, we provide correctness proof of the algorithm plus the implementation using the \acrshort{dpf} in \acrshort{hs}, that we call \acrfull{dpbt}.
+In order to achieve that goal, we first conduct a proof of concept to assess the feasibility of using \acrshort{hs} for implementing an algorithm with the \acrshort{dp}. In that assessment, we work on solving the problem of \acrfull{wcc} of a graph. Then, we develop a \acrlong{dpf} written in \acrlong{hs} that could help to implement any algorithm using \acrshort{dp}.
+Following that, we provide the formal definition of \acrshort{iebt} using \acrshort{dp}, in a pseudo-code format an its correctness proof.   Finally, we provide the implementation of the algorithm, called \acrfull{dpbt}, using the \acrshort{dpf}. 
 
 \section{Contribution}\label{sec:contrib}
-The main contribution of this work was to implement, formalize and empirically evaluate a \acrlong{iebt} using \acrlong{dp} written in \acrshort{hs}.
+The main contribution of this work is to implement, formalize and empirically evaluate a \acrlong{iebt} using \acrlong{dp} written in \acrshort{hs}.
 We believe that this implementation is a step forward in the field, and we think our approach opens new research lines and improvements to be addressed in the future. 
 
-In order to assess the feasibility of \acrshort{dp} implemented in \acrshort{hs}, we made a proof of concept solving \acrfull{wcc} problem of a Graph 
-using \acrshort{dp} with \acrshort{hs}. We have also empirically evaluated this implementation with interesting results that we are going to cover in \autoref{prole}. 
-This proof of concept and its results has been presented and accepted in the \acrfull{prole21} Conference~\cite{prole21}. 
+In order to assess the feasibility of \acrshort{dp} implemented in \acrshort{hs}, we made a proof of concept solving \acrfull{wcc} problem of a graph using \acrshort{dp} with \acrshort{hs}. We have also empirically evaluated this implementation with interesting results that we are going to cover in \autoref{prole}. 
 
-Finally, and as a result of the proof of concept work, was the development and publication of a \acrshort{hs} framework called \mintinline{shell}{dynamic-pipeline}~\cite{dynamic-pipeline}. 
-The framework was published on \acrfull{hack}~\cite{hackage} on 2021 June 17th in its first version,
-providing to \acrshort{hs} community the ability to build algorithms using \acrshort{dp}. This is a novel contribution since it is the first library published on \acrshort{hs}
-that implements \acrshort{dp}.
+Finally, and as a result of the proof of concept work, is the development and publication of a \acrshort{hs} framework called \mintinline{shell}{dynamic-pipeline}~\cite{dynamic-pipeline}.  The framework was published on \acrfull{hack}~\cite{hackage} on 2021 June 17th in its first version,
+providing to \acrshort{hs} community the ability to build algorithms using \acrshort{dp}. This is a novel contribution since it is the first library published on \acrshort{hs} that implements \acrshort{dp}.
 
 To summarize, our contributions are:
 \begin{itemize}
-  \item We implement, formalize and empirically evaluate an \acrlong{iebt} using \acrlong{dp}.
+  \item We develop, formalize, implement and empirically evaluate an \acrlong{iebt} using \acrlong{dp}.
   \item We conduct a proof of concept to evaluate the use of \acrlong{hs} as an implementation language for \acrlong{dp} solving the \acrlong{wcc} problem.
   \item We develop a \acrshort{hs} framework to implement any algorithm using \acrlong{dp}.
 \end{itemize}
 
-\section{Document Overview}
+\section{Document Overview} 
+\color{red}
+Lo veremos al final, cuando todos los capítulos estén escritos
+\color{black}
 This document is organized as follows. In \autoref{prelim} we present and describe all the previous work that has been done on the related fields of Streaming Processing, Dynamic Pipeline Paradigm, and Streaming processing related to \acrshort{hs}. 
 Following that, in \autoref{relate-work} we describe the state of the art related \acrshort{bt} in \acrshort{bg}, \emph{pay-as-you-go} model and subgraph enumeration algorithms in general.
 In \autoref{prole} we show and describe with some level of details, an overview to the \acrshort{prole21} as well as the details of the results obtained. 
