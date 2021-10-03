@@ -3,28 +3,34 @@ In this chapter, we present the future work that we think it is interesting to a
 as well as the conclusions obtained.
 
 \section{Future Work}
-One of the first things that have been out of the scope of this work and it will be tremendously important to address in order to be able to process huge networks efficiently is 
-the selection of better data structures for handling the search in the compress \acrshort{bt} once the query command arrives at the $\ad$.
-We have seen in \autoref{sub:sec:res:e3} how there is a memory bottleneck that is not allowing the execution of bigger graphs without paying so much extra cost. 
-Performing indexing over the edges and vertices could lead to important improvements in search, although there is a trade-off in terms of memory allocation.
-On the other hand, and continuing with the same idea, an important work to be addressed in the future is the distribution of the stages not only between threads but also between machines. 
-We believe that moving from a multithreading model to a distributed model will allow \acrlong{dp} to reduce the gap of memory consumption for bigger graphs instances, as well as distribute the stage according to the amount of memory required by them. 
-This leads to a similar scenario as before, there is a trade-off in terms of transfer data and the delay that this kind of distributed computation brings, but 
-since we are delivering incremental results and we have implemented a \emph{pay-as-you-go} model, the distribution cost could be amortized; without mentioning that the speed up and reliance on network communication is higher than ever.
+As we have seen in \autoref{experiments}, we have detected an increase in the memory consumption as long as the network grows. 
+In regards to that, we think it is extremely important to improve this aspect in order to be able to process huge networks efficiently. 
+Moreover, we have seen evidence of the previous statement in \autoref{sub:sec:res:e3}, where it is exhibited that execution of larger graphs requires paying an extra cost.
+The selection of appropriate data structures for handling the search in the compress \acrlong{abt} once the query command arrives at the $\ad$, is something that has been out of the scope of the present work but it would need to be tackled in the future.
+Performing indexing over the edges and vertices could lead to significant improvements in search, although there is a trade-off in terms of memory allocation, that can be addressed using fast external storage.
+Another important aspect to be addressed in the future is to make \acrlong{dpbt} distributed and parallel. Distribution of the stages between machines and not only between threads would enable sharing memory-intensive allocation between machines and not using a single memory unit for all the threads.
+We believe that moving from a multithreading model to a distributed model will allow \acrlong{dp} to reduce the gap of memory consumption for huge network instances, as well as distribute the stage according to the amount of memory required by them. 
+We cannot avoid that there is a trade-off in terms of transfer data and the delay that this kind of distributed computation brings in, but since \acrlong{dpbt} is delivering incremental results in a \emph{pay-as-you-go} model, the distribution cost could be amortized. 
+We should also take into consideration that the speed up and reliance on network communication is extremely high nowadays enabling the exploration of the commented approach.
 
-In another aspect of the computational model and more related with the \acrlong{hs} implementation, there are several improvements to be conducted there as well. One of them could be
-to delegate the distribution to other stream processing systems like Kafka~\cite{kafka} for example, and do the parallel processing of the split data with \acrshort{hs} consuming from them.
-Moreover, some radical improvements can be done into \acrshort{dpfh}. From designing more abstractions to help the user to write pipelines with less effort and errors, up to helping the thread schedule and memory management to perform even better than it is now. 
-One of this speedup could be moving some types to be Unboxed types~\cite{hs-unbox} which reduce memory footprint.
+In another aspect of the computational model and more related with the \acrlong{hs} implementation, there are several improvements to be conducted in the \acrlong{dpfh} as well. 
+One of those improvements could be to delegate the distribution to other stream processing systems like \texttt{Kafka}~\cite{kafka} for example and do the parallel processing of the split data with \acrlong{hs} acting as a consumer.
+In addition to that, some other radical improvements can also be done into \acrlong{dpfh}. From designing more abstractions to help the user to write pipelines with less effort and errors to modifying the thread scheduler and memory management in \acrshort{ghc} to improve performance. 
+We can also improve the speed-up in \acrlong{dpfh} moving some Boxed types to Unboxed types~\cite{hs-unbox} which would reduce memory footprint.
+
+As we can appreciate, this work has opened a vast amount of research lines and improvements that are worth to be explored.
 
 \section{Conclusions}
-Dealing with $NP$-complete problems like Enumerating \acrlong{bt} in \acrlong{bg} is a task that, in general, is addressed using approximation algorithms or heuristics. 
-On the other hand, introducing algorithms in a \emph{pay-as-you-go} model approach combined with a model of computation that enables building incremental solutions like \acrshort{dp} brings exhaustive and exact results for the solution space that the user wants to obtain.    
-\acrfull{dp} has shown to be an efficient model for building a parallel algorithm to incrementally enumerate \acrlong{bt} in \acrlong{bg}. 
-In addition to that, and at the moment of writing this, we have given a novel solution for the enumeration problem, which has not been addressed in any other work at the time of writing this thesis.
-Moreover, we have also shown how strong this paradigm is in companion with a powerful language like \acrfull{hs}. 
-The capabilities of combining both not only for implementing the concepts but also for supporting intensive experiments with large size graphs and complex topologies. 
-Following that, the designed algorithm \acrshort{dpbt} can process and enumerate big networks like the \acrlong{dbpedia} which contains more than $300$ millions of \acrlong{bt}.
-In the experimental analysis, we have demonstrated as well if the implementation delivers incremental results using \acrlong{dm} giving support to our research assumptions and motivations. 
+\acrlong{bt} in \acrlong{bg} is a significant problem that helps to detect important relations between entities in many areas: in pharmacology research to establish relations between drugs and side-effects, in medicine to detect how some genes affect specific diseases
+or even in the entertainment industry to describe user behavior in TV shows allowing certain predictions in that matter.
+Having the ability to enumerate \acrlong{bt} enables those problems to be structurally explained in terms of the specific objects that are participating in the relationship.  
+Moreover, those problems do not always require the complete information of the whole network or the whole set of \acrlong{bt}. 
+Therefore, introducing algorithms that incrementally deliver results, using a \emph{pay-as-you-go} model approach combined with \acrshort{dp} brings exhaustive and exact results for the solution space that the user wants to obtain. 
+During the research of this work, we have explored \acrfull{dp} as a model of computation for solve that problem using the described approach. 
+One of the first conclusions that we arrive at after empirically validate our assumptions is that \acrlong{dp} has shown to be an efficient model for building a parallel algorithm to incrementally enumerate \acrlong{bt} in \acrlong{bg}. 
+In addition to that, and at the moment of writing this, we have given a novel solution for the problem, which has not been addressed in any other work.
+Moreover, we have also shown how strong \acrfull{hs} behaves for implementing \acrfull{dp} for solving \acrlong{iebt}. 
+Following that, the designed algorithm \acrshort{dpbt} can process and enumerate large networks like the \acrlong{dbpedia} which contains more than $300$ millions of \acrlong{bt}.
+In the experimental analysis, we have demonstrated the continuous behavior capabilities of the implementation using \acrlong{dm} giving support to our research assumptions and motivations. 
 
-In conclusion, we believe that the achieved results clearly show we have reached the goal on providing an \emph{\acrlong{iebt}}, opening a wide range of possibilities not only to improve the existing framework and algorithm but also for implementing other complex problems where the use case requires a \emph{pay-as-you-go} model.
+In conclusion, we believe that the achieved results clearly show we have implemented a suitable \emph{\acrlong{iebt}}, opening a wide range of possibilities not only to improve the existing framework and algorithm but also for implementing other complex problems.
