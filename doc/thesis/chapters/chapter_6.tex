@@ -1,6 +1,6 @@
 \chapter[An \acrshort{iebt} using DP]{An algorithm for incrementally enumerating Bitriangles using DP}\label{incr-algo-bt-dp}
 In this chapter, we first describe the overall idea of the algorithm for incrementally enumerate 
-\acrshort{bt}. After that, we present the algorithms in pseudo-code format and then a complexity analysis of the principal functions of the algorithm.
+\acrfull{bt}. After that, we present the algorithms in pseudo-code format and then a complexity analysis of the principal functions of the algorithm.
 In the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
 
 \section{Preliminaries Definitions}\label{sec:prem:def}
@@ -15,27 +15,70 @@ A \acrfull{bg} is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap
 Additionally, without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. We can see an example of a \acrshort{bg}
 in \autoref{fig:bipartite-graph-example}.
 
-\begin{definition}[\acrlong{bt}]\label{def:bt}
-Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
-The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{\acrfull{bt}} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
-\end{definition}      
+\begin{figure}[ht]
+\centering	
+\inputtikz{bipartite}
+\caption[{[\acrshort{iebt}] Example of \acrlong{bg}}]{Example of \acrlong{bg} which has $5$ (five) \acrshort{bt}. We are going to use this example to show how to build the different objects definitions presented in \autoref{sec:prem:def}}
+\label{fig:bipartite-graph-example}
+\end{figure}
 
-\begin{definition}[\acrfull{wg}]
+As we can see in \autoref{fig:bipartite-graph-example}, trying to identify the different \acrshort{bt} in this graph, it can be done manually, but in larger graphs can be more challenging.
+The minimal structure that we can extract from this \acrshort{bt} is \acrlong{awg}, but for that we need to define what is a \acrfull{wg}.
+
+\begin{definition}[\acrfull{wg}]\label{def:wg}
 A \textit{\acrfull{wg}} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
-
+With this \dref{def:wg} in place, we can now define a \acrshort{awg}, which is an aggregated form of all the wedges of one $l \in L$.
+      
 \begin{definition}[\acrfull{awg}]\label{def:awg}
 An \textit{\acrfull{awg}} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u\in W_l$, the edge  $(u,l)\in E$. 
 \end{definition}
 
+\begin{figure}[htp!]
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\inputtikz{bipartite_awg_a}
+\caption{\acrshort{awg} on $a$}
+\label{fig:awedge-example-a}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\inputtikz{bipartite_awg_b}
+\caption{\acrshort{awg} on $b$}
+\label{fig:awedge-example-b}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\textwidth}
+\centering
+\inputtikz{bipartite_awg_c}
+\caption{\acrshort{awg} on $c$}
+\label{fig:awedge-example-c}
+\end{subfigure}
+\caption[{[\acrshort{iebt}] Definitions Examples \acrlong{awg}}]{ \acrlong{awg} of nodes $a,b,c$ of \autoref{fig:bipartite-graph-example}}
+\label{fig:awedge-example}
+\end{figure}
+
+As we can see on \autoref{fig:awedge-example}, we are only enumerating the first three lower layer vertices \acrshort{awg}.
+Following that, now we can define a more refined structure that will allow us to enrich the \acrshort{awg} in order to lead us to a \acrshort{bt}. 
+That intermediate structure is an \acrlong{adwg}. For defining \acrshort{adwg} we need also another structure called \acrlong{dwg}. Intuitively is similar to \acrshort{wg} and \acrshort{awg} but relating two vertices in the Lower Layer $L$.
+
 \begin{definition}[\acrfull{dwg}]
 A \textit{\acrfull{dwg}} in $G$ is a path of length 4 $(u_1,l_1,u_2,l_2,u_3)$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$ and $l_2$ are the middle vertices of \acrshort{dwg}. 
 \end{definition}
-  
+      
 \begin{definition}[\acrfull{adwg}]\label{def:adwg}
 Let $U_l = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
 An \textit{\acrfull{adwg}}  is a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
 \end{definition}
+      
+\begin{figure}[htp!]
+\centering
+\inputtikz{bipartite_adwg_a}
+\caption[{[\acrshort{iebt}] Example Aggregated double-wedge}]{\acrlong{adwg} of the pair of nodes $(a,c)$ of \autoref{fig:bipartite-graph-example}. Upper layer nodes $1,3,7$ and $5,9$ are enclosed in a Square indicating the set that they belong to. Remember in \dref{def:adwg} we are forming three sets $U_l = \la I, J, K \ra$. $I = \emptyset$ in ths case because they should be disjointed sets and $a$ and $c$ share the same upper layer nodes in $J$.}
+\label{fig:agg-double-wedge-example}
+\end{figure}
+
+In \autoref{fig:agg-double-wedge-example} we can see the \acrshort{adwg} built by $a$ and $c$ where according to \dref{def:adwg} $a = l_1$ and $c = l_2$.
+The last aggregated structure that will finally enable the algorithm to build a \acrshort{bt} is an \acrlong{abt}. In \acrshort{abt} we need some other structure definitions before to understand how it is built, but intuitively it is an aggregation of a \acrshort{adwg} with another new \acrshort{awg} that is related with the former structure.
 
 \begin{definition}[\acrfull{awgc}]\label{def:awgc}
 Let $\la (l_1, l_2), U_l \ra$ be an \acrshort{adwg}, where $\{l_1,l_2\}\subseteq L$ and $U_l = \la I, J, K\ra$.
@@ -46,11 +89,39 @@ An \acrshort{awg} $\la l, W_l \ra$ is an \textit{\acrfull{awgc}} \emph{if and on
 Let $\hat{U}_l=\la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$. An \textit{\acrfull{abt}}  is a pair  $\langle \ell, \hat{U}_l\rangle$, 
 where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
+      
+\begin{figure}[h!]
+\centering      
+\inputtikz{bipartite_abt_a}
+\caption[{[\acrshort{iebt}] Example Aggregated bi-triangle}]{Aggregated bi-triangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}. In this case as the \dref{def:abt} states, $\hat{U}_l$ does not contains disjoint sets, because we are using a compressing mechanism similar as described in \cite{Lai}. We can appreciate in the image that we can built an \acrshort{abt} with $b$ which has incidents edges in $1,5$. Note that not all of combinations are going to form a \acrshort{bt}.}
+\label{fig:agg-bt-example}
+\end{figure}
+      
+As we can see in \autoref{fig:agg-bt-example}, we have all the structures at our disposal to build a \acrshort{bt}. Now we are in condition to define a \acrshort{bt}.
+
+\begin{definition}[\acrlong{bt}]\label{def:bt}
+Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
+The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{\acrfull{bt}} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
+\end{definition}      
+
+\begin{figure}[h!]
+\centering      
+\inputtikz{bipartite_bt_a}
+\caption[{[\acrshort{iebt}] Example of bi-triangle}]{Bi-triangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}. In this case the bi-triangle has been built from the \autoref{fig:agg-bt-example} which is the only possible bi-triangle that can be extracted from there.}
+\label{fig:bt-a-example}
+\end{figure}
+
+As we can see in \autoref{fig:bt-a-example}, the \acrshort{bt} $(1,a,3,c,5,b,1)$ is the only possible one that can be extracted from the \acrshort{abt} presented in \autoref{fig:agg-bt-example}.
+
+Because \acrshort{iebt} will allow to enumerate \acrshort{bt} using a \emph{pay-as-you-go} model, we need to allow the user enumerates specific \acrshort{bt} according to some criteria.
+In regards to that, we are going to define a Query Command that is going to be use in the pseudo-algorithm for that purpose.
 
 \begin{definition}[\acrfull{qo}]\label{def:query:match} 
 $Q$ is a \emph{\acrfull{qo}} is a value from the  \textit{sum type}
 $\mathbb{P}(U + L) + \mathbb{P}(E)$ producing as a result a possible set of \acrshort{bt} that include any of the vertices or edges given in $Q$.
 \end{definition}
+
+Finally, we can elaborate a summary of all the definitions and terms in the \autoref{table:notation}.
 
 \begin{table}[!ht]
 \centering
@@ -73,69 +144,10 @@ $\bti$ & the \acrshort{bt} $u_1,l_1,u_2,l_3,u_3,l_2,u_1$\\  \hline
 $\bt$ & the set of all the possible \acrshort{bt} in $G$ \\  \hline
 $bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
 \end{tabular}
-\caption[{[\acrshort{iebt}] Summary of notations and their meanings}]{This table summarizes all the different object definitions that we have detailed in \autoref{sec:prem:def}}
+\caption[{[\acrshort{iebt}] Summary of notations and their meanings}]{This table summarizes all the different object definitions that we have detailed in \autoref{sec:prem:def}. The first column describe the formal term used in the definitions on \autoref{sec:prem:def}. The second column summarize the meaning of each term}
 \label{table:notation}
 \end{table}
       
-
-\subsection{Examples of Definitions}
-Let us illustrate some of the previous definitions with a \acrlong{bg}. 
-Lets suppose that we have the following \acrshort{bg} as it is shown in the \autoref{fig:bipartite-graph-example}.
-
-\begin{figure}[ht]
-\centering	
-\inputtikz{bipartite}
-\caption[{[\acrshort{iebt}] Example of \acrlong{bg}}]{Example of \acrlong{bg} which has $5$ (five) \acrshort{bt}. We are going to use this example to show how to build the different objects definitions presented in \autoref{sec:prem:def}}
-\label{fig:bipartite-graph-example}
-\end{figure}
-
-As we can see, trying to identify the different \acrshort{bt} in this graph, it can be done manually, but in larger graphs can be more challenging.
-If we use the previous definitions, we can detect that \acrshort {bt} in an easier and automated manner.
-The first structure that we can detect is \acrlong{awg} as we can see on \autoref{fig:awedge-example}.
-
-\begin{figure}[htp!]
-\begin{subfigure}[b]{0.3\textwidth}
-\centering
-\inputtikz{bipartite_awg_a}
-\caption{\acrshort{awg} on $a$}
-\label{fig:awedge-example-a}
-\end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
-\centering
-\inputtikz{bipartite_awg_b}
-\caption{\acrshort{awg} on $b$}
-\label{fig:awedge-example-b}
-\end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
-\centering
-\inputtikz{bipartite_awg_c}
-\caption{\acrshort{awg} on $c$}
-\label{fig:awedge-example-c}
-\end{subfigure}
-\caption[{[\acrshort{iebt}] Definitions Examples \acrlong{awg}}]{ \acrlong{awg} of nodes $a,b,c$ of \autoref{fig:bipartite-graph-example}. $d, e$ are omitted because of the propose of the example.}
-\label{fig:awedge-example}
-\end{figure}
-
-As we can see on \autoref{fig:awedge-example}, we are only enumerating the first three lower layer vertices \acrshort{awg}.
-Following that, we can build the \acrlong{adwg} as we can see in \autoref{fig:agg-double-wedge-example} to continue building the structure that leads us to the \acrshort{bt}.
-
-\begin{figure}[htp!]
-\centering
-\inputtikz{bipartite_adwg_a}
-\caption[{[\acrshort{iebt}] Example Aggregated double-wedge}]{\acrlong{adwg} of the pair of nodes $(a,c)$ of \autoref{fig:bipartite-graph-example}. Upper layer nodes $1,3,7$ and $5,9$ are enclosed in a Square indicating the set that they belong to. Remember in \dref{def:adwg} we are forming three sets $U_l = \la I, J, K \ra$. $I = \emptyset$ in ths case because they should be disjointed sets and $a$ and $c$ share the same upper layer nodes in $J$.}
-\label{fig:agg-double-wedge-example}
-\end{figure}
-
-In \autoref{fig:agg-double-wedge-example} we can see the \acrshort{adwg} built by $a$ and $c$ where according to \dref{def:adwg} $a = l_1$ and $c = l_2$.
-Now we can finally build our first \acrlong{abt} as we can see in the following \autoref{fig:agg-bt-example}.
-\begin{figure}[htp!]
-\centering      
-\inputtikz{bipartite_abt_a}
-\caption[{[\acrshort{iebt}] Example Aggregated bi-triangle}]{Aggregated bi-triangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}. In this case as the \dref{def:abt} states, $\hat{U}_l$ does not contains disjoint sets, because we are using a compressing mechanism similar as described in \cite{Lai}. We can appreciate in the image that we can built an \acrshort{abt} with $b$ which has incidents edges in $1,5$. Note that not all of combinations are going to form a \acrshort{bt}.}
-\label{fig:agg-bt-example}
-\end{figure}
-
-
 \subsection{Algorithm Sketch}\label{sub:sec:algo-sketch}
 Dynamic Pipeline Algorithm for Enumerating Bi-triangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
 \textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. 

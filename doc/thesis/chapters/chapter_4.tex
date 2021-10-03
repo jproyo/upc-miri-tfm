@@ -214,7 +214,7 @@ Finally, we have executed a \textit{Performance Analysis} in which we have to ga
    \hline
   \end{tabular}
   }
- \caption[{[PoC] Execution times}]{This table shows the \acrshort{ghc} execution time measurement of selected networks, as well as the execution flags used for running each of the networks.}
+ \caption[{[PoC] Execution times}]{This table shows the \acrshort{ghc} execution time measurement of selected networks. Column \texttt{Exec Param} describe the runtime flags provided to the running program. \texttt{MUT Time} is the time in seconds the program was executing computations (a.k.a. program time). \texttt{GC} Time is garbage collector time. Total time is the sum of \texttt{MUT} $+$ \texttt{GC} time.}
  \label{table:5}
  \end{table}
 
@@ -241,7 +241,7 @@ for \textit{web-Google} due to the topology of the graph; it is denser in terms 
    \hline
   \end{tabular}
   }
- \caption[{[PoC] Mean Execution times}]{Mean execution time of each network running under \texttt{criterion} library comparing both implementations in \acrshort{hs}: \acrshort{dpwcc} and \texttt{containers} lib. \texttt{criterion} runs $1000$ times each implementations and takes mean execution times of each.}
+ \caption[{[PoC] Mean Execution times}]{Mean execution time of each network running under \texttt{criterion} library comparing both implementations in \acrshort{hs}: \acrshort{dpwcc} and \texttt{containers} lib. \texttt{criterion} runs $1000$ times each implementations and takes mean execution times of each. \texttt{Speed-up} column shows the ratio between \texttt{Haskell containers} and \texttt{\acrshort{dpwcc}}}
  \label{table:6}
  \end{table}
 
@@ -334,7 +334,7 @@ In order to verify this, we measure memory allocation with \textit{eventlog2html
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=1\linewidth, height=0.3\textheight]{visualization}
-  \caption[{[PoC] Memory Metrics: Allocation by Data Type}]{This plot is showing the accumulated memory allocation size of each \acrshort{hs} Data Type throughout the execution of the program.}
+  \caption[{[PoC] Memory Metrics: Allocation by Data Type}]{This plot is showing the accumulated memory allocation size of each \acrshort{hs} Data Type throughout the execution of the program. The dark blue area shows the \texttt{ARR\_WORDS} data type which is \texttt{String} values. There are many of them because all that it comes from a file is in \texttt{String} format and need to be converted to the proper Data type. Rest of the light blue areas belong to \texttt{ByteString} which is the format treated in the input file as well, and \texttt{Maybe} type which is the type of data transfer between channels.}
   \label{fig:5}
 \end{figure}
 
@@ -346,7 +346,7 @@ Light blue is allocation of \mintinline{haskell}{Maybe a} type which is the type
 Data value \mintinline{haskell}{Nothing} is indicating end of the \textit{Channel}. 
 Another important aspect is the green area which represents \mintinline{haskell}{IntSet} allocation, which in the case of our program is the data structure that we use to gather the set of vertices that represents a \acrshort{wcc}. 
 This means that the amount of memory used for gathering the \acrshort{wcc} itself is minimum, and it is decreasing over time, which is another empirical indication that we are incrementally releasing results to the user. 
-It can be seen as well that as long the green area reduces the lighter blue (\mintinline{haskell}{MUT_ARR_PTRS_CLEAN} \cite{ghcheap}) increases at the same time indicating that the computations for the output (releasing results) is taking place. 
+It can be seen as well that as long the green area reduces the lighter blue (\texttt{MUT\_ARR\_PTRS\_CLEAN} \cite{ghcheap}) increases at the same time indicating that the computations for the output (releasing results) is taking place. 
 Finally, according to what we have stated above, we can answer the question [Q3], showing that not only the memory management was efficient, but at the same time, the memory was not leaking or increasing across the running execution program.
 
 The empirical evaluation of the \acrshort{dpwcc} implementation to compute weakly connected components of a graph, evidence suitability, 
