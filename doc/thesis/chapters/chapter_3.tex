@@ -1,37 +1,47 @@
 \chapter{Related Work}\label{relate-work}
 In this chapter, we present \emph{the state of the art} of \acrlong{bt} in \acrlong{bg} and \emph{pay-as-you-go} processing model.
-At the beginning, we explore some works related to the subgraph enumeration problem since a \acrshort{bt} is a subgraph. Then, in the case of \acrshort{bt} in \acrshort{bg}, we show the last novel work that has been conducted in \acrshort{bt} counting problem,
-and in the case of incremental results, we describe some related researches that have been done lately. 
+Having the fact that a \acrshort{bt} is a subgraph, at the beginning of this chapter, we explore some works related to the subgraph enumeration problem. 
+Then, in the case of \acrshort{bt} in \acrshort{bg}, we describe one of the latest works, at the moment of writing this article, that has been conducted in \acrshort{bt} counting problem.
+Finally, we describe some related researches that have been done lately regarding \emph{pay-as-you-go} model.
 
 \section{Subgraph Enumeration}\label{sec:rel-work:subgraph}
-\paragraph{Enumerating subgraphs using Map-Reduce} 
-Subgraph enumeration problem has been treated here~\cite{enumeratingsg} using a single round map-reduce.
-The problem presented in this work is to enumerate all instances of a given subgraph (sample graph) in a very big graph using a single map-reduce round. 
-In that work, all the examples are conducted with the smallest subgraph known which is the triangle.
-The solution proposed is presented as a special case of computing a multiway join but improving complexity reducing the communication cost and the computation cost.
-To achieving this, the authors present an improvement over the \emph{Partition Algorithm of Suri and Vassilvitskii}~\cite{partitionalgo} replicating all edges the same number of times
-reducing the communication cost to conciliate duplicated triangles. In regards to the computation cost, an improvement over the \emph{multiway-join} algorithm is proposed using an ordering of the buckets node. 
+\paragraph{Enumerating subgraphs using Map-Reduce} This work has been presented by Afrati et al.~\cite{enumeratingsg} for solving the subgraph enumeration problem using a single round map-reduce.
+The problem presented in this work is to enumerate all instances of a given subgraph (sample graph) in a large graph using a single map-reduce round. 
+In that work, all the examples are conducted with the smallest subgraph known for unipartite graphs, this is the triangle.
+The solution proposed is presented as a special case of computing a multiway join but improving complexity reducing the communication cost and computational cost.
+To achieving this, the authors present an improvement over the \emph{Partition Algorithm of Suri and Vassilvitskii}~\cite{partitionalgo} replicating all edges the same number of times reducing the communication cost to conciliate duplicated triangles. 
+In regards to the computation cost, an improvement over the \emph{multiway-join} algorithm is proposed using an ordering of the buckets node. 
 The main advantage of this work is the use of a stream parallelization model like Map-Reduce bringing the choice to exploit parallel and distributed computation to gain efficiency. 
-Moreover, the improvements done by the authors reduce even more the processing time for the enumeration. Another advantage is the use of a sample graph for querying specific subgraphs and not all of them, 
-as we can see in the \autoref{sec:motivation}, to be able to process very big graphs in an efficient manner when the user does not need the whole results.
-The first limitation of this work is the use of a streaming model like Map-Reduce. Although it is a parallel and distributed model, incremental results are not possible until all the reducers are calculated; we can compute in parallel but we cannot produce in parallel.
-The other limitation is the adjustment of resources that in this work and due to the map-reduce nature of the model is done statically beforehand. The partition needs to be done by the number of nodes and edges that you only know beforehand.
-As we have stated in \autoref{sec:motivation}, \acrshort{dp} overcome both of these limitations by providing a Dynamic Pipeline parallelization model. The first limitation of incrementally generates results is done by the nature of \acrshort{dp} model. 
-The other limitation regarding the runtime adjustment of resources is also done by the nature of the model because it does not need to know the structure of the graph beforehand. 
+The use of Map-Reduce combined with the improvements proposed by the authors of this work~\cite{enumeratingsg} reduce even more the processing time for the enumeration. 
+Another improvement proposed is the use of a sample graph for querying specific subgraphs and not all of them. This enables processing large graphs producing incremental results.
+One of the limitation we think it can be improved is the use of a streaming model like Map-Reduce. Although it is a parallel and distributed model, incremental results are not possible until all the reducers are calculated; we can compute in parallel but we cannot produce in parallel limiting the capability to deliver incremental results. 
+The other limitation is the adjustment of computational resources, which in this work is done statically beforehand. Partitioning is done by the number of nodes and edges which is known in advance.
+As we have stated in \autoref{intro}, \acrshort{dp} overcome both of these limitations by providing a Dynamic Pipeline parallelization model. The first limitation of incrementally generates results is done by the nature of \acrshort{dp} model. 
+The other limitation regarding the runtime adjustment of resources is also done by principle of the model because \acrshort{dp} has the capability to adjust the stages dynamically as the input data is arriving to the pipeline. 
 
-\paragraph{Distributed subgraph matching on timely dataflow} In this work~\cite{Lai} the authors also cover the subgraph matching problem in big graphs using a distributed computational model. 
-The main contribution of this work is the optimization of four \emph{state of the art} strategies algorithms use on \mintinline{shell}{Timely} dataflow system~\cite{timelyflow}. 
-The sketch of the algorithm relies on randomly partitioning the vertices using hashing where the neighbors are going to be placed in the same partition.
+\paragraph{Distributed subgraph matching on timely dataflow} This work has been presented by Lai et al.~\cite{Lai} for solving the subgraph matching problem in large graphs using a distributed computational model.
+The main contribution of this work is the optimization of four strategies algorithms use on \texttt{Timely} dataflow system~\cite{timelyflow}. 
+The main idea of the purposed algorithm is performing a random partition of the vertices using hashing, where the vertices hashed neighbors are placed on the same partition.
 Query vertices are attributes and results are relational tables, enabling the subgraph matching problem to be expressed with natural joins, where the solution is to find the optimal distributed join plan.
-The join algorithms improved are $\mathtt{BinJoin}$, $\mathtt{WOptJoin}$ and $\mathtt{ShrCube}$ using the following optimizations techniques: \mintinline{shell}{Batching},\mintinline{shell}{TrIndexing} and \mintinline{shell}{Compression}.
-In the case of \mintinline{shell}{Batching}, the optimization relies on processing in batch mode the partial results that match a subset of vertices in a way that each partial result can be batched in a single task to process against the whole result.
-\mintinline{shell}{TrIndexing} or Triangle Indexing precomputes triangles of a data graph and indices to prune unfeasible results beforehand. Finally, \mintinline{shell}{Compression} maintains intermediate results in a compressed form to reduce communication and maintenance. 
-The results obtained on this work are efficient but it always depends on the machine characteristics and the topology of the graph. Some combinations are better with some optimizations techniques if there is a chance for example to have on each machine all graphs in memory, but for example, the authors recommend to use always \mintinline{shell}{Compression} and when there is enough space \mintinline{shell}{TrIndexing} to achieve the best results. 
-We believe that the main limitations of this work are that although the authors claimed this analysis can be conducted against other distributed tools like Spark~\cite{apachespark} for example, they have conducted all the implementation and benchmarking with
-\mintinline{shell}{Timely}~\cite{timelyflow} and uses some of the optimizations that the tool already provides like \mintinline{shell}{HashJoin} for building the pipeline. It is not clear how this would be replicated to other models.
-On a \acrshort{dp} model we offer a model that is unaware of a specific tool or implementation. It is an abstract model that allows building of any pipeline parallelization algorithm.
-Having said that, one of the things that we have gathered from this work to implement in our solution is the use of \mintinline{shell}{Compression} as a technique for better maintenance and performance both on memory and computation time.
+The join algorithms improved are $\mathtt{BinJoin}$, $\mathtt{WOptJoin}$ and $\mathtt{ShrCube}$ using the following optimizations techniques: \texttt{Batching},\texttt{TrIndexing} and \texttt{Compression}.
+In the case of \texttt{Batching}, the optimization relies on processing in batch mode the partial results that match a subset of vertices in a way that each partial result can be batched in a single task to process against the whole result.
+\texttt{TrIndexing} or Triangle Indexing precomputes triangles of a data graph and indices to prune unfeasible results beforehand. Finally, \texttt{Compression} maintains intermediate results in a compressed form to reduce communication and maintenance. 
+The results exposed on the empirical analysis in this work are efficient, but depends on the machine characteristics and the topologis of the analyzed graphs. 
+For example, some combinations of join algorithms with optimizations techniques, are better if there is a chance to place in all nodes machines all the graph in memory. Because of this, the authors recommend to use always \texttt{Compression} and when there is enough space \texttt{TrIndexing} to achieve the best results. 
+In spite the authors claimed this analysis can be conducted against other distributed tools like Spark~\cite{apachespark}, they have implemented the improvements with \texttt{Timely}~\cite{timelyflow} which already has some built-in optimizations like \texttt{HashJoin}.
+We believe that this is a limitation since it is not clearly described how this can be replicated to others pipelining models.
+We think that this limitation can be overcome with \acrshort{dp}, because it is an abstract model that allows the building of any pipeline parallelization algorithm.
+Having said that, one of the interesting idea that we have extracted from this work to implement in our solution is the use of \texttt{Compression} as a technique for better maintenance and performance both on memory and computation time.
 
+\paragraph{\emph{motif-paths}} In the work of Xiaodong Li et al.~\cite{Li2019MotifPA}, the authors presents an algorithm for calculating the shortest \emph{motif-paths}.
+A \emph{motif-path} is a path between motif, where a motif is a connected subgraph with a few nodes. 
+Because of the complexity of building a \emph{motif-graph} to establish the shortest path, the authors propose an incremental search in an algorithm called \emph{Incremental Motif-path Search (IMS Search)}.
+The idea of this algorithm is the following: After all the motif are discovered around some seed $s$, a motif-path $\mathbf{P}$ can be constructed based on those instances.
+The process is repeated until a target $t$ node is discovered. According to the paper, this method has two limitations. First, it is possible to detect \emph{motif-path} that contains 
+redundant \emph{motif-instances}. Secondly, the incremental search proposed might be far from the optimal direction. For the first issue, the authors proposed a pre-filter for the \emph{motif-instances},
+and for the second one, a bi-directional search allowing to explore different seeds. 
+In that sense, \acrshort{dp} can improve this incremental search first because it can provide a special filter for \emph{motif-instances} eliminating the need for filtering because the filter is built-in in the model itself.
+Then, to deal with the optimal direction, \acrshort{dp} allows retro-feeding the pipeline more than once with more than one channel. This means that we are not only able to explore different seeds, but we also can do it in parallel as well.
 
 \section{\acrlong{bt} Counting in \acrlong{bg}}\label{sec:rel-work:counting}
 The problem of Counting \acrshort{bt} has been deeply addressed in the work of Yang et al.~\cite{btcount} where they present several \emph{polly-time} algorithms to solve it.
@@ -63,29 +73,21 @@ In this case, the algorithm needs to be recalculated locally for every edge or v
 Our model improves this limitation taking advantage again with the use of \acrshort{dp} model. At the same time, the computation of \acrshort{bt} is done once, and multiple queries can be processed without the need to recalculate again.
 
 \section{Pay-as-you-go Model}
-The ability to deliver incremental results without waiting for the whole results is known as the \emph{pay-as-you-go} model. This plays a fundamental role in applications that needs to process big data. 
+The ability to deliver incremental results in opposition to the "all-or-nothing" model is known as the \emph{pay-as-you-go} model. 
+This type of computational model plays a fundamental role in applications that needs to process large amount data, where the user does not need to obtained all the results but a fraction of them.
+In that sense, the user can administrate the amount of resources or time it is able to "pay" or "wait" for the subset of the desired outcomes. 
 There have been different use cases in which this approach has helped to obtain partial results in large data set structures.
 
-\paragraph{Fact-Checking} Some of these studies are related to \emph{Fact Checking Pay-as-you-go} models~\cite{factcatch} which use incremental quality estimation to provide fact-checking over world wide web documents.
-Here, the authors require that it should continuously improve the credibility assessment of the documents in the database and, users may then examine the
-that to decide whether to stop or resume validation.
+\paragraph{Fact-Checking} Nguyen et al.~\cite{factcatch} have conducted some of these studies related to \emph{Fact Checking Pay-as-you-go} models, where they use incremental quality estimation to provide fact-checking over world wide web documents.
+Here, the authors require that it should continuously improve the credibility assessment of the documents in the database and, users may then examine that to decide whether to stop or resume validation.
 For conducting this model, they propose a simple front-end application connecting with a backend that is communicating with a Database in PostgreSQL. 
-The limitations of their model rely on any use of parallelization computation. Basically, they are relying on all the computational models to the Database system. 
-We believe that an incremental approach or \emph{pay-as-you-go} model can be described and implemented better with a \acrshort{dp} model because all the processing is done in parallel. 
-Another advantage of \acrshort{dp} model is that, once the data is computed, if we are in an unbounded data stream, we can receive more data to incrementally update and deliver results. 
+The limitations of this model is the lack of parallelization or distributed computation. They are relying all the computational intensive process to the Database system. 
+We believe that an incremental approach or \emph{pay-as-you-go} model can be described and implemented better with a \acrshort{dp} because all the processing are done in parallel, and adjusting the computational resources to the incoming data.
+Another advantage of \acrshort{dp} is that, once the data is computed, if we are in an unbounded data stream, \acrshort{dp} can continuously receive more data to incrementally update and deliver results. 
 In the case of \emph{fact-checking}, those updates could be new validations.
-
-\paragraph{\emph{motif-paths}} Another important use of this model is found in \emph{motif-paths} work~\cite{Li2019MotifPA} like we discussed on previous \autoref{intro}.
-Because of the complexity of building a \emph{motif-graph} to establish the shortest path, this path is search incrementally in an algorithm called \emph{Incremental Motif-path Search (IMS Search)}.
-The idea of this algorithm is the following: After all the motif-graphs are discovered around some seed $s$, a motif-path $\mathbf{P}$ can be constructed based on those instances.
-The process is repeated until a target $t$ node is discovered. According to the paper, this method has two limitations. First, it is possible to detect \emph{motif-path} that contains 
-redundant \emph{motif-instances}. Secondly, the incremental search proposed might be far from the optimal direction. For the first issue, the authors proposed a pre-filter for the \emph{motif-instances},
-and for the second one, a bi-directional search allowing to explore different seeds. 
-In that sense, \acrshort{dp} can improve this incremental search first because it can provide a special filter for \emph{motif-instances} eliminating the need for filtering because the filter is built-in in the model itself.
-Then, to deal with the optimal direction, \acrshort{dp} allows retro-feeding the pipeline more than once with more than one channel. This means that we are not only able to explore different seeds, but we also can do it in parallel as well.
 
 \section{Chapter Summary}
 In this chapter, we have summarized all the \emph{State of the Art} that are related to our research.
 First, we have shown all the details of the most recent work regarding subgraph enumeration problem. 
 After that, we analyze the latest and most important work on counting \acrlong{bt} in \acrlong{bg}.
-Then, we have also explored, what are the latest research and explorations in the use of \emph{pay-as-you-go} models.
+Then, we have also explored, what is the latest research and explorations in the use of \emph{pay-as-you-go} models.
