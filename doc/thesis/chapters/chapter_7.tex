@@ -16,7 +16,7 @@ Regarding that, we have asked ourselves the following research questions that gu
 \section{Experiments Configuration}
 We have conducted different kinds of experiments to answer our research questions, and verify the behavior of the approach in various benchmarks.
 First, we have performed a \emph{Continuous behavior Analysis} using \acrfull{dm}~\cite{diefpaper} in order to assess the continuous behavior capabilities of the implemented algorithm (generation of incremental results). 
-Then, we have performed a \emph{Benchmark Analysis} to identify how the behavior of \acrshort{dpbt} varies depending on the type of query command selected for the user.
+Then, we have performed a \emph{Benchmark Analysis} to identify how the behavior of \acrshort{dpbt} varies depending on the type of query command defined in \dref{def:query:match}.
 Finally, we have executed a \textit{Performance Analysis} in which we have to gather profiling data from \acrfull{ghc} for one of the graphs, 
 to measure how the program performs regarding multithreading and memory allocation.
 In the following subsections, we detail the different aspects of the configuration such as hardware, \acrshort{hs} compilation flags, metrics, and benchmark to conduct these experiments.
@@ -138,8 +138,9 @@ Regarding \texttt{-with-rtsopts=-N}, it allows us to change dynamically on each 
 
 \paragraph{Optimal Execution Parameters}\label{par:ex:param} \acrshort{ghc} enables different flags parameters to speed up the execution. Unfortunately there is no recipe to tune those parameters in the correct way and each program needs to be analyzed to take advantage of \acrshort{ghc} capabilities.\footnote{Execution parameters details are explained in \aref{apx:running:experiments}}
 The most important parameters to be tuned are memory and the number of processors. In the case of the number of processors, we have run all the experiments between 6 and 12 cores. The detail of each run can be found in \autoref{table:e1:def}.
-Setting up memory allocation is not a straightforward task, because the combination of two parameters needs to be considered. \texttt{-A} flag which indicates the allocation area for the garbage collector, which is fixed and never resize, and \texttt{-H} which is the heap size. We  used the tool \texttt{ghc-gc-tune} \cite{ghctune} to find the combination of the parameters; 
-it implements a heuristic algorithm which tries different setups until it finds an optimal combination for memory allocation.
+Setting up memory allocation is not a straightforward task, because the combination of two parameters needs to be considered. \texttt{-A} flag which indicates the allocation area for the garbage collector, which is fixed and never resized, and \texttt{-H} which is the heap size. 
+We used the tool \texttt{ghc-gc-tune} \cite{ghctune} to find the best combination of those parameters; 
+it implements a heuristic algorithm that tries different setups until it finds an \emph{suboptimal} combination for memory allocation. \emph{Suboptimal combination} here refers to find the fastest total execution time with the less amount of allocated memory, as it can be seen in \autoref{fig:exp:opt-mem}.
 We have run \acrshort{dpbt} with that tool, obtaining the following result that can be appreciated in \autoref{fig:exp:opt-mem}
 
 \begin{figure}[h!]
@@ -147,12 +148,13 @@ We have run \acrshort{dpbt} with that tool, obtaining the following result that 
   \resizebox{1\textwidth}{!}{%
   \includegraphics{bt-graph-dp-time-gc-space}
   }
-\caption[{[EE] $\dpbt$ Finding Optimal Memory Setup}]{This figure shows the results obtained after running \acrshort{dpbt} with the \texttt{ghc-gc-tune} tool in order to find the optimal configuration for Memory allocation. $y$ axis shows the total execution time, $x$ axis is the \texttt{-A} configuration flag and $z$ axis is the \texttt{-H} configuration flag.}
+\caption[{[EE] $\dpbt$ Finding Optimal Memory Setup}]{This figure shows the results obtained after running \acrshort{dpbt} with the \texttt{ghc-gc-tune} tool in order to find the suboptimal configuration for Memory allocation. $y$ axis shows the total execution time, $x$ axis is the \texttt{-A} configuration flag and $z$ axis is the \texttt{-H} configuration flag.}
 \label{fig:exp:opt-mem}
 \end{figure}
 
 In \autoref{fig:exp:opt-mem} we can appreciate that the tool runs sereval times the same program with different configurations on flags \texttt{-A} and \texttt{-H} until if it finds a minimum. The dark blue shows the better performance where the curve find its minimum execution time. 
-This indicates two possible optimal setup, either when \texttt{-A} is equal to \texttt{-H}, or either when \texttt{-A} is $\frac{1}{4}$ of the \texttt{-H}. For all our experiments we have selected the first option which \texttt{-A} is equal to \texttt{-H}.
+This indicates two possible suboptimal setup, either when \texttt{-A} is equal to \texttt{-H}, or either when \texttt{-A} is $\frac{1}{4}$ of the \texttt{-H}. For all our experiments we have selected the first option which \texttt{-A} is equal to \texttt{-H}, because choosing any of the two best combinations provides the same results as it can be seen in \autoref{fig:exp:opt-mem}.
+It is important to remind the reader that \texttt{ghc-gc-tune} \cite{ghctune} uses an heuristic algorithm, providing suboptimal results.
 
 \section{Experimental Results}\label{sec:exp:observed-results}
 \subsection{E1: Continuous behavior Analysis}\label{sub:sec:exp-1} 
@@ -161,7 +163,7 @@ In order to do that, we use the \acrfull{dm} Tool \emph{diefpy}~\cite{diefpy} wh
 This experiment allows us to answer research questions [R1] and [R3] defined in \qref{res:bt:question}. 
 
 \paragraph{Procedure} We execute this experiment for each of the networks described in \autoref{data:set} and for each scenario described in \autoref{sub:exp:exp-data-setup}.
-This experiment has been executed five times on each case until we found the proper vertex of edges in the selection described in \autoref{sub:exp:sel-vals}.
+This experiment has been executed five times on each case until we found the proper vertex or edges in the selection described in \autoref{sub:exp:sel-vals}. The criteria followed by the selection of the vertices or edges are detailed in \autoref{sub:exp:sel-vals}.
 The metric  \acrfull{dt}-described in \autoref{sub:metric}- is used to measure the continuous behavior of the proposed approach in a given time frame.
 \autoref{table:e1:def} depicts the different configurations evaluated in this experiment.
 
@@ -250,11 +252,13 @@ The metric  \acrfull{dt}-described in \autoref{sub:metric}- is used to measure t
  \end{figure}
 
 The continuous behavior can be appreciated in \autoref{fig:dief:all} having the fact that any of those points draw a straight vertical line. 
-If that were the case, the graphic would have indicated that all the $t$ times, in \acrshort{dm} metric, are being produced at the same $t$.
-Since this is not the case for these observed results, we can ensure that all the results are continuously generated by \acrshort{dpbt}.
-We can also observe how the results obtained in the experiment \emph{Vertex Lower with High Incidence}(VL-H) (see \autoref{table:exp:data-setup}), are more continuous compare to the rest of the experiments setups. 
-The only experiment setup that cannot be appreciated with the same level of continuous results as the rest is \emph{Opsahl UC Forum} (see \autoref{fig:dief:opsahl}). 
-Moreover, it is observed how Moreno Crime in \autoref{fig:dief:moreno} that between time $100$ and $150$, scenarios VU-H, VL-M, and E-H are plotting in the same $t$ all the enumerated \acrshort{bt}, indicating low continuous behavior. 
+If that were the case, the plot would have indicated that all the $t$ times, in \acrshort{dm} metric, are being produced at the same $t$.
+Moreover we can observed \acrshort{dm} values for dbpedia of $4, 1.22, 6, 9.8, 1.14, 6.32, 4.11, 8.15$ and $3.63$ for the nine scenarios indicating continuous behavior. 
+In the case of Opsahl UC Forum \acrshort{dm} of $5, 1.51, 10, 7.68, 4.30, 3.23, 1.06, 8.48, 5.77$ indicating continuous behavior as well.
+Having those values, we can ensure that all the results are continuously generated by \acrshort{dpbt}.
+We can also observe how the results obtained in experiments VU-M for Opshal with $10$, e-L for Moreno with $28.42$, VL-M for dbpedia with $9.8$ and VL-M for Wang Amazon with $11766.99$ (see \autoref{table:exp:data-setup}), are more continuous compare to the rest of the experiments setups. 
+The only experiment setup that cannot be appreciated with the same level of continuous results as the rest is \emph{Wang Amazon} which for the rest of the scenarios has value $0$ of \acrshort{dm} metric. 
+Moreover, it is observed how Moreno Crime in \autoref{fig:dief:moreno} that between time $100$ and $150$, scenarios VL-H, VL-M, and VL-L are plotting in the same $t$ all the enumerated \acrshort{bt}, with a \acrshort{dm} value of $0$ indicating low continuous behavior. 
 This network is the only one exhibiting that behavior in more than two scenarios.
 
 \begin{figure}[!htp]
@@ -369,7 +373,7 @@ Regarding \autoref{fig:exp:bench:2}, it is observed with the red bars that \acrs
 We can also see in \autoref{fig:exp:bench:2} that scenario E-H took $8756$ seconds in \acrshort{dbpedia} network compare with the E-L and E-M, which took $596$ seconds and $577$ seconds, respectively. 
 Also, in \autoref{fig:exp:bench:2}, we can see that Opsahl UC Forum took $1660$ seconds for VL-H scenario, $11$ seconds for VL-L, and $22$ seconds for VL-M, also showing the same behavior as \acrshort{dbpedia}.
 Moreover, in \autoref{fig:exp:bench:2} it can also be appreciated how Wang Amazon network and Moreno Crime are showing the same behavior for VL-H, VL-L, and VL-M scenarios, where Wang Amazon networks report $21, 8$ and $8$ seconds, respectively and Moreno Crime $3, 3$ and $2$ seconds.
-The same behavior repeats for all networks and all scenarios, indicating that the experiments with higher incidence take more time to finalize the execution compared to the experiments with lower incidence.
+The same behavior repeats for all networks and all scenarios, indicating that the experiments with higher incidence take more time to finalize the execution compared to the experiments with lower incidence. This means that the type of query command $Q$ impacts on the execution of the program; the higher the incidence, the more bi-triangles to be enumerated and the longest the program will take to finish.
 
 \subsection{E3: Performance Analysis}\label{sub:sec:exp-3} 
 \paragraph{Goal} In this experiment, we take measurements on one network, to gather data about the use of memory allocation and threads on \acrshort{ghc} during the execution of \acrshort{dpbt}.
@@ -403,42 +407,42 @@ We can divide the analysis of this section into two: memory consumption and mult
 \paragraph{Multithreading} Regarding multithreading, we have gathered multithreading metrics of different time slots of the total execution time of Moreno Crime network run.
 We could not analyze bigger networks due to the huge amount of data gathered that make the program timeout for this experiment. The timeout on this case was set on $24$ hours and the program timed out running out of memory.
 As we can see in the overview, execution in \autoref{fig:exp:perf:1} all the cores (8) are running \acrfull{mut} time in threads almost during the whole execution of the program.
-\begin{wrapfigure}{r}{0.5\textwidth}
-  \begin{center}
-     \includegraphics[width=0.48\textwidth] {experiments/thread/general_overview}
-       \end{center}
-     \caption[{[EE] Thread Metrics: General overview}]{This is a general overview of ThreadScope results over the experiments running. Green bar indicates \acrshort{mut} time. The distribution between different 8 green bars means that it is executing on the 8 assigned cores.}
-     \label{fig:exp:perf:1}
- \end{wrapfigure}
-This indicates that there are few GC pauses, and running time is overtaken by \acrshort{mut} time and not GC. In fact, \acrshort{ghc} productivity on this run indicated $99.8\%$.
+Running \acrfull{mut} most of the execution of the program, also indicates that there are few GC pauses, and running time is overtaken by \acrshort{mut} time and not GC. In fact, \acrshort{ghc} productivity on this run indicated $99.8\%$.
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\textwidth]{experiments/thread/general_overview}
+  \caption[{[EE] Thread Metrics: General overview}]{This is a general overview of ThreadScope results over the experiments running. Green bar indicates \acrshort{mut} time. The distribution between different 8 green bars means that it is executing on the 8 assigned cores.}
+  \label{fig:exp:perf:1}
+ \end{figure}
+
 ThreadScope~\cite{threadscope} output allows us to zoom in different portions of the execution time to analyze the results better. 
 If we zoom in on the execution threads at the beginning and at the end, we are going to see that there is a moment when only one core is executing. 
 At the middle of the execution, we are seeing more processing distributing evenly among cores with less use GC and higher \acrshort{mut} time.
 
 \begin{figure}[!htb]
   \centering
-  \begin{minipage}{0.3\textwidth}
+  \begin{subfigure}[t]{0.3\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/thread/init}
    \caption{{[EE] Thread Metrics: Initial execution}}
    \label{fig:exp:perf:2}
-  \end{minipage}%
+  \end{subfigure}%
   \hspace{.3cm}%
-  \begin{minipage}{0.3\textwidth}
+  \begin{subfigure}[t]{0.3\textwidth}
     \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/thread/middle}
     \caption{{[EE] Thread Metrics: Middle of execution}}
     \label{fig:exp:perf:4}
-   \end{minipage}% 
+   \end{subfigure}% 
    \hspace{.3cm}%
-  \begin{minipage}{0.3\textwidth}
+   \begin{subfigure}[t]{0.3\textwidth}
    \includegraphics[width=1\linewidth, height=0.2\textheight]{experiments/thread/end}
    \caption{{[EE] Thread Metrics: End of execution}}
    \label{fig:exp:perf:3}
-  \end{minipage}%
+  \end{subfigure}%
   \caption[{[EE] Thread Metrics: Partitioned}]{In this 3 images we can see different moments of the execution of the program after doing a zoom of the images allowing to scale down execution time view. The left image indicates the beginning of the execution. Middle image is the middle of the execution and right image is the end of the execution.}
 \end{figure}
 
 \paragraph{Memory Consumption} In the case of memory consumption, we have been able to measure the memory consumption for the biggest graph, \acrshort{dbpedia}. 
-As it is known, enabling profiling downgrades the performance of execution time. Because of that, the program runs out of memory, as we are going to see in the image. Although this, we have still been able to gather interesting data to analyze memory allocation.
+As it is known, enabling profiling downgrades the performance of execution time. Because of that, the program runs out of memory after $24$ hs., as we are going to see in the image. Although this, we have still been able to gather memory allocation data to conduct the analysis.
 
 \begin{figure}[!htb]
   \begin{center}
@@ -450,18 +454,20 @@ As it is known, enabling profiling downgrades the performance of execution time.
 
 As we can appreciate in \autoref{fig:exp:mem:1} the darkest blue area belongs to \texttt{MUT\_ARR\_PTRS\_CLEAN}. These types of objects are pointers to function.
 It is clear that \texttt{MUT\_ARR\_PTRS\_CLEAN} is allocating $2G$ at most, and it is more than the rest of the objects. This also represents more than $50\%$ of the accumulated memory allocation during the whole execution time.
-Below dark blue \texttt{MUT\_ARR\_PTRS\_CLEAN}, there is a lighter blue area, which represents the allocation of \texttt{Maybe} type. \texttt{Maybe} is the type that transfers data between stages through channels. In this case represents the $25\%$ of the total allocated memory going beyond $1G$ in total.
-Continue below \texttt{Maybe} type, it is \texttt{IntSet} data type memory allocation, which is the type for storing the \acrshort{adwg} and \acrshort{abt} as we have described on \autoref{sec:prem:def}. This is even lower than the previous one, allocating up to $0.3G$ of memory which does not represent more than $7\%$ of the total memory. 
-Alongside with this, it is the \texttt{W} type which is storing \acrshort{awg}; it represents $0.5G$ which is a $10\%$ of the total allocation.
-The rest $10\%$ of the total memory is evenly distributed about among other data types that are not part of the specific \acrshort{dpfh} implementation, but from \acrshort{hs} in general.
+Below dark blue \texttt{MUT\_ARR\_PTRS\_CLEAN}, there is a lighter blue area, which represents the allocation of \texttt{Maybe} type. \texttt{Maybe} is the type that transfers data between stages through channels. It also represents the $25\%$ of the total allocated memory with less than $1G$ in total.
+Continue below \texttt{Maybe} type, it is \texttt{IntSet} data type memory allocation, which is the type for storing the \acrshort{adwg} and \acrshort{abt} as we have described on \autoref{sec:prem:def}. This is even lower than the previous one, allocating up to $0.3G$ of memory that does not represent more than $7\%$ of the total memory. 
+Alongside this, it is the \texttt{W} type which is storing \acrshort{awg}; it represents $0.5G$ which is a $10\%$ of the total allocation.
+The rest $10\%$ of the total memory is evenly distributed among other data types that are not part of the specific \acrshort{dpfh} implementation, but from \acrshort{hs} in general.
  
 \section{Discussion}\label{sec:exp:discussion}
-\paragraph{E1: Continuous behavior} \autoref{sub:sec:res:e1} reports on cases where the continuous behavior can be appreciated better in some scenarios and networks compared to others. This is the case for example of VL-H scenario in general. 
-The behavior of this case can be explained because bi-triangles are aggregated based on some triple $\ell = (l_l,l_m,l_u)$ (see \dref{def:abt}) if the requested $l \in L$ matches with some of these triple elements, all the $\hat{U}_l$ Cartesian product need to be enumerated in a 6-cycle path \acrshort{bt} (see \dref{def:bt}). Therefore, there are many \acrshort{bt} as a result of combining all $\hat{U}_l$ with $\ell$.
-The only case of VL-H that exhibits less continuous behavior is the Opsahl UF Forum network. That is explained because the selection of the command $Q$ value (vertex or edge) for the different experimental scenario is \emph{pseudo-random}-- as it is explained in \autoref{sub:exp:sel-vals}. 
+\paragraph{E1: Continuous behavior} \autoref{sub:sec:res:e1} reports show that continuous behavior can be appreciated better in some scenarios and networks than others. For example, the scenarios containing queries with lower and medium incident vertices. 
+The behavior on these cases can be explained because bi-triangles are aggregated based on triple $\ell = (l_l,l_m,l_u)$ (see \dref{def:abt}). Then, if the requested $l \in L$ matches with some of these vertices in $\ell$, all the $\hat{U}_l$ cartesian product need to be enumerated in a 6-cycle path \acrshort{bt} (see \dref{def:bt}). 
+Therefore, if there are few \acrshort{bt} because the incidence level is lower, this is going to be delivered faster and continuously.
+Moreover, the cases that exhibit less continuous behavior are Wang Amazon and Moreno Crime networks in the majority of their scenarios. In the case of Wang Amazon $8$ out of $9$ scenarios shows a \acrshort{dm} value of $0$. In the case of Moreno crime networks, it is reported a \acrshort{dm} value of $0$ in $5$ out of $9$ scenarios. 
+We provide two arguments that support the explanation of this low continuous level in Wang Amazon and Moreno Crime. 
+Firstly, the selection of the command $Q$ value (vertex or edge) for the different experimental scenario is \emph{pseudo-random}-- as it is commented in \autoref{sub:exp:sel-vals}. 
 We have detected that for this particular experiment setup, even when the \emph{pseudo-randomly} chosen vertex belongs to the Lower Layer $L$, it is not a vertex with a high incidence as it should be.
-In fact, it can be seen that for \emph{Vertex Upper with High Incidence}(VU-H) scenario in the same network, the \emph{pseudo-random} selection is a vertex that has high incidence which matches with the desired semantic of the scenario. 
-Moreno Crime network, which shows the less continuous behavior, could be explained by the fact of the topology of the graph, which is the smallest of all the graphs used, both in terms of the number of \acrshort{bt} and the number of wedges.
+Secondly, it could be explained by the fact of the topology of both graphs. Wang Amazon and Moreno Crime networks are the smallest of all the graphs used, in terms of the number of \acrshort{bt} as we can see in \autoref{table:exp:data-set}.
 Therefore, results are delivered extremely fast and incremental results only can be appreciated in the vertices with high incidence.
 In conclusion, we are able to answer [R1] and asses that we have built an incremental algorithm for enumerating \acrlong{bt}. 
 The same conclusion can be obtained regarding question [R3]. We verify that, depending on the incidence of the vertex or edge, \acrshort{dpbt} is enumerating \acrshort{bt} in a continuous manner. This shows us \acrshort{dpbt} effectively implements a \emph{pay-as-you-go} model.
@@ -477,13 +483,13 @@ That exhibits a perfect fit with the \acrshort{dp} model since at the beginning,
 After that, we can see an even distribution and all cores busy when \acrshort{dp} executes the filters. Remember that each stage runs on its own thread. At the end, we observe a reduction in the distribution of the cores, because  the last part of the execution is done by $\obt$.
 Regarding memory allocation, we have seen that most of the allocation is done by \texttt{MUT\_ARR\_PTRS\_CLEANER} data type.
 In \acrlong{hs} \acrshort{mut} is the acronym of a thread evaluating an \acrshort{hs} expression.
-That means that there are many pointers allocated waiting for evaluating expressions. \acrshort{dpbt} implementation explains this behavior because it is spawning one
+Therefore, having $2G$ of allocated memory for \texttt{MUT\_ARR\_PTRS\_CLEANER} type means that there are many pointers allocated waiting for evaluating expressions. \acrshort{dpbt} implementation explains this behavior because it is spawning one
 thread per stage, and in particular, that means one thread per filter instance as well. In the case of \acrshort{dbpedia} which contains $168.338$ vertices in 
 $L$ according to \autoref{table:exp:data-set}, in the worst case \acrshort{dpbt} is spawning the same amount of threads for every run of this network. Since the execution of all these stages will not be released until it finishes the last $\ad$ (processing queries), all of them are waiting for the queries to be processed and executed.
 Another important part of the allocated memory as we have seen in \autoref{sub:sec:exp-3} is distributed between \texttt{Maybe}, \texttt{IntSet} and \texttt{W} data types. This behavior is expected because \texttt{Maybe} carries data between stages which cannot be avoided due to the \acrshort{dp} model. Additionally,  both \texttt{IntSet} and \texttt{W} are the 
 compressed form \acrshort{dpbt} uses for storing intermediate structures to build \acrshort{bt}, as we have described in \autoref{sec:prem:def}.
 One of the proposed solutions for future work is to reduce the number of $\fbt$ for bigger graphs in order to reduce the number of allocated pointers waiting for commands.
-Although memory allocation increases linearly by the amount of the filters instances in this particular experiment, the rest of the memory allocation is not growing linearly, as we can see in \autoref{fig:exp:mem:1}. This is a key factor on memory analysis since it is showing how \acrshort{dpfh} is compressing intermediate objects like \acrshort{awg}, \acrshort{adwg}, and \acrshort{abt} without penalizing the rest. 
+Although memory allocation shows a linear growth in \autoref{fig:exp:mem:1} for the \texttt{MUT\_ARR\_PTRS\_CLEANER} type in this experiment, the rest of the memory allocation is not growing linearly, as we can see also in \autoref{fig:exp:mem:1}. This is a key factor on memory analysis since it is showing how \acrshort{dpfh} is compressing intermediate objects like \acrshort{awg}, \acrshort{adwg}, and \acrshort{abt} without penalizing the rest. 
 In conclusion, we can answer the question [R4] as we have shown that threads are efficiently handled by \acrshort{hs} \acrshort{ghc} scheduler supporting the parallelization level that \acrshort{dp} requires. 
 We can also state that memory management is efficiently handled as well by the analysis exposed before.
 Additionally, memory allocation can be also improved by implementing a better matching algorithm for searching and deliver \acrshort{bt} like for example the ones describe by Lai et al.~\cite{Lai}. 
@@ -497,7 +503,7 @@ Then, the experimental procedure and results are reported. Finally, we have disc
 To summarize, the main points observed during the experimentation are:
 \begin{itemize}
   \item High values of the metric dief\@t that is indicating the continuous behavior of \acrshort{dpbt} exhibiting its capability of incrementally enumerates \acrshort{bt}.
-  \item High values of the metrics XXX suggesting n effective implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt} in  different scenarios and networks results.
+  \item High values of the metrics \emph{Average Running Time} and \emph{Total Running Time} suggesting an effective implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt} in  different scenarios and networks results.
   \item Results captured by the \texttt{ThreadScope} tool indicating an even distribution of the threads among processors, showing efficient use of the parallel model.
   \item Results gathered by the \texttt{eventlog2html} tool suggesting that memory consumption is efficiently handled in the intermediate objects that \acrshort{dpfh} collects on each filter and transfers between them. A proposal on how also improve this part was exposed in \autoref{sec:exp:discussion}.
 \end{itemize} 

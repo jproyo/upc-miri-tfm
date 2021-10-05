@@ -1,0 +1,46 @@
+ $ python bt-graph-dp/experiments/diepfy/experiments.py
+[('opsahl-ucforum', 'edge-low', 5.00759666e+09)
+ ('opsahl-ucforum', 'vertex-upper-high', 1.51696968e+10)
+ ('opsahl-ucforum', 'vertex-upper-medium', 9.97322919e+09)
+ ('opsahl-ucforum', 'vertex-upper-low', 7.68282703e+08)
+ ('opsahl-ucforum', 'edge-high', 4.30366898e+09)
+ ('opsahl-ucforum', 'edge-medium', 3.23811316e+09)
+ ('opsahl-ucforum', 'vertex-lower-low', 1.06346812e+08)
+ ('opsahl-ucforum', 'vertex-lower-high', 8.48558803e+09)
+ ('opsahl-ucforum', 'vertex-lower-medium', 5.77175674e+09)]
+
+ ~/Projects/upc/upc-miri-tfm   main ● ? ⍟4                                                                                                                                        ✔  diefpy  10963  00:43:35
+ $ python bt-graph-dp/experiments/diepfy/experiments.py
+[('moreno_crime', 'edge-low', 28.42248535)
+ ('moreno_crime', 'vertex-lower-low',  0.        )
+ ('moreno_crime', 'edge-medium',  0.        )
+ ('moreno_crime', 'vertex-upper-low', 15.70361328)
+ ('moreno_crime', 'vertex-upper-medium',  9.69873047)
+ ('moreno_crime', 'edge-high',  0.91845703)
+ ('moreno_crime', 'vertex-lower-medium',  0.        )
+ ('moreno_crime', 'vertex-lower-high',  0.        )
+ ('moreno_crime', 'vertex-upper-high',  0.        )]
+
+ ~/Projects/upc/upc-miri-tfm   main ● ? ⍟4                                                                                                                                        ✔  diefpy  10963  00:44:35
+ $ python bt-graph-dp/experiments/diepfy/experiments.py
+[('dbpedia', 'vertex-lower-low', 3.96563684e+09)
+ ('dbpedia', 'vertex-upper-medium', 1.22380813e+13)
+ ('dbpedia', 'vertex-upper-high', 6.00787165e+12)
+ ('dbpedia', 'vertex-lower-medium', 9.80397041e+11)
+ ('dbpedia', 'vertex-lower-high', 1.14409034e+13)
+ ('dbpedia', 'vertex-upper-low', 6.32967370e+12)
+ ('dbpedia', 'edge-medium', 4.11904435e+11)
+ ('dbpedia', 'edge-low', 8.15912566e+10)
+ ('dbpedia', 'edge-high', 3.63786381e+12)]
+
+ ~/Projects/upc/upc-miri-tfm   main ● ? ⍟4                                                                                                                                        ✔  diefpy  10963  00:49:03
+ $ python bt-graph-dp/experiments/diepfy/experiments.py
+[('wang-amazon', 'vertex-lower-low',     0.        )
+ ('wang-amazon', 'vertex-lower-high',     0.        )
+ ('wang-amazon', 'edge-medium',     0.        )
+ ('wang-amazon', 'edge-low',     0.        )
+ ('wang-amazon', 'vertex-lower-medium', 11766.99609375)
+ ('wang-amazon', 'vertex-upper-low',     0.        )
+ ('wang-amazon', 'vertex-upper-medium',     0.        )
+ ('wang-amazon', 'vertex-upper-high',     0.        )
+ ('wang-amazon', 'edge-high',     0.        )]

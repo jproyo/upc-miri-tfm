@@ -156,7 +156,7 @@ $bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
 \label{table:notation}
 \end{table}
       
-\subsection{Algorithm Sketch}\label{sub:sec:algo-sketch}
+\section{Algorithm Sketch}\label{sub:sec:algo-sketch}
 Dynamic Pipeline Algorithm for Enumerating Bitriangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
 \textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. 
 The algorithm considers a \acrlong{bt} as a convenient composition of three wedges as we can see the example in \autoref{fig:bitriangle-example}.
@@ -217,7 +217,7 @@ From retro feeding channel $IC_{W2}$, $\ac$ receives all the \acrshort{awg}  and
 
 $Q$ Commands are downstream from $\ibt$ to $\ad$ using channel $IC_Q$. $\ad$ receives all the commands, and for each of them, if there is match according to \dref{def:query:match}, it enumerates those \acrshort{bt} extracted from $\st$ and downstream to $\obt$ through $OC_{BT}$.
 
-\subsection{Dynamic Pipeline for Enumerating Bitriangles}\label{sub:sec:iebt:dpalgo}
+\section{Dynamic Pipeline for Enumerating Bitriangles}\label{sub:sec:iebt:dpalgo}
 In this section, we present all the pseudo-code definitions of each of the stages described in ~\autoref{sub:sec:algo-sketch}. 
 In spite of this work has been implemented using \acrshort{hs}, and in particular \acrshort{dpfh}, the pseudo-code algorithms presented here are language independent.
 Before starting with the details, we introduce in \autoref{table:aux:fn} auxiliary functions that we use in the pseudo-code to help understanding better the desired behavior of the algorithm.
