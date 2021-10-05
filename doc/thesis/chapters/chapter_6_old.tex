@@ -23,10 +23,10 @@ in \autoref{fig:bipartite-graph-example}.
 \end{figure}
 
 As we can see in \autoref{fig:bipartite-graph-example}, trying to identify the different \acrshort{bt} in this graph, it can be done manually, but in larger graphs can be more challenging.
-The minimal structure that we can extract from this \acrshort{bt} is \acrlong{awg}, but for that we need to define what is a \acrfull{wg}.
+The minimal structure that we can extract from this \acrshort{bt} is \acrlong{awg}, but for that, we need to define what is a \acrfull{wg}.
 
 \begin{definition}[\acrfull{wg}]\label{def:wg}
-A \textit{\acrfull{wg}} in $G$ is a triple $(u_1,l,u_2)$, $\{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
+A \textit{\acrfull{wg}} in $G$ is a triple $(u_1,l,u_2), \{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
 With this \dref{def:wg} in place, we can now define a \acrshort{awg}, which is an aggregated form of all the wedges of one $l \in L$.
       
@@ -53,7 +53,7 @@ An \textit{\acrfull{awg}} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \sub
 \caption{\acrshort{awg} on $c$}
 \label{fig:awedge-example-c}
 \end{subfigure}
-\caption[{[\acrshort{iebt}] Definitions Examples \acrlong{awg}}]{\acrlong{awg} of nodes $a,b,c$ of \autoref{fig:bipartite-graph-example}}
+\caption[{[\acrshort{iebt}] Definitions Examples \acrlong{awg}}]{ \acrlong{awg} of nodes $a,b,c$ of \autoref{fig:bipartite-graph-example}}
 \label{fig:awedge-example}
 \end{figure}
 
@@ -73,7 +73,7 @@ An \textit{\acrfull{adwg}}  is a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l
 \begin{figure}[htp!]
 \centering
 \inputtikz{bipartite_adwg_a}
-\caption[{[\acrshort{iebt}] Example Aggregated double-wedge}]{\acrlong{adwg} of the pair of nodes $(a,c)$ of \autoref{fig:bipartite-graph-example}. Upper layer nodes $1,3,7$ and $5,9$ are enclosed in a Square indicating the set that they belong to. Remember in \dref{def:adwg} we are forming three sets $U_l = \la I, J, K \ra$. $I = \emptyset$ in this case because they should be disjoint sets and $a$ and $c$ share the same upper layer nodes in $J$.}
+\caption[{[\acrshort{iebt}] Example Aggregated double-wedge}]{\acrlong{adwg} of the pair of nodes $(a,c)$ of \autoref{fig:bipartite-graph-example}. Upper layer nodes $1,3,7$ and $5,9$ are enclosed in a Square indicating the set that they belong to. Remember in \dref{def:adwg} we are forming three sets $U_l = \la I, J, K \ra$. $I = \emptyset$ in ths case because they should be disjointed sets and $a$ and $c$ share the same upper layer nodes in $J$.}
 \label{fig:agg-double-wedge-example}
 \end{figure}
 
@@ -89,11 +89,11 @@ An \acrshort{awg} $\la l, W_l \ra$ is an \textit{\acrfull{awgc}} \emph{if and on
 Let $\hat{U}_l=\la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$. An \textit{\acrfull{abt}}  is a pair  $\langle \ell, \hat{U}_l\rangle$, 
 where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu}\in \bt$.
 \end{definition}
-      
+
 \begin{figure}[h!]
 \centering      
 \inputtikz{bipartite_abt_a}
-\caption[{[\acrshort{iebt}] Example Aggregated bitriangle}]{Aggregated bitriangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}. In this case as the \dref{def:abt} states, $\hat{U}_l$ does not contains disjoint sets, because we are using a compressing mechanism similar as described in \cite{Lai}. We can appreciate in the image that we can built an \acrshort{abt} with $b$ which has incidents edges in $1,5$. Note that not all of combinations are going to form a \acrshort{bt}.}
+\caption[{[\acrshort{iebt}] Example Aggregated bi-triangle}]{Aggregated bi-triangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}. In this case as the \dref{def:abt} states, $\hat{U}_l$ does not contains disjoint sets, because we are using a compressing mechanism similar as described in \cite{Lai}. We can appreciate in the image that we can built an \acrshort{abt} with $b$ which has incidents edges in $1,5$. Note that not all of combinations are going to form a \acrshort{bt}.}
 \label{fig:agg-bt-example}
 \end{figure}
       
@@ -105,23 +105,15 @@ The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{\acrfull{bt}} in $G$, 
 \end{definition}      
 
 \begin{figure}[h!]
-\begin{subfigure}[b]{0.5\textwidth}
-\centering
+\centering      
 \inputtikz{bipartite_bt_a}
-\caption{\acrshort{bt} $(1,a,3,c,5,b,1)$}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\centering
-\inputtikz{bipartite_bt_b}
-\caption{\acrshort{bt} $(1,b,5,a,7,c,1)$}
-\end{subfigure}
-\caption[{[\acrshort{iebt}] Example of bitriangles}]{Bitriangles of the triple $(a,b,c)$ combined with vertices from $U$ $\{1,3,5,7\}$ of \autoref{fig:bipartite-graph-example}. In this case two bitriangles have been built from the \autoref{fig:agg-bt-example}}
+\caption[{[\acrshort{iebt}] Example of bi-triangle}]{Bi-triangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}. In this case the bi-triangle has been built from the \autoref{fig:agg-bt-example} which is the only possible bi-triangle that can be extracted from there.}
 \label{fig:bt-a-example}
 \end{figure}
 
-As we can see in \autoref{fig:bt-a-example}, the two possible \acrshort{bt} can be extracted from the \acrshort{abt} presented in \autoref{fig:agg-bt-example} are $(1,a,3,c,5,b,1)$ and $(1,b,5,a,7,c,1)$.
+As we can see in \autoref{fig:bt-a-example}, the \acrshort{bt} $(1,a,3,c,5,b,1)$ is the only possible one that can be extracted from the \acrshort{abt} presented in \autoref{fig:agg-bt-example}.
 
-Because \acrshort{iebt} will allow to enumerate \acrshort{bt} using a \emph{pay-as-you-go} model, we need to allow the user to enumerate specific \acrshort{bt} according to some criteria.
+Because \acrshort{iebt} will allow to enumerate \acrshort{bt} using a \emph{pay-as-you-go} model, we need to allow the user enumerates specific \acrshort{bt} according to some criteria.
 In regards to that, we are going to define a Query Command that is going to be used in the pseudo-algorithm for that purpose.
 
 \begin{definition}[\acrfull{qo}]\label{def:query:match} 
@@ -157,11 +149,11 @@ $bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
 \end{table}
       
 \subsection{Algorithm Sketch}\label{sub:sec:algo-sketch}
-Dynamic Pipeline Algorithm for Enumerating Bitriangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
+Dynamic Pipeline Algorithm for Enumerating Bi-triangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
 \textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. 
 The algorithm considers a \acrlong{bt} as a convenient composition of three wedges as we can see the example in \autoref{fig:bitriangle-example}.
 In order to reduce memory footprint, the algorithm aggregates results, i.e. the set of wedges having the same middle vertex is represented as a pair $\la l, W_l \ra$ where $l$ is the middle vertex and $W_l$ is the set of adjacent vertices of $l$ called \acrfull{awg} (see \dref{def:awg}).
-The algorithm first collects \acrshort{awg} for every vertex in the $L$ set of the graph. Afterwards it constructs \acrfull{adwg} for every pair of distinct vertices, Finally  constructs \acrshort{abt}  for selected triples of vertices. 
+The algorithm first collects \acrshort{awg} for every vertex in the $L$ set of the graph. Afterward it constructs \acrfull{adwg} for every pair of distinct vertices. Finally constructs \acrshort{abt}  for selected triples of vertices. 
 The following \autoref{table:channels} describes the different channels that are connecting the stages in $\dpbt$.
 
 \begin{table}[ht!]
@@ -206,18 +198,18 @@ An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ has a sum ty
 \label{fig:btDP}
 \end{figure}
 
-\paragraph{Sketch} The setup of $\dpbt$ can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ and transfers to the following stage each $(u,l)$ using $C_E$.
+\paragraph{Sketch} The setup of \acrshort{dp} can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ in an incremental non-blocking manner and transfers to the following stage each $(u,l)$ using $C_E$.
 For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. 
-First, $\aaa$ receives from $IC_E$ the edges and builds aggregated wedges, when there are no more edges it downstreams it to it's neighbour $\fbt$ using $OC_{W1}$. 
+First, $\aaa$ receives from $IC_E$ the edges and builds \acrshort{awg}, when there are no more edges it downstreams it to it's neighbour $\fbt$ using $OC_{W1}$. 
 Then $\ab$ receives from $IC_{W1}$ aggregated wedges from previous $\fbt$, downstream to next $\fbt$ and $\gbt$ using $OC_{W1}$ and at the same time use its information to see 
-if it can build an aggregated double wedge. If it can, it will store in its state $dw \in \dw$.
+if it can build an \acrshort{adwg}. If it can, it will store in its $\st$ those $dw \in \dw$.
 
-$\ab$ downstream the aggregated wedge to  it's neighbour $\fbt$ or to $\gbt$ if it is the last $\fbt$. This is because we need to retro feed all the pipeline with all the aggregated wedges, in order to find an \acrfull{awgc} as we defined in \dref{def:awgc}.
+$\ab$ downstream the \acrshort{awg} to  it's neighbour $\fbt$ or to $\gbt$ if it is the last $\fbt$. This is because we need to retro feed all the pipeline with all the \acrshort{awg}, in order to find an \acrfull{awgc} as we defined in \dref{def:awgc}.
 From retro feeding channel $IC_{W2}$, $\ac$ receives all the \acrshort{awg}  and builds \acrshort{abt} storing them in $\st$. 
 
 $Q$ Commands are downstream from $\ibt$ to $\ad$ using channel $IC_Q$. $\ad$ receives all the commands, and for each of them, if there is match according to \dref{def:query:match}, it enumerates those \acrshort{bt} extracted from $\st$ and downstream to $\obt$ through $OC_{BT}$.
 
-\subsection{Dynamic Pipeline for Enumerating Bitriangles}\label{sub:sec:iebt:dpalgo}
+\subsection{Dynamic Pipeline for Enumerating Bi-triangles}
 In this section, we present all the pseudo-code definitions of each of the stages described in ~\autoref{sub:sec:algo-sketch}. 
 In spite of this work has been implemented using \acrshort{hs}, and in particular \acrshort{dpfh}, the pseudo-code algorithms presented here are language independent.
 Before starting with the details, we introduce in \autoref{table:aux:fn} auxiliary functions that we use in the pseudo-code to help understanding better the desired behavior of the algorithm.
@@ -238,7 +230,7 @@ $\mt(Q, BT)$ & Check if a \acrshort{qo} $Q$ produces $\bt$ \\ \hline
 \label{table:aux:fn}
 \end{table}
       
-\begin{algorithm}[h!]
+\begin{algorithm}
 \SetKwInOut{P}{Input Data}
 \SetKwInOut{Q}{Input Commands}
 \SetKwInOut{IC}{Input Channels}
@@ -258,7 +250,7 @@ $\mt(Q, BT)$ & Check if a \acrshort{qo} $Q$ produces $\bt$ \\ \hline
 \ForAll(\tcp*[f]{Send Query Commands}){$Q \in IO_Q$}
 {$\p(Q, OC_Q)$ \label{algo:source:3}
 }
-\caption[Source ($\ibt$)]{Source ($\ibt$): It process all the edges from the file or input channel $IO_E$ and send to the following stages. It also receives from $IC_{W_l2}$ all the feedback \acrshort{awg} that is sending back the $\gbt$. At the end it process also from other File or Input stream the Query Command $Q$ to be sent to th filters}
+\caption{Source ($\ibt$)}
 \label{algo:source}
 \end{algorithm}
 
@@ -266,7 +258,7 @@ $\mt(Q, BT)$ & Check if a \acrshort{qo} $Q$ produces $\bt$ \\ \hline
 Another important part as well is \autoref{algo:source:2}, the $\ibt$ is retro feed with \acrshort{awg} stream that is generated during pipeline execution.
 This is important to finally build the \acrshort{bt} as we have describe in \autoref{sub:sec:algo-sketch}. Finally, \autoref{algo:source:3} shows how all the queries are downstream as well.
 
-\begin{algorithm}[h!]
+\begin{algorithm}
 \SetKwInOut{P}{Filter Template}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -284,7 +276,7 @@ This is important to finally build the \acrshort{bt} as we have describe in \aut
 \ForAll{$\bti \in IC_{BT}$}
 {$\p(\bti, OC_{BT})$ \label{algo:gen:3}
 }
-\caption[Generator ($\gbt$)]{Generator ($\gbt$): For each edge $(u,l)$ it receives from previous stage, it spawn a new filter using $l$ as parameter of the Filter and $\{u\}$ as the state. It also receives all the \acrshort{awg} that previous filters built and sends back to $\ibt$. Finally it sends to the $\obt$ the \acrshort{bt} matched by filters according to Command Query $Q$}
+\caption{Generator ($\gbt$)}
 \label{algo:gen}
 \end{algorithm}
 
@@ -304,7 +296,7 @@ In \autoref{algo:gen:2} we can see how the algorithm is receiving and retro feed
 is connected with $IC_{W2}$ in $\ibt$.
 Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the different filters to $\obt$.
 
-\begin{algorithm}[h!]
+\begin{algorithm}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{O}{Output}
 \SetAlgorithmName{}{sink}{}
@@ -314,13 +306,13 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \ForAll(\tcp*[f]{Read Results and put in $IO_{BT}$}){$\bti \in IC_{BT}$}
 {$put(\bti, IO_{BT})$
 }
-\caption[Sink ($\obt$)]{Sink ($\obt$): It receives \acrshort{bt} from $\gbt$ and send to the File or Output Stream}
+\caption{Sink ($\obt$)}
 \label{algo:sink}
 \end{algorithm}
 
 \paragraph{Sink $\obt$} In \autoref{algo:sink} shows a simple stage that receives all results and sends them to some output handler (file, standard output, etc.). 
 
-\begin{algorithm}[h!]
+\begin{algorithm}
 \SetKwInOut{P}{Filter Template}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -341,13 +333,13 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
       $\actorc()$\\
       $\actord()$\\
 }
-\caption[Filter ($\fbt$)]{Filter ($\fbt$): Call sequentially to all the actors in this filter}
+\caption{Filter ($\fbt$)}
 \label{algo:fil}
 \end{algorithm}
 
 \paragraph{Filter $\fbt$} In \autoref{algo:fil} we can see the simple call sequence over all the actor functions of the filter template. 
 
-\begin{algorithm}[h!]
+\begin{algorithm}
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -376,16 +368,16 @@ $\la l, W_l \ra \leftarrow \gs$\\
       $\p(\la l, W_l \ra, OC_{W_l1})$\\
 }\Else{$\fd$}
 }
-\caption[Actor1 ($actor_1$)]{Actor1 ($actor_1$): Build a set of aggregated wedges. This is, $W_l \subseteq U$ adjancents to $l$ Filter parameter. For each received edge $(u',l')$ which $l \neq l'$ by pass the edge to next filters. It updates the State of the filter with $W_l$ if it could build a $W_l$ with more than 1 vertex in $U$.}
+\caption{Actor1 ($actor_1$)}
 \label{algo:act-1}
 \end{algorithm}
 
-\paragraph{Filter $\aaa$} 
+\paragraph{Filter $\aaa$} %As we have described in \autoref{sub:sec:algo-sketch} and it according to \autoref{algo:act-1:1}, 
 $\aaa$ receives all edges not consumed by previous $\fbt$.
 If the received edge $(u',l')$ is incident to l i.e. $l = l'$,  then $u'$ will be added to the list of \acrshort{awg}. Otherwise the edge is downstream to the next stage.
 In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if and only if at least 1 wedge was collected. Otherwise, the filter is marked as dead using the  $\fd$ function.
 
-\begin{algorithm}[h!]
+\begin{algorithm}
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -426,7 +418,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \uIf{$\dwi = \emptyset$}{$\fd$}
 \Else{$\us(\dwi)$}
 }
-\caption[Actor2 ($actor_2$)]{Actor2 ($actor_2$): Receiving all aggregated wedges from previous filters, build a set of all possible aggregated double-wedges $\dwi = \{\la (l,l'), U_l \ra\}, \dwi \subseteq \dw$, which first component $l$ is the Parameter of the Filter. At the end, it updates the State of the filter with $\dwi$ if $\dwi \neq \emptyset$}
+\caption{Actor2 ($actor_2$)}
 \label{algo:act-2}
 \end{algorithm}
 
@@ -437,7 +429,7 @@ $l$ and $l'$ which are $I$ and $K$ and those that are shared by both lower layer
 Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$.
 
 
-\begin{algorithm}[h!]
+\begin{algorithm}
 \DontPrintSemicolon
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
@@ -477,7 +469,7 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
       \uIf{$\ati = \emptyset$}{$\fd$}
       \Else{$\us(\ati)$\\}
 }
-\caption[Actor3 ($actor_3$)]{Actor3 ($actor_3$): Receiving all aggregated wedges for second time that came from feedback channel, build a Set of all possible Aggregated bi-triangles $\ati = \{\la (l_l, l_m, l_u), U_l \ra\}, \ati \subseteq \at$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter. At the end, it updates the State of the filter with $\ati$ if $\ati \neq \emptyset$}
+\caption{Actor3 ($actor_3$)}
 \label{algo:act-3}
 \end{algorithm}
 
@@ -485,7 +477,7 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
 This is because in order to build \acrshort{abt} finding all the possibles \acrshort{awgc}. This is what is doing \autoref{algo:act-3} according to definition 
 \dref{def:awgc} and \dref{def:abt}. If that can be achieve, algorithm sets $\st = \ati$ and $\ad$ can be executed.
 
-\begin{algorithm}[h!]
+\begin{algorithm}
 \SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
@@ -531,8 +523,7 @@ $\ati \leftarrow \gs$\\
       }
 }
 }
-\caption[Actor4 ($actor_4$)]{Actor4 ($actor_4$): Receiving all the Query Commands $Q$ that arrives through Channel $IC_Q$, verify if matches with some Bi-triangles that in the state $\ati \subseteq at$ of this Filter. If some bi-triangle matches it will be downstream to the Channel $OC_{BT}$ to be processed by the Sink}
-
+\caption{Actor4 ($actor_4$)}
 \label{algo:act-4}
 \end{algorithm}
 
@@ -545,7 +536,7 @@ Using the same construction process a \acrshort{bt} is built if \acrshort{qo} co
 The following pseudo-code definitions on \autoref{algo:buildBtVertex} and \autoref{algo:buildBtEdge} are auxiliary functions that are called
 from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E)$.
 
-\begin{algorithm}[h!]
+\begin{algorithm}
 \SetKwInOut{I}{Input}
 \SetKwInOut{O}{Output}
 \SetKwFunction{but}{buildBtVertex}
@@ -578,11 +569,11 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
       }
       \Return{$\btii$}
 }
-\caption[Function \mintinline{shell}{buildBtVertex}]{Function \mintinline{shell}{buildBtVertex}: Given a Set of Vertex in $\mathbb{P}(U + L)$, if any of those vertices matches with some vertex in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bi-triangles that matches that query}
+\caption{Function \mintinline{shell}{buildBtVertex}}
 \label{algo:buildBtVertex}
 \end{algorithm}
 
-\begin{algorithm}[h!]
+\begin{algorithm}
 \SetKwInOut{I}{Input}
 \SetKwInOut{O}{Output}
 \SetKwFunction{but}{buildBtEdge}
@@ -611,112 +602,123 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
             \Return{False}
       }
 }
-\caption[Function \mintinline{shell}{buildBtEdge}]{Function \mintinline{shell}{buildBtEdge}: Given a Set of Edges in $\mathbb{P}(E)$, if any of those edges matches with some edge in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bi-triangles that matches that query}
+\caption{Function \mintinline{shell}{buildBtEdge}}
 \label{algo:buildBtEdge}
 \end{algorithm}
 
-% \clearpage
-% \section{Complexity Analysis of Algorithm}
-% The complexity analysis provided in this section will cover each of the principal pseudo-code algorithms described in the previous \autoref{sub:sec:iebt:dpalgo}, which includes \autoref{algo:source}, \autoref{algo:gen}, \autoref{algo:sink} and \autoref{algo:fil} (including all actors). 
+\clearpage
+\section{Complexity Analysis of Algorithm}
+This complexity analysis does not provide an analysis of the algorithm as a whole with all the details of \acrshort{dp} model included.
+Just the opposite, we are only limiting the analysis to the specific functions without taking into consideration neither the context of the parallelization model nor \acrshort{dp}.
 
-% \begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
-% The size of all possible aggregated wedges is upper bound by $|L|$.
-% \end{theorem}
-% \begin{proof}
-% This can be deduced by \dref{def:awg}, because exactly each $l \in L$ is participating on a wedge.
-% \end{proof}
+Having said that, we are going to conduct the complexity analysis of the algorithm focusing on each stage. 
+$\fbt$ stage is going to be analyzed with all its actors as a single stage.
 
-% \begin{complexity}[Source $\ibt$]\label{prop:comp-src}
-% The total complexity of $\ibt$ algorithm in worst-case is $O(|E|)$.
-% \end{complexity}
-% \begin{proof}
-% In the case of this stage, we have three loops. The first one is the number of edges of the graph $|E|$, the second in the number 
-% of possible \acrshort{awg} which is $|L|$ because of \autoref{theorem:awg}.
-% And the last is the amount of $Q$, then worst-case complexity is $O(|E| + |L| + |Q|)$.
-% Since $|L| \leq |E|$ by \dref{def:bt} and $|Q| << |E|$ because otherwise the user will be able to manually inspect the whole graph and we are in a \emph{pay-as-you-go} model
-% as we have described in \autoref{relate-work}.
-% Therefore, $O(|E|)$ 
-% \end{proof}
+\begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
+The size of all possible aggregated wedges is upper bound by $|L|$.
+\end{theorem}
+\begin{proof}
+This can be deduced by \dref{def:awg}, because exactly each $l \in L$ is participating on a wedge.
+\end{proof}
 
-% \begin{complexity}[Generator $\gbt$]
-% The total complexity of $\gbt$ algorithm in worst-case is $O(2|L| + |\bt|)$.
-% \end{complexity}
-% \begin{proof}
-% $\gbt$ receives at most $|L|$ edges in in \autoref{algo:gen:1} first loop, since $\aaa$ will collect all the upper vertices from the same $l$ without bypassing edges with the same $l$ (\autoref{theorem:awg}).
-% In \autoref{algo:gen:2}, the second loop, it will receive at most $|L|$ aggregated wedges $W_l$, also can be deduced by \autoref{theorem:awg}.
-% Finally, it will receive all possible $\bti \subseteq \bt$. Then worst-case complexity is $O(|L| + |L| + |\bt|) = O(2|L| + |\bt|)$.
-% \end{proof}
+\begin{proposition}[Complexity on Source $\ibt$]\label{prop:comp-src}
+The total complexity of $\ibt$ algorithm in worst-case is $O(|E|)$.
+\end{proposition}
+\begin{proof}
+In the case of this stage we have three loops. The first one is the number of edges of the graph $|E|$, the second in the number 
+of possible \acrshort{awg} which is $|L|$ because of \autoref{theorem:awg}.
+And the last is the amount of $Q$, then worst-case complexity is $O(|E| + |L| + |Q|)$.
+Since $|L| \leq |E|$ by \dref{def:bt} and $|Q| << |E|$ because otherwise the user will be able to manually inspect the whole graph and we are in a \emph{pay-as-you-go} model
+as we have described in \autoref{relate-work}.
+Therefore, $O(|E|)$ 
+\end{proof}
 
-% \begin{complexity}[Sink $\obt$]
-% The total complexity of $\obt$ algorithm in worst-case is $O(|\bt|)$.
-% \end{complexity}
-% \begin{proof}
-% Obvious by definition of \autoref{algo:sink}.
-% \end{proof}
+% TODO: Recibe potencialmente todos los l \in L en el peor caso. 
+\begin{proposition}[Complexity on Generator $\gbt$]
+The total complexity of $\gbt$ algorithm in worst-case is $O(|E| + |\bt|)$.
+\end{proposition}
+\begin{proof}
+$\gbt$ could receive potentially all edges, then there is a worst case cost of $|E|$.
+After that it will receive all $|L|$ worst case, as we have seen in \autoref{theorem:awg}.
+Finally, it will receive all possible $\bti \subseteq \bt$. Then worst-case complexity is $O(|E| + |\bt| + |L|)$.
+For same reason in \pref{prop:comp-src} $|L|$ can be discarded, therefore complexity is $O(|E| + |\bt|)$.
+\end{proof}
 
-% \begin{complexity}[Filter $\fbt$]
-% The total complexity of $\fbt$ algorithm in worst-case is $O(\binom{|L|}{2} \times 3|U| + \binom{|V|}{6})$.
-% \end{complexity}
-% \begin{proof}
-% Since actors in filters are executed sequentially, the complexity of $\aaa$ is $O(|E|)$ by \dref{algo:act-1}.
-% Then for $\ab$ complexity is $O(3|U|)$ because of intersection and difference operation on Set inside the loop is $O(m+n)$ each. 
-% Since $|U| = m = n$ worst case, then the cost of each loop is $O(3|U|)$.  
-% The complexity of $\ac$ is $O(\binom{|L|}{2} \times 3|U|)$. For building all possible $\dw$ we need all possible combinations of $|L|$ taken by $2$ worst case, times the complexity of building for each case the three sets of incident edges.
-% Finally for building all possible $\bt$ in $\ad$ worst case is $O(\binom{|V|}{6})$.
-% \end{proof}
+\begin{proposition}[Complexity on Sink $\obt$]
+The total complexity of $\obt$ algorithm in worst-case is $O(|\bt|)$.
+\end{proposition}
+\begin{proof}
+Obvious by definition of \autoref{algo:sink}.
+\end{proof}
+
+% TODO: actor1 |E| worst case no es correcto porque eso ocurriria solo en el primer filter y no en el resto.
+% TODO: actor2 La interseccion es 3 veces entre el U y los W_l, y a su vez no es cierto que m = n = |U|
+% TODO: actor3 Los double wedges que se intentan construir no se estan combinando en el mismo filtro, sino que el filtro
+% recibe wedges y construye los que puede, con lo cual no es una combinatoria.
+% TODO: actor4 
+\begin{proposition}[Complexity of Filter $\fbt$]
+The total complexity of $\fbt$ algorithm in worst-case is $O(\binom{|L|}{2} \times 3|U| + \binom{|V|}{6})$.
+\end{proposition}
+\begin{proof}
+Since actors in filters are executed sequentially, the complexity of $\aaa$ is $O(|E|)$ by \dref{algo:act-1}.
+Then for $\ab$ complexity is $O(3|U|)$ because of intersection and difference operation on Set inside the loop is $O(m+n)$ each. 
+Since $|U| = m = n$ worst case, then the cost of each loop is $O(3|U|)$.  
+The complexity of $\ac$ is $O(\binom{|L|}{2} \times 3|U|)$. For building all possible $\dw$ we need all possible combinations of $|L|$ taken by $2$ worst case, times the complexity of building for each case the three sets of incident edges.
+Finally for building all possible $\bt$ in $\ad$ worst case is $O(\binom{|V|}{6})$.
+\end{proof}
       
       
 \clearpage
 \section{Correctness of the Algorithm}
-Given a bitriangle  $BT_{\ell}^{\mu} = \bti$ as we defined in \dref{def:bt}, where the 6-cycle is $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$.
+Given a \acrshort{bt} $BT_{\ell}^{\mu} = \bti$ as we defined in \dref{def:bt}, where the 6-cycle is $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$.
 
-%A bitriangle can be described as a sequence $(C,a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U\footnote{In the enumeration, L and $U$ be interchanged}$
+%A bi-triangle can be described as a sequence $(C,a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U\footnote{In the enumeration, L and $U$ be interchanged}$
 
-We need to prove that the algorithm can enumerate all bitriangle in the graph and also that there are no duplicates in the enumeration.
+We need to prove that the algorithm can enumerate all bi-triangle in the graph and also that there are no duplicates in the enumeration.
 
 Very recently, Qiao et al. proposed CrystalJoin~\cite{Lai} that aims at resolving the output crisis by compressing the intermediate results.
-We use the same technique, compressing a group of bitriangles as we define in \dref{def:abt} $\langle \ell, \hat{U}_l\rangle$, where $\ell = (l_1,l_2,l_3,)$ and $\hat{U}_l= \la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$.
+
+We use the same technique, compressing a group of bi-triangles as we define in \dref{def:abt} $\langle \ell, \hat{U}_l\rangle$, where $\ell = (l_1,l_2,l_3,)$ and $\hat{U}_l= \la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$ ($\at$).
  
 
-First we are going to prove that if we take all the triples $(l_1,l_2,l_3)$  such $l_1<l_2$ and $l_2<l_3$  and  $\bti$ is a  bitriangle, then it is not stored twice (theorem \ref{TH-unicity}). 
-We will show that we store all the aggregate bitriangles where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $l_3$ (theorem \ref{TH-all}). 
-\begin{theorem} \label{TH-unicity} Given a graph a bipartite graph $G = ((U\cup L),E)$ and the \acrshort{iebt} every bitriangle occurring in $G$ is stored at most once.
+First we are going to prove that if we take all the triples $(l_1,l_2,l_3)$  such $l_1<l_2$ and $l_2<l_3$  and  $\la (l_1,l_2,l_3,), \hat{U}_l \ra$ is an aggregate  bi-triangle, then it is not stored twice (theorem \ref{TH-unicity}). 
+We will show that we store all the aggregate bi-triangles where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $l_3$ (theorem \ref{TH-all}). 
+\begin{theorem} \label{TH-unicity}Every aggregated bi-triangle is stored  at most once 
 
 \end{theorem}
 \begin{proof}
-
-Let $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, such that $l_1 < l_2 <l_3$. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$, or $\ac$.  
+As a bi-triangle is a 6-closed cycle it can be described as a sequence of nodes  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, each one adjacent to its neighbour. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$ .  
 \begin{itemize}
-      \item According to lines 7-12 of $\ab$ $(u_1,l_2,u_3,l_3,u_2,l_1,u_1)$ is  not accepted  when constructing elements of $\dw$ to be used by $\ac$  because $l_2 > l_1$ 
-      \item According to lines 7 of $\ac$ $(u_3,l_2,u_1,l_1,u_2,l_3,u_3)$ is not accepted because $l_2 > l_1$
-      \item According to lines 7-12 of $\ab$ $(u_3,l_3,u_2,l_1,u_1,l_2,u_3)$ is  not accepted  when constructing elements of $\dw$ to be used by $\ac$  because  $l_3 > l_2$
-      \item According to lines 7-12 of $\ab$ $(u_2,l_3,u_3,l_2,u_1,l_1,u_2)$ not accepted because $l_3 > l_1 $
-      \item  According to lines 7-12 of $\ab$ and line 7 in $\ac$ $(u_2,l_1,u_1,l_2,u_3,l_3,u_2)$ is accepted because $l_1 < l_3 $ and $l_1 < l_2 <l_3$ 
-      \item According to  line 7 in $\ac$ $(u_1, l_1,u_2,l_3,u_3,l_2,u_1)$ is not accepted because $l_3 > l_2$
+      \item $(u_1,l_2,u_3,l_3,u_2,l_1,u_1)$ not accepted because $l_3 > l_1$
+      \item $(u_3,l_2,u_1,l_1,u_2,l_3,u_3)$ not accepted because $l_2 > l_1$
+      \item $(u_3,l_3,u_2,l_1,u_1,l_2,u_3)$ not accepted because $l_3 > l_1$ and $l_3 > l_2$
+      \item $(u_2,l_3,u_3,l_2,u_1,l_1,u_2)$ not accepted because $l_3 > l_1 $
+      \item $(u_2,l_1,u_1,l_2,u_3,l_3,u_2)$ is accepted because $l_1 < l_3 $ in actor 2 of filter $F_{l_1}$ or $F_{l_3}$ and $l_1 < l_2 <l_3$  in actor 3
+      \item $(u_1, l_1,u_2,l_3,u_3,l_2,u_1)$ not accepted because $l_3 > l_1$
 \end{itemize}
 
 
-Therefore the  only bitriangle  constructed by the algorithm is the one that satisfies $l_1 < l_2 < l_3$ where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $u_3$.
+Therefore the  only sequence constructed by the algorithm is the one that satisfies $l_1 < l_2 < l_3$ where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $u_3$.
 \end{proof}
 
 
-\begin{theorem}\label{TH-all}Given a bipartite graph $G$, if the bitriangle $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ such that $l_1 < l_2 <l_3$ is present in G, then $\bti$ can be enumerated.
-\end{theorem}
+\begin{theorem}\label{TH-all}Every bi-triangle present in the graph can be  listed.
 
+\end{theorem}
 
 \begin{proof}
 \iffalse
-Obvious from the definition of $I,J,K$  and the algorithm of obtaining bitriangles. 
+Obvious from the definition of $I,J,K$  and the algorithm of obtaining bi-triangles. 
 \fi
-  Let $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, such that $l_1 < l_2 <l_3$ is present in the graph. 
+Lets assume that a bi-triangle $(C,a,A,b,B,c,C)$ is present in the graph. We will assume that $a$ is the smallest element in the set $\{a,b,c\}$ and $c$ is the bigger.
 
-When $\aaa$ acting in filter $F_{l_1}$ ends reading all the edges, $\{u_1,u_2\} \subseteq W_{l_1}$. Also when $\aaa$ in filter $F_{l_3}$ ends reading all the edges, $\{u_2,u_3\} \subseteq W_{l_3}$. 
+When $\aaa$ acting in filter $F_a$ ends reading all the edges, $\{A,B\} \subseteq W_a$. Also when $\aaa$ in filter $F_c$ ends reading all the edges, $\{B,C\} \subseteq W_c$. 
 
-As $l_1 < l_3$ in $\ab$, in lines 7-12, in filter $F_{l_1}$ or in filter $F_{l_3}$, the pair $(l_1,l_3)$  will be added to 
-$\mathsf{dw}$. When $\ac$ in lines 7-16, in filter $F_{l_1}$ or in filter $F_{l_3}$ receives $(l_2, W_{l_2})$  will construct the corresponding  $BT$ because of the condition in line 10 is satisfied (non empty intersection). Therefore, the bitriangle is stored in $\mathsf{bt}$ an thus $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ can be listed by $\ad$.
+As $a < c$  in filter $F_a$ the pair $(a,c)$  will be added to 
+$DW$. When $\ac$ in filter $F_a$ receives $(b, W_b)$ will add to $BT$ because of the non empty intersection. Therefore the bi-triangle $(a,A,b,B,c,C)$ can be recognized
 \end{proof}
 \iffalse
-So we are going to talk from now on about the bitriangles stored in filter $F_a$.
+So we are going to talk from now on about the bi-triangles stored in filter $F_a$.
 
 At the end of the execution of $\ac$ $F_a$ constructs the sets where to choose $A,B,C$ $\at$
 
@@ -728,7 +730,7 @@ In each filter, the pair of lower vertices in the double edges are pairs constru
 
 Actor 3 receives pairs $(b,M) $ where $M$ are all the nodes adjacent to $b$ and has in memory a set of double wedges $\la (a,c), l_2), U_{t_1} \ra$
 
-$\ac$ accepts b as a candidate to construct an element of the set of aggregate bitriangles if $a < b < c$. Therefore the aggregated bitriangles so constructed are recorded in a single filter due to the fact that that the pair $(a,c)$ is present in a single filter.
+$\ac$ accepts b as a candidate to construct an element of the set of aggregate bi-triangles if $a < b < c$. Therefore the aggregated bi-triangles so constructed are recorded in a single filter due to the fact that that the pair $(a,c)$ is present in a single filter.
 \fi
 
         
@@ -736,7 +738,7 @@ $\ac$ accepts b as a candidate to construct an element of the set of aggregate b
 \section{\acrshort{dpbt} implementation}
 As we have seen in the previous \autoref{dp-hs}, first we need to define the \acrshort{dp} using the \acrshort{dsl}.
 
-\begin{listing}[htp!]
+\begin{listing}[H]
 \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={3}]{haskell}
 
 type DPBT = Source (Channel (Edge :<+> W :<+> Q :<+> BT :<+> BTResult :<+> W :<+> Eof))
@@ -749,13 +751,13 @@ type DPBT = Source (Channel (Edge :<+> W :<+> Q :<+> BT :<+> BTResult :<+> W :<+
 \label{src:dpbt:1}
 \end{listing}
 
-In \autoref{src:dpbt:1} can be appreciated the use of feedback channel in the highlighted line. 
+In \autoref{src:dpbt:1} can be appreciated the use of retro feed channel in the highlighted line. 
 Automatically \acrshort{dpbt} is going to connect this with the $\ibt$.
 
-$\ibt, \obt, \gbt$ are not going to be covered because they are straightforward to follow from the code. 
-The most sofisticated part of the algorithm, as we have seen in \autoref{sub:sec:iebt:dpalgo}, relies on actor filter.
+$\ibt, \obt, gbt$ are not going to be covered because they are straightforward to follow from the code. 
+The main part of the algorithmic complexity, as we have seen in the pseudo-code, relies on actor filter.
 
-\begin{listing}[htp!]
+\begin{listing}[H]
 \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={16,21}]{haskell}
 
 actor1 :: Edge
@@ -786,12 +788,11 @@ actor1 (_, l) redges _ _ _ _ _ we ww1 _ _ _ _ = do
 \label{src:dpbt:2}
 \end{listing}
 
-In \autoref{src:dpbt:2} $\aaa$ source code can be appreciated. Since all the actors are inside the same filter context, all of them have access to read and write
+In \autoref{src:dpbt:2} $\aaa$ source code can be appreciated. Since all the actors are inside the same filter context, all of them has access to read and write
 channels of all the filters. That explains the number of parameters which is generated by the \acrshort{idl}.
-The first highlighted line is the catamorphism (\mintinline{haskell}{foldM_}) of the $IC_E$ channel, which corresponds to \autoref{algo:act-1:1}.
-At the last highlighted line the code is downstream the aggregated wedge collected in this filter.
+The first highlighted line is the catamorphism (\mintinline{haskell}{foldM_}) of the $IC_E$ channel. 
 
-\begin{listing}[htp!]
+\begin{listing}[H]
 \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={22,30,36}]{haskell}
 
 actor2 :: Edge
@@ -837,9 +838,9 @@ buildDW' !w_t !w_t' = (w_t IS.\\ w_t', IS.intersection w_t w_t', w_t' IS.\\ w_t)
 \end{listing}
 
 In \autoref{src:dpbt:3}, the interesting part of $\ab$ is the construction of $\dwi$. That is done by the function \mintinline{haskell}{buildDW}
-and \mintinline{haskell}{buildDW'} which are building the three subsets required to create aggregated double-wedges $\dwi$.
+and \mintinline{haskell}{buildDW'} which are building the three subsets required to build $\dwi$.
 
-\begin{listing}[htp!]
+\begin{listing}[H]
 \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={27,34-40}]{haskell}      
 actor3 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
@@ -886,10 +887,10 @@ filterUt wt (si, sj, sk) =
 \label{src:dpbt:4}
 \end{listing}
 
-$\ac$ in \autoref{src:dpbt:4}, shows the process of collecting aggregated bi-triangles $\ati$. In highlighted lines on \autoref{src:dpbt:4} we can see the algorithm to detect when the \acrshort{awg}
+$\ac$ in \autoref{src:dpbt:4}, shows the build $\ati$ and in highlighted lines we can see the algorithm to detect when the \acrshort{awg}
 received in the feedback channel are \acrshort{awgc} according to \dref{def:awgc}.
 
-\begin{listing}[htp!]
+\begin{listing}[H]
 \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={21-22,27-31}]{haskell}            
 actor4 :: Edge
        -> ReadChannel (UpperVertex, LowerVertex)
@@ -927,36 +928,9 @@ sendBts (BTTT bttt) q@(Q c _ _) wbtr = case c of
 \label{src:dpbt:5}
 \end{listing}
 
-$\ad$ in \autoref{src:dpbt:5} shows the pattern match done over the query $Q$ sum type and the construction
-of the final \acrshort{bt} to be downstream to the $\obt$. 
-
-\begin{listing}[htp!]
-\begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={}]{haskell}            
-filterBTByVertex :: MonadIO m => BT -> IntSet -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
-filterBTByVertex bt vertices f =
-  if inLower bt vertices then
-     liftIO
-     . mapConcurrently_ f
-     . buildBT
-     $ bt
-  else 
-    if inUpper bt vertices 
-      then buildBT' bt vertices f
-      else pure ()
-
-filterBTByEdge :: MonadIO m => BT -> Set Edge -> ((Int, Int, Int, Int, Int, Int, Int) -> IO ()) -> m ()
-filterBTByEdge bt edges f =
-  when (getAny $ foldMap (`hasEdge` bt) edges)
-   $ liftIO . mapConcurrently_ f . R.filter (isInSetEdge edges) . buildBT $ bt
-      
-\end{minted}
-\caption{[\mintinline{shell}{Edges.hs}] \texttt{filterBTByVertex} and \texttt{filterBTByEdge}}
-\label{src:dpbt:6}
-\end{listing}
-      
-Finally, definition of \mintinline{haskell}{filterBTByEdge} and \mintinline{haskell}{filterBTByVertex} can be seen in \autoref{src:dpbt:6} and differs 
-from the pseudo-code presented in \autoref{algo:buildBtEdge} and \autoref{algo:buildBtVertex} because it is using \acrshort{hs} specific combinators and 
-for-comprehension lists to take advantage of the non-strictness of the language as well as some concurrency primitives.
+Finally $\ad$ in \autoref{src:dpbt:5} shows the pattern match done over the query $Q$ sum type and the construction
+of the final \acrshort{bt} to be downstream to the $\obt$. We are ommiting here the function definition of \mintinline{haskell}{filterBTByEdge}
+and \mintinline{haskell}{filterBTByVertex}.
 
 \section{Chapter Summary}
 This chapter presents the details of the \acrshort{dpbt} algorithm. In the first part, we have introduced the sketch of the algorithm.

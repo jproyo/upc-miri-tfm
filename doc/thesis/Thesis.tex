@@ -27,7 +27,7 @@
 \usepackage[nottoc]{tocbibind}
 \usepackage[cache=true]{minted}
 
-\title{An algorithm for incrementally enumerating bi-triangles in large bipartite networks}
+\title{An algorithm for incrementally enumerating bitriangles in large bipartite networks}
 \setthesistype{Master}
 \author{Juan Pablo Royo Sales}
 \degree{%
@@ -78,8 +78,8 @@
 \abstract{
 A bipartite network is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. 
 For instance, two different object sets can be modeled with a bipartite graph, establishing the relationships between them (e.g., a network of drugs and side effects of those drugs). 
-One of the metrics that reflect properly if the relationships are strong on particular elements of sets are bi-triangles of bipartite graphs. 
-Having an algorithm that enumerates bi-triangles incrementally that matches specific criteria is extremely useful for real networks and scenarios like expressed before. 
+One of the metrics that reflect properly if the relationships are strong on particular elements of sets are bitriangles of bipartite graphs. 
+Having an algorithm that enumerates bitriangles incrementally that matches specific criteria is extremely useful for real networks and scenarios like expressed before. 
 On the other hand, streaming processing has given rise to new computation paradigms processing data effectively.
 The most important features of these paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, 
 reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce incremental results. 
@@ -87,7 +87,7 @@ The Dynamic Pipeline Paradigm (DPP) is a naturally functional approach to deal w
 This fact encourages us to use Haskell, a purely functional programming language, for DPP.  
 In this work, we validate the suitability of (parallel) Haskell to implement a Dynamic Pipeline Framework (DPF). 
 After that, we show the abstraction and implementation details of the DP Framework written in Haskell and then, 
-we provide an algorithm for enumerating bi-triangles in a bipartite graph given particular criteria. 
+we provide an algorithm for enumerating bitriangles in a bipartite graph given particular criteria. 
 At the end of the work, we empirically evaluate the implementation against large bipartite networks through a series of experiments and metrics.
 We also discuses the conclusions that we arrive at based on these experiments' results.
 All these results are novel and cannot be compared with related works since they focus on counting problems and not enumeration.

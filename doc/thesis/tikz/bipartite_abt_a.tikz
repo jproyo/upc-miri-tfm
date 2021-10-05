@@ -17,7 +17,9 @@
 	\draw (1) [line width=0.5mm] -- (a);
 	\draw (3) [line width=0.5mm] -- (a);
 	\draw (7) [line width=0.5mm] -- (a);
+	\draw (1) [line width=0.5mm,dotted] -- (b);
 	\draw (1_1) [line width=0.5mm,dotted] -- (b);
+	\draw (1_2) [line width=0.5mm,dotted] -- (b);
 	\draw (5) [line width=0.5mm,dotted] -- (b);
 	\draw (1) [line width=0.5mm] -- (c);
 	\draw (3) [line width=0.5mm] -- (c);

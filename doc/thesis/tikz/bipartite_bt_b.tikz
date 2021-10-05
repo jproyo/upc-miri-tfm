@@ -1,0 +1,17 @@
+\begin{tikzpicture}
+	\node[shape=circle,draw=red,fill=red,label=above:$1$] (1)  {};
+	\node[shape=circle,draw=yellow,fill=yellow,label=above:$5$] (5) [right of=1] {};
+	\node[shape=circle,draw=blue,fill=blue,label=above:$7$] (7) [right of=5] {};
+	\node[shape=circle,draw=green,fill=green,label=below:$a$] (a) [below of=5] {};
+	\node[shape=circle,draw=green,fill=green,label=below:$b$] (b) [below of=1] {};
+	\node[shape=circle,draw=green,fill=green,label=below:$c$] (c) [below of=7] {};
+
+	\draw (1) [line width=0.5mm] -- (a);
+	\draw (7) [line width=0.5mm] -- (a);
+	\draw (1) [line width=0.5mm,dotted] -- (b);
+	\draw (5) [line width=0.5mm,dotted] -- (b);
+	\draw (5) [line width=0.5mm] -- (c);
+	\draw (7) [line width=0.5mm] -- (c);
+\end{tikzpicture}
+
+ 
