@@ -615,55 +615,74 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
 \label{algo:buildBtEdge}
 \end{algorithm}
 
-% \clearpage
-% \section{Complexity Analysis of Algorithm}
-% The complexity analysis provided in this section will cover each of the principal pseudo-code algorithms described in the previous \autoref{sub:sec:iebt:dpalgo}, which includes \autoref{algo:source}, \autoref{algo:gen}, \autoref{algo:sink} and \autoref{algo:fil} (including all actors). 
+\clearpage
+\section{DRAFT - Complexity Analysis of Algorithm}
+The complexity analysis provided in this section will cover each of the principal pseudo-code algorithms described in the previous \autoref{sub:sec:iebt:dpalgo}, this is \autoref{algo:source}, \autoref{algo:gen}, \autoref{algo:sink} and \autoref{algo:fil} (including all actors). 
 
-% \begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
-% The size of all possible aggregated wedges is upper bound by $|L|$.
-% \end{theorem}
-% \begin{proof}
-% This can be deduced by \dref{def:awg}, because exactly each $l \in L$ is participating on a wedge.
-% \end{proof}
+\begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
+The size of all possible aggregated wedges is upper bound by $|L|$.
+\end{theorem}
+\begin{proof}[Anlaysis]
+This can be deduced by \dref{def:awg}, because exactly each $l \in L$ is participating on a wedge.
+\end{proof}
 
-% \begin{complexity}[Source $\ibt$]\label{prop:comp-src}
-% The total complexity of $\ibt$ algorithm in worst-case is $O(|E|)$.
-% \end{complexity}
-% \begin{proof}
-% In the case of this stage, we have three loops. The first one is the number of edges of the graph $|E|$, the second in the number 
-% of possible \acrshort{awg} which is $|L|$ because of \autoref{theorem:awg}.
-% And the last is the amount of $Q$, then worst-case complexity is $O(|E| + |L| + |Q|)$.
-% Since $|L| \leq |E|$ by \dref{def:bt} and $|Q| << |E|$ because otherwise the user will be able to manually inspect the whole graph and we are in a \emph{pay-as-you-go} model
-% as we have described in \autoref{relate-work}.
-% Therefore, $O(|E|)$ 
-% \end{proof}
+\begin{theorem}[$|\dw| \leq \binom{|L|}{2}$]\label{theorem:adwg}
+The size of all possible aggregated double-wedges is upper bound by $\binom{|L|}{2}$.
+\end{theorem}
+\begin{proof}[Anlaysis]
+This can be deduced by \dref{def:adwg}, and by \autoref{theorem:awg}. If we can combine vertices from $L$ taken by $2$ without repetition that forms an \acrshort{adwg}, we have at most that amount of possible aggregated double-wedges combinations.
+\end{proof}
+      
+\begin{complexity}[Source $\ibt$]\label{prop:comp-src}
+The total complexity of $\ibt$ algorithm in worst-case is $O(|E|)$.
+\end{complexity}
+\begin{proof}[Anlaysis]
+In the case of this stage, we have three \texttt{for} loops. The first one is done in the number of edges of the graph $|E|$. The second \texttt{for} loop iterates over  
+all possible \acrshort{awg} which is at most $|L|$ according to \autoref{theorem:awg}.
+And the last \texttt{for} loop is taking the size of all commands $Q$ provided by the user. Then, worst-case complexity is $O(|E| + |L| + |Q|)$.
+Since $|L| \leq |E|$ by \dref{def:bt} and $|Q| << |E|$ because otherwise the user will be able to manually inspect the whole graph. Since the algorithm implements a \emph{pay-as-you-go} model
+as we have described in \autoref{relate-work}, it has a high cost for the user to ask for an amount of commands near to $|E|$.
+Therefore, the dominant term is $|E|$, and the complexity of this part of the algorithm is $O(|E|)$.
+\end{proof}
 
-% \begin{complexity}[Generator $\gbt$]
-% The total complexity of $\gbt$ algorithm in worst-case is $O(2|L| + |\bt|)$.
-% \end{complexity}
-% \begin{proof}
-% $\gbt$ receives at most $|L|$ edges in in \autoref{algo:gen:1} first loop, since $\aaa$ will collect all the upper vertices from the same $l$ without bypassing edges with the same $l$ (\autoref{theorem:awg}).
-% In \autoref{algo:gen:2}, the second loop, it will receive at most $|L|$ aggregated wedges $W_l$, also can be deduced by \autoref{theorem:awg}.
-% Finally, it will receive all possible $\bti \subseteq \bt$. Then worst-case complexity is $O(|L| + |L| + |\bt|) = O(2|L| + |\bt|)$.
-% \end{proof}
+\begin{complexity}[Generator $\gbt$]\label{comp:anal:gen}
+The total complexity of $\gbt$ algorithm in worst-case is $O(2|L| + |Q||\ati|)$.
+\end{complexity}
+\begin{proof}[Anlaysis]
+$\gbt$ receives at most $|L|$ edges in in \autoref{algo:gen:1} first loop, since $\aaa$ will collect all the upper vertices from the same $l$ without bypassing those collected edges (\autoref{theorem:awg}).
+In \autoref{algo:gen:2}, the second loop, it will receive at most $|L|$ aggregated wedges $W_l$, which also can be deduced by \autoref{theorem:awg}.
+Finally, it will receive all matched $\btii \subseteq \bt$. By \autoref{algo:act-4}, \autoref{algo:buildBtEdge} and \autoref{algo:buildBtVertex} the amount of possible $\btii$ matched is $|Q| \times |\ati|$ (see \dref{def:abt}).
+Then worst-case complexity is $O(|L| + |L| + |Q||\ati|) = O(2|L| + |Q||\ati|)$.
+\end{proof}
 
-% \begin{complexity}[Sink $\obt$]
-% The total complexity of $\obt$ algorithm in worst-case is $O(|\bt|)$.
-% \end{complexity}
-% \begin{proof}
-% Obvious by definition of \autoref{algo:sink}.
-% \end{proof}
+\begin{complexity}[Sink $\obt$]
+The total complexity of $\obt$ algorithm in worst-case is $O(|Q||\ati|)$.
+\end{complexity}
+\begin{proof}[Anlaysis]
+Obvious by definition of \autoref{algo:sink} and by complexity analysis in \autoref{comp:anal:gen}.
+\end{proof}
 
-% \begin{complexity}[Filter $\fbt$]
-% The total complexity of $\fbt$ algorithm in worst-case is $O(\binom{|L|}{2} \times 3|U| + \binom{|V|}{6})$.
-% \end{complexity}
-% \begin{proof}
-% Since actors in filters are executed sequentially, the complexity of $\aaa$ is $O(|E|)$ by \dref{algo:act-1}.
-% Then for $\ab$ complexity is $O(3|U|)$ because of intersection and difference operation on Set inside the loop is $O(m+n)$ each. 
-% Since $|U| = m = n$ worst case, then the cost of each loop is $O(3|U|)$.  
-% The complexity of $\ac$ is $O(\binom{|L|}{2} \times 3|U|)$. For building all possible $\dw$ we need all possible combinations of $|L|$ taken by $2$ worst case, times the complexity of building for each case the three sets of incident edges.
-% Finally for building all possible $\bt$ in $\ad$ worst case is $O(\binom{|V|}{6})$.
-% \end{proof}
+\paragraph{Filter Consideration}\label{comp:an:filter:note} In the case of complexity analysis of the Filter instances $\fbt$ algorithms, which involves the four actors, we are going to take into consideration the worst-case.
+The worst-case is the first filter, because it is the one that is going to receive all the edges from the $\ibt$ at least as we can see in \autoref{sub:sec:algo-sketch}. 
+If the second filter is spawned, is going to receive $|E|-2$ edges, the third $|E|-3$, and so on. 
+
+\begin{complexity}[Filter $\fbt$]
+The total complexity of $\fbt$ algorithm in worst-case is $O(|E| + |L| \times \binom{|L|}{2} \times 6|U| + |Q||\ati|)$.
+\end{complexity}
+\begin{proof}[Anlaysis]
+Since actors in filters are executed sequentially, lets analyze each actor separately. 
+The complexity of $\aaa$ is $O(|E|)$ by \dref{algo:act-1}. 
+This worst-case complexity of $|E|$ for $\aaa$ only happens in the first filter as we have explained before in \ref{comp:an:filter:note}. 
+Then for $\ab$ complexity is $O(|L| \times 6|U|)$. $|L|$ is the upper bound by \autoref{theorem:awg} since the \texttt{for} loop is iterating over all $W_l$ received from the channel.
+Inside that \texttt{for} loop there is taking place 1 intersection and 2 set difference operations. Each of those operations are $O(m+n)$ where $m = n = |U|$ in the worst-case, since $W_l \subseteq U$ by \dref{def:awg}. 
+Then, the cost of each loop is $O(6|U|)$ worst-case.  
+The complexity of $\ac$ is $O(|L| \times \binom{|L|}{2} \times 6|U|)$. The first $|L|$ is the outer \texttt{for} loop which receives all the possible \acrshort{awg}, which is upper bounded by $|L|$ according to \autoref{theorem:awg}.
+$\binom{|L|}{2}$ is the second \texttt{for} loop which is iterating over all the \acrshort{adwg} that are in this filter, and it is upper bounded by $\binom{|L|}{2}$ according to \autoref{theorem:adwg} and supposing that this filter contains all the \acrshort{adwg} in the worst case. 
+Then, $6|U|$ is inside of the second \texttt{for} loop and follows the same analisys for intersection and set difference provided in $\ab$. Finally, $\ad$ takes $O(|Q||\ati|)$ as we have described in $\gbt$ complexity analysis.
+Gluing everything together the worst-case complexity of four actors in the filter instance is $O(|E| + |L| \times 6|U| + |L| \times \binom{|L|}{2} \times 6|U| + |Q||\ati|)$. 
+Since $|L| \times \binom{|L|}{2} \times 6|U| > |L| \times 6|U|$, we can eliminate that term which is not dominating. Therefore $O(|E| + |L| \times \binom{|L|}{2} \times 6|U| + |Q||\ati|)$.
+
+\end{proof}
       
       
 \clearpage

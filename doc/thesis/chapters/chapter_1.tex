@@ -20,8 +20,9 @@ One of the most common techniques to analyze bipartite networks, i.e. to compute
 However, the projection of the bipartite graph distorts the relationships represented in the original networks. Among other problems caused by transforming bipartite networks to unipartite ones, there is the upgrowth of the number of links and hence the distortion of some properties of the original graph such as the number of triangles, the density, etc. (see \cite{latapy2008basic} for more details). 
 In particular, this problem impacts the in-memory manipulation of the graph and distorts the link prediction for bipartite networks.
 
-Discarding the transformation of bipartite graphs into unipartite graphs, in a bipartite graph, there are no triangles as classically defined for graphs. Thus, since computing and using triangles do not fit well for the case of bipartite graphs, Opsahl~\cite{opsahl} proposes to use another locality graph pattern or motif, the bitriangle or closed 4-path, as the smallest unit of cohesion of a bipartite graph. 
-Bitriangles generate triangles in the projection of bipartite graphs. Yang et al.~\cite{btcount}  study the problem of counting bitriangles and, propose and analyze, different algorithms to do it. In particular, they propose an algorithm for local counting bitriangles. 
+Discarding the transformation of bipartite graphs into unipartite graphs, in a bipartite graph, there are no triangles as classically defined for graphs. Thus, since computing and using triangles do not fit well for the case of bipartite graphs, Opsahl~\cite{opsahl} proposes to use another locality graph pattern or motif, the bitriangle or 6-cycle, i.e. a cycle with
+three vertices from one type of vertices and three vertices from the other type of vertices, as the smallest unit of cohesion of a bipartite graph. In his work, Opsahl argues that 
+bitriangles in bipartite graphs capture the idea of the triadic closure in unipartite graphs. Yang et al.~\cite{btcount}  study the problem of counting bitriangles and, propose and analyze, different algorithms to do it. In particular, they propose an algorithm for local counting bitriangles. 
 This is, counting bitriangles in a bipartite graph in which a given vertex/edge occurs.
 
 For example, in \cite{liben2007link} the link prediction problem in a social network is stated as, given a snapshot of a social graph,  inferring which new interactions among its members are likely to occur in the near future. 
@@ -38,7 +39,7 @@ This is why, for overcoming this problem, instead of considering a classical enu
 From our point of view, this means that bitriangles can be incrementally emitted as results. Users continuously receive answers from the algorithm as long as the provided resources support the computation.
 %This leads us to the main motivation of this work which is to provide an Algorithm for Incrementally Enumerating Bitriangles in Large Bipartite Networks. The algorithm must emit  results in an \emph{incremental} way because we want the user to be able to obtain \acrshort{bt} as long as the algorithm is capable of computing them. And, it should \emph{enumerate}, because it is suitable for a wide range of problems like <motif-paths>, in which the user needs to know the specific structure of the \acrshort{bt} as we stated before.
 
-In this work we tackled the problem of providing and implementing an Algorithm for Incrementally Enumerating Bitriangles in Large Bipartite Networks. The algorithm must emit  results in an \emph{incremental} way because we want the user to be able to obtain bitriangles as they are computed.   
+In this work we tackled the problem of providing and implementing an \acrfull{iebt}. The algorithm must emit  results in an \emph{incremental} way because we want the user to be able to obtain bitriangles as they are computed.   
 %The main question that arise is \emph{how to solve} the \acrshort{iebt}. The answer and the purpose of this work are to implement this using a \emph{Streaming Processing} model that can fulfill these requirements.
 Effective streaming processing of large amounts of data has been studied for several years~\cite{enumeratingsg, exploiting, onthefly} as a key factor providing fast and incremental results in big data algorithmic problems. 
 One of the most explored techniques, regardless of the approach, is the exploitation of parallel techniques to take advantage of the available computational power as much as possible. 
@@ -49,29 +50,29 @@ This computational model relies on a functional approach, where the building blo
 %The most important features of these new paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, 
 %reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce incremental results. 
 %The \acrfull{dp} is a naturally functional approach to deal with stream processing. 
-We believe that \acrshort{dp} is the proper model for solving the \acrshort{iebt}. Moreover, since   \acrshort{dp} is focused on dynamic functional units, it encourages us to use \acrlong{hs}, a purely functional programming language where functions are first class citizens, for implementing \acrshort{iebt} under the  \acrshort{dp}.
+We believe that \acrshort{dp} is a proper computational model for solving the \acrshort{iebt}. Moreover, since   \acrshort{dp} is focused on dynamic functional units, it encourages us to use \acrlong{hs}, a purely functional programming language where functions are first class citizens, for implementing \acrshort{iebt} under the  \acrshort{dp}.
 
 \section{Problem Statement}
-A \acrlong{bt} in a \acrlong{bg} is defined as a cycle with three vertices from one vertex set and three for the other. We can also say that it is formed by two connected wedges closed by an additional wedge~\cite{btcount}.
+A bitriangle in a bipartite graph is defined as a 6-cycle with three vertices from one type of vertex set and three vertices from the other type of vertex set. We can also say that it is formed by two connected wedges closed by an additional wedge~\cite{btcount}.
 An example of what it is a \acrshort{bt} and what it is not, can be seen in \autoref{fig:bitriangle-example} and \autoref{fig:bitriangle-not}.
 
 \begin{figure}[htp!]
 \begin{subfigure}[b]{0.5\textwidth}
 \centering
 \inputtikz{bitriangle}
-\caption{Example of \acrshort{bt} in \acrshort{bg}}
+\caption{Example of \acrshort{bt} in a \acrshort{bg}}
 \label{fig:bitriangle-example}
 \end{subfigure}
 \begin{subfigure}[b]{0.5\textwidth}
 \centering
 \inputtikz{not-bitriangle}
-\caption{Not a \acrshort{bt} in \acrshort{bg}}
+\caption{Not a \acrshort{bt} in a \acrshort{bg}}
 \label{fig:bitriangle-not}
 \end{subfigure}
-\caption[{[Int] Example of \acrshort{bt} in \acrshort{bg}}]{Example of \acrshort{bt} in \acrshort{bg}. In the left image we see a bi-triangle well form by 3-cycle wedges. In the right image the figure does not form a bi-triangle because $l_2$ is only connected with $u_3$ breaking the cycle}
+\caption[{[Int] Example of \acrshort{bt} in a \acrshort{bg}}]{Example of \acrshort{bt} in \acrshort{bg}. In the left figure  we see a bitriangle well formed by 3-cycle wedges. In the right image the figure does not form a bitriangle because $l_2$ is only connected with $u_3$ breaking the cycle}
 \end{figure}
 
-As we have stated above, enumerating all possible \acrshort{bt} it is not only computationally hard but, in general, only partial results are needed. In that sense, we can provide a query-based command to search all \acrshort{bt} that matches the query criteria and incrementally deliver results to the user. In this work, we provide an \acrfull{iebt} and its implementation. 
+Enumerating all the possible \acrshort{bt} is computationally hard. However, as we have stated before, most frequently only partial results are needed. In that sense, we can provide a query-oriented  algorithm to search all  the \acrshort{bt} that matches some query criteria and  that incrementally deliver results to the user. In this work, we propose and implement an \acrfull{iebt}.
 
 \section{Proposed Solution}
 The solution proposed in this work is to implement an \acrfull{iebt} using \acrfull{dp} implemented in \acrfull{hs}.
@@ -89,9 +90,9 @@ providing to \acrshort{hs} community the ability to build algorithms using \acrs
 
 To summarize, our contributions are:
 \begin{itemize}
-  \item We develop, formalize, implement and empirically evaluate an \acrlong{iebt} using \acrlong{dp}.
-  \item We conduct a proof of concept to evaluate the use of \acrlong{hs} as an implementation language for \acrlong{dp} solving the \acrlong{wcc} problem.
-  \item We develop a \acrshort{hs} framework to implement any algorithm using \acrlong{dp}.
+  \item We develop, formalize, implement and empirically evaluate an \acrlong{iebt} under the \acrlong{dp}.
+  \item We conduct a proof of concept to assess the use of \acrlong{hs} as an implementation language for \acrlong{dp} solving the \acrlong{wcc} problem.
+  \item We develop a Dynamic Pipeline Framework (DPF) in (parallel) Haskell to implement any algorithm using \acrlong{dp}.
 \end{itemize}
 
 \section{Document Overview} 
@@ -109,5 +110,4 @@ In \autoref{experiments} we describe the experimental analysis conducted to asse
 Finally, at the end of the document in \autoref{conclusions}, we present the future work and the conclusions obtained.
 
 \section{Chapter Summary}
-In this chapter, we have shown the motivation of this work, as well as the problem statement related to that motivation and the proposed solution to that problem.
-We have also described how is going to be the organization of all the documents to facilitate the reader review.
+In this chapter, we have presented the motivation of this work, as well as the problem statement related to that motivation and the proposed solution to that problem. Additionally we provide a document overview to facilitate the reader review.

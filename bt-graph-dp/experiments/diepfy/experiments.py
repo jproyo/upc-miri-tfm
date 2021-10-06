@@ -10,7 +10,8 @@ def plot_experiments():
     # diefpy.plot_answer_trace(traces, f, colors).show()
     # metrics = diefpy.load_metrics(f"{root_path}/{f}/results/metrics.csv")
     # exp1 = diefpy.experiment1(traces, metrics)
-    print(diefpy.dieft(traces, "wang-amazon",4144))
+    # print(diefpy.dieft(traces, "wang-amazon",4144))
+    print(diefpy.dieft(traces, "wang-amazon",4144.76))
     # diefpy.plotExperiment1Test(exp1, f, colors).show()
 
 plot_experiments()
