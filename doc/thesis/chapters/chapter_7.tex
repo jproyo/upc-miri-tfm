@@ -165,58 +165,58 @@ This experiment allows us to answer research questions [R1] and [R3] defined in 
 \paragraph{Procedure} We execute this experiment for each of the networks described in \autoref{data:set} and for each scenario described in \autoref{sub:exp:exp-data-setup}.
 This experiment has been executed five times on each case until we found the proper vertex or edges in the selection described in \autoref{sub:exp:sel-vals}. The criteria followed by the selection of the vertices or edges are detailed in \autoref{sub:exp:sel-vals}.
 The metric  \acrfull{dt}-described in \autoref{sub:metric}- is used to measure the continuous behavior of the proposed approach in a given time frame.
-\autoref{table:e1:def} depicts the different configurations evaluated in this experiment.
+\autoref{table:e1:def} depicts the different configurations evaluated in this experiment. The timeout for all the configuration scenarios setups that appears in \autoref{table:e1:def} have been set in $48$ hours.
 
 \begin{table}[H]
   \centering
   \resizebox{1\textwidth}{!}{%
-  \begin{tabular}{|p{0.25\linewidth}|c|c|c|c|}
+  \begin{tabular}{|p{0.25\linewidth}|c|c|c|}
     \hline
-   \textbf{Network} & \textbf{Scenario ID} & \textbf{Exec Flags} & \textbf{Query} & \textbf{Timeout}\\
+   \textbf{Network} & \textbf{Scenario ID} & \textbf{Exec Flags} & \textbf{Query}\\
    \hline
-   \multirow{9}{*}{Dbpedia} & E-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-edge (921, 4)} & 48 hours\\
-   & E-L & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-edge (383, 397)} & 48 hours\\
-   & E-M & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-edge (540, 60)} & 48 hours\\
-   & VL-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 9} & 48 hours\\
-   & VL-L & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 809} & 48 hours\\
-   & VL-M & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 511} & 48 hours\\
-   & VU-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 921} & 48 hours\\
-   & VU-L & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 93} & 48 hours\\
-   & VU-M & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 540} & 48 hours\\
+   \multirow{9}{*}{Dbpedia} & E-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-edge (921, 4)}\\
+   & E-L & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-edge (383, 397)}\\
+   & E-M & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-edge (540, 60)}\\
+   & VL-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 9}\\
+   & VL-L & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 809}\\
+   & VL-M & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 511}\\
+   & VU-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 921}\\
+   & VU-L & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 93}\\
+   & VU-M & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 540}\\
    \hline
-   \multirow{9}{*}{Moreno Crime} & E-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (413, 419)} & 48 hours\\
-   & E-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (361, 19)} & 48 hours\\
-   & E-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (531, 196)} & 48 hours\\
-   & VL-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 95} & 48 hours\\
-   & VL-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 187} & 48 hours\\
-   & VL-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 97} & 48 hours\\
-   & VU-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 2} & 48 hours\\
-   & VU-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 793} & 48 hours\\
-   & VU-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 533} & 48 hours\\
+   \multirow{9}{*}{Moreno Crime} & E-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (413, 419)}\\
+   & E-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (361, 19)}\\
+   & E-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (531, 196)}\\
+   & VL-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 95}\\
+   & VL-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 187}\\
+   & VL-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 97}\\
+   & VU-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 2}\\
+   & VU-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 793}\\
+   & VU-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 533}\\
    \hline
-   \multirow{9}{*}{Opsahl UC Forum} & E-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (213, 33)} & 48 hours\\
-   & E-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (398, 10)} & 48 hours\\
-   & E-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (129, 171)} & 48 hours\\
-   & VL-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 289} & 48 hours\\
-   & VL-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 258} & 48 hours\\
-   & VL-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 433} & 48 hours\\
-   & VU-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 395} & 48 hours\\
-   & VU-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 390} & 48 hours\\
-   & VU-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 207} & 48 hours\\
+   \multirow{9}{*}{Opsahl UC Forum} & E-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (213, 33)}\\
+   & E-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (398, 10)}\\
+   & E-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (129, 171)}\\
+   & VL-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 289}\\
+   & VL-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 258}\\
+   & VL-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 433}\\
+   & VU-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 395}\\
+   & VU-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 390}\\
+   & VU-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 207}\\
    \hline
-   \multirow{9}{*}{Wang Amazon} & E-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (839, 9)} & 48 hours\\
-   & E-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (10987, 36)} & 48 hours\\
-   & E-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (19630, 84)} & 48 hours\\
-   & VL-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 124} & 48 hours\\
-   & VL-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 321} & 48 hours\\
-   & VL-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 64} & 48 hours\\
-   & VU-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 1727} & 48 hours\\
-   & VU-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 9970} & 48 hours\\
-   & VU-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 73} & 48 hours\\
+   \multirow{9}{*}{Wang Amazon} & E-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (839, 9)}\\
+   & E-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (10987, 36)}\\
+   & E-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-edge (19630, 84)}\\
+   & VL-H & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 124}\\
+   & VL-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 321}\\
+   & VL-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 64}\\
+   & VU-H & \texttt{+RTS -A5G -N8 -c -H5G -RTS} & \texttt{by-vertex 1727}\\
+   & VU-L & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 9970}\\
+   & VU-M & \texttt{+RTS -A5G -N6 -c -H5G -RTS} & \texttt{by-vertex 73}\\
    \hline
   \end{tabular}
   }
- \caption[{[EE] E1 Procedure}]{This table shows all the different experiments setups conducted for E1. Execution flags are the Runtime execution flags which needs to be set on the execution command as it is detailed in \autoref{apx:running:experiments}. On the last column we can see for each scenario, the query command executed for \acrshort{bt} enumeration (see \dref{def:query:match})}
+ \caption[{[EE] E1 Procedure}]{This table shows all the different experiments setups conducted for E1. Execution flags are the Runtime execution flags which needs to be set on the execution command as it is detailed in \autoref{apx:running:experiments}. On the last column we can see for each scenario, the query command executed for \acrshort{bt} enumeration (see \dref{def:query:match}). The timeout configured for all this experiments setup were $48$ hours}
  \label{table:e1:def}
  \end{table}
 
@@ -357,44 +357,44 @@ The command run for \texttt{criterion} benchmark analysis is \mintinline[fontsiz
 \centering
 \begin{tabular}{|c|c|c|c|}
   \hline
-  \textbf{Network} & \textbf{Scenario ID} & \textbf{Query} & \textbf{Timeout}\\
+  \textbf{Network} & \textbf{Scenario ID} & \textbf{Query}\\
   \hline
-  \multirow{9}{*}{Moreno Crime} & E-H & \texttt{by-edge (413, 419)} & 48 hours \\
-  & E-L & \texttt{by-edge (361, 19)} & 48 hours \\
-  & E-M & \texttt{by-edge (531, 196)} & 48 hours \\
-  & VL-H & \texttt{by-vertex 95} & 48 hours \\
-  & VL-L & \texttt{by-vertex 187} & 48 hours \\
-  & VL-M & \texttt{by-vertex 97} & 48 hours \\
-  & VU-H & \texttt{by-vertex 2} & 48 hours \\
-  & VU-L & \texttt{by-vertex 793} & 48 hours \\
-  & VU-M & \texttt{by-vertex 533} & 48 hours \\
+  \multirow{9}{*}{Moreno Crime} & E-H & \texttt{by-edge (413, 419)}\\
+  & E-L & \texttt{by-edge (361, 19)}\\
+  & E-M & \texttt{by-edge (531, 196)}\\
+  & VL-H & \texttt{by-vertex 95}\\
+  & VL-L & \texttt{by-vertex 187}\\
+  & VL-M & \texttt{by-vertex 97}\\
+  & VU-H & \texttt{by-vertex 2}\\
+  & VU-L & \texttt{by-vertex 793}\\
+  & VU-M & \texttt{by-vertex 533}\\
   \hline
-  \multirow{9}{*}{Opsahl UC Forum} & E-H & \texttt{by-edge (213, 33)} & 48 hours \\
-  & E-L & \texttt{by-edge (398, 10)} & 48 hours \\
-  & E-M & \texttt{by-edge (129, 171)} & 48 hours \\
-  & VL-H & \texttt{by-vertex 289} & 48 hours \\
-  & VL-L & \texttt{by-vertex 258} & 48 hours \\
-  & VL-M & \texttt{by-vertex 433} & 48 hours \\
-  & VU-H & \texttt{by-vertex 395} & 48 hours \\
-  & VU-L & \texttt{by-vertex 390} & 48 hours \\
-  & VU-M & \texttt{by-vertex 207} & 48 hours \\
+  \multirow{9}{*}{Opsahl UC Forum} & E-H & \texttt{by-edge (213, 33)}\\
+  & E-L & \texttt{by-edge (398, 10)}\\
+  & E-M & \texttt{by-edge (129, 171)}\\
+  & VL-H & \texttt{by-vertex 289}\\
+  & VL-L & \texttt{by-vertex 258}\\
+  & VL-M & \texttt{by-vertex 433}\\
+  & VU-H & \texttt{by-vertex 395}\\
+  & VU-L & \texttt{by-vertex 390}\\
+  & VU-M & \texttt{by-vertex 207}\\
   \hline
-  \multirow{9}{*}{Wang Amazon} & E-H & \texttt{by-edge (839, 9)} & 48 hours \\
-  & E-L & \texttt{by-edge (10987, 36)} & 48 hours \\
-  & E-M & \texttt{by-edge (19630, 84)} & 48 hours \\
-  & VL-H & \texttt{by-vertex 124} & 48 hours \\
-  & VL-L & \texttt{by-vertex 321} & 48 hours \\
-  & VL-M & \texttt{by-vertex 64} & 48 hours \\
-  & VU-H & \texttt{by-vertex 1727} & 48 hours \\
-  & VU-L & \texttt{by-vertex 9970} & 48 hours \\
-  & VU-M & \texttt{by-vertex 73} & 48 hours \\
+  \multirow{9}{*}{Wang Amazon} & E-H & \texttt{by-edge (839, 9)}\\
+  & E-L & \texttt{by-edge (10987, 36)}\\
+  & E-M & \texttt{by-edge (19630, 84)}\\
+  & VL-H & \texttt{by-vertex 124}\\
+  & VL-L & \texttt{by-vertex 321}\\
+  & VL-M & \texttt{by-vertex 64}\\
+  & VU-H & \texttt{by-vertex 1727}\\
+  & VU-L & \texttt{by-vertex 9970}\\
+  & VU-M & \texttt{by-vertex 73}\\
   \hline
 \end{tabular}
-\caption[{[EE] E2 Procedure}]{This table shows all the different experiments setups that we have conducted for E2. Execution command is the same for each experiment because it is handled by \texttt{criterion} tool. On the last column we can see for each scenario the query command executed for \acrshort{bt} enumeration (see \dref{def:query:match}), although the output is not used in this case, because we focus on average running time}
+\caption[{[EE] E2 Procedure}]{This table shows all the different experiments setups that we have conducted for E2. Execution command is the same for each experiment because it is handled by \texttt{criterion} tool. On the last column we can see for each scenario the query command executed for \acrshort{bt} enumeration (see \dref{def:query:match}), although the output is not used in this case, because we focus on average running time. The timeout configured for all this setups were $48$ hours.}
 \label{table:e2:def}
 \end{table}
 
-Furthermore, \emph{Total Running Time} is gathered with the time measured after running all the scenarios described in \autoref{table:e1:def}.
+Furthermore, \emph{Total Running Time} is gathered with the time measured after running all the scenarios described in \autoref{table:e1:def}. Also the timeout configured for all the scenarios in \autoref{table:e2:def} have been setup in $48$ hours.
 
 
 \paragraph{Observed Results}\label{sub:sec:res:e2} As it can be seen in \autoref{fig:exp:bench}, yellow bars are all the experiments related to Lower Layer vertices, blue bars are related to Upper Layer, and red bars are the experiments related to edge search. 

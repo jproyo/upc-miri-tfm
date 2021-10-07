@@ -1,45 +1,50 @@
 \chapter{Conclusions and Future Work}\label{conclusions}
+
+% Conclusiones
+%limitaciones
+%Trabajo futuro
+
 In this chapter, we present the limitations that we detected during the empirical analysis, the future work that we think it is interesting to address as a result of this research, 
 as well as the conclusions obtained.
 
 \section{Observed Limitations}
-In spite of having obtained positive results during the experimental analysis, we have detected some weaknesses of the implementation that can be addressed in the future 
+In spite of having obtained positive results during the experimental analysis, we have detected some weaknesses of the implementation that can be addressed in the future, 
 overcoming those limitations and improving the solution even more.
 The first exposed limitation in the previous \autoref{experiments} was memory efficiency. As we have discussed there, although the part of the memory allocation that belongs purely to the \acrshort{iebt} specificities are showing an acceptable use of the resources, there is still a problem with the number of filters that are being spawned and not free by \acrshort{ghc}.
-This is causing a big increase of \texttt{MUT\_ARR\_PTRS\_CLEANER} object. The main limitation is the amount of memory that we have at our disposal if we want to handle networks bigger than dbpedia.
+This is causing a big increase of \texttt{MUT\_ARR\_PTRS\_CLEANER} object. The main limitation is the amount of memory that we have at our disposal if we want to handle networks bigger than DBpedia.
 Another weakness also related to memory management, is the data structures used for managing the query matches of the bitriangles. Although in the \acrshort{dpfh} implementation of the pseudo-code algorithm as we have seen on \autoref{sec:iebt:hs:imp} we have been careful about \acrshort{hs} techniques and data types used to improve the search performance, it is important to remark that 
 there are more advanced techniques to implement this kind of joins and matchings as it is described in the work of Lai et al.~\cite{Lai} for example.
 Finally, there are currently some limitations on \acrfull{dpfh} itself, since the Threading model that we are using is the green threads~\cite{sparks} that \acrshort{hs} provides, with a limitation in the number of threads that the framework can spawn. Even the limitation is high (in the order of hundred of thousands), it is nothing compared with the potential of using sparks which is at the level of hundreds of millions and also supported by \acrshort{hs}.
 
 \section{Future Work}
 As we have seen in \autoref{experiments}, we have detected an increase in the memory consumption as long as the network grows. 
-In regards to that, we think it is extremely important to improve this aspect in order to be able to process huge networks efficiently. 
+Regarding that, we think it is extremely important to improve this aspect in order to be able to process huge networks efficiently. 
 Moreover, we have seen evidence of the previous statement in \autoref{sub:sec:res:e3}, where it is exhibited that execution of larger graphs requires paying an extra cost.
-The selection of appropriate data structures for handling the search in the compress \acrlong{abt} once the query command arrives at the $\ad$, is something that has been out of the scope of the present work but it would need to be tackled in the future.
+The selection of appropriate data structures for handling the search in the compress \acrlong{abt} once the query command arrives at the $\ad$, is something that has been out of the scope of the present work, but it would need to be tackled in the future.
 Performing indexing over the edges and vertices could lead to significant improvements in search, although there is a trade-off in terms of memory allocation, that can be addressed using fast external storage.
 Another important aspect to be addressed in the future is to make \acrlong{dpbt} distributed and parallel. Distribution of the stages between machines and not only between threads would enable sharing memory-intensive allocation between machines and not using a single memory unit for all the threads.
 We believe that moving from a multithreading model to a distributed model will allow \acrlong{dp} to reduce the gap of memory consumption for huge network instances, as well as distribute the stage according to the amount of memory required by them. 
 We cannot avoid that there is a trade-off in terms of transfer data and the delay that this kind of distributed computation brings in, but since \acrlong{dpbt} is delivering incremental results in a \emph{pay-as-you-go} model, the distribution cost could be amortized. 
-We should also take into consideration that the speed up and reliance on network communication is extremely high nowadays enabling the exploration of the commented approach.
+We should also take into consideration that the speed-up and reliance on network communication is extremely high nowadays, enabling the exploration of the commented approach.
 
 In another aspect of the computational model and more related with the \acrlong{hs} implementation, there are several improvements to be conducted in the \acrlong{dpfh} as well. 
 One of those improvements could be to delegate the distribution to other stream processing systems like \texttt{Kafka}~\cite{kafka} for example and do the parallel processing of the split data with \acrlong{hs} acting as a consumer.
-In addition to that, some other radical improvements can also be done into \acrlong{dpfh}. From designing more abstractions to help the user to write pipelines with less effort and errors to modifying the thread scheduler and memory management in \acrshort{ghc} to improve performance. 
+In addition to that, some other radical improvements can also be done into \acrlong{dpfh}. From designing more abstractions to help the user to write pipelines with less effort and errors, to modifying the thread scheduler and memory management in \acrshort{ghc} to improve performance. 
 We can also improve the speed-up in \acrlong{dpfh} moving some Boxed types to Unboxed types~\cite{hs-unbox} which would reduce memory footprint.
 
 As we can appreciate, this work has opened a vast amount of research lines and improvements that are worth to be explored.
 
 \section{Conclusions}
-\acrlong{bt} in \acrlong{bg} is a significant problem that helps to detect important relations between entities in many areas: in pharmacology research to establish relations between drugs and side-effects, in medicine to detect how some genes affect specific diseases
+\acrlong{bt} in \acrlong{bg} is a significant problem that helps to detect important relations between entities in many areas: in pharmacology research to establish relations between drugs and side effects, in medicine to detect how some genes affect specific diseases
 or even in the entertainment industry to describe user behavior in TV shows allowing certain predictions in that matter.
 Having the ability to enumerate \acrlong{bt} enables those problems to be structurally explained in terms of the specific objects that are participating in the relationship.  
 Moreover, those problems do not always require the complete information of the whole network or the whole set of \acrlong{bt}. 
 Therefore, introducing algorithms that incrementally deliver results, using a \emph{pay-as-you-go} model approach combined with \acrshort{dp} brings exhaustive and exact results for the solution space that the user wants to obtain. 
-During the research of this work, we have explored \acrfull{dp} as a model of computation for solve that problem using the described approach. 
+During the research of this work, we have explored \acrfull{dp} as a model of computation to solve that problem using the described approach. 
 One of the first conclusions that we arrive at after empirically validate our assumptions is that \acrlong{dp} has shown to be an efficient model for building a parallel algorithm to incrementally enumerate \acrlong{bt} in \acrlong{bg}. 
 In addition to that, and at the moment of writing this, we have given a novel solution for the problem, which has not been addressed in any other work.
 Moreover, we have also shown how strong \acrfull{hs} behaves for implementing \acrfull{dp} for solving \acrlong{iebt}. 
 Following that, the designed algorithm \acrshort{dpbt} can process and enumerate large networks like the \acrlong{dbpedia} which contains more than $300$ millions of \acrlong{bt}.
-In the experimental analysis, we have demonstrated the continuous behavior capabilities of the implementation using \acrlong{dm} giving support to our research assumptions and motivations. 
+In the experimental analysis, we have demonstrated the continuous behavior capabilities of the implementation using, \acrlong{dm} giving support to our research assumptions and motivations. 
 
 In conclusion, we believe that the achieved results clearly show we have implemented a suitable \emph{\acrlong{iebt}}, opening a wide range of possibilities not only to improve the existing framework and algorithm but also for implementing other complex problems.
