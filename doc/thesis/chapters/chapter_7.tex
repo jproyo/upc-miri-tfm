@@ -14,11 +14,12 @@ Regarding that, we have asked ourselves the following research questions that gu
 \end{inparaenum}
   
 \section{Experiments Configuration}
-We have conducted different kinds of experiments to answer our research questions, and verify the behavior of the approach in various benchmarks.
-First, we have performed a \emph{Continuous behavior Analysis} using \acrfull{dm}~\cite{diefpaper} in order to assess the continuous behavior capabilities of the implemented algorithm (generation of incremental results). 
-Then, we have performed a \emph{Benchmark Analysis} to identify how the behavior of \acrshort{dpbt} varies depending on the type of query command defined in \dref{def:query:match}.
-Finally, we have executed a \textit{Performance Analysis} in which we have to gather profiling data from \acrfull{ghc} for one of the graphs, 
-to measure how the program performs regarding multithreading and memory allocation.
+We have conducted different kinds of experiments to answer our research questions and verify the behavior of the approach in various benchmarks.
+\begin{inparaenum}[\bf i\upshape)]
+  \item \emph{Continuous behavior Analysis}: using \acrfull{dm}~\cite{diefpaper} to assess the continuous behavior capabilities of the implemented algorithm (generation of incremental results). We run this experiment only once for each scenario per network (see \autoref{sub:exp:exp-data-setup}).
+  \item \emph{Benchmark Analysis}: to identify how the behavior of \acrshort{dpbt} varies depending on the type of query command defined in \dref{def:query:match}. This experiment have been conducted with \texttt{criterion}~\cite{criterion} which runs each scenario $1000$ times for each network.
+  \item Finally, we have executed a \textit{Performance Analysis} in which we have to gather profiling data from \acrfull{ghc} for one of the graphs, to measure how the program performs regarding multithreading and memory allocation. This experiment has been run only once for memory analysis and once for multi-threading analysis. On each case we selected the biggest network and most time consuming scenario according to the results of the \emph{Benchmark Analysis}. 
+\end{inparaenum}
 In the following subsections, we detail the different aspects of the configuration such as hardware, \acrshort{hs} compilation flags, metrics, and benchmark to conduct these experiments.
 
 
@@ -26,7 +27,7 @@ In the following subsections, we detail the different aspects of the configurati
 The experiments have been evaluated over the networks that composed the benchmark Konect Networks~\cite{konect}. 
 Specifically, the networks used in the literature have been selected \cite{konect:2017:dbpedia-recordlabel,konect:2017:moreno_crime,konect:2017:opsahl-ucforum,konect:2017:wang-amazon}.
 
-\begin{table}[H]
+\begin{table}[htp!]
   \centering
   \begin{tabular}{|p{0.25\linewidth}|c|c|c|c|c|}
     \hline
@@ -84,7 +85,7 @@ A \emph{low, medium, or high incidence level} for edges is defined as following:
 
 Having the previous \dref{def:exp:incidence}, we define the following scenarios to conduct all the experiments regardless of the network.
 
-\begin{table}[H]
+\begin{table}[htp!]
   \centering
   \begin{tabular}{|l|c|c|}
     \hline
@@ -167,7 +168,7 @@ This experiment has been executed five times on each case until we found the pro
 The metric  \acrfull{dt}-described in \autoref{sub:metric}- is used to measure the continuous behavior of the proposed approach in a given time frame.
 \autoref{table:e1:def} depicts the different configurations evaluated in this experiment. The timeout for all the configuration scenarios setups that appears in \autoref{table:e1:def} have been set in $48$ hours.
 
-\begin{table}[H]
+\begin{table}[htp!]
   \centering
   \resizebox{1\textwidth}{!}{%
   \begin{tabular}{|p{0.25\linewidth}|c|c|c|}
@@ -353,7 +354,7 @@ The results of this evaluation will also provide evidence to answer [R3] since w
 For gathering \emph{Average Running Time}, the experiment scenarios described in \autoref{table:e2:def} were conducted; the \emph{\acrshort{dbpedia}} network was not considered, but the \mintinline{shell}{criterion} \cite{criterion} benchmark tool were followed.
 The command run for \texttt{criterion} benchmark analysis is \mintinline[fontsize=\small, breaklines]{bash}{stack exec benchmark}. 
 
-\begin{table}[H]
+\begin{table}[htp!]
 \centering
 \begin{tabular}{|c|c|c|c|}
   \hline
@@ -396,31 +397,75 @@ The command run for \texttt{criterion} benchmark analysis is \mintinline[fontsiz
 
 Furthermore, \emph{Total Running Time} is gathered with the time measured after running all the scenarios described in \autoref{table:e1:def}. Also the timeout configured for all the scenarios in \autoref{table:e2:def} have been setup in $48$ hours.
 
-
 \paragraph{Observed Results}\label{sub:sec:res:e2} As it can be seen in \autoref{fig:exp:bench}, yellow bars are all the experiments related to Lower Layer vertices, blue bars are related to Upper Layer, and red bars are the experiments related to edge search. 
 The longest bars are from network opsahl-ucforum, which we already know by \autoref{table:exp:data-set} it is the biggest of the four networks in terms of the number of \acrshort{bt} and wedges. So, it needs to enumerate more \acrshort{bt}. 
-Further, almost all the high incidence vertices and edges queries are taken longer as well. 
-There is only one scenario that behaves differently, which is edges (see \autoref{table:exp:data-setup}) for opsahl-ucforum, where execution time is not proportional to incidence level.
 
 \begin{figure}[!htb]
  \begin{center}
     \includegraphics[width=1\textwidth] {experiments/bench_1}
       \end{center}
-    \caption[{[EE] Benchmark Results: Criterion Plot}]{This plot depicts the results after running \texttt{criterion} the tool over the experimental setup described in \autoref{table:e2:def}. Yellow bars are the experiments over Opsahl UC Forum network. Blue light bars represents the experiments on Moreno Crime network, and red bars on Wang Amazon}
+    \caption[{[EE] E2 Benchmark Results: Criterion Plot}]{This plot depicts the results after running \texttt{criterion} the tool over the experimental setup described in \autoref{table:e2:def}. Yellow bars are the experiments over Opsahl UC Forum network. Blue light bars represents the experiments on Moreno Crime network, and red bars on Wang Amazon}
     \label{fig:exp:bench}
 \end{figure}
 
- The \emph{Total Running Time}, which can be seen in \autoref{fig:exp:bench:2}, is also reported.
+\begin{table}[htp!]
+  \centering
+  \resizebox{1\textwidth}{!}{%
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+   \textbf{Network} & \textbf{Scenario ID}  & \textbf{Average Execution Time} & \textbf{Standard deviation}\\
+   \hline
+   \multirow{9}{*}{Moreno Crime} & VL-L & $656$ ms & $13.0$ ms \\
+   & VL-M & $669$ ms & $18.7$ ms \\ 
+   & VL-H & $723$ ms & $72.2$ ms \\ 
+   & VU-L & $695$ ms & $16.2$ ms \\ 
+   & VU-M & $726$ ms & $14.0$ ms \\ 
+   & VU-H & $745$ ms & $19.6$ ms \\ 
+   & E-L & $694$ ms & $4.7$ ms \\ 
+   & E-M & $655$ ms & $14.9$ ms \\ 
+   & E-H & $655$ ms & $21.1$ ms \\ 
+   \hline
+   \multirow{9}{*}{Opsahl UC Forum} & VL-L & $5.6$ s & $940$ ms \\
+   & VL-M & $18.1$ s & $5.03$ s \\ 
+   & VL-H & $70.8$ s & $2.03$ s \\ 
+   & VU-L & $8.12$ s & $2.43$ s \\ 
+   & VU-M & $108$ s & $13.7$ s \\ 
+   & VU-H & $138$ s & $8.19$ s \\ 
+   & E-L & $41.9$ s & $2.87$ s \\ 
+   & E-M & $26.7$ s & $5.63$ s \\ 
+   & E-H & $26.2$ s & $4.05$ s \\
+  \hline
+  \multirow{9}{*}{Wang Amazon} & VL-L & $6.5$ s & $1.05$ s \\
+  & VL-M & $5.91$ s & $994$ ms \\ 
+  & VL-H & $10.2$ s & $2.66$ s \\ 
+  & VU-L & $8.12$ s & $2.43$ s \\ 
+  & VU-M & $7.04$ s & $739$ ms \\ 
+  & VU-H & $8.16$ s & $3.25$ s \\ 
+  & E-L & $6.4$ s & $1.08$ s \\ 
+  & E-M & $5.71$ s & $863$ ms \\ 
+  & E-H & $5.91$ s & $1.04$ s \\
+ \hline
+ \end{tabular}
+  }
+  \caption[{[EE] E2 Average Execution Time}]{This tables shows a detailed reported data of all the average execution time of all the networks and all scenarios except Dbpedia networks. It is also show the standard deviation of all average execution time. The measurement unit indicated in the table are: $s$ for seconds, and $ms$ for milliseconds}
+  \label{table:exp:e1:bench:avg:time} 
+ \end{table}
+In \autoref{table:exp:e1:bench:avg:time} we can see both the \emph{Average Execution Time} and the \emph{Standard deviation} of that average. 
+As we can see and according to this data, all the scenarios with higher incidence are taking longer time in executing compared with the rest of the scenarios for the same network.
+\emph{Average Execution Time} for Moreno Crime network is reporting $723, 745$ and $655$ milliseconds average execution time for high incidence (see \autoref{sub:exp:exp-data-setup}), compared with lower and medium incidence.
+The same behavior is shown for Wang Amazon which high incidence scenarios report $10.2$ and $8.16$ seconds on VL-H and VU-H respectively.
+Moreover, Opsahl UC Forum reports VL-H and VU-H with $70.8$ and $138$ seconds of average running time which is higher than other scenarios with lower incidence.
+The only cases that this behavior do not hold is for E-H in both Wang Amazon and Opsahl UC Forum networks. E-L scenario shows the highest value for both networks with $6.4$ and $41.9$ seconds respectively.
 
 \begin{figure}[!htb]
   \begin{center}
      \includegraphics[width=1\textwidth] {experiments/execution_time_by_experiments}
        \end{center}
-     \caption[{[EE] Total Execution Time: Comparison between all setups}]{This plot shows all the experiment scenarios run in \autoref{table:e1:def} and the comparison of the Total running execution time for each case. $y$ axis shows the total time in $\ln$ scale and $x$ axis is each Scenario ID describe in \autoref{table:exp:data-setup}}
+     \caption[{[EE] E2 Total Execution Time Comparison}]{This plot shows all the experiment scenarios run in \autoref{table:e1:def} and the comparison of the Total running execution time for each case. $y$ axis shows the total time in $\ln$ scale and $x$ axis is each Scenario ID describe in \autoref{table:exp:data-setup}}
      \label{fig:exp:bench:2}
  \end{figure}
 
-Regarding \autoref{fig:exp:bench:2}, it is observed with the red bars that \acrshort{dbpedia} was the one which took more time in all scenarios.
+Regarding \autoref{fig:exp:bench:2} which is showing the \emph{Total Running Time}, it is observed with the red bars that \acrshort{dbpedia} was the one which took more time in all scenarios.
 We can also see in \autoref{fig:exp:bench:2} that scenario E-H took $8756$ seconds in \acrshort{dbpedia} network compare with the E-L and E-M, which took $596$ seconds and $577$ seconds, respectively. 
 Also, in \autoref{fig:exp:bench:2}, we can see that Opsahl UC Forum took $1660$ seconds for VL-H scenario, $11$ seconds for VL-L, and $22$ seconds for VL-M, also showing the same behavior as \acrshort{dbpedia}.
 Moreover, in \autoref{fig:exp:bench:2} it can also be appreciated how Wang Amazon network and Moreno Crime are showing the same behavior for VL-H, VL-L, and VL-M scenarios, where Wang Amazon networks report $21, 8$ and $8$ seconds, respectively and Moreno Crime $3, 3$ and $2$ seconds.
@@ -433,7 +478,7 @@ The same behavior repeats for all networks and all scenarios, indicating that th
 Using \mintinline{shell}{ThreadScope} \cite{threadscope} tool we measure \emph{GHC Productivity}, \emph{Distribution of Threads per Core}, and using \mintinline{shell}{eventlog2html} \cite{eventlog2html} tool, we measure \emph{Distribution of Allocated Memory per Data Type}.
 For both cases, we have run these tools using one network only and one scenario. This is because both tools enable profiling flags at compilation level on \acrshort{ghc}, penalizing performance.
 
-\begin{table}[H]
+\begin{table}[htp!]
 \centering
 \resizebox{1\textwidth}{!}{%
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -523,7 +568,9 @@ Therefore, results are delivered extremely fast and incremental results only can
 In conclusion, we are able to answer [R1] and asses that we have built an incremental algorithm for enumerating \acrlong{bt}. 
 The same conclusion can be obtained regarding question [R3]. We verify that, depending on the incidence of the vertex or edge, \acrshort{dpbt} is enumerating \acrshort{bt} in a continuous manner. This shows us \acrshort{dpbt} effectively implements a \emph{pay-as-you-go} model.
 
-\paragraph{E2: Benchmark} Regarding \autoref{sub:sec:res:e2} we have noticed that for the case of edges scenarios in Opshal UC Forum network, the execution time is not consistent with what we expected regarding the incidence level. This could be explained by the \emph{pseudo-randomly} selection detailed in \autoref{sub:exp:sel-vals}.
+\paragraph{E2: Benchmark} Regarding \autoref{sub:sec:res:e2} on the one hand, we have noticed that for the case of edges with high incidence scenarios in both Opshal UC Forum and Wang Amazon networks, the execution time is not consistent with what we expected regarding the incidence level. 
+This could be explained by the \emph{pseudo-randomly} selection detailed in \autoref{sub:exp:sel-vals} which is outlying the samples. By outlying we mean that we select \emph{randomly} from the subset with higher vertex degree assuming that this will enumerate more bitriangles, but in the experimentation has been shown it has not.
+On the other hand, all the rest of the scenarios reports \emph{Average Execution Time} according to the level of incidence of the experiment, the higher the incidence the longest the average execution time. 
 In what relates to \emph{Total Execution time}, we have pointed out that DBpedia network is the one taking longer. This is perfectly explained by the characteristics and topology of the graph, since it is both the biggest graph in terms of edges and vertex, and it is the graph which proportionally has more \acrshort{bt}. 
 We can answer the question [R2] because it can clearly be seen in the benchmark analysis and in \autoref{fig:exp:bench:2} that as long as the user request for command queries $Q$ that have more incidence in the graph and participates in more \acrshort{bt},
 the execution time increases.
