@@ -113,13 +113,13 @@ The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{\acrfull{bt}} in $G$, 
 \begin{subfigure}[b]{0.5\textwidth}
 \centering
 \inputtikz{bipartite_bt_b}
-\caption{\acrshort{bt} $(1,b,5,a,7,c,1)$}
+\caption{\acrshort{bt} $(1,a,7,b,5,c,1)$}
 \end{subfigure}
 \caption[{[\acrshort{iebt}] Example of bitriangles}]{Bitriangles of the triple $(a,b,c)$ combined with vertices from $U$ $\{1,3,5,7\}$ of \autoref{fig:bipartite-graph-example}. In this case two bitriangles have been built from the \autoref{fig:agg-bt-example}}
 \label{fig:bt-a-example}
 \end{figure}
 
-As we can see in \autoref{fig:bt-a-example}, the two possible \acrshort{bt} can be extracted from the \acrshort{abt} presented in \autoref{fig:agg-bt-example} are $(1,a,3,c,5,b,1)$ and $(1,b,5,a,7,c,1)$.
+As we can see in \autoref{fig:bt-a-example}, the two possible \acrshort{bt} can be extracted from the \acrshort{abt} presented in \autoref{fig:agg-bt-example} are $(1,a,3,c,5,b,1)$ and $(1,a,7,b,5,c,1)$.
 
 Because \acrshort{iebt} will allow to enumerate \acrshort{bt} using a \emph{pay-as-you-go} model, we need to allow the user to enumerate specific \acrshort{bt} according to some criteria.
 In regards to that, we are going to define a Query Command that is going to be used in the pseudo-algorithm for that purpose.
@@ -475,7 +475,7 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
       \uIf{$\ati = \emptyset$}{$\fd$}
       \Else{$\us(\ati)$\\}
 }
-\caption[Actor3 ($actor_3$)]{Actor3 ($actor_3$): Receiving all aggregated wedges that came from feedback channel, build a Set of all possible Aggregated bi-triangles $\ati = \{\la (l_l, l_m, l_u), U_l \ra\}, \ati \subseteq \at$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter and $l_m$ is the middle vertex of the incoming wedge. At the end, it updates the State of the filter with $\ati$ if $\ati \neq \emptyset$}
+\caption[Actor3 ($actor_3$)]{Actor3 ($actor_3$): Receiving all aggregated wedges that came from feedback channel, build a Set of all possible Aggregated bitriangles $\ati = \{\la (l_l, l_m, l_u), U_l \ra\}, \ati \subseteq \at$, , such that $l = l_l \lor l = l_u$, where $l$ is the Filter Parameter and $l_m$ is the middle vertex of the incoming wedge. At the end, it updates the State of the filter with $\ati$ if $\ati \neq \emptyset$}
 \label{algo:act-3}
 \end{algorithm}
 
@@ -529,14 +529,14 @@ $\ati \leftarrow \gs$\\
       }
 }
 }
-\caption[Actor4 ($actor_4$)]{Actor4 ($actor_4$): Receiving all the Query Commands $Q$ that arrives through Channel $IC_Q$, verify if matches with some Bi-triangles that in the state $\ati \subseteq at$ of this Filter. If some bi-triangle matches it will be downstream to the Channel $OC_{BT}$ to be processed by the Sink}
+\caption[Actor4 ($actor_4$)]{Actor4 ($actor_4$): Receiving all the Query Commands $Q$ that arrives through Channel $IC_Q$, verify if matches with some Bitriangles that in the state $\ati \subseteq at$ of this Filter. If some bitriangle matches it will be downstream to the Channel $OC_{BT}$ to be processed by the Sink}
 
 \label{algo:act-4}
 \end{algorithm}
 
 \paragraph{Filter $\ad$} Once the execution reaches $\ad$, it is ready for processing $Q$ \acrlong{qo}. 
 Since we have a compress representation of \acrshort{bt}, which is a similar idea exposed here~\cite{Lai}, we need to enumerate incrementally all the \acrshort{bt} present in the compressed format and filter the ones that match the command.
-The matches proceeds in the following manner. Given a \acrshort{abt} with the form $\la \ell, \hat{U}_l \ra$, such that $\ell = (l_1,l_2,l_3)$ and $\hat{U}_l = \la I,J,K \ra$, where $I \subseteq U, J \subseteq U, K \subseteq U$, if the \acrshort{qo} contains a command with vertices, those vertices are search in $\ell$ and $\hat{U}_l$. 
+The matches proceeds in the following manner. Given a \acrshort{abt} with the form $\la \ell, \hat{U}_l \ra$, such that $\ell = (l_1,l_2,l_3)$ and $\hat{U}_l = \la I,J,K \ra$, where $I \subseteq U, J \subseteq U, K \subseteq U$, if the \acrshort{qo} contains a command with vertices, those vertices are searched in $\ell$ and $\hat{U}_l$. 
 There are two posibilities. On the first case, if any of those vertices that belongs to $Q$ matches $\ell$, then forall $u_i \in I, u_j \in J, u_k \in K$ where $ u_i \neq u_j \neq u_k$, a \acrshort{bt} is built using a 6-cycle $(u_i, l_1, u_j, l_3, u_k, l_2, u_i)$ path.
 On the second case, if any of those vertices that belongs to $Q$ matches on some vertex in $\hat{U}_l$, build only the \acrshort{bt} in which 6-cycle $(u_i, l_1, u_j, l_3, u_k, l_2, u_i)$ path contains that vertex in $Q$.
 Using the same construction process a \acrshort{bt} is built if \acrshort{qo} contains a command with edges and any of those edges matches with any of the possible \acrshort{bt} 6-cycle path.
@@ -577,7 +577,7 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
       }
       \Return{$\btii$}
 }
-\caption[Function \mintinline{shell}{buildBtVertex}]{Function \mintinline{shell}{buildBtVertex}: Given a Set of Vertex in $\mathbb{P}(U + L)$, if any of those vertices matches with some vertex in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bi-triangles that matches that query}
+\caption[Function \mintinline{shell}{buildBtVertex}]{Function \mintinline{shell}{buildBtVertex}: Given a Set of Vertex in $\mathbb{P}(U + L)$, if any of those vertices matches with some vertex in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bitriangles that matches that query}
 \label{algo:buildBtVertex}
 \end{algorithm}
 
@@ -610,79 +610,80 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
             \Return{False}
       }
 }
-\caption[Function \mintinline{shell}{buildBtEdge}]{Function \mintinline{shell}{buildBtEdge}: Given a Set of Edges in $\mathbb{P}(E)$, if any of those edges matches with some edge in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bi-triangles that matches that query}
+\caption[Function \mintinline{shell}{buildBtEdge}]{Function \mintinline{shell}{buildBtEdge}: Given a Set of Edges in $\mathbb{P}(E)$, if any of those edges matches with some edge in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bitriangles that matches that query}
 \label{algo:buildBtEdge}
 \end{algorithm}
 
-% \clearpage
-% \section{DRAFT - Complexity Analysis of Algorithm}
-% The complexity analysis provided in this section will cover each of the principal pseudo-code algorithms described in the previous \autoref{sub:sec:iebt:dpalgo}, this is \autoref{algo:source}, \autoref{algo:gen}, \autoref{algo:sink} and \autoref{algo:fil} (including all actors). 
+\iffalse
+\clearpage
+\section{DRAFT - Complexity Analysis of Algorithm}
+The complexity analysis provided in this section will cover each of the principal pseudo-code algorithms described in the previous \autoref{sub:sec:iebt:dpalgo}, this is \autoref{algo:source}, \autoref{algo:gen}, \autoref{algo:sink} and \autoref{algo:fil} (including all actors). 
 
-% \begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
-% The size of all possible aggregated wedges is upper bound by $|L|$.
-% \end{theorem}
-% \begin{proof}[Anlaysis]
-% This can be deduced by \dref{def:awg}, because at most each $l \in L$ is participating on a wedge.
-% \end{proof}
+\begin{theorem}[$|\aw| \leq |L|$]\label{theorem:awg}
+The size of all possible aggregated wedges is upper bound by $|L|$.
+\end{theorem}
+\begin{proof}[Anlaysis]
+This can be deduced by \dref{def:awg}, because at most each $l \in L$ is participating on a wedge.
+\end{proof}
 
-% \begin{theorem}[$|\dw| \leq \binom{|L|}{2}$]\label{theorem:adwg}
-% The size of all possible aggregated double-wedges is upper bound by $\binom{|L|}{2}$.
-% \end{theorem}
-% \begin{proof}[Anlaysis]
-% This can be deduced by \dref{def:adwg}, and by \autoref{theorem:awg}. If we can combine vertices from $L$ taken by $2$ without repetition that forms an \acrshort{adwg}, we have at most that amount of possible aggregated double-wedges combinations.
-% \end{proof}
+\begin{theorem}[$|\dw| \leq \binom{|L|}{2}$]\label{theorem:adwg}
+The size of all possible aggregated double-wedges is upper bound by $\binom{|L|}{2}$.
+\end{theorem}
+\begin{proof}[Anlaysis]
+This can be deduced by \dref{def:adwg}, and by \autoref{theorem:awg}. If we can combine vertices from $L$ taken by $2$ without repetition that forms an \acrshort{adwg}, we have at most that amount of possible aggregated double-wedges combinations.
+\end{proof}
       
-% \begin{complexity}[Source $\ibt$]\label{prop:comp-src}
-% The total complexity of $\ibt$ algorithm in worst-case is $O(|E|)$.
-% \end{complexity}
-% \begin{proof}[Anlaysis]
-% In the case of this stage, we have three \texttt{for} loops. The first one is done in the number of edges of the graph $|E|$. The second \texttt{for} loop iterates over  
-% all possible \acrshort{awg} which is at most $|L|$ according to \autoref{theorem:awg}.
-% And the last \texttt{for} loop is taking the size of all commands $Q$ provided by the user. Then, worst-case complexity is $O(|E| + |L| + |Q|)$.
-% Since $|L| \leq |E|$ by \dref{def:bt} and $|Q| << |E|$ because otherwise the user will be able to manually inspect the whole graph. Since the algorithm implements a \emph{pay-as-you-go} model
-% as we have described in \autoref{relate-work}, it has a high cost for the user to ask for an amount of commands near to $|E|$.
-% Therefore, the dominant term is $|E|$, and the complexity of this part of the algorithm is $O(|E|)$.
-% \end{proof}
+\begin{complexity}[Source $\ibt$]\label{prop:comp-src}
+The total complexity of $\ibt$ algorithm in worst-case is $O(|E|)$.
+\end{complexity}
+\begin{proof}[Anlaysis]
+In the case of this stage, we have three \texttt{for} loops. The first one is done in the number of edges of the graph $|E|$. The second \texttt{for} loop iterates over  
+all possible \acrshort{awg} which is at most $|L|$ according to \autoref{theorem:awg}.
+And the last \texttt{for} loop is taking the size of all commands $Q$ provided by the user. Then, worst-case complexity is $O(|E| + |L| + |Q|)$.
+Since $|L| \leq |E|$ by \dref{def:bt} and $|Q| << |E|$ because otherwise the user will be able to manually inspect the whole graph. Since the algorithm implements a \emph{pay-as-you-go} model
+as we have described in \autoref{relate-work}, it has a high cost for the user to ask for an amount of commands near to $|E|$.
+Therefore, the dominant term is $|E|$, and the complexity of this part of the algorithm is $O(|E|)$.
+\end{proof}
 
-% \begin{complexity}[Generator $\gbt$]\label{comp:anal:gen}
-% The total complexity of $\gbt$ algorithm in worst-case is $O(2|L| + |Q||\ati|)$.
-% \end{complexity}
-% \begin{proof}[Anlaysis]
-% $\gbt$ receives at most $|L|$ edges in in \autoref{algo:gen:1} first loop, since $\aaa$ will collect all the upper vertices from the same $l$ without bypassing those collected edges (\autoref{theorem:awg}).
-% In \autoref{algo:gen:2}, the second loop, it will receive at most $|L|$ aggregated wedges $W_l$, which also can be deduced by \autoref{theorem:awg}.
-% Finally, it will receive all matched $\btii \subseteq \bt$. By \autoref{algo:act-4}, \autoref{algo:buildBtEdge} and \autoref{algo:buildBtVertex} the amount of possible $\btii$ matched is $|Q| \times |\ati|$ (see \dref{def:abt}).
-% Then worst-case complexity is $O(|L| + |L| + |Q||\ati|) = O(2|L| + |Q||\ati|)$.
-% \end{proof}
+\begin{complexity}[Generator $\gbt$]\label{comp:anal:gen}
+The total complexity of $\gbt$ algorithm in worst-case is $O(2|L| + |Q||\ati|)$.
+\end{complexity}
+\begin{proof}[Anlaysis]
+$\gbt$ receives at most $|L|$ edges in in \autoref{algo:gen:1} first loop, since $\aaa$ will collect all the upper vertices from the same $l$ without bypassing those collected edges (\autoref{theorem:awg}).
+In \autoref{algo:gen:2}, the second loop, it will receive at most $|L|$ aggregated wedges $W_l$, which also can be deduced by \autoref{theorem:awg}.
+Finally, it will receive all matched $\btii \subseteq \bt$. By \autoref{algo:act-4}, \autoref{algo:buildBtEdge} and \autoref{algo:buildBtVertex} the amount of possible $\btii$ matched is $|Q| \times |\ati|$ (see \dref{def:abt}).
+Then worst-case complexity is $O(|L| + |L| + |Q||\ati|) = O(2|L| + |Q||\ati|)$.
+\end{proof}
 
-% \begin{complexity}[Sink $\obt$]
-% The total complexity of $\obt$ algorithm in worst-case is $O(|Q||\ati|)$.
-% \end{complexity}
-% \begin{proof}[Anlaysis]
-% Obvious by definition of \autoref{algo:sink} and by complexity analysis in \autoref{comp:anal:gen}.
-% \end{proof}
+\begin{complexity}[Sink $\obt$]
+The total complexity of $\obt$ algorithm in worst-case is $O(|Q||\ati|)$.
+\end{complexity}
+\begin{proof}[Anlaysis]
+Obvious by definition of \autoref{algo:sink} and by complexity analysis in \autoref{comp:anal:gen}.
+\end{proof}
 
-% \paragraph{Filter Consideration}\label{comp:an:filter:note} In the case of complexity analysis of the Filter instances $\fbt$ algorithms, which involves the four actors, we are going to take into consideration the worst-case.
-% The worst-case is the first filter, because it is the one that is going to receive all the edges from the $\ibt$ at least as we can see in \autoref{sub:sec:algo-sketch}. 
-% If the second filter is spawned, is going to receive at most $|E|-2$ edges, the third $|E|-3$, and so on. 
+\paragraph{Filter Consideration}\label{comp:an:filter:note} In the case of complexity analysis of the Filter instances $\fbt$ algorithms, which involves the four actors, we are going to take into consideration the worst-case.
+The worst-case is the first filter, because it is the one that is going to receive all the edges from the $\ibt$ at least as we can see in \autoref{sub:sec:algo-sketch}. 
+If the second filter is spawned, is going to receive at most $|E|-2$ edges, the third $|E|-3$, and so on. 
 
-% \begin{complexity}[Filter $\fbt$]
-% The total complexity of $\fbt$ algorithm in worst-case is $O(|E| + |L| \times \binom{|L|}{2} \times 6|U| + |Q||\ati|)$.
-% \end{complexity}
-% \begin{proof}[Anlaysis]
-% Since actors in filters are executed sequentially, lets analyze each actor separately. 
-% The complexity of $\aaa$ is $O(|E|)$ by \dref{algo:act-1}. 
-% This worst-case complexity of $|E|$ for $\aaa$ only happens in the first filter as we have explained before in \ref{comp:an:filter:note}. 
-% Then for $\ab$ complexity is $O(|L| \times 6|U|)$. $|L|$ is the upper bound by \autoref{theorem:awg} since the \texttt{for} loop is iterating over all $W_l$ received from the channel.
-% Inside that \texttt{for} loop there 3 sets operations are taking place. Each of those operations are upper bounded by $|U|$ in the worst-case, since $W_l \subseteq U$ by \dref{def:awg}. 
-% Then, the cost of each loop is $O(6|U|)$ worst-case.  
-% The complexity of $\ac$ is $O(|L| \times \binom{|L|}{2} \times 6|U|)$. The first $|L|$ is the outer \texttt{for} loop which receives all the possible \acrshort{awg}, which is upper bounded by $|L|$ according to \autoref{theorem:awg}.
-% $\binom{|L|}{2}$ is the second \texttt{for} loop which is iterating over all the \acrshort{adwg} that are in this filter, and it is upper bounded by $\binom{|L|}{2}$ according to \autoref{theorem:adwg} and supposing that this filter contains all the \acrshort{adwg} in the worst case. 
-% Then, $6|U|$ is inside of the second \texttt{for} loop and follows the same analisys for the set operations provided in $\ab$. Finally, $\ad$ takes $O(|Q||\ati|)$ as we have described in $\gbt$ complexity analysis.
-% Gluing everything together the worst-case complexity of four actors in the filter instance is $O(|E| + |L| \times 6|U| + |L| \times \binom{|L|}{2} \times 6|U| + |Q||\ati|)$. 
-% Since $|L| \times \binom{|L|}{2} \times 6|U| > |L| \times 6|U|$, we can eliminate that term which is not dominating. Therefore $O(|E| + |L| \times \binom{|L|}{2} \times 6|U| + |Q||\ati|)$.
+\begin{complexity}[Filter $\fbt$]
+The total complexity of $\fbt$ algorithm in worst-case is $O(|E| + |L| \times \binom{|L|}{2} \times 6|U| + |Q||\ati|)$.
+\end{complexity}
+\begin{proof}[Anlaysis]
+Since actors in filters are executed sequentially, lets analyze each actor separately. 
+The complexity of $\aaa$ is $O(|E|)$ by \dref{algo:act-1}. 
+This worst-case complexity of $|E|$ for $\aaa$ only happens in the first filter as we have explained before in \ref{comp:an:filter:note}. 
+Then for $\ab$ complexity is $O(|L| \times 6|U|)$. $|L|$ is the upper bound by \autoref{theorem:awg} since the \texttt{for} loop is iterating over all $W_l$ received from the channel.
+Inside that \texttt{for} loop there 3 sets operations are taking place. Each of those operations are upper bounded by $|U|$ in the worst-case, since $W_l \subseteq U$ by \dref{def:awg}. 
+Then, the cost of each loop is $O(6|U|)$ worst-case.  
+The complexity of $\ac$ is $O(|L| \times \binom{|L|}{2} \times 6|U|)$. The first $|L|$ is the outer \texttt{for} loop which receives all the possible \acrshort{awg}, which is upper bounded by $|L|$ according to \autoref{theorem:awg}.
+$\binom{|L|}{2}$ is the second \texttt{for} loop which is iterating over all the \acrshort{adwg} that are in this filter, and it is upper bounded by $\binom{|L|}{2}$ according to \autoref{theorem:adwg} and supposing that this filter contains all the \acrshort{adwg} in the worst case. 
+Then, $6|U|$ is inside of the second \texttt{for} loop and follows the same analisys for the set operations provided in $\ab$. Finally, $\ad$ takes $O(|Q||\ati|)$ as we have described in $\gbt$ complexity analysis.
+Gluing everything together the worst-case complexity of four actors in the filter instance is $O(|E| + |L| \times 6|U| + |L| \times \binom{|L|}{2} \times 6|U| + |Q||\ati|)$. 
+Since $|L| \times \binom{|L|}{2} \times 6|U| > |L| \times 6|U|$, we can eliminate that term which is not dominating. Therefore $O(|E| + |L| \times \binom{|L|}{2} \times 6|U| + |Q||\ati|)$.
 
-% \end{proof}
-      
+\end{proof}
+\fi   
       
 \clearpage
 \section{Correctness of the Algorithm}
@@ -904,7 +905,7 @@ filterUt wt (si, sj, sk) =
 \label{src:dpbt:4}
 \end{listing}
 
-$\ac$ in \autoref{src:dpbt:4}, shows the process of collecting aggregated bi-triangles $\ati$. In highlighted lines on \autoref{src:dpbt:4} we can see the algorithm to detect when the \acrshort{awg}
+$\ac$ in \autoref{src:dpbt:4}, shows the process of collecting aggregated bitriangles $\ati$. In highlighted lines on \autoref{src:dpbt:4} we can see the algorithm to detect when the \acrshort{awg}
 received in the feedback channel are \acrshort{awgc} according to \dref{def:awgc}.
 
 \begin{listing}[htp!]

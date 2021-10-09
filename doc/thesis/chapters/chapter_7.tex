@@ -41,7 +41,7 @@ Specifically, the networks used in the literature have been selected \cite{konec
    Wang Amazon & 26112 & 799 & 29062 & $3.4 \times 10^6$ & 110269\\
    \hline
   \end{tabular}
- \caption[{[EE] Selected Networks of \acrlong{bg}}]{This table shows the different networks used in the experiments. We provide some metrics of the networks used in order to understand a little more about the topology of each \acrshort{bg}. In particular, we are showing in the last column $2$ metrics that are important and could affect results which are a number of wedges and bi-triangles}
+ \caption[{[EE] Selected Networks of \acrlong{bg}}]{This table shows the different networks used in the experiments. We provide some metrics of the networks used in order to understand a little more about the topology of each \acrshort{bg}. In particular, we are showing in the last column $2$ metrics that are important and could affect results which are a number of wedges and bitriangles}
  \label{table:exp:data-set}
  \end{table}
  
@@ -424,7 +424,7 @@ Regarding \autoref{fig:exp:bench:2}, it is observed with the red bars that \acrs
 We can also see in \autoref{fig:exp:bench:2} that scenario E-H took $8756$ seconds in \acrshort{dbpedia} network compare with the E-L and E-M, which took $596$ seconds and $577$ seconds, respectively. 
 Also, in \autoref{fig:exp:bench:2}, we can see that Opsahl UC Forum took $1660$ seconds for VL-H scenario, $11$ seconds for VL-L, and $22$ seconds for VL-M, also showing the same behavior as \acrshort{dbpedia}.
 Moreover, in \autoref{fig:exp:bench:2} it can also be appreciated how Wang Amazon network and Moreno Crime are showing the same behavior for VL-H, VL-L, and VL-M scenarios, where Wang Amazon networks report $21, 8$ and $8$ seconds, respectively and Moreno Crime $3, 3$ and $2$ seconds.
-The same behavior repeats for all networks and all scenarios, indicating that the experiments with higher incidence take more time to finalize the execution compared to the experiments with lower incidence. This means that the type of query command $Q$ impacts on the execution of the program; the higher the incidence, the more bi-triangles to be enumerated and the longest the program will take to finish.
+The same behavior repeats for all networks and all scenarios, indicating that the experiments with higher incidence take more time to finalize the execution compared to the experiments with lower incidence. This means that the type of query command $Q$ impacts on the execution of the program; the higher the incidence, the more bitriangles to be enumerated and the longest the program will take to finish.
 
 \subsection{E3: Performance Analysis}\label{sub:sec:exp-3} 
 \paragraph{Goal} In this experiment, we take measurements on one network, to gather data about the use of memory allocation and threads on \acrshort{ghc} during the execution of \acrshort{dpbt}.
@@ -512,7 +512,7 @@ The rest $10\%$ of the total memory is evenly distributed among other data types
  
 \section{Discussion}\label{sec:exp:discussion}
 \paragraph{E1: Continuous behavior} \autoref{sub:sec:res:e1} reports show that continuous behavior can be appreciated better in some scenarios and networks than others. For example, the scenarios containing queries with higher incidence shows more continuous behavior than the rest as we have seen in \autoref{table:e1:dm:values}. 
-The reason of higher incidence are more continuous than the rest can be explained because bi-triangles are aggregated based on triple $\ell = (l_l,l_m,l_u)$ (see \dref{def:abt}). Then, if the requested $l \in L$ matches with some of these vertices in $\ell$, all the $\hat{U}_l$ cartesian product need to be enumerated in a 6-cycle path \acrshort{bt} (see \dref{def:bt}). 
+The reason of higher incidence are more continuous than the rest can be explained because bitriangles are aggregated based on triple $\ell = (l_l,l_m,l_u)$ (see \dref{def:abt}). Then, if the requested $l \in L$ matches with some of these vertices in $\ell$, all the $\hat{U}_l$ cartesian product need to be enumerated in a 6-cycle path \acrshort{bt} (see \dref{def:bt}). 
 Therefore, if there are a large number of \acrshort{bt} because the incidence level is high, there are more data to be delivered through channels and more data is arriving to $\obt$ sooner, incrementally generating results (see \autoref{sub:sec:algo-sketch}).
 Moreover, the cases that exhibit less continuous behavior are Wang Amazon and Moreno Crime networks in the majority of their scenarios as we discussed in \autoref{sub:sec:res:e1}. In the case of Wang Amazon $8$ out of $9$ scenarios shows a \acrshort{dm} value of $0$. In the case of Moreno crime networks, it is reported a \acrshort{dm} value of $0$ in $5$ out of $9$ scenarios. 
 We provide two arguments that support the explanation of this low continuous level in Wang Amazon and Moreno Crime. 
@@ -554,7 +554,7 @@ Then, the experimental procedure and results are reported. Finally, we have disc
 To summarize, the main points observed during the experimentation are:
 \begin{itemize}
   \item High values of the metric dief\@t that is indicating the continuous behavior of \acrshort{dpbt} exhibiting its capability of incrementally enumerates \acrshort{bt}.
-  \item High values of the metrics \emph{Average Running Time} and \emph{Total Running Time} for scenarios which enumerates more bi-triangles, are suggesting an effective implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt}.
+  \item High values of the metrics \emph{Average Running Time} and \emph{Total Running Time} for scenarios which enumerates more bitriangles, are suggesting an effective implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt}.
   \item Results captured by the \texttt{ThreadScope} tool indicating an even distribution of the threads among processors, showing efficient use of the parallel model.
   \item Results gathered by the \texttt{eventlog2html} tool suggesting that memory consumption is efficiently handled in the intermediate objects that \acrshort{dpfh} collects on each filter and transfers between them. A proposal on how also improve this part was exposed in \autoref{sec:exp:discussion}.
 \end{itemize} 

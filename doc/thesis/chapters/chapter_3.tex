@@ -58,7 +58,7 @@ are not \acrshort{bt} are \emph{acyclic swj-unit}. The main idea of the algorith
 the number of \acrshort{bt} can be deduced straightforward.
 The main advantage of SWJ-Count compared with the wedge-based is that it does not count wedges twice.
 Therefore, the complexity is less, although both \emph{polly-time}.
-In terms of empirical analysis, it performs well up to graphs of $4 \times 10^20$ bi-triangles. After that, the algorithm times out.
+In terms of empirical analysis, it performs well up to graphs of $4 \times 10^20$ bitriangles. After that, the algorithm times out.
 The second algorithm they proposed is the Ranked Super-wedge based algorithm (RSWJ-Count). This is a better approach compared with the previous in terms of complexity and running time because it takes the same gadget to count which is the \emph{swj-unit} but introducing ranking on the degree of the vertices. The main idea is that vertices with a higher degree have more super-wedges, 
 and therefore, \emph{swj-unit} can be count faster by sharing computations. RSWJ-Count is the best of all three algorithms for doing global counting.
 The main limitation of \emph{Global Counting} is that the user needs to wait for the whole calculation to complete and there is no partial result of it.
@@ -75,7 +75,7 @@ Our model improves this limitation, taking advantage again with the use of \acrs
 
 \section{Pay-as-you-go Model}
 As we have described in \autoref{intro}, the \emph{pay-as-you-go} computational model focuses on incrementally deliver results on high resource-consumer processes.
-\emph{pay-as-you-go} model plays a fundamental role in applications that needs to process large amount data, where the user does not need to obtain all the results but a fraction of them.
+\emph{pay-as-you-go} model~\cite{factcatch} plays a fundamental role in applications that needs to process large amount data, where the user does not need to obtain all the results but a fraction of them.
 At the same time, the user is able to administrate the resources that the user is able to "pay" or "wait" for a subset of the desired outcomes. 
 
 \paragraph{Fact-Checking} Nguyen et al.~\cite{factcatch} have conducted a study with primary focus on \emph{pay-as-you-go} model, where they use incremental quality estimation to provide fact-checking over World Wide Web documents.
