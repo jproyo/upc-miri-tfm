@@ -2,7 +2,8 @@
 Before moving forward with the core of the research, we describe the fundamental concepts that support the different parts of our study. That is Stream Processing in general, Dynamic Pipeline Paradigm and, Streaming Processing in the context of \acrshort{hs}.
 
 \section{Streaming Processing}
-The rise of massive data processing for data mining algorithms and big data analysis could not have been possible without proper Streaming Processing techniques. 
+%The rise of massive data processing for data mining algorithms and big data analysis could not have been possible without proper Streaming Processing techniques. 
+The development of Streaming Processing techniques  have potentiated areas as massive data processing for data mining algorithms, big data analysis, IoT applications, etc.  
 \acrfull{ds} has been studied using different approaches~\cite{enumeratingsg, exploiting, onthefly} allowing to process a large amount of data efficiently with an intensive level of parallelization.
 We can distinguished two different parallelization streaming computational models: \acrfull{dap} and \acrfull{pip}. 
 
@@ -18,7 +19,8 @@ The communication between stages takes place through some means, typically chann
 This kind of paradigm enables computational algorithms that can generate incremental results, preventing the user waits until the end of the whole data stream processing to get a result. 
 On the other hand, the disadvantage over \acrshort{dap} is that although pipeline stages are parallelized, some intensive computation in one stage might delay processing the next stage because of its sequential dependency nature. Therefore, the user must be sure each stage runs extremely fast computations on it.
 
-Due to the nature of our problem where we need to incrementally generate \acrlong{bt}s and the data needs to be aware of the context to compute those \acrshort{bt}, the stream processing model of our choice is \acrshort{pip}.
+%Due to the nature of our problem where we need to incrementally generate \acrlong{bt}s and the data needs to be aware of the context to compute those \acrshort{bt}, the stream processing model of our choice is \acrshort{pip}.
+The nature of our problem requieres that results are  output incrementally, i.e.   \acrlong{bt}s are emitted incrementally. Additionally, data need to be aware of the context to compute the  \acrshort{bt}s. Considering the stream processing models presented above, we have chosen  \acrshort{pip}. We think it is the model that better fits the requirements of the enumerating incrementally bitriangles problem. 
 We are going to see in the next section what is the specific \acrshort{pip} computation model used for that purpose.
 
 \section{Dynamic Pipeline Paradigm}\label{sec:dp}
@@ -61,13 +63,15 @@ Although most of those libraries offer the ability to implement \acrshort{dap} a
 the setup of the stages should be provided beforehand. In the context of this work, we have done a proof of concept at the beginning, 
 but it was not possible to adapt any of those libraries to implement properly \acrshort{dp}. 
 The closest we have been to implement \acrshort{dp} with some of those libraries was when we explored \mintinline{shell}{streamly}.
-In that case, there is a \mintinline{haskell}{foldrS} combinator that could have been proper to the purpose of generating a dynamic pipeline of stages based on the data flow, but it was not possible to manipulate the channels between the stages to control the flow of the data. 
-In spite of this, it is important to remark that the library implements Channels, but it is hidden from the end-user and, there is no clear way to manipulate them.
+In this case, there is a \mintinline{haskell}{foldrS} combinator that could have been proper to the purpose of generating a dynamic pipeline of stages based on the data flow, but it was not possible to manipulate the channels between the stages to control the flow of the data. It is important to remark that, even though, the  library  \mintinline{shell}{streamly} implements channels, they are hidden from the end-user and, there is not a  clear way to manipulate them.
 
-No similar library with \acrshort{dp} approach has been written at the moment of this research in \acrlong{hs}. 
-This was another important motivation to write our own Framework, not only because we wanted to solve our research needs but, as a novel contribution, we wanted to deliver a \acrshort{dpf} to the \acrshort{hs} community as well, in order to help writing algorithms using \acrshort{dp}. 
+To the best of our knowledge no similar library under the  \acrshort{dp} approach has been written in \acrlong{hs}. 
+One important motivation to develop our own framework is that  we not only  wanted to satisfy our research needs but, as a novel contribution, we wanted to deliver a \acrshort{dpf} to the \acrshort{hs} community as well. We hope this contribution encourages and helps writing algorithms under the Dynamic Pipeline Paradigm. 
 
 \section{Chapter Summary}
+
 In this chapter, we have summarized all the \emph{preliminary work} that has been done on the related areas that affect our research objective.
-First, we have shown the different Streaming processing computational models. Then we have described the \acrshort{dp} as we know it now. 
-Finally, we have explored what is the preliminary work on that aspect at this moment in \acrshort{hs} regarding Stream processing. 
+%First, we have shown the different stream processing computational models. Then, we have described the \acrshort{dp}.  
+%Finally, we have explored what is the preliminary work on that aspect at this moment in \acrshort{hs} regarding stream processing. 
+First, we have shown the different stream processing computational models. Then, we have described the \acrshort{dp}.  
+Finally, we have presented the available tools and libraries for stream processing  in \acrshort{hs}.
