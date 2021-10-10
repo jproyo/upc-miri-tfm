@@ -54,7 +54,7 @@ We believe that \acrshort{dp} is a proper computational model for solving the \a
 
 \section{Problem Statement}
 A bitriangle in a bipartite graph is defined as a 6-cycle with three vertices from one type of vertex set and three vertices from the other type of vertex set. We can also say that it is formed by two connected wedges closed by an additional wedge~\cite{btcount}.
-An example of what it is a \acrshort{bt} and what it is not, can be seen in \autoref{fig:bitriangle-example} and \autoref{fig:bitriangle-not}.
+An example of what it is a \acrfull{bt} and what it is not, can be seen in \autoref{fig:bitriangle-example} and \autoref{fig:bitriangle-not}.
 
 \begin{figure}[htp!]
 \begin{subfigure}[b]{0.5\textwidth}
@@ -72,18 +72,18 @@ An example of what it is a \acrshort{bt} and what it is not, can be seen in \aut
 \caption[{[Int] Example of \acrshort{bt} in a \acrshort{bg}}]{Example of \acrshort{bt} in \acrshort{bg}. In the left figure  we see a bitriangle well formed by 3-cycle wedges. In the right image the figure does not form a bitriangle because $l_2$ is only connected with $u_3$ breaking the cycle}
 \end{figure}
 
-Enumerating all the possible \acrshort{bt} is computationally hard. However, as we have stated before, most frequently only partial results are needed. In that sense, we can provide a query-oriented  algorithm to search all  the \acrshort{bt} that matches some query criteria and  that incrementally deliver results to the user. In this work, we propose and implement an \acrfull{iebt}.
+Enumerating all the possible \acrshort{bt} is computationally hard. However, as we have stated before, most frequently only partial results are needed. In that sense, we can provide a query-oriented  algorithm to search all  the \acrshort{bt} that matches some query criteria and  that incrementally deliver results to the user. In this work, we propose and implement an \acrlong{iebt}.
 
 \section{Proposed Solution}
-The solution proposed in this work is to implement an \acrfull{iebt} using \acrfull{dp} implemented in \acrfull{hs}.
-In order to achieve that goal, we first conduct a proof of concept to assess the feasibility of using \acrshort{hs} for implementing an algorithm with the \acrshort{dp}. In that assessment, we work on solving the problem of \acrfull{wcc} of a graph. Then, we develop a \acrlong{dpf} written in \acrlong{hs} that could help to implement any algorithm using \acrshort{dp}.
+The solution proposed in this work is to implement an \acrlong{iebt} using \acrlong{dp} implemented in \acrfull{hs}.
+In order to achieve that goal, we first conduct a proof of concept to assess the feasibility of using \acrshort{hs} for implementing an algorithm with the \acrshort{dp}. In that assessment, we work on solving the problem of \acrfull{wcc} of a graph. Then, we develop a \acrfull{dpf} written in \acrlong{hs} that could help to implement any algorithm using \acrshort{dp}.
 Following that, we provide the formal definition of \acrshort{iebt} using \acrshort{dp}, in a pseudo-code format an its correctness proof.   Finally, we provide the implementation of the algorithm, called \acrfull{dpbt}, using the \acrshort{dpf}. 
 
 \section{Contribution}\label{sec:contrib}
 The main contribution of this work is to implement, formalize and empirically evaluate a \acrlong{iebt} using \acrlong{dp} written in \acrshort{hs}.
 We believe that this implementation is a step forward in the field, and we think our approach opens new research lines and improvements to be addressed in the future. 
 
-In order to assess the feasibility of \acrshort{dp} implemented in \acrshort{hs}, we made a proof of concept solving \acrfull{wcc} problem of a graph using \acrshort{dp} with \acrshort{hs}. We have also empirically evaluated this implementation with interesting results that we are going to cover in \autoref{prole}. 
+In order to assess the feasibility of \acrshort{dp} implemented in \acrshort{hs}, we made a proof of concept solving \acrlong{wcc} problem of a graph using \acrshort{dp} with \acrshort{hs}. We have also empirically evaluated this implementation with interesting results that we are going to cover in \autoref{prole}. 
 
 Finally, and as a result of the proof of concept work, is the development and publication of a \acrshort{hs} framework called \mintinline{shell}{dynamic-pipeline}~\cite{dynamic-pipeline}.  The framework was published on \acrfull{hack}~\cite{hackage} on 2021 June 17th in its first version,
 providing to \acrshort{hs} community the ability to build algorithms using \acrshort{dp}. This is a novel contribution since it is the first library published on \acrshort{hs} that implements \acrshort{dp}.
@@ -101,8 +101,8 @@ To summarize, our contributions are:
 Lo veremos al final, cuando todos los capítulos estén escritos
 \color{black}
 This document is organized as follows. In \autoref{prelim} we present and describe all the previous work that has been done on the related fields of Streaming Processing, Dynamic Pipeline Paradigm, and Streaming processing related to \acrshort{hs}. 
-Following that, in \autoref{relate-work} we describe the state of the art related \acrshort{bt} in \acrshort{bg}, \emph{pay-as-you-go} model and subgraph enumeration algorithms in general.
-In \autoref{prole} we show and describe with some level of details, an overview to the \acrshort{prole21} as well as the details of the results obtained. 
+Following that, in \autoref{relate-work} we describe the state of the art related \acrshort{bt} in \acrfull{bg}, \emph{pay-as-you-go} model and subgraph enumeration algorithms in general.
+In \autoref{prole} we show and describe with some level of details, an overview the the proof of concept that we conducted for verifying the suitability of \acrshort{hs} as an implementation language for \acrshort{dp} as well as the obtained results. 
 Continuing with that, in \autoref{dp-hs} we deeply describe the \acrshort{dpf} written in \acrshort{hs}, the design of the framework, and all the used techniques for the implementation.
 After that chapter, we finally arrive at \autoref{incr-algo-bt-dp} where we focus on the main problem of this work. There we provide all the details related to the algorithm for incrementally enumerating \acrshort{bt} in \acrshort{bg}, its pseudo-code,
 correctness proof and \acrshort{hs} implementation using the framework.

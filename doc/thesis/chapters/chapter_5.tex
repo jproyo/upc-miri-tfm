@@ -1,7 +1,7 @@
 \chapter{Dynamic Pipeline Framework in Haskell}\label{dp-hs}
 The design and implementation of \acrfull{dpfh} is a fundamental piece of the present work, as we have described in ~\autoref{intro} and ~\autoref{prelim},
 A \acrlong{dpf} written in \acrlong{hs} which allow \acrshort{hs} users to implement any suitable algorithm in \acrlong{dp}.
-During the process of conducting this research, we have implemented \acrshort{dpfh}~\cite{dynamic-pipeline} and publishes it into \acrfull{hack}~\cite{hackage}.
+During the process of conducting this research, we have implemented \acrshort{dpfh}~\cite{dynamic-pipeline} and publishes it into \acrlong{hack}~\cite{hackage}.
 In this chapter, we are going to describe the design and implementation details of \acrshort{dpfh}.
 
 \section{Framework Design}
@@ -16,7 +16,7 @@ There are several design approximations to implement a framework: \begin{inparae
   \item \emph{\acrfull{dsl}}~\cite{Fowler10} where the framework or library provides a new language that represents the domain problem and allows to program the solution in terms of that high-level language. An example of this type of design is Hibernate Query Language~\cite{hql}
    \end{inparaenum}.
 
-In the \acrlong{dsl} approach~\cite{dsl} there exists two types of it: \acrfull{dsl} and \acrfull{edsl}. The purpose of \acrshort{dsl}, usually called external \acrshort{dsl}, is to create a completely new language with its own semantic, syntax, and interpreter. 
+In the \acrlong{dsl} approach~\cite{dsl} there exists two types of it: \acrlong{dsl} and \acrfull{edsl}. The purpose of \acrshort{dsl}, usually called external \acrshort{dsl}, is to create a completely new language with its own semantic, syntax, and interpreter. 
 \acrshort{dsl}s are not general-purpose languages, because as their name indicates, they are domain-specific. \acrshort{edsl} are syntactically embedded in the host language of the library, and the user writes in that host language, but restricted by the \acrshort{edsl} abstractions.
 \acrshort{dpfh} follows a \acrshort{edsl} approach taking advantage of the strong type \acrshort{hs} system giving the user correctness at type-level~\cite{curryhoward}.
 

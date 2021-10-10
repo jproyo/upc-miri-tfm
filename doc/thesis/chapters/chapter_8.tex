@@ -12,10 +12,10 @@ or even in the entertainment industry to describe user behavior in TV shows allo
 Having the ability to enumerate \acrlong{bt} enables those problems to be structurally explained in terms of the specific objects that are participating in the relationship.  
 Moreover, those problems do not always require the complete information of the whole network or the whole set of \acrlong{bt}. 
 Therefore, introducing algorithms that incrementally deliver results, using a \emph{pay-as-you-go} model approach combined with \acrshort{dp} brings exhaustive and exact results for the solution space that the user wants to obtain. 
-During the research of this work, we have explored \acrfull{dp} as a model of computation to solve that problem using the described approach. 
+During the research of this work, we have explored \acrlong{dp} as a model of computation to solve that problem using the described approach. 
 One of the first conclusions that we arrive at after empirically validate our assumptions is that \acrlong{dp} has shown to be an efficient model for building a parallel algorithm to incrementally enumerate \acrlong{bt} in \acrlong{bg}. 
 In addition to that, and at the moment of writing this, we have given a novel solution for the problem, which has not been addressed in any other work.
-Moreover, we have also shown how strong \acrfull{hs} behaves for implementing \acrfull{dp} for solving \acrlong{iebt}. 
+Moreover, we have also shown how strong \acrlong{hs} behaves for implementing \acrlong{dp} for solving \acrlong{iebt}. 
 Following that, the designed algorithm \acrshort{dpbt} can process and enumerate large networks like the \acrlong{dbpedia} which contains more than $300$ millions of \acrlong{bt}.
 In the experimental analysis, we have demonstrated the continuous behavior capabilities of the implementation using, \acrlong{dt} giving support to our research assumptions and motivations. 
 
@@ -28,7 +28,7 @@ The first exposed limitation in the previous \autoref{experiments} was memory ef
 This is causing a big increase of \texttt{MUT\_ARR\_PTRS\_CLEANER} object. The main limitation is the amount of memory that we have at our disposal if we want to handle networks bigger than DBpedia.
 Another weakness also related to memory management, is the data structures used for managing the query matches of the bitriangles. Although in the \acrshort{dpfh} implementation of the pseudo-code algorithm as we have seen on \autoref{sec:iebt:hs:imp} we have been careful about \acrshort{hs} techniques and data types used to improve the search performance, it is important to remark that 
 there are more advanced techniques to implement this kind of joins and matchings as it is described in the work of Lai et al.~\cite{Lai} for example.
-Finally, there are currently some limitations on \acrfull{dpfh} itself, since the Threading model that we are using is the green threads~\cite{sparks} that \acrshort{hs} provides, with a limitation in the number of threads that the framework can spawn. Even the limitation is high (in the order of hundred of thousands), it is nothing compared with the potential of using sparks which is at the level of hundreds of millions and also supported by \acrshort{hs}.
+Finally, there are currently some limitations on \acrlong{dpfh} itself, since the Threading model that we are using is the green threads~\cite{sparks} that \acrshort{hs} provides, with a limitation in the number of threads that the framework can spawn. Even the limitation is high (in the order of hundred of thousands), it is nothing compared with the potential of using sparks which is at the level of hundreds of millions and also supported by \acrshort{hs}.
 
 \section{Future Work}
 As we have seen in \autoref{experiments}, we have detected an increase in the memory consumption as long as the network grows. 

@@ -87,7 +87,7 @@ This metric is gathered by \texttt{TreadScope} \cite{threadscope} tool.
 This metric is gathered by \texttt{eventlog2html} \cite{eventlog2html} tool.
     
 \subsection{Scenarios}\label{sub:exp:exp-data-setup}
-An experimental scenario is a specific configuration of the \acrfull{qo} that we have defined in \dref{def:query:match}. 
+An experimental scenario is a specific configuration of the \acrlong{qo} that we have defined in \dref{def:query:match}. 
 That means, that for each network that we run an experiment with a different configuration of the \acrshort{qo} to obtain different results.
 
 \begin{definition}[Incidence Level]\label{def:exp:incidence}
@@ -148,7 +148,7 @@ Having the previous \dref{def:exp:incidence}, we define the following scenarios 
   
 \subsection{Implementation}
 \paragraph{Hardware Platform} All the experiments have been executed in the \emph{HPC Cluster at UPC}. The nodes' architecture running in the cluster is $x86$ $64$ bits with a \textit{$24$-Core Intel(R) Xeon(R) CPU X5650} processor of $2.67$ GHz. 
-Regarding memory, the allocated nodes have been requested from $40 GB$ up to $120 GB$ of RAM for the biggest \acrshort{dbpedia} graph. These machines also have $256\ KB$ of L2 cache memory, and $12\ MB$ of L3 cache.
+Regarding memory, the allocated nodes have been requested from $40 GB$ up to $120 GB$ of RAM for the biggest \acrfull{dbpedia} graph. These machines also have $256\ KB$ of L2 cache memory, and $12\ MB$ of L3 cache.
 
 \paragraph{Haskell Setup} The implementation uses \acrshort{ghc} $8.10.4$ plus the following set of \acrshort{hs} libraries:
 \begin{inparaenum}[]
@@ -186,12 +186,12 @@ It is important to remind the reader that \texttt{ghc-gc-tune} \cite{ghctune} us
 \section{Experimental Results}\label{sec:exp:observed-results}
 \subsection{E1: Continuous behavior Analysis}\label{sub:sec:exp-1} 
 \paragraph{Goal} In this experiment, we assess the ability of \acrshort{dpbt} to generate results incrementally.
-In order to do that, we use the \acrfull{dtkp} Tool~\cite{diefpy} which implements \emph{Diefficiency Metric}~\cite{diefpaper} measurement analysis.
+In order to do that, we use the \acrlong{dtkp} Tool~\cite{diefpy} which implements \emph{Diefficiency Metric}~\cite{diefpaper} measurement analysis.
 This experiment allows us to answer research questions [R1] and [R3] defined in \qref{res:bt:question}. 
 
 \paragraph{Procedure} We execute this experiment for each of the networks described in \autoref{data:set} and for each scenario described in \autoref{sub:exp:exp-data-setup}.
 This experiment has been executed five times on each case until we found the proper vertex or edges in the selection described in \autoref{sub:exp:sel-vals}. The criteria followed by the selection of the vertices or edges are detailed in \autoref{sub:exp:sel-vals}.
-The metric  \acrfull{dt}-described in \autoref{sub:metric}- is used to measure the continuous behavior of the proposed approach in a given time frame.
+The metric  \acrlong{dt}-described in \autoref{sub:metric}- is used to measure the continuous behavior of the proposed approach in a given time frame.
 \autoref{table:e1:def} depicts the different configurations evaluated in this experiment. The timeout for all the configuration scenarios setups that appears in \autoref{table:e1:def} have been set in $48$ hours.
 
 \begin{table}[htp!]
@@ -372,14 +372,14 @@ Finally, Opsahl UC Forum is reporting the lowest \acrshort{dk} value in VL-M wit
     \caption[{[EE] \acrshort{dt} Results (Radial): Wang Amazon}]{\acrshort{dt} metric results in radial plot after running all experiment scenarios described in \autoref{table:e1:def} on Wang Amazon network. Each color represents one scenario. For this case \texttt{Comp}, \texttt{T} and \acrshort{dt} with $100\%$ is also for VL-H scenario.}
     \label{fig:dief:wang-radial}
   \end{subfigure}
-  \caption[{[EE] \acrshort{dt} General Results (Radial)}]{Radial plots show how the different dimensions values provided by \acrshort{dtkp} tool such as \acrfull{tt}, \acrfull{tfft}, \acrfull{dt}, \acrfull{et} and \acrfull{comp} are related each other for each experimental case. These figures show radial plot observed results after running all the scenarios described in \autoref{table:e1:def} for each network. \acrshort{dt} is described in \\ \autoref{sub:metric}.}
+  \caption[{[EE] \acrshort{dt} General Results (Radial)}]{Radial plots show how the different dimensions values provided by \acrshort{dtkp} tool such as \acrshort{tt}, \acrshort{tfft}, \acrshort{dt}, \acrshort{et} and \acrshort{comp} are related each other for each experimental case. These figures show radial plot observed results after running all the scenarios described in \autoref{table:e1:def} for each network. \acrshort{dt} is described in \\ \autoref{sub:metric}.}
 \end{figure}
 
 Another plots that \acrshort{dtkp} tool provides are shown in \autoref{fig:dief:dbpedia-radial}, \autoref{fig:dief:moreno-radial}, \autoref{fig:dief:opsahl-radial} and \autoref{fig:dief:wang-radial}.
 Here we can observe how all the networks under the VL-H scenario cover \acrshort{dt} metrics with the dark green area, which indicates that it is continuously delivering results for each network. 
-The rest of the data setup experiments indicates that the level of throughput, completeness, and execution time is less than \acrfull{dt}, and the results can be delivered faster without appreciating continuous behavior properly in the plot. 
-These radial plots obtained from \acrshort{dt} shows how \acrfull{et}, \acrfull{tfft}, \acrfull{comp}, \acrfull{tt} and \acrshort{dt} measured by \acrshort{dtkp} tool, relate each other in the same setup. 
-For our case analysis, the higher the area that is cover in \acrfull{dt} the better, indicating a high level of continuous behavior.
+The rest of the data setup experiments indicates that the level of throughput, completeness, and execution time is less than \acrlong{dt}, and the results can be delivered faster without appreciating continuous behavior properly in the plot. 
+These radial plots obtained from \acrshort{dt} shows how \acrshort{et}, \acrshort{tfft}, \acrshort{comp}, \acrshort{tt} and \acrshort{dt} measured by \acrshort{dtkp} tool, relate each other in the same setup. 
+For our case analysis, the higher the area that is cover in \acrlong{dt} the better, indicating a high level of continuous behavior.
 
 \subsection{E2: Benchmark Analysis}\label{sub:sec:exp-2} 
 \paragraph{Goal} Regarding benchmarking, we aim at answering research question [R2] and assess  the impact of the type of command query $Q$ on the  \acrshort{bt} enumeration.
@@ -538,8 +538,8 @@ We can divide the analysis of this section into two: memory consumption and mult
 
 \paragraph{Multithreading} Regarding multithreading, we have gathered multithreading metrics of different time slots of the total execution time of Moreno Crime network run.
 We could not analyze bigger networks due to the huge amount of data gathered that make the program timeout for this experiment. The timeout on this case was set on $24$ hours and the program timed out running out of memory.
-As we can see in the overview, execution in \autoref{fig:exp:perf:1} all the cores (8) are running \acrfull{mut} time in threads almost during the whole execution of the program.
-Running \acrfull{mut} most of the execution of the program, also indicates that there are few GC pauses, and running time is overtaken by \acrshort{mut} time and not GC. In fact, \acrshort{ghc} productivity on this run indicated $99.8\%$.
+As we can see in the overview, execution in \autoref{fig:exp:perf:1} all the cores (8) are running \acrlong{mut} time in threads almost during the whole execution of the program.
+Running \acrlong{mut} most of the execution of the program, also indicates that there are few GC pauses, and running time is overtaken by \acrshort{mut} time and not GC. In fact, \acrshort{ghc} productivity on this run indicated $99.8\%$.
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=1\textwidth]{experiments/thread/general_overview}
