@@ -50,3 +50,41 @@ For ThreadScope
 >>> stack build --profile
 >>> stack exec bt-graph-dp -- +RTS -A10G -H10G -c -N12 -l -s -RTS -f ./experiments/diepfy/moreno_crime/input.txt -c ./experiments/diepfy/moreno_crime/c-edge-high.txt -e moreno_crime
 \end{minted}
+
+\section{Diefficiency Metrics - Traces}\label{apx:traces}
+
+\begin{listing}[htp!]
+\begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2]{text}
+test,approach,tfft,totaltime,comp
+dbpedia,edge-high,255736.822265625,8485928.7265625,214038
+dbpedia,edge-low,224763.88452148438,389846.43212890625,3880
+dbpedia,edge-medium,147658.31372070313,372466.23828125,19534
+dbpedia,vertex-lower-high,251050.91967773438,86167082.25341797,4143936
+dbpedia,vertex-lower-low,216835.52563476563,239741.81201171875,188
+dbpedia,vertex-lower-medium,199219.95922851563,1318776.70703125,47714
+dbpedia,vertex-upper-high,225575.84912109375,13363175.830078125,419107
+dbpedia,vertex-upper-low,181239.228515625,3579096.3217773438,324662
+dbpedia,vertex-upper-medium,250305.59741210938,21314163.650390625,1167826
+\end{minted}  
+\caption[{[\mintinline{shell}{metrics.csv}] Metrics CSV Dbpedia}]{CSV file that contains the metrics for all the scenarios of Dbpedia network that feed \acrshort{dtkp} tool in order to obtain Diefficiency Metrics. This file contains the minimum and maximum $t$ where an answer was produced for each scenario}
+\label{apx:metrics:csv}
+\end{listing}
+
+\begin{listing}[htp!]
+  \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2]{text}
+  test,approach,answer,time
+  dbpedia,edge-high,1,255736.822265625
+  dbpedia,edge-high,2,255737.4765625
+  dbpedia,edge-high,3,255737.59545898438
+  ..
+  ..
+  dbpedia,vertex-upper-medium,1167666,21313172.78540039
+  dbpedia,vertex-upper-medium,1167667,21313172.837890625
+  dbpedia,vertex-upper-medium,1167668,21313172.888183594
+  dbpedia,vertex-upper-medium,1167669,21313262.267333984
+  ..
+  ..
+\end{minted}  
+\caption[{[\mintinline{shell}{results.csv}] Results CSV Dbpedia}]{CSV file that contains all data points where an answer was generated for all the scenarios of Dbpedia network that feed \acrshort{dtkp} tool in order to obtain Diefficiency Metrics. This file contains the scenario, the answer number, and the time $t$ where that answer was produced}
+\label{apx:results:csv}
+\end{listing}

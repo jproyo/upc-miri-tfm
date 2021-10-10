@@ -1,0 +1,43 @@
+\multirow{9}{*}{Moreno Crime}
+& VU-H & $6.05 \times 10^2$ & $0.00$\\
+& VL-L & $2.10 \times 10^2$ & $0.00$\\
+& VL-H & $7.95 \times 10^3$ & $0.00$\\
+& VL-M & $1.01 \times 10^3$ & $0.00$\\
+& E-L & $5.40 \times 10^2$ & $0.00$\\
+& E-M & $2.37 \times 10^3$ & $0.00$\\
+& VU-L & $2.71 \times 10^2$ & $0.00$\\
+& VU-M & $5.89 \times 10^3$ & $0.00$\\
+& E-H & $9.85 \times 10^3$ & $0.00$\\
+\hline
+\multirow{9}{*}{Dbpedia}
+& VU-H & $3.32 \times 10^{13}$ & $1.97 \times 10^5$\\
+& VL-L & $1.62 \times 10^{10}$ & $3.65 \times 10^6$\\
+& VL-H & $1.81 \times 10^{14}$ & $2.34 \times 10^4$\\
+& VL-M & $4.07 \times 10^{12}$ & $4.41 \times 10^5$\\
+& E-L & $3.33 \times 10^{11}$ & $2.90 \times 10^5$\\
+& E-M & $1.68 \times 10^{12}$ & $4.99 \times 10^5$\\
+& VU-L & $2.74 \times 10^{13}$ & $3.60 \times 10^5$\\
+& VU-M & $8.80 \times 10^{13}$ & $1.48 \times 10^5$\\
+& E-H & $1.75 \times 10^{13}$ & $3.28 \times 10^5$\\
+\hline
+\multirow{9}{*}{Opsahl UC Forum}
+& VU-H & $1.99 \times 10^{12}$ & $1.27 \times 10^5$\\
+& VL-L & $2.17 \times 10^9$ & $4.92 \times 10^5$\\
+& VL-H & $6.44 \times 10^{11}$ & $1.90 \times 10^5$\\
+& VL-M & $1.30 \times 10^{11}$ & $1.05 \times 10^5$\\
+& E-L & $1.71 \times 10^{11}$  & $1.11 \times 10^5$\\
+& E-M & $7.09 \times 10^{10}$  & $1.20 \times 10^5$\\
+& VU-L & $1.58 \times 10^{10}$ & $1.18 \times 10^5$\\
+& VU-M & $5.93 \times 10^{11}$ & $1.06 \times 10^5$\\
+& E-H & $1.02 \times 10^{11}$ & $2.93 \times 10^5$\\
+\hline
+\multirow{9}{*}{Wang Amazon}
+& VU-H & $1.50 \times 10^7$ & $43.6$\\
+& VL-L & $3.90 \times 10^5$ & $41.0$\\
+& VL-H & $2.24 \times 10^7$ & $63.1$\\
+& VL-M & $4.74 \times 10^6$ & $34.5$\\
+& E-L & $3.55 \times 10^6$  & $46.2$\\
+& E-M & $1.61 \times 10^6$ & $41.2$\\
+& VU-L & $3.41 \times 10^5$ & $51.4$\\
+& VU-M & $1.83 \times 10^7$ & $2.48 \times 10^3$\\
+& E-H & $8.06 \times 10^6$  & $42.3$\\
