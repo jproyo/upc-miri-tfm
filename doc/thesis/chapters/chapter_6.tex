@@ -26,7 +26,7 @@ As we can see in \autoref{fig:bipartite-graph-example}, trying to identify the d
 The minimal structure that we can extract from this \acrshort{bt} is \acrlong{awg}, but for that we need to define what is a \acrfull{wg}.
 
 \begin{definition}[\acrfull{wg}]\label{def:wg}
-A \textit{\acrfull{wg}} in $G$ is a triple $(u_1,l,u_2)$, $\{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(l,u_2)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
+A \textit{\acrfull{wg}} in $G$ is a triple $(u_1,l,u_2)$, $\{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(u_2,l)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
 With this \dref{def:wg} in place, we can now define a \acrshort{awg}, which is an aggregated form of all the wedges of one $l \in L$.
       
@@ -125,7 +125,7 @@ Because \acrshort{iebt} will allow to enumerate \acrshort{bt} using a \emph{pay-
 In regards to that, we are going to define a Query Command that is going to be used in the pseudo-algorithm for that purpose.
 
 \begin{definition}[\acrfull{qo}]\label{def:query:match} 
-$Q$ is a \emph{\acrfull{qo}} is a value from the  \textit{sum type}
+a \emph{\acrlong{qo}} $Q$ is a value from the  \textit{sum type}
 $\mathbb{P}(U + L) + \mathbb{P}(E)$ producing as a result a possible set of \acrshort{bt} that include any of the vertices or edges given in $Q$.
 \end{definition}
 
@@ -151,6 +151,7 @@ $\ati$ & Subset of $\at$, such that $\ati \subseteq \at$ \\  \hline
 $\bti$ & the \acrshort{bt} $u_1,l_1,u_2,l_3,u_3,l_2,u_1$\\  \hline
 $\bt$ & the set of all the possible \acrshort{bt} in $G$ \\  \hline
 $bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
+$\mathbb{P}$ & Parts of set \\  \hline
 \end{tabular}
 \caption[{[\acrshort{iebt}] Summary of notations and their meanings}]{This table summarizes all the different object definitions that we have detailed in \autoref{sec:prem:def}. The first column describe the formal term used in the definitions on \autoref{sec:prem:def}. The second column summarize the meaning of each term}
 \label{table:notation}

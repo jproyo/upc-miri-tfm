@@ -96,18 +96,14 @@ To summarize, our contributions are:
 \end{itemize}
 
 \section{Document Overview} 
-\color{red}
-% TODO 
-Lo veremos al final, cuando todos los capítulos estén escritos
-\color{black}
-This document is organized as follows. In \autoref{prelim} we present and describe all the previous work that has been done on the related fields of Streaming Processing, Dynamic Pipeline Paradigm, and Streaming processing related to \acrshort{hs}. 
-Following that, in \autoref{relate-work} we describe the state of the art related \acrshort{bt} in \acrfull{bg}, \emph{pay-as-you-go} model and subgraph enumeration algorithms in general.
-In \autoref{prole} we show and describe with some level of details, an overview the the proof of concept that we conducted for verifying the suitability of \acrshort{hs} as an implementation language for \acrshort{dp} as well as the obtained results. 
-Continuing with that, in \autoref{dp-hs} we deeply describe the \acrshort{dpf} written in \acrshort{hs}, the design of the framework, and all the used techniques for the implementation.
-After that chapter, we finally arrive at \autoref{incr-algo-bt-dp} where we focus on the main problem of this work. There we provide all the details related to the algorithm for incrementally enumerating \acrshort{bt} in \acrshort{bg}, its pseudo-code,
-correctness proof and \acrshort{hs} implementation using the framework.
+The document is organized as follows. In \autoref{prelim} we present and describe the preliminary concepts needed to support this work such as Streaming Processing, Dynamic Pipeline Paradigm, and Streaming processing related to \acrshort{hs} and Diefficiency Metrics. 
+Following that, in \autoref{relate-work} we describe some work done in related fields like subgraph enumeration problems, using other streaming models to compute subgraphs, counting bitriangles in bipartite graphs, and \emph{pay-as-you-go} model.
+Additionally, in \autoref{prole} we present and describe a proof of concept that we conducted for verifying the suitability of \acrshort{hs} as an implementation language for \acrshort{dp}. 
+Continuing with that, in \autoref{dp-hs} we deeply describe the Dynamic Pipeline Framework written in \acrshort{hs}, its architectural design, and the techniques used for conducting this implementation.
+After that chapter, we finally arrive at \autoref{incr-algo-bt-dp} where we focus on the main problem of this work, where we provide the pseudo-code of the algorithm for incrementally enumerating bitriangles in large bipartite networks
+We also present the correctness proof of that algorithm as well as the \acrshort{hs} implementation using the framework defined in the previous chapter.
 In \autoref{experiments} we describe the experimental analysis conducted to assert our assumptions and answer our research questions.
-Finally, at the end of the document in \autoref{conclusions}, we present the future work and the conclusions obtained.
+Finally, at the end of the document in \autoref{conclusions}, we present the conclusions obtained after conducting this work, as well as the future work and limitations that we observe.
 
 \section{Chapter Summary}
-In this chapter, we have presented the motivation of this work, as well as the problem statement related to that motivation and the proposed solution to that problem. Additionally we provide a document overview to facilitate the reader review.
+In this chapter, we have presented the motivation of this work, as well as the problem statement related to that motivation and the proposed solution to that problem. Additionally, we provide a document overview to facilitate the reader's review.
