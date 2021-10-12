@@ -51,6 +51,7 @@
 \newcommand{\Actt}{\mathsf{actor_2}}
 \definecolor{androidgreen}{rgb}{0.64,0.78,0.22}
 \definecolor{titaniumyellow}{rgb}{0.93,0.9,0.0}
+\definecolor{light}{rgb}{0.5, 0.5, 0.5}
 
 \makeatletter
 \long\def\beamer@author[#1]#2{%
@@ -118,6 +119,14 @@
   \end{tikzpicture}
 }
 
+\usetikzlibrary{external,quotes,positioning,calc,arrows,decorations.markings,positioning,fit,shapes.misc,shadows}
+
+\newcommand{\inputtikz}[1]{%
+  \tikzsetnextfilename{#1}%
+  \input{tikz/#1.tikz}
+}
+
+\tikzexternalize[shell escape=-shell-escape,mode=graphics if exists,prefix=images/]
 \begin{document}
 
   \begin{frame}
@@ -135,271 +144,450 @@
   \end{frame}
 
   \begin{frame}[fragile]{Motivation}
-    \begin{itemize}
-      \item Assess the suitability of \textbf{Haskell} to implement \textbf{Dynamic Pipeline Paradigm}
-    \end{itemize}    
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
   \end{frame}
 
   \begin{frame}[fragile]{Motivation}
-    \begin{itemize}
-      \item Assess the suitability of \textbf{Haskell} to implement \textbf{Dynamic Pipeline Paradigm}
-      \vspace{0.5cm}
-      \begin{itemize}
-        \item Pure FP Language
-        \item Strong theoretical foundations
-        \item Toolset for building Multithreading Programs
-      \end{itemize}
-    \end{itemize}    
+    \begin{center}
+      {\color{light}Provide an Algorithm for Incrementally Enumarting Bitriangles in large} \underline{{\color{red}\textbf{Bipartite Networks}}} {\color{light}{using \textbf{Dynamic Pipeline Paradigm}}}
+    \end{center}    
+    \vspace{0.5cm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[yshift=3cm] at (current page.south) {
+        \inputtikz{bipartite}
+      };
+    \end{tikzpicture}
   \end{frame}
 
   \begin{frame}[fragile]{Motivation}
-    \begin{itemize}
-      \item Assess the suitability of \textbf{Haskell} to implement \textbf{Dynamic Pipeline Paradigm}
-      \vspace{0.5cm}
-      \begin{itemize}
-        \item Pure FP Language
-        \item Strong theoretical foundations
-        \item Toolset for building Multithreading Programs
-      \end{itemize}
-      \vspace{0.5cm}
-      \item Provide a \textbf{Proof of Concept} for implementing Weakly Connected Components (\textbf{WCC}) of a Graph
-    \end{itemize}    
+    \begin{center}
+      {\color{light}Provide an Algorithm for Incrementally Enumarting} \underline{{\color{red}\textbf{Bitriangles}}} {\color{light}{in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}}}
+    \end{center}    
+    \vspace{0.5cm}
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[yshift=3cm] at (current page.south) {
+        \inputtikz{bitriangle}
+      };
+    \end{tikzpicture}
   \end{frame}
+
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \vspace{0.5cm}
+    \begin{center}
+    \huge\emph{Why?}
+    \end{center}
+  \end{frame}
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \begin{block}{Why?}
+      \begin{itemize}
+        \item Bipartite graph model interesting relations between different set of objects, i.e. \textbf{phenotype-disease gene associations network, Netflix subscribers-TV shows, author-papers, etc.}
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \begin{block}{Why?}
+      \begin{itemize}
+        \item {\color{light}Bipartite graph model interesting relations between different set of objects, i.e. \textbf{phenotype-disease gene associations network, Netflix subscribers-TV shows, author-papers, etc.}}
+        \item Metrics for analyzing relations \textbf{Clustering coefficient, communities, social analysis}, based on Bitriangles amount.
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \begin{block}{Why?}
+      \begin{itemize}
+        \item {\color{light}Bipartite graph model interesting relations between different set of objects, i.e. \textbf{phenotype-disease gene associations network, Netflix subscribers-TV shows, author-papers, etc.}}
+        \item {\color{light}Metrics for analyzing relations \textbf{Clustering coefficient, communities, social analysis}, based on Bitriangles amount.}
+        \item Counting is \textbf{not enough}. Needs to know structural components of bitriangles, for example: in diseasome netowrk 2 disorders are connected if there is a gene implicated in both. 
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \begin{block}{Why?}
+      \begin{itemize}
+        \item {\color{light}Bipartite graph model interesting relations between different set of objects, i.e. \textbf{phenotype-disease gene associations network, Netflix subscribers-TV shows, author-papers, etc.}}
+        \item {\color{light}Metrics for analyzing relations \textbf{Clustering coefficient, communities, social analysis}, based on Bitriangles amount.}
+        \item {\color{light}Counting is \textbf{not enough}. Needs to know structural components of bitriangles, for example: in diseasome netowrk 2 disorders are connected if there is a gene implicated in both.}
+        \item \emph{"All-or-Nothing" vs. "Pay-as-you-go"} model: Some results are enough to conduct analysis like in diseasome netowrks. 
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \vspace{0.5cm}
+    \begin{center}
+      \huge\emph{How?}
+    \end{center}  
+  \end{frame}
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \begin{block}{How?}
+      \begin{itemize}
+        \item Provide a \textbf{Proof of Concept} to test \textbf{Haskell} suitability for implementing  \textbf{Dynamic Pipeline Paradigm} solving Weakly Connected Components Problem
+    \end{itemize}   
+  \end{block} 
+  \end{frame}
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \begin{block}{How?}
+      \begin{itemize}
+        \item {\color{light}Provide a \textbf{Proof of Concept} to test \textbf{Haskell} suitability for implementing  \textbf{Dynamic Pipeline Paradigm} solving Weakly Connected Components Problem}
+        \item Build a \textbf{Dynamic Pipeline Framework} in \textbf{Haskell} to implement any algorithm 
+    \end{itemize}   
+  \end{block} 
+  \end{frame}
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \begin{block}{How?}
+      \begin{itemize}
+        \item {\color{light}Provide a \textbf{Proof of Concept} to test \textbf{Haskell} suitability for implementing  \textbf{Dynamic Pipeline Paradigm} solving Weakly Connected Components Problem}
+        \item {\color{light}Build a \textbf{Dynamic Pipeline Framework} in \textbf{Haskell} to implement any algorithm }
+        \item Provide an pseudo-code algorithm definition for \textbf{Incrementally Enumerating Bitriangles in large Bipartite Networks}
+    \end{itemize}   
+  \end{block} 
+  \end{frame}
+
+  \begin{frame}[fragile]{Motivation}
+    \begin{center}
+      Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+    \end{center}    
+    \begin{block}{How?}
+      \begin{itemize}
+        \item {\color{light}Provide a \textbf{Proof of Concept} to test \textbf{Haskell} suitability for implementing  \textbf{Dynamic Pipeline Paradigm} solving Weakly Connected Components Problem}
+        \item {\color{light}Build a \textbf{Dynamic Pipeline Framework} in \textbf{Haskell} to implement any algorithm }
+        \item {\color{light}Provide an pseudo-code algorithm definition for \textbf{Incrementally Enumerating Bitriangles in large Bipartite Networks}}
+        \item Implement that Algorithm using \textbf{Dynamic Pipeline Framework in Haskell}
+    \end{itemize}   
+  \end{block} 
+  \end{frame}
+
 
   \begin{frame}{Agenda}
     \section{Dynamic Pipeline Paradigm}
     \tableofcontents[currentsection]
   \end{frame}
 
-  \input{genericDP-Fig}
+  \inputtikz{genericDP-Fig}
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-3cm,yshift=-2cm] at (current page.north east) {
-        \input{graph-DP-Fig}
+        \inputtikz{graph-DP-Fig}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-0}
+      \resizebox{\textwidth}{!}{\inputtikz{dp_example_0}}
     \end{figure}
   \end{frame}
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{2cm}{\input{genericDP-Fig-0}}
+        \resizebox{5cm}{2cm}{\inputtikz{dp_example_0}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-1}
+      \resizebox{\textwidth}{!}{\inputtikz{dp_example_1}}
     \end{figure}
   \end{frame}
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
     \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-      \resizebox{5cm}{2cm}{\input{genericDP-Fig-0}}
+      \resizebox{5cm}{2cm}{\inputtikz{dp_example_0}}
       };
     \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{6cm}{2cm}{\input{genericDP-Fig-1}}
+        \resizebox{6cm}{2cm}{\inputtikz{dp_example_1}}
     };
   \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-2}
+      \resizebox{\textwidth}{!}{\inputtikz{dp_example_2}}
     \end{figure}
   \end{frame}   
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{2cm}{\input{genericDP-Fig-1}}
+        \resizebox{5cm}{2cm}{\inputtikz{dp_example_1}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{6cm}{2cm}{\input{genericDP-Fig-2}}
+          \resizebox{6cm}{2cm}{\inputtikz{dp_example_2}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-3}
+      \resizebox{\textwidth}{!}{\inputtikz{dp_example_3}}
     \end{figure}
   \end{frame}   
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{2cm}{\input{genericDP-Fig-2}}
+        \resizebox{5cm}{2cm}{\inputtikz{dp_example_2}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{6cm}{2cm}{\input{genericDP-Fig-3}}
+          \resizebox{6cm}{2cm}{\inputtikz{dp_example_3}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-4}
+      \resizebox{\textwidth}{!}{\inputtikz{dp_example_4}}
     \end{figure}
   \end{frame}   
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{2cm}{\input{genericDP-Fig-3}}
+        \resizebox{5cm}{2cm}{\inputtikz{dp_example_3}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{6cm}{2cm}{\input{genericDP-Fig-4}}
+          \resizebox{6cm}{2cm}{\inputtikz{dp_example_4}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-5}
+      \resizebox{\textwidth}{!}{\inputtikz{dp_example_5}}
     \end{figure}
   \end{frame}   
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{2cm}{\input{genericDP-Fig-4}}
+        \resizebox{5cm}{2cm}{\inputtikz{dp_example_4}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{6cm}{2cm}{\input{genericDP-Fig-5}}
+          \resizebox{6cm}{2cm}{\inputtikz{dp_example_5}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-6}
+      \resizebox{\textwidth}{!}{\inputtikz{dp_example_6}}
     \end{figure}
   \end{frame}  
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{2cm}{\input{genericDP-Fig-5}}
+        \resizebox{5cm}{2cm}{\inputtikz{dp_example_5}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{6cm}{2cm}{\input{genericDP-Fig-6}}
+          \resizebox{6cm}{2cm}{\inputtikz{dp_example_6}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-7}
+      \inputtikz{dp_example_7}
     \end{figure}
   \end{frame}  
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{2cm}{\input{genericDP-Fig-6}}
+        \resizebox{5cm}{2cm}{\inputtikz{dp_example_6}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{6cm}{2cm}{\input{genericDP-Fig-7}}
+          \resizebox{6cm}{2cm}{\inputtikz{dp_example_7}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-8}
+      \inputtikz{dp_example_8}
     \end{figure}
   \end{frame} 
   
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{2cm}{\input{genericDP-Fig-7}}
+        \resizebox{5cm}{2cm}{\inputtikz{dp_example_7}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{6cm}{2cm}{\input{genericDP-Fig-8}}
+          \resizebox{6cm}{2cm}{\inputtikz{dp_example_8}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-9}
+      \inputtikz{dp_example_9}
     \end{figure}
   \end{frame}  
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{2cm}{\input{genericDP-Fig-8}}
+        \resizebox{5cm}{2cm}{\inputtikz{dp_example_8}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{6cm}{1cm}{\input{genericDP-Fig-9}}
+          \resizebox{6cm}{1cm}{\inputtikz{dp_example_9}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-10}
+      \inputtikz{dp_example_10}
     \end{figure}
   \end{frame}  
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{1cm}{\input{genericDP-Fig-9}}
+        \resizebox{5cm}{1cm}{\inputtikz{dp_example_9}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{5cm}{1cm}{\input{genericDP-Fig-10}}
+          \resizebox{5cm}{1cm}{\inputtikz{dp_example_10}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-11}
+      \inputtikz{dp_example_11}
     \end{figure}
   \end{frame}  
 
   \begin{frame}[fragile]{Dynamic Pipeline Paradigm}
     \begin{tikzpicture}[overlay, remember picture]
       \node[xshift=-1.5cm,yshift=-0.7cm] at (current page.north east) {
-        \resizebox{2cm}{1cm}{\input{graph-DP-Fig}}
+        \resizebox{2cm}{1cm}{\inputtikz{graph-DP-Fig}}
       };
       \node[xshift=3cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-        \resizebox{5cm}{1cm}{\input{genericDP-Fig-10}}
+        \resizebox{5cm}{1cm}{\inputtikz{dp_example_10}}
         };
       \node[xshift=9cm,yshift=-2cm,opacity=0.3] at (current page.north west) {
-          \resizebox{5cm}{1cm}{\input{genericDP-Fig-11}}
+          \resizebox{5cm}{1cm}{\inputtikz{dp_example_11}}
       };
     \end{tikzpicture}
     \begin{figure}
       \centering
-      \input{genericDP-Fig-12}
+      \inputtikz{dp_example_12}
     \end{figure}
   \end{frame}  
 
   \begin{frame}{Agenda}
     \section{Proof of Concept: $DP_{WCC}$}
     \tableofcontents[currentsection]
+  \end{frame}
+
+  \begin{frame}[fragile]{Proof of Concept: $DP_{WCC}$}
+    \begin{block}{Summary}
+    \begin{itemize}
+      \item Develop the algorithm presented before using \textbf{Haskell}
+    \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{Proof of Concept: $DP_{WCC}$}
+    \begin{block}{Summary}
+    \begin{itemize}
+      \item {\color{light}Develop the algorithm presented before using \textbf{Haskell}}
+      \item Conduct empirical analysis to prove suitability of implementation
+    \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{Proof of Concept: $DP_{WCC}$}
+    \begin{block}{Summary}
+    \begin{itemize}
+      \item {\color{light}Develop the algorithm presented before using \textbf{Haskell}}
+      \item {\color{light}Conduct empirical analysis to prove suitability of implementation}
+      \item Write an \textbf{article} and present the results in \textbf{PROLE21 Conference}~\cite{prole:2021:017}
+    \end{itemize}
+    \end{block}
+  \end{frame}
+  
+  \begin{frame}[fragile]{Proof of Concept: $DP_{WCC}$ - Empirical Evaluation}
+    \begin{block}{Research Questions}
+      \begin{itemize}
+            \item Does $\dpwcc$ in Haskell support the dynamic parallelization level that $\dpwcc$ requires?
+            \item Is $\dpwcc$ in Haskell competitive compared with default implementations on base libraries for the same problem?
+            \item Does $\dpwcc$ in Haskell handle memory efficiently?
+        \end{itemize}        
+    \end{block}
+    \begin{block}{Experiments}
+      \begin{itemize}
+        \item \textbf{Implementation Analysis}: Measure and analyze Total execution time, MUT time and GC Time.
+        \item \textbf{Benchmark Analysis}: Compare $DP_{WCC}$ with \mintinline{haskell}{Data.Graph} $WCC$ execution times:
+        \begin{itemize}
+          \item Using \mintinline{haskell}{ criterion } library.
+          \item Diefficency metric $\mathtt{dief@t}$ (\textit{diepfy} tool) to measure incremental results.
+        \end{itemize}
+        \item \textbf{Performance Analysis}: Thread and Memory allocation analysis.
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{Proof of Concept: $DP_{WCC}$ - Conclusions}
+    \begin{block}{Conclusions}      
+
+    \begin{itemize}
+      \item \textbf{Robustness and Suitability} of the DP-Haskell 
+      \item \textbf{Ability to generate Incremental results} has been shown by $\mathtt{dief@t}$ metrics
+      \item \textbf{Satisfactory Performance results} with an adequate Memory allocation and Execution times. 
+    \end{itemize}
+  \end{block}
   \end{frame}
 
 
@@ -659,129 +847,9 @@ withGenerator @DPExample
 
   \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
     \begin{block}{Program}
-      \begin{minted}[fontsize=\small,breaklines,highlightlines={5-6}]{haskell}      
-type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Sink
-
-program :: FilePath -> IO ()
-program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
-      \end{minted}
     \end{block}
   \end{frame}
 
-
-  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-    \begin{block}{Program}
-      \begin{minted}[fontsize=\small,breaklines,highlightlines={5-9}]{haskell}      
-type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Sink
-
-source' :: FilePath
-        -> Stage
-           (WriteChannel Edge -> WriteChannel ConnectedComponents -> DP st ())
-source' filePath = withSource @DPConnComp
-  $ \edgeOut _ -> unfoldFile filePath edgeOut (toEdge . decodeUtf8)
-
-program :: FilePath -> IO ()
-program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'  
-      \end{minted}
-    \end{block}
-  \end{frame}
-
-  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-    \begin{block}{Program}
-      \begin{minted}[fontsize=\small,breaklines,highlightlines={5-7}]{haskell}      
-type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Sink
-
-sink' :: Stage (ReadChannel Edge -> ReadChannel ConnectedComponents -> DP st ())
-sink' = withSink @DPConnComp $ \_ cc -> withDP $ foldM_ cc print
-
-program :: FilePath -> IO ()
-program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'  
-      \end{minted}
-    \end{block}
-  \end{frame}
-
-  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-    \begin{block}{Program}
-      \begin{minted}[fontsize=\small,breaklines,highlightlines={7-8,11-11}]{haskell}      
-type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Sink
-
-generator' :: GeneratorStage DPConnComp ConnectedComponents Edge st
-generator' =
-  let gen = withGenerator @DPConnComp genAction
-  in  mkGenerator gen filterTemplate
-
-filterTemplate :: Filter DPConnComp ConnectedComponents Edge st
-filterTemplate = actor actor1 |>> actor actor2
-
-program :: FilePath -> IO ()
-program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
-      \end{minted}
-    \end{block}
-  \end{frame}
-
-  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-    \begin{block}{Program}
-      \begin{minted}[fontsize=\small,breaklines,highlightlines={11-14}]{haskell}      
-type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Generator (Channel (Edge :<+> ConnectedComponents :<+> Eof))
-:=> Sink
-
-genAction :: Filter DPConnComp ConnectedComponents Edge st
-          -> ReadChannel Edge
-          -> ReadChannel ConnectedComponents
-          -> WriteChannel Edge
-          -> WriteChannel ConnectedComponents
-          -> DP st ()
-genAction filter' readEdge readCC _ writeCC = do
-  let unfoldFilter = mkUnfoldFilterForAll filter' toConnectedComp readEdge (readCC .*. HNil) 
-  results <- unfoldF unfoldFilter
-  foldM_ (hHead results) (`push` writeCC)
-      \end{minted}
-    \end{block}
-  \end{frame}
-
-  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-    \begin{block}{Program}
-      \begin{minted}[fontsize=\tiny,breaklines,highlightlines={7-12,20-28}]{haskell}      
-actor1 :: Edge
-       -> ReadChannel Edge
-       -> ReadChannel ConnectedComponents
-       -> WriteChannel Edge
-       -> WriteChannel ConnectedComponents
-       -> StateT ConnectedComponents (DP st) ()
-actor1 _ readEdge _ writeEdge _ = 
-  foldM_ readEdge $ \e -> get >>= doActor e
- where
-  doActor v conn
-    | toConnectedComp v `intersect` conn = modify (toConnectedComp v <>)
-    | otherwise = push v writeEdge
-
-actor2 :: Edge
-       -> ReadChannel Edge
-       -> ReadChannel ConnectedComponents
-       -> WriteChannel Edge
-       -> WriteChannel ConnectedComponents
-       -> StateT ConnectedComponents (DP st) ()
-actor2 _ _ readCC _ writeCC = do 
-  foldWithM_ readCC pushMemory $ \e -> get >>= doActor e
-
- where
-   pushMemory = get >>= flip push writeCC
-
-   doActor cc conn
-    | cc `intersect` conn = modify (cc <>)
-    | otherwise = push cc writeCC
-      \end{minted}
-    \end{block}
-  \end{frame}
 
   \begin{frame}{Agenda}
     \section{Empirical Evaluation}
@@ -952,6 +1020,12 @@ actor2 _ _ readCC _ writeCC = do
       \item \textbf{Improve DP Framework} implementing more combinators and abstractions to allow the user write better and faster programs.
     \end{itemize}
   \end{block}
+  \end{frame}
+
+  \begin{frame}[allowframebreaks]
+    \frametitle{References}
+    \bibliographystyle{amsalpha}
+    \bibliography{Report.bib}
   \end{frame}
 
   \begin{frame}

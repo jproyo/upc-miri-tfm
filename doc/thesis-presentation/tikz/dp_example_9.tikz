@@ -2,11 +2,11 @@
 	%Nodes
 	\node[source]      (stream)                 {\hspace{1cm}};
 	\node[filternode,label=below:$F_{\{4,5\}}$]  (filter3)               [right=of stream] {\small $\{3,4,5,6\}$};
-	\node[ionode,label=below:Sink]   (gen)                 [right=of filter3] {$\owcc$};
+	\node[ionode]   (gen)                 [right=of filter3] {$\owc$};
 	\node[outdata]      (out)                 [right=of gen]    {};
 	%Lines
-	\draw[edge] (stream.-20) to  ["{\small$eof$}",swap]   (filter3.190);
-	\draw[edge] (filter3.-10) to ["{\small$\{1,2\}$}",swap] (gen.199);
+	\draw[edge] (stream) to  ["{\small$eof$}",swap]   (filter3);
+	\draw[edge] (filter3) to ["{\small$\{1,2\}$}",swap] (gen);
 	\draw[ioedge] (gen) to (out);
 	\end{tikzpicture}
 	
