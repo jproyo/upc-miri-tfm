@@ -19,7 +19,7 @@
 \usetikzlibrary{shapes.misc,shadows}
 \usetikzlibrary{quotes,positioning,arrows,decorations.markings}
 \usetikzlibrary{positioning} 
-\usepackage[cache=false,section]{minted}
+\usepackage[cache=true,section]{minted}
 %\usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage[tworuled,algosection,figure,linesnumbered]{algorithm2e}
 \usepackage{glossaries}
@@ -91,45 +91,37 @@
 }
 \makeatother
 
-\title[IEBT in Haskell]{Towards a Dynamic Pipeline Framework implemented in (parallel) Haskell}
-
-\author[Royo Sales et al. (PROLE2021)] 
-{%
-  Juan Pablo Royo Sales\inst{1} \and Edelmira Pasarella\inst{1}\\
-  Cristina Zoltan\inst{1} \and Maria-Esther Vidal\inst{2}
+\title[Incrementally Enumerating BT in BG]{An Algorithm for incrementally Enumerating Bitriangles in large Bipartite Networks}
+\subtitle{Master Thesis\vspace{-0.5cm}}
+\author[Juan Pablo Royo Sales (Master Thesis)]{\vspace{-0.5cm}Juan Pablo Royo Sales}
+\institute[]{%
+  {\small Facultat d’Informàtica de Barcelona (FIB)}\\
+  {\small Universitat Politècnica de Catalunya (UPC) – BarcelonaTech}\\
+  \vspace{0.2cm}
+  Master in Innovation and Research in Informatics\\ 
+  Advance Computing\\
+  \vspace{0.2cm}
+  \tiny{%
+  Supervisors: Edelmira Pasarella, Computer Science Department\\
+  Maria-Esther Vidal, Leibniz Information Centre for Science and Technology-TIB, and L3S Centre at the Leibniz University of Hannover\\
+  Cristina Zoltan, Computer Science Department
+  }
 }
 
-\institute[] % (optional)
-{
-  \inst{1}%
-  Universitat Politecnica de Catalunya\\
-  juan.pablo.royo@upc.edu\\
-  \{zoltan,edelmira\}@cs.upc.edu \and
-  \inst{2}%
-  TIB/L3S Research Centre at the University of Hannover\\
-  maria.vidal@tib.eu
-  }
+\date[October 29, 2021]{October 29, 2021}
   
-  \date[September 24, 2021] % (optional)
-  {September 24, 2021}
-  
-  \titlegraphic{
-    \begin{tikzpicture}[overlay,remember picture]
-      \node[left=0.2cm] at (current page.30){
-        \includegraphics[height=1cm]{upc_logo}
-        \hspace{2cm}
-        %
-        \hspace{2cm}
-        \includegraphics[height=1cm]{tib_logo}
-      };
-      \end{tikzpicture}
-  }
-  
-  
-  \begin{document}
+\titlegraphic{%
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[left=3.5cm] at (current page.30){
+      \includegraphics[height=1.5cm]{upc_logo}
+    };
+  \end{tikzpicture}
+}
+
+\begin{document}
 
   \begin{frame}
-    \vspace{1.2cm}
+    \vspace{1.3cm}
     \titlepage
   \end{frame}
 
@@ -406,17 +398,23 @@
   \end{frame}  
 
   \begin{frame}{Agenda}
-    \section{DP Framework: Haskell}
+    \section{Proof of Concept: $DP_{WCC}$}
     \tableofcontents[currentsection]
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+
+  \begin{frame}{Agenda}
+    \section{DP Haskell Framework}
+    \tableofcontents[currentsection]
+  \end{frame}
+
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{center}
       \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3}
     \end{center}
   \end{frame}
 
-    \begin{frame}[fragile]{DP Framework: Haskell}
+    \begin{frame}[fragile]{DP Haskell Framework}
       \begin{center}
       \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3-1}
     \end{center}
@@ -427,7 +425,7 @@
     literate={->}{$\rightarrow$}{2}
   }
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \frametitle{DSL Grammar}
     \small
     \begin{equation*}
@@ -463,7 +461,7 @@
     \end{equation*}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{itemize}
       \item The specification of \textbf{DP} in the Language is compile time checked (\textit{Type-safe})
     \end{itemize}    
@@ -486,46 +484,13 @@ mkDP @DPExample
     \end{exampleblock}
   \end{frame}
 
-  % \begin{frame}[fragile]{DP Framework: Haskell}
-  %   \begin{itemize}
-  %     \item Otherwise the compiler warns us about \textbf{Grammar Verification Error}
-  %   \end{itemize}    
-  % \end{frame}
-
-%   \begin{frame}[fragile]{DP Framework: Haskell}
-%     \begin{itemize}
-%       \item Otherwise the compiler warns us about \textbf{Grammar Verification Error}
-%     \end{itemize}    
-%     \begin{alertblock}{Type Level DSL}
-%     \begin{minted}[fontsize=\small,breaklines,highlightlines={8-17},highlightcolor=titaniumyellow]{shell}      
-% ghci> type DPExample2 = Source (Channel Int) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
-% type DPExample2 :: *
-% type DPExample2 =
-%   Source (Channel Int)
-%   :=> (Generator (Channel (Int :<+> Eof)) :=> Sink)
-% ghci> :t mkDP @DPExample2
-
-% <interactive>:1:1: error:
-%     Invalid Semantic for Source Stage
-%     in the DP Definition 'ChanIn Int'
-%     Language Grammar:
-%     DP       -> Source CHANS :=> Generator CHANS :=> Sink
-%     DP       -> Source CHANS :=> Generator CHANS :=> FEEDBACK :=> Sink
-%     CHANS    -> Channel CH
-%     FEEDBACK -> FeedbackChannel CH
-%     CH       -> Type :<+> CH | Eof
-%     Example: 'Source (Channel (Int :<+> Int)) :=> Generator (Channel (Int :<+> Int)) :=> Sink'    
-%     \end{minted}
-%     \end{alertblock}
-%   \end{frame}
-
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{center}
       \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3-3}
     \end{center}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{block}{Runtime System}
       \begin{itemize}
         \item \textbf{DP Monad}:
@@ -537,7 +502,7 @@ mkDP @DPExample
     \end{block}
     \end{frame}
   
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{block}{Runtime System}
       \begin{itemize}
         \item \textbf{DP Monad}:
@@ -554,7 +519,7 @@ mkDP @DPExample
     \end{block}
     \end{frame}
   
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{block}{Runtime System}
       \begin{itemize}
         \item \textbf{DP Monad}:
@@ -572,7 +537,7 @@ mkDP @DPExample
     \end{block}
     \end{frame}
   
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
   \begin{block}{Runtime System}
     \begin{itemize}
       \item \textbf{DP Monad}:
@@ -591,13 +556,13 @@ mkDP @DPExample
   \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{center}
       \includegraphics[width = 0.8\textwidth, height = 0.8\textheight]{dpf_haskell_v3-2}
     \end{center}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{block}{IDL}
       \begin{minted}[fontsize=\small,breaklines]{shell}      
 ghci> type DPExample = Source (Channel (Int :<+> Eof)) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
@@ -609,7 +574,7 @@ type DPExample =
   \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{block}{IDL}
       \begin{minted}[fontsize=\small,breaklines,highlightlines={7-11}]{shell}      
 ghci> type DPExample = Source (Channel (Int :<+> Eof)) :=> Generator (Channel (Int :<+> Eof)) :=> Sink
@@ -627,7 +592,7 @@ withSource @DPExample
   \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{block}{IDL}
       \begin{minted}[fontsize=\small,breaklines,highlightlines={7-9}]{shell}      
 ghci> :t withSource @DPExample
@@ -643,7 +608,7 @@ source' :: forall k (st :: k). Stage (WriteChannel Int -> DP st ())
   \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{block}{IDL}
       \begin{minted}[fontsize=\small,breaklines,highlightlines={2-8}]{shell}      
 ghci> :t withGenerator @DPExample
@@ -656,7 +621,7 @@ withGenerator @DPExample
   \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{block}{IDL}
       \begin{minted}[fontsize=\small,breaklines,highlightlines={2-8}]{shell}      
 ghci> :t withGenerator @DPExample
@@ -677,7 +642,7 @@ withGenerator @DPExample
   \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{DP Framework: Haskell}
+  \begin{frame}[fragile]{DP Haskell Framework}
     \begin{block}{}
       Library released on Hackage \\
       https://hackage.haskell.org/package/dynamic-pipeline
@@ -688,11 +653,11 @@ withGenerator @DPExample
   \end{frame}
 
   \begin{frame}{Agenda}
-    \section{$DP_{WCC}$: Computing $WCC$}
+    \section{Algorithm for Incrementally Enumerating BT in BG}
     \tableofcontents[currentsection]
   \end{frame}
 
-  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
     \begin{block}{Program}
       \begin{minted}[fontsize=\small,breaklines,highlightlines={5-6}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
@@ -706,7 +671,7 @@ program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
   \end{frame}
 
 
-  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
     \begin{block}{Program}
       \begin{minted}[fontsize=\small,breaklines,highlightlines={5-9}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
@@ -725,7 +690,7 @@ program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
     \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
     \begin{block}{Program}
       \begin{minted}[fontsize=\small,breaklines,highlightlines={5-7}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
@@ -741,7 +706,7 @@ program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
     \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
     \begin{block}{Program}
       \begin{minted}[fontsize=\small,breaklines,highlightlines={7-8,11-11}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
@@ -762,7 +727,7 @@ program file = runDP $ mkDP @DPConnComp (source' file) generator' sink'
     \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
     \begin{block}{Program}
       \begin{minted}[fontsize=\small,breaklines,highlightlines={11-14}]{haskell}      
 type DPConnComp = Source (Channel (Edge :<+> ConnectedComponents :<+> Eof))
@@ -783,7 +748,7 @@ genAction filter' readEdge readCC _ writeCC = do
     \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{$DP_{WCC}$: Computing $WCC$}
+  \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
     \begin{block}{Program}
       \begin{minted}[fontsize=\tiny,breaklines,highlightlines={7-12,20-28}]{haskell}      
 actor1 :: Edge

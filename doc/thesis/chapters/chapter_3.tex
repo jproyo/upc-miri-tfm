@@ -12,14 +12,14 @@ To achieving this, the authors present an improvement over the \emph{Partition A
 Regarding the computation cost, an improvement over the \emph{multiway-join} algorithm is proposed using an ordering of the buckets node. 
 The main advantage of this work is the use of a stream parallelization model like Map-Reduce, bringing the choice to exploit parallel and distributed computation to gain efficiency. 
 The use of Map-Reduce combined with the improvements proposed by the authors of this work~\cite{enumeratingsg} reduce even more the processing time for the enumeration. 
-One of the limitations is the use of a streaming model like Map-Reduce. Although it is a parallel and distributed model, incremental results are not possible until all the reducers are calculated; computation can be done in parallel, however the production of subgraphs is restricted by the reducers limiting the capability of delivering results incrementally. 
+One of the limitations is the use of a streaming model like Map-Reduce. Although it is a parallel and distributed model, incremental results are not possible until all the reducers are calculated. Computation can be done in parallel, however the production of subgraphs is restricted by the reducers limiting the capability of delivering results incrementally. 
 The other limitation is the adjustment of computational resources, which in this work is done statically beforehand. Partitioning is done by the number of nodes and edges which is known in advance.
 As we have stated in \autoref{intro}, \acrshort{dp} overcome both of these limitations by providing a Dynamic Pipeline parallelization model, where the resources can be adjusted dynamically, and results are generated incrementally as soon as they are computed. 
 
 
 \paragraph{Distributed subgraph matching on timely dataflow} This work has been presented by Lai et al.~\cite{Lai} for solving the subgraph matching problem in large graphs using a distributed computational model.
 The main contribution of this work is the optimization of four strategies algorithms use on \texttt{Timely} dataflow system~\cite{timelyflow}. 
-The main idea of the proposed algorithm is performing a random partition of the vertices using hashing, where the vertices hashed neighbors are placed on the same partition.
+The underlying idea of the proposed algorithm is performing a random partition of the vertices using hashing, where the vertices hashed neighbors are placed on the same partition.
 Query vertices are attributes, and results are relational tables, enabling the subgraph matching problem to be expressed with natural joins, where the solution is to find the optimal distributed join plan.
 The join algorithms improved are $\mathtt{BinJoin}$, $\mathtt{WOptJoin}$ and $\mathtt{ShrCube}$ using the following optimizations techniques: \texttt{Batching},\texttt{TrIndexing} and \texttt{Compression}.
 In the case of \texttt{Batching}, the optimization relies on processing in batch mode the partial results that match a subset of vertices in a way that each partial result can be batched in a single task to process against the whole result.
@@ -28,7 +28,7 @@ Finally, \texttt{Compression} maintains intermediate results, matched vertices, 
 The results exposed on the empirical analysis in this work show a suitable level of efficiency but, it depends on the machine characteristics and the topologies of the analyzed graphs. 
 One of the most interesting contributions of this work that we have adapted in our solution is the use of \texttt{Compression} technique. 
 In our description of the bitriangle enumeration algorithm, described in \autoref{incr-algo-bt-dp}, we define intermediate objects such as aggregated wedges, aggregated double-wedges, and aggregated bitriangles. 
-Those intermediate objects help us to build and store bitriangles in a compressed representation in order to use less memory footprint and computation time.
+Those intermediate structures help us to build and store bitriangles in a compressed representation in order to use less memory footprint and computation time.
 
 \paragraph{\emph{motif-paths}.} In the work of Xiaodong Li et al.~\cite{Li2019MotifPA}, the authors presents an algorithm for calculating the shortest \emph{motif-paths}.
 A \emph{motif-path} is a concatenation --a path--  of two or more \emph{motif}, where a \emph{motif} is a small graph with few nodes, considered as a fundamental unit of a graph.
@@ -44,22 +44,21 @@ Therefore, we could eliminate repeated \emph{motif-instances} and wrong path det
 
 \section{\acrlong{bt} Counting in \acrlong{bg}s}\label{sec:rel-work:counting}
 The problem of Counting \acrshort{bt} has been addressed in the work of Yang et al.~\cite{btcount} where they present several \emph{polly-time} algorithms to solve it.
-In that paper, the authors present different approaches to calculate with a combinatorial algorithmic the number of \acrshort{bt} in \acrshort{bg}. 
-To be concrete, the authors present three algorithms to count all the \acrshort{bt} in the graph \emph{(Global Counting)}, and two algorithms to count only locally \acrshort{bt} \emph{(Local Counting)}: this means that given a vertex or an edge, the algorithms count only the number of \acrshort{bt} in which 
+Authors present different approaches to calculate using  combinatorial algorithmics the number of \acrshort{bt} in \acrshort{bg}. 
+To be concrete, authors present three algorithms to count all the \acrshort{bt} in the graph \emph{(Global Counting)}, and two algorithms to count only locally \acrshort{bt} \emph{(Local Counting)}: this means that given a vertex or an edge, the algorithms count only the number of \acrshort{bt} in which 
 that vertex or edge is participating.
 
-In this work, the authors based all the algorithms, \emph{Global} and \emph{Local}, on using intermediate small units of the graph -- wedge, wj-unit, super-wedge and swj-unit -- to count the number of the bitriangle.
-In the case of \emph{Global Counting}, the best algorithm of the three presented, in terms of time complexity, is the Ranked Super-wedge based algorithm (RSWJ-Count). 
-It is based on ranking the vertices by their degree. Exploring higher degree vertices first allows to detect those with more super-wedges, and therefore, count \emph{swj-unit} faster by sharing computations. 
+In this work, authors based all the algorithms, \emph{Global} and \emph{Local}, on using intermediate small units or graph patterns that could form part of  bitriangles. These small graph patterns are: wedge, wj-unit, super-wedge and swj-unit.
+In the case of \emph{Global Counting}, the best algorithm in terms of time complexity, is the Ranked Super-wedge based algorithm (RSWJ-Count). 
+It is based on ranking the vertices by their degree. Exploring higher degree vertices first allows to detect the ones with more super-wedges, and therefore, count \emph{swj-unit} faster by sharing computations. 
 
-Additionally, in regards to \emph{Local Counting}, the work presents two strategies. 
-Both algorithms to count locally \acrshort{bt} given a particular vertex or an edge, is based on \emph{swj-unit} global algorithm, but instead of check every vertex, it only calculates from the one that is requested. 
-The main advantage of doing \emph{Local Counting} is the ability to reduce processing time when the user does not need to analyze the whole network but just a part of it, as we have seen in \autoref{intro}.
+In regards to \emph{Local Counting}, the work presents two algorithms. One algorithm locally counts \acrshort{bt} given a particular vertex, and the other locally counts \acrshort{bt} given a particular edge. 
+In both cases, the algorithms use the same \emph{swj-unit} small unit for counting the bitriangles that are presented in \emph{Global Counting}. The difference with the \emph{swj-unit} based algorithm for counting globally, is that instead of traversing all the vertices or edges to count the \emph{swj-unit}, it explores \emph{swj-unit} locally based on the given vertex or edge.
+The main advantage of doing \emph{Local Counting} is the ability to reduce processing time when the user does not need to analyze the whole network but just a part of it.
 The principal limitation of \emph{Local Counting}, apart from sharing the same limitation of \emph{Global Counting} regarding incremental results, is that it does not have the possibility to reuse previous calculations if several vertices or edges searches are requested. 
 In this case, the algorithm needs to be recalculated locally for every edge or vertex request.
 
-In our work, we have adapted the same idea of Xiaodong Li et al.~\cite{Li2019MotifPA} work, about using small units or structures of the graph to find a bigger structure like bitriangle.
-Although we use the concept of \emph{wedge} as well, the rest of the minimal units or structures that we have defined are different.
+In this work, we have adapted the idea of using small units or structures of the graph to find a bigger structure like bitriangle. However, although we use the concept of \emph{wedge} as well, the rest of the small  units or structures we have defined are different. Additionally, as said before, following the Lai et al. approach, these structures are represented in a compressed way. 
 
 
 \section{Pay-as-you-go Model}
@@ -68,9 +67,8 @@ As we have described in \autoref{intro}, the \emph{pay-as-you-go} computational 
 At the same time, the user is able to administrate the resources he/she can afford. The more resources the user can afford, the more data or faster results he/she will obtain.
 
 \paragraph{Fact-Checking} Nguyen et al.~\cite{factcatch} have conducted a study with primary focus on \emph{pay-as-you-go} model, where they use incremental quality estimation to provide fact-checking over World Wide Web documents.
-The work continuously improves the credibility assessment of documents in the database and, users may then examine that to decide whether to stop or resume validation.
-Having into consideration the results on this work, we believe that a \emph{pay-as-you-go} model can be described properly using \acrlong{dp} because of its intrinsic features. 
-One of those features of \acrshort{dp} is the capability of adjusting the computational resources to the incoming data. 
+The work continuously improves the credibility assessment of documents in the database and, users may then examine that information to decide whether to stop or resume validation.
+Having into consideration the results on this work, we think  that a \emph{pay-as-you-go} model can be described properly using \acrlong{dp}. In effect, one of the intrinsic features of \acrshort{dp} is the capability of adjusting the computational resources to the incoming data. 
 
 \section{Chapter Summary}
 In this chapter, we have presented all the work that is related to our research.
