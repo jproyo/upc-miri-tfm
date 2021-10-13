@@ -1,0 +1,268 @@
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \large We define \textbf{Compressed}~\cite{Lai} structural units that allows to \textbf{build} Bitriangles in different steps
+  \end{center}    
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    Given a Bipartite Graph
+  \end{center}    
+  \begin{figure}
+    \centering
+    \resizebox{0.7\textwidth}{!}{\inputtikz{bipartite}}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    We build first \textbf{Aggregated Wedges}: a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u \in W_l$, the edge  $(u,l)\in E$
+  \end{center}    
+  \begin{figure}
+    \centering
+    \resizebox{0.8\textwidth}{!}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_b}\inputtikz{bipartite_awg_c}}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    Then, \textbf{Aggregated Double Wedges}: a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
+    $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
+  \end{center}    
+  \begin{figure}
+    \centering
+    \resizebox{0.6\textwidth}{!}{\inputtikz{bipartite_adwg_a}}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{block}{Bitriangle}    
+    Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
+    The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{bitriangle} in $G$, denoted by $BT_{\ell}^{\mu} = BT_{(l_1, l_2,l_3)}^{(u_1, u_2, u_3)}$. \\
+  \end{block}
+  \begin{center}
+    \textbf{Finally}, \textbf{Aggregated Bitriangles}: is a pair  $\langle \ell, \hat{U}_l\rangle$, 
+    where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu} \in \mathsf{BT}$.
+  \end{center}    
+  \begin{figure}
+    \centering
+    \resizebox{0.6\textwidth}{!}{\inputtikz{bipartite_abt_a}}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \textbf{Dynamic Pipeline} initial Configuration for Enumerating BT in BG
+  \end{center}    
+  \begin{figure}
+    \centering  
+    \resizebox{1\textwidth}{!}{\inputtikz{btDP}}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \textbf{Dynamic Pipeline} evolution on first filter for Enumerating BT in BG
+  \end{center}    
+  \begin{figure}
+    \centering  
+    \resizebox{1\textwidth}{!}{\inputtikz{btDP_actor1}}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \large Lets see how the Actors' Filter solve this
+  \end{center} 
+  \begin{center}
+  \resizebox{1\textwidth}{!}{  
+  \begin{algorithm}[H]
+    \SetKwInOut{P}{Filter Template}
+    \SetKwInOut{IC}{Input Channels}
+    \SetKwInOut{OC}{Output Channels}
+    \SetKwFunction{actora}{actor1}
+    \SetKwFunction{actorb}{actor2}
+    \SetKwFunction{actorc}{actor3}
+    \SetKwFunction{actord}{actor4}
+    \SetKwFunction{filter}{filter}
+    \SetKwProg{df}{def}{:}{end}
+    \SetAlgorithmName{}{fil}{}
+    \SetAlgoRefName{[A4]}
+    \P{$l \in L$}
+    \IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
+    \OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
+    \df{\filter{}}{
+          $\actora()$\\
+          $\actorb()$\\
+          $\actorc()$\\
+          $\actord()$\\
+    }
+  \end{algorithm}  
+  }  
+\end{center} 
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \underline{\color{red}\textbf{\texttt{actor1}: Aggregated Wedges}}
+  \end{center}
+  \begin{center}
+  \resizebox{!}{0.4\textheight}{ 
+    \begin{algorithm}[H]
+      \SetKwFunction{acta}{actor1}
+      \SetKwProg{df}{def}{:}{end}
+      \df{\acta{}}{
+      $\la l, W_l \ra \leftarrow \gs$\\
+      \ForAll{$(u',l') \in IC_E$}
+      {\HiLi\uIf{$l = l'$}{
+        \HiLi$W_l \leftarrow W_l \cup \{u'\}$
+      }\Else{\HiLi$\p((u',l'),OC_E)$}
+      }
+      \If{$|W_l| > 1$}{
+          \HiLi$\us(\la l, W_l \ra)$\\ 
+          \HiLi$\p(\la l, W_l \ra, OC_{W_l1})$\\
+      }
+      }
+      \end{algorithm}
+  }  
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \underline{\color{red}\textbf{\texttt{actor2}: Aggregated Double Wedges}}
+  \end{center}
+  \begin{center}
+  \resizebox{!}{0.4\textheight}{  
+    \begin{algorithm}[H]
+      \SetKwFunction{actb}{actor2}
+      \SetKwProg{df}{def}{:}{end}
+      \BlankLine
+      \df{\actb{}}{
+      $\la l, W_l \ra \leftarrow \gs$\\
+      \HiLi\ForAll{$\la l', W_l' \ra \in IC_{W_l1}$}{
+        \HiLi$\p(\la l', W_l \ra, OC_{W_l1})$\\
+            $\dwi \leftarrow \emptyset$\\
+            \If{$W_l' \cap W_l \neq \emptyset$}{ 
+                  $(l_l, l_u) \leftarrow (\argmin_{l,l'}, \argmax_{l,l'})$\\
+                  \uIf{$l < l'$}{
+                        $(W_{l_l}, W_{l_u}) \leftarrow (W_l, W_l')$
+                  }\Else{
+                        $(W_{l_l}, W_{l_u}) \leftarrow (W_l', W_l)$
+                  }
+                  $I \leftarrow W_{l_l} \setminus W_{l_u}$\\ 
+                  $J \leftarrow W_{l_l} \cap W_{l_u}$\\
+                  $K \leftarrow W_{l_u} \setminus W_{l_l}$\\
+                  $U_l \leftarrow \la I, J, K\ra$\\
+                  \HiLi$\dwi \leftarrow dw \cup \{\la (l_l, l_u), U_l \ra\}$
+            }
+      }
+      \HiLi$\us(\dwi)$
+      }
+      \end{algorithm}
+  }  
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \underline{\color{red}\textbf{\texttt{actor3}: Aggregated Bitriangles}}
+  \end{center}
+  \begin{center}
+  \resizebox{!}{0.4\textheight}{  
+    \begin{algorithm}[H]
+      \SetKwFunction{actc}{actor3}
+      \SetKwProg{df}{def}{:}{end}
+      \BlankLine
+      \df{\actc{}}{
+        $\dwi \leftarrow \gs$\\
+        $\ati \leftarrow \emptyset$\\
+        \HiLi\ForAll{$\la l', W_l \ra \in IC_{W_l2}$}{
+          \HiLi$\p(\la l', W_l \ra, OC_{W_l2})$\\ 
+          \HiLi\ForEach{$\la (l_l, l_u), \la I, J, K \ra \ra \in \dwi, l_l < l' \land l_u > l'$}{
+                    $I' \leftarrow I \cup J$\\
+                    $K' \leftarrow K \cup J$\\
+                    \If{$W_l \cap I' \neq \emptyset \land W_l \cap K' \neq \emptyset$}{
+                          $I' \leftarrow I' \cap W_l$\\
+                          $K' \leftarrow K' \cap W_l$\\
+                          $\hat{U}_l  \leftarrow \la I', J, K' \ra$\\
+                          \HiLi$\ati \leftarrow \ati \cup \big\{\la (l_l, l', l_u), \hat{U}_l \ra\big\}$
+                    }
+              }
+        }      
+        \HiLi$\us(\ati)$\\
+        }
+        \end{algorithm}
+  }  
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \underline{\color{red}\textbf{\texttt{actor4}: Process Query to Incrementally retrieve Bitriangles}}
+  \end{center}
+  \begin{center}
+  \resizebox{!}{0.4\textheight}{  
+    \begin{algorithm}[H]
+      \SetKwFunction{butV}{buildBtVertex}
+      \SetKwFunction{butE}{buildBtEdge}      
+      \SetKwFunction{actd}{actor4}
+      \SetKwProg{df}{def}{:}{end}
+      \BlankLine
+      \df{\actd{}}{
+        $\ati \leftarrow \gs$\\
+        \ForAll{$Q \in IC_Q$}{
+          \HiLi\ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati$}{
+                    \Switch{$Q$}{
+                          \Case{$\mathbb{P}(U + L)$}{
+                                \If{$\mathbb{P}(U + L) \cap \{l_l, l_m, l_u\} \neq \emptyset \lor \mathbb{P}(U + L) \cap (I \cup J \cup K) \neq \emptyset$}{
+                                      \HiLi$\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), \mathbb{P}(U + L))$\\
+                                      \HiLi\ForAll{$\bti \in \btii$}{
+                                        \HiLi$\p(\bti, OC_{BT})$
+                                      }
+                                }
+                          }
+                          \Case{$\mathbb{P}(E)$}{
+                              \tcp*[h]{SAME FOR EDGES......}\\
+                          }
+                    }
+              }
+        }
+        }
+      \end{algorithm}
+  }  
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{block}{Correctness of the Algorithm}
+    We need to prove that the algorithm \textbf{can enumerate all bitriangles} in the graph and also that there are \textbf{no duplicates in the enumeration}.
+  \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{theorem}[All Bitriangles can be enumerated] 
+    Given a graph a bipartite graph $G = ((U\cup L),E)$ and the \acrshort{iebt} every bitriangle occurring in $G$ is stored at most once.
+  \end{theorem}
+\end{frame} 
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \resizebox{!}{0.7\textheight}{
+  \begin{proof}[Proof. All Bitriangles can be enumerated]   
+  Let $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, such that $l_1 < l_2 <l_3$. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$, or $\ac$.  
+  \begin{itemize}
+        \item According to lines 7-12 of $\ab$ $(u_1,l_2,u_3,l_3,u_2,l_1,u_1)$ is  not accepted  when constructing elements of $\dw$ to be used by $\ac$  because $l_2 > l_1$ 
+        \item According to lines 7 of $\ac$ $(u_3,l_2,u_1,l_1,u_2,l_3,u_3)$ is not accepted because $l_2 > l_1$
+        \item According to lines 7-12 of $\ab$ $(u_3,l_3,u_2,l_1,u_1,l_2,u_3)$ is  not accepted  when constructing elements of $\dw$ to be used by $\ac$  because  $l_3 > l_2$
+        \item According to lines 7-12 of $\ab$ $(u_2,l_3,u_3,l_2,u_1,l_1,u_2)$ not accepted because $l_3 > l_1 $
+        \item  According to lines 7-12 of $\ab$ and line 7 in $\ac$ $(u_2,l_1,u_1,l_2,u_3,l_3,u_2)$ is accepted because $l_1 < l_3 $ and $l_1 < l_2 <l_3$ 
+        \item According to  line 7 in $\ac$ $(u_1, l_1,u_2,l_3,u_3,l_2,u_1)$ is not accepted because $l_3 > l_2$
+  \end{itemize}
+  Therefore the  only bitriangle  constructed by the algorithm is the one that satisfies $l_1 < l_2 < l_3$ where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $u_3$.
+  \end{proof}  
+  }
+\end{frame}
+

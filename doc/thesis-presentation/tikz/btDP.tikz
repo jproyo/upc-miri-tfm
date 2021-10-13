@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+	\node[ionode]     (in)      [minimum width=2cm, minimum height=3cm]      {$\ibt$};
+	\node[indata]     (stream)   [above left of=in] at (-2.5,0) {\mbox{{\small $eof\: \dots \: (u,l)$}}};
+	\node[indata]     (commands) [below left of=in] at (-3,0) {\mbox{{\small $eof\: \dots \{u_1, \dots, l_n\}$}}};
+	\node[gennode]    (gen)     [right=2cm of in,minimum width=2cm, minimum height=3cm]          {$\gbt$};
+	\node[ionode]     (out)     [right=1.5cm of gen]         {$\obt$};
+	\node[outdata]     (x)     [right=of out]                    {};
+	\node[filternode,label=above:Filter] (filter)  [above= 0.2mm of gen]  {$\fbt$};
+	\draw[ioedge] ([yshift=-0.2 cm]stream.east) to ([yshift=.5 cm]in.west);
+	\draw[ioedge] ([yshift=0 cm]commands.east) to ([yshift=-0.7 cm]in.west);
+	\draw[edge] ([yshift=0 cm]in.east) to ["{\small$C_E$}"] ([yshift=0 cm]gen.west);
+  \draw[edge] (gen) to [bend left=90,"{\small$C_{W_l2}$}"] (in);
+	\draw[edge] (gen) to ["{\small$C_{BT}$}"] (out);
+	\draw[ioedge] (out) to (x);
+\end{tikzpicture}
+

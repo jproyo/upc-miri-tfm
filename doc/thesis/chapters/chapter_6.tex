@@ -1,7 +1,7 @@
 \chapter[An Algorithm for Incrementally Enummerating Bitriangles]{An algorithm for incrementally enumerating Bitriangles using DP}\label{incr-algo-bt-dp}
 In this chapter, we first describe the overall idea of the algorithm for incrementally enumerate 
-\acrlong{bt}. After that, we present the algorithms in pseudo-code format and then a complexity analysis of the principal functions of the algorithm.
-In the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
+\acrlong{bt}. After that, we present the algorithms in pseudo-code format.
+At the end, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
 
 \section{Preliminaries Definitions}\label{sec:prem:def}
 In order to understand how the algorithm works, we need to provide some basic definitions that are already exposed in previous work~\cite{btcount}, and
@@ -9,7 +9,7 @@ at the same time, we define other structures that we use for giving a solution t
 Let's enumerate all those definitions in the following paragraphs.
 
 \begin{definition}[\acrlong{bg}] 
-A \acrfull{bg} is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.\cite{Bondy1976}
+A \acrfull{bg} is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.
 \end{definition}
 
 Additionally, without loss of generality, we assume that  $U\subseteq \mathbb{N}$ and $L\subseteq \mathbb{N}$. Consequently, $(U,<)$  and $(L,<)$ are strict total orders. We can see an example of a \acrshort{bg}

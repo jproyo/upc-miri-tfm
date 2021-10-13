@@ -4,8 +4,8 @@
 		\node[shape=circle,draw=blue,fill=blue,label=above:$7$] (7) [right of=3] {};
 		\node[shape=circle,draw=green,fill=green,label=below:a] (a) [below of=3] {};
 
-		\draw (a) [line width=0.5mm] -- (1);
-		\draw (a) [line width=0.5mm] -- (3);
+		\draw (a) [line width=0.5mm, dotted,color=red] -- (1);
+		\draw (a) [line width=0.5mm, dotted,color=red] -- (3);
 		\draw (a) [line width=0.5mm] -- (7);
 	\end{tikzpicture}
 

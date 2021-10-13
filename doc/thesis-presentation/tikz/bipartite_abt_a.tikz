@@ -13,19 +13,19 @@
 	\node[draw=black!70,fit=(1) (3) (7),label={[label distance=.3cm]above:$J$}] {};
 	\node[draw=black!90,fit=(1_2) (5),label={[label distance=.3cm]above:$K$}] {};
 
-	\draw (1_1) [line width=0.5mm] -- (a);
-	\draw (1) [line width=0.5mm] -- (a);
-	\draw (3) [line width=0.5mm] -- (a);
-	\draw (7) [line width=0.5mm] -- (a);
-	\draw (1) [line width=0.5mm,dotted] -- (b);
-	\draw (1_1) [line width=0.5mm,dotted] -- (b);
-	\draw (1_2) [line width=0.5mm,dotted] -- (b);
-	\draw (5) [line width=0.5mm,dotted] -- (b);
-	\draw (1) [line width=0.5mm] -- (c);
-	\draw (3) [line width=0.5mm] -- (c);
-	\draw (1_2) [line width=0.5mm] -- (c);
-	\draw (5) [line width=0.5mm] -- (c);
-	\draw (7) [line width=0.5mm] -- (c);
+	\draw (1_1) [line width=0.5mm, dotted, color=red] -- (a);
+	\draw (1) [line width=0.5mm, opacity=0.3] -- (a);
+	\draw (3) [line width=0.5mm, dotted, color=red] -- (a);
+	\draw (7) [line width=0.5mm, opacity=0.3] -- (a);
+	\draw (1) [line width=0.5mm, opacity=0.3] -- (b);
+	\draw (1_1) [line width=0.5mm, dotted, color=red] -- (b);
+	\draw (1_2) [line width=0.5mm, opacity=0.3] -- (b);
+	\draw (5) [line width=0.5mm, dotted, color=red] -- (b);
+	\draw (1) [line width=0.5mm, opacity=0.3] -- (c);
+	\draw (3) [line width=0.5mm, dotted, color=red] -- (c);
+	\draw (1_2) [line width=0.5mm, opacity=0.3] -- (c);
+	\draw (5) [line width=0.5mm, dotted, color=red] -- (c);
+	\draw (7) [line width=0.5mm, opacity=0.3] -- (c);
 \end{tikzpicture}
 
  
