@@ -244,25 +244,48 @@
 
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-  \begin{theorem}[All Bitriangles can be enumerated] 
+  \begin{theorem}[No Bitriangles are duplicated] 
     Given a graph a bipartite graph $G = ((U\cup L),E)$ and the \acrshort{iebt} every bitriangle occurring in $G$ is stored at most once.
+  \end{theorem}
+
+  \begin{theorem}[All Bitriangles can be enumerated] 
+    Given a bipartite graph $G$, if the bitriangle $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ such that $l_1 < l_2 <l_3$ is present in G, then $\bti$ can be enumerated.
   \end{theorem}
 \end{frame} 
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-  \resizebox{!}{0.7\textheight}{
-  \begin{proof}[Proof. All Bitriangles can be enumerated]   
+  \begin{proof}[Proof. No Bitriangles are duplicated]   
   Let $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, such that $l_1 < l_2 <l_3$. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$, or $\ac$.  
   \begin{itemize}
         \item According to lines 7-12 of $\ab$ $(u_1,l_2,u_3,l_3,u_2,l_1,u_1)$ is  not accepted  when constructing elements of $\dw$ to be used by $\ac$  because $l_2 > l_1$ 
         \item According to lines 7 of $\ac$ $(u_3,l_2,u_1,l_1,u_2,l_3,u_3)$ is not accepted because $l_2 > l_1$
         \item According to lines 7-12 of $\ab$ $(u_3,l_3,u_2,l_1,u_1,l_2,u_3)$ is  not accepted  when constructing elements of $\dw$ to be used by $\ac$  because  $l_3 > l_2$
         \item According to lines 7-12 of $\ab$ $(u_2,l_3,u_3,l_2,u_1,l_1,u_2)$ not accepted because $l_3 > l_1 $
-        \item  According to lines 7-12 of $\ab$ and line 7 in $\ac$ $(u_2,l_1,u_1,l_2,u_3,l_3,u_2)$ is accepted because $l_1 < l_3 $ and $l_1 < l_2 <l_3$ 
+  \end{itemize}
+  \end{proof}  
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{proof}[Proof. (Cont.) No Bitriangles are duplicated]   
+  Let $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, such that $l_1 < l_2 <l_3$. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$, or $\ac$.  
+  \begin{itemize}
+        \item According to lines 7-12 of $\ab$ and line 7 in $\ac$ $(u_2,l_1,u_1,l_2,u_3,l_3,u_2)$ is accepted because $l_1 < l_3 $ and $l_1 < l_2 <l_3$ 
         \item According to  line 7 in $\ac$ $(u_1, l_1,u_2,l_3,u_3,l_2,u_1)$ is not accepted because $l_3 > l_2$
   \end{itemize}
   Therefore the  only bitriangle  constructed by the algorithm is the one that satisfies $l_1 < l_2 < l_3$ where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $u_3$.
   \end{proof}  
-  }
 \end{frame}
 
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{proof}[All Bitriangles can be enumerated] 
+    \begin{itemize}
+      \item Let $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, such that $l_1 < l_2 <l_3$ is present in the graph. 
+      \item When $\aaa$ acting in filter $F_{l_1}$ ends reading all the edges, $\{u_1,u_2\} \subseteq W_{l_1}$. Also when $\aaa$ in filter $F_{l_3}$ ends reading all the edges, $\{u_2,u_3\} \subseteq W_{l_3}$. 
+      \item As $l_1 < l_3$ in $\ab$, in lines 7-12, in filter $F_{l_1}$ or in filter $F_{l_3}$, the pair $(l_1,l_3)$  will be added to $\mathsf{dw}$.
+      \item When $\ac$ in lines 7-16, in filter $F_{l_1}$ or in filter $F_{l_3}$ receives $(l_2, W_{l_2})$  will construct the corresponding  $BT$ because of the condition in line 10 is satisfied (non empty intersection). 
+    \end{itemize}    
+    Therefore, the bitriangle is stored in $\mathsf{bt}$ an thus $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ can be listed by $\ad$.
+  \end{proof}
+    
+\end{frame} 
