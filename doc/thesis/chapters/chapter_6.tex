@@ -17,52 +17,80 @@ in \autoref{fig:bipartite-graph-example}.
 \begin{figure}[ht]
 \centering	
 \inputtikz{bipartite}
-\caption[{[\acrshort{iebt}] Example of \acrlong{bg}}]{Example of \acrlong{bg} which has $5$ (five) \acrshort{bt}. We are going to use this example to show how to build the different objects definitions presented in \autoref{sec:prem:def}}
+\caption[{[\acrshort{iebt}] Example of \acrlong{bg}}]{A bipartite graph in which five bitriangles can be enumerated}
 \label{fig:bipartite-graph-example}
 \end{figure}
 
-As we can see in \autoref{fig:bipartite-graph-example}, trying to identify the different \acrshort{bt} in this graph, it can be done manually, but in larger graphs can be more challenging.
-The minimal structure that we can extract from this \acrshort{bt} is \acrlong{awg}, but for that we need to define what is a \acrfull{wg}.
+Identifying the different bitriangles in the graph in \autoref{fig:bipartite-graph-example} can be done manually. 
+In what follows, we use this graph to illustrate the new definitions. 
+This small example allows us to realize that identifying and listing bitriangles in large graphs is a challenging task.
 
 \begin{definition}[\acrfull{wg}]\label{def:wg}
 A \textit{\acrfull{wg}} in $G$ is a triple $(u_1,l,u_2)$, $\{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(u_2,l)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
-With this \dref{def:wg} in place, we can now define a \acrshort{awg}, which is an aggregated form of all the wedges of one $l \in L$.
+
+With this definition in place, we can now define an aggregated wedge, which is a compressed form of all the wedges having $l \in L$ as a middle vertex.
       
 \begin{definition}[\acrfull{awg}]\label{def:awg}
 An \textit{\acrfull{awg}} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u\in W_l$, the edge  $(u,l)\in E$. 
 \end{definition}
 
 \begin{figure}[htp!]
-\begin{subfigure}[b]{0.3\textwidth}
+\begin{subfigure}[t]{0.3\textwidth}
 \centering
 \inputtikz{bipartite_awg_a}
-\caption{\acrshort{awg} on $a$}
+\caption[\acrshort{awg} on $a$]{This is the \acrshort{awg} $\la a, \{1,2,7\}\ra$, the compact representation of wedges}
 \label{fig:awedge-example-a}
-\end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.3\textwidth}
 \centering
 \inputtikz{bipartite_awg_b}
-\caption{\acrshort{awg} on $b$}
+\caption[\acrshort{awg} on $b$]{This is the \acrshort{awg} $\la b, \{1,5\}\ra$, the compact representation of wedges}
 \label{fig:awedge-example-b}
-\end{subfigure}
-\begin{subfigure}[b]{0.3\textwidth}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.3\textwidth}
 \centering
 \inputtikz{bipartite_awg_c}
-\caption{\acrshort{awg} on $c$}
+\caption[\acrshort{awg} on $c$]{This is the \acrshort{awg} $\la c, \{1,3,5,7,9\}\ra$, the compact representation of wedges}
 \label{fig:awedge-example-c}
 \end{subfigure}
 \caption[{[\acrshort{iebt}] Definitions Examples \acrlong{awg}}]{\acrlong{awg} of nodes $a,b,c$ of \autoref{fig:bipartite-graph-example}}
 \label{fig:awedge-example}
 \end{figure}
 
-As we can see on \autoref{fig:awedge-example}, we are only enumerating the first three lower layer vertices \acrshort{awg}.
-Following that, now we can define a more refined structure that will allow us to enrich the \acrshort{awg} in order to lead us to a \acrshort{bt}. 
-That intermediate structure is an \acrlong{adwg}. For defining \acrshort{adwg} we need also another structure called \acrlong{dwg}. Intuitively is similar to \acrshort{wg} and \acrshort{awg} but relating two vertices in the Lower Layer $L$.
+In \autoref{fig:awedge-example}, we are only enumerating the first three lower layer vertices \acrshort{awg}.
+Next, we define a more refined structure that will allow us to enrich the \acrshort{awg} in order to lead us to a \acrshort{bt}. 
+That intermediate structure is an \emph{aggregated double-wedge}. For defining \acrshort{adwg} we first need another structure called \emph{double-wedge}. Intuitively, a \emph{double-wedge}, is similar to a \acrshort{wg} and \acrshort{awg} but relating two vertices in the lower layer $L$.
 
 \begin{definition}[\acrfull{dwg}]
 A \textit{\acrfull{dwg}} in $G$ is a path of length 4 $(u_1,l_1,u_2,l_2,u_3)$ where  $\{u_1,$ $u_2,u_3\}\subseteq U$ and $\{l_1,l_2\}\subseteq L$. Vertices $l_1$ and $l_2$ are the middle vertices of \acrshort{dwg}. 
 \end{definition}
+
+\begin{figure}[htp!]
+\begin{subfigure}[t]{0.5\textwidth}
+\centering
+\inputtikz{bipartite_wg_a}
+\caption[\acrshort{wg} $(u_1,l_m,u_3)$]{A connector \emph{wedge} $(u_1,l_m,u_3)$ with middle vertex $l_m$}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.5\textwidth}
+\centering
+\inputtikz{bipartite_dw_a}
+\caption[\acrshort{dwg} $(u_1,l_l,u_2,l_u,u_3)$]{A \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$}
+\end{subfigure}\hfill
+%
+\begin{subfigure}[t]{1\textwidth}
+\centering
+\inputtikz{bipartite_bt_dw_wg_a}
+\caption[\acrshort{bt} $(u_1,l_l,u_2,l_m,u_3,l_u,u_1)$]{A \emph{bitriangle} $(u_1,l_l,u_2,l_m,u_3,l_u,u_1)$ form with \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$ and connector \emph{wedge} $(u_1,l_m,u_3)$}
+\end{subfigure}
+\caption[{[\acrshort{iebt}] Example of connector wedge}]{Example on how to build a bitriangle from a \emph{double-wege} plus a \emph{wedge} connector}
+\label{fig:wg-dw-example}
+\end{figure}
+      
+
+Note that in \autoref{fig:wg-dw-example}, if we find a \emph{wedge} $(u_1,l_m,u_3)$, that "connects" to a \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$ such that $l_m > l_l$ and $l_m < l_u$, then we can build a bitriangle.
+In such a case, the \emph{wedge} $(u_1,l_m,u_3)$, is called the \emph{connector wedge}.
+
       
 \begin{definition}[\acrfull{adwg}]\label{def:adwg}
 Let $U_l = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
@@ -72,12 +100,13 @@ An \textit{\acrfull{adwg}}  is a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l
 \begin{figure}[htp!]
 \centering
 \inputtikz{bipartite_adwg_a}
-\caption[{[\acrshort{iebt}] Example Aggregated double-wedge}]{\acrlong{adwg} of the pair of nodes $(a,c)$ of \autoref{fig:bipartite-graph-example}. Upper layer nodes $1,3,7$ and $5,9$ are enclosed in a Square indicating the set that they belong to. Remember in \dref{def:adwg} we are forming three sets $U_l = \la I, J, K \ra$. $I = \emptyset$ in this case because they should be disjoint sets and $a$ and $c$ share the same upper layer nodes in $J$.}
+\caption[{[\acrshort{iebt}] Example Aggregated double-wedge}]{\acrlong{adwg} of the pair of nodes $(a,c)$ of \autoref{fig:bipartite-graph-example}. Upper layer nodes $1,3,7$ and $5,9$ are enclosed in a square indicating the set that they belong to. Remember in \dref{def:adwg} we are forming three sets $U_l = \la I, J, K \ra$. $I = \emptyset$ in this case because they should be disjoint sets and $a$ and $c$ share the same upper layer nodes in $J$.}
 \label{fig:agg-double-wedge-example}
 \end{figure}
 
-In \autoref{fig:agg-double-wedge-example} we can see the \acrshort{adwg} built by $a$ and $c$ where according to \dref{def:adwg} $a = l_1$ and $c = l_2$.
-The last aggregated structure that will finally enable the algorithm to build a \acrshort{bt} is an \acrlong{abt}. In \acrshort{abt} we need some other structure definitions before to understand how it is built, but intuitively it is an aggregation of a \acrshort{adwg} with another new \acrshort{awg} that is related with the former structure.
+In \autoref{fig:agg-double-wedge-example} we can see the \acrshort{adwg} built by $a$ and $c$ where, according to \dref{def:adwg}, $a = l_1$ and $c = l_2$.
+The last aggregated structure that enable the algorithm to build a \acrshort{bt} is the \emph{\acrlong{abt}}. 
+Intuitively, this intermediate structure is an aggregation of a \acrshort{adwg} with another new \acrshort{awg} related with the former structure.
 
 \begin{definition}[\acrfull{awgc}]\label{def:awgc}
 Let $\la (l_1, l_2), U_l \ra$ be an \acrshort{adwg}, where $\{l_1,l_2\}\subseteq L$ and $U_l = \la I, J, K\ra$.
@@ -92,7 +121,9 @@ where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $
 \begin{figure}[h!]
 \centering      
 \inputtikz{bipartite_abt_a}
-\caption[{[\acrshort{iebt}] Example Aggregated bitriangle}]{Aggregated bitriangle of the triple $(a,b,c)$ of \autoref{fig:bipartite-graph-example}. In this case as the \dref{def:abt} states, $\hat{U}_l$ does not contains disjoint sets, because we are using a compressing mechanism similar as described in \cite{Lai}. We can appreciate in the image that we can built an \acrshort{abt} with $b$ which has incidents edges in $1,5$. Note that not all of combinations are going to form a \acrshort{bt}.}
+\caption[{[\acrshort{iebt}] Example Aggregated bitriangle}]{Aggregated bitriangle $\la (a,b,c), \la \{1\},\{1,3,7\},\{1,5\} \ra \ra$ of \autoref{fig:bipartite-graph-example}. 
+In this case as the \dref{def:abt} states, $\hat{U}_{(a,b,c)}=\{I,J,K\}$ does not contains disjoint sets, because we are using a compressing mechanism similar as described in \cite{Lai}. 
+We can appreciate in the image that we can built an \acrshort{abt} with $b$ which has incidents edges in $1,5$. Note that not all of combinations, for instance form a \acrshort{bt}.}
 \label{fig:agg-bt-example}
 \end{figure}
       
@@ -120,15 +151,15 @@ The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{\acrfull{bt}} in $G$, 
 
 As we can see in \autoref{fig:bt-a-example}, the two possible \acrshort{bt} can be extracted from the \acrshort{abt} presented in \autoref{fig:agg-bt-example} are $(1,a,3,c,5,b,1)$ and $(1,a,7,c,5,b,1)$.
 
-Because \acrshort{iebt} will allow to enumerate \acrshort{bt} using a \emph{pay-as-you-go} model, we need to allow the user to enumerate specific \acrshort{bt} according to some criteria.
-In regards to that, we are going to define a Query Command that is going to be used in the pseudo-algorithm for that purpose.
+Because of \acrshort{iebt} will allow to enumerate \acrshort{bt} according to some locality criteria.
+In this regards, we next define the \emph{query operators} to be used for that purpose.
 
 \begin{definition}[\acrfull{qo}]\label{def:query:match} 
 a \emph{\acrlong{qo}} $Q$ is a value from the  \textit{sum type}
 $\mathbb{P}(U + L) + \mathbb{P}(E)$ producing as a result a possible set of \acrshort{bt} that include any of the vertices or edges given in $Q$.
 \end{definition}
 
-Finally, we can elaborate a summary of all the definitions and terms in the \autoref{table:notation}.
+In \autoref{table:notation}, we present a summary of the notation used in this chapter.
 
 \begin{table}[!ht]
 \centering
@@ -157,7 +188,14 @@ $\mathbb{P}$ & Parts of set \\  \hline
 \end{table}
       
 \section{Algorithm Sketch}\label{sub:sec:algo-sketch}
-Dynamic Pipeline Algorithm for Enumerating Bitriangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
+The algorithm for enumerating incrementally bitriangles in a large bipartite graph consists in two main phases. 
+During the first phase, the bipartite network is received by the $\dpbt$ as a stream of edges and a graph index structure is created. 
+This graph index is represented by the different structures stored along the filters stages of the $\dpbt$. 
+This first phase is in charge of constructing the compressed structures \emph{double wedge}, \emph{aggregated double-wedge}, and finally \emph{aggregated bitriangles}.
+The second phase is a querying phase. During the querying phase local queries can be submitted to the $\dpbt$. 
+When a query arrives to the $\dpbt$, the enumeration incremental of bitriangles process --according to the criteria in the submitted  queries-- is launched. 
+In this phase, enumerated bitriangles are extracted from the different aggregated bitriangles occurring in the graph index, i.e. the aggregated bitriangles stored in filter stages.
+More concretely, the Dynamic Pipeline Algorithm for Enumerating Bitriangles ($\dpbt$) is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\ibt$),  
 \textit{Generator} ($\gbt$),  \textit{Sink} ($\obt$), and \textit{Filter}($\fbt$) stages. 
 The algorithm considers a \acrlong{bt} as a convenient composition of three wedges as we can see the example in \autoref{fig:bitriangle-example}.
 In order to reduce memory footprint, the algorithm aggregates results, i.e. the set of wedges having the same middle vertex is represented as a pair $\la l, W_l \ra$ where $l$ is the middle vertex and $W_l$ is the set of adjacent vertices of $l$ called \acrfull{awg} (see \dref{def:awg}).
@@ -190,12 +228,6 @@ $OC_{BT}$ & Output Channels carrying $\bt$ \\ \hline
 \label{table:channels}
 \end{table}
 
-\begin{definition}[Filter State]
-Let $\aw$ be a set of all possibles \acrlong{awg} in $G$.
-Let $\dw$ be a set of all possibles \acrlong{adwg} in $G$.
-Let $\at$ be a set of all possibles \acrlong{abt} in $G$.
-An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ has a sum type $\st = \la l, W_l \ra + \dwi + \ati$, such that $\la l, W_l \ra \in \aw, \dwi \subseteq \dw, \ati \subseteq \at$.
-\end{definition}
  
 \begin{figure}[h]
 \centering  
@@ -206,11 +238,11 @@ An \textit{filter state} of \acrshort{dp} Filter with parameter $l$ has a sum ty
 \label{fig:btDP}
 \end{figure}
 
-\paragraph{Sketch} The setup of $\dpbt$ can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ and transfers to the following stage each $(u,l)$ using $C_E$.
+The setup of $\dpbt$ can be appreciated in \autoref{fig:btDP}. $\ibt$ reads from input stream all $(u,l) \in E$ and transfers to the following stage each $(u,l)$ using $C_E$.
 For every $(u,l)$ that arrives to $\gbt$, a new $\fbt$ instance with parameter $l \in L$ is spawn. $\fbt$ contains four actors. 
 First, $\aaa$ receives from $IC_E$ the edges and builds aggregated wedges, when there are no more edges it downstreams it to it's neighbour $\fbt$ using $OC_{W1}$. 
 Then $\ab$ receives from $IC_{W1}$ aggregated wedges from previous $\fbt$, downstream to next $\fbt$ and $\gbt$ using $OC_{W1}$ and at the same time use its information to see 
-if it can build an aggregated double wedge. If it can, it will store in its state $dw \in \dw$.
+if it can build an aggregated double-wedge. If an aggregated double-wedge could be constructed, it will be stored in the filter state.
 The need of bypassing all the aggregated wedges up to $\gbt$ is for retro feeding all the pipeline with all the aggregated wedges a second time, in order to find an \acrfull{awgc} as we defined in \dref{def:awgc}.
 From retro feeding channel $IC_{W2}$, $\ac$ receives all the \acrshort{awg}  and builds \acrshort{abt} storing them in $\st$. 
 $Q$ Commands are downstream from $\ibt$ to $\ad$ using channel $IC_Q$. $\ad$ receives all the commands, and for each of them, if there is match according to \dref{def:query:match}, it enumerates those \acrshort{bt} extracted from $\st$ and downstream to $\obt$ through $OC_{BT}$.
@@ -224,7 +256,7 @@ Before starting with the details, we introduce in \autoref{table:aux:fn} auxilia
 \centering
 \begin{tabular}{|p{0.3\linewidth}|p{0.7\linewidth}|} \hline
 \textbf{Function} & \textbf{Meaning}\\ \hline
-$\sw(F,l,\st)$ & Spawn new filter instance with parameters $F$ (Filter template), $l \in L$ and $\st$ as the State of the Filter\\\hline
+$\sw(F,l,\st)$ & Spawn new filter instance with parameters $F$, $l \in L$ and $\st$ as the State of the Filter\\\hline
 $\fd$ & Kill this filter instance because PostCondition is not satisfied\\ \hline
 $\fid$ & State after calling $\fd$ on filter. Indicates if Filter is die or not. If it is dead, this filter instance does not participate anymore in the pipeline streaming processor\\ \hline
 $\gs$ & Get Current State $\st$ for Filter Instance \\ \hline
@@ -265,7 +297,7 @@ Another important part as well is \autoref{algo:source:2}, the $\ibt$ is retro f
 This is important to finally build the \acrshort{bt} as we have describe in \autoref{sub:sec:algo-sketch}. Finally, \autoref{algo:source:3} shows how all the queries are downstream as well.
 
 \begin{algorithm}[h!]
-\SetKwInOut{P}{Filter Template}
+\SetKwInOut{P}{Parameter}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
 \SetAlgorithmName{}{gen}{}
@@ -319,7 +351,8 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \paragraph{Sink $\obt$} In \autoref{algo:sink} shows a simple stage that receives all results and sends them to some output handler (file, standard output, etc.). 
 
 \begin{algorithm}[h!]
-\SetKwInOut{P}{Filter Template}
+\SetKwInOut{P}{Filter Parameter}
+\SetKwInOut{FS}{Filter State}
 \SetKwInOut{IC}{Input Channels}
 \SetKwInOut{OC}{Output Channels}
 \SetKwFunction{actora}{actor1}
@@ -331,6 +364,7 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \SetAlgorithmName{}{fil}{}
 \SetAlgoRefName{[A4]}
 \P{$l \in L$}
+\FS{$\st = \aw + \mathcal{P}(\dw) + \mathcal{P}(\at)$}
 \IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
 \OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
 \df{\filter{}}{
@@ -344,6 +378,7 @@ Finally, \autoref{algo:gen:3} sends all the results that $Q$ matches in the diff
 \end{algorithm}
 
 \paragraph{Filter $\fbt$} In \autoref{algo:fil} we can see the simple call sequence over all the actor functions of the filter template. 
+The values stored in the \textit{state of the filter} with parameter $l$ are of the sum type $\st = \aw + \mathcal{P}(\dw) + \mathcal{P}(\at)$.
 
 \begin{algorithm}[h!]
 \SetKwInOut{P}{Parameter}
@@ -378,7 +413,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \label{algo:act-1}
 \end{algorithm}
 
-\paragraph{Filter $\aaa$} 
+\paragraph{Filter-$\aaa$} 
 $\aaa$ receives all edges not consumed by previous $\fbt$.
 If the received edge $(u',l')$ is incident to l i.e. $l = l'$,  then $u'$ will be added to the list of \acrshort{awg}. Otherwise the edge is downstream to the next stage.
 In \autoref{algo:act-1:2} the state is updated and \acrshort{awg} downstream, if and only if at least 1 wedge was collected. Otherwise, the filter is marked as dead using the  $\fd$ function.
@@ -428,7 +463,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \label{algo:act-2}
 \end{algorithm}
 
-\paragraph{Filter $\ab$} In \autoref{algo:act-2} \acrshort{adwg} is built. Following that idea and according to the \dref{def:adwg}, this algorithm will collect all the \acrshort{awg} 
+\paragraph{Filter-$\ab$} In \autoref{algo:act-2} \acrshort{adwg} is built. Following that idea and according to the \dref{def:adwg}, this algorithm will collect all the \acrshort{awg} 
 from previous filters if an only if the condition in \autoref{algo:act-2:1} is met. Note that the two \acrshort{awg}, $W_l$ and $W_l'$ have different vertices from the set $L$. $W_l$ intersection check is mandatory since if \acrshort{awg} are disjoint, we cannot aggregate them.
 After this checking from \autoref{algo:act-2:2} to \autoref{algo:act-2:3}, the algorithm builds three disjoint Sets to separate upper edges in three subsets; those which are incident only of 
 $l$ and $l'$ which are $I$ and $K$ and those that are shared by both lower layer vertex. This can be appreciated in \autoref{fig:agg-double-wedge-example}.
@@ -479,7 +514,7 @@ Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$
 \label{algo:act-3}
 \end{algorithm}
 
-\paragraph{Filter $\ac$} $\ac$ focuses on treating elements from feedback channel $IC_{W2}$ which is going to downstream all the \acrshort{awg} of all filters.
+\paragraph{Filter-$\ac$} $\ac$ focuses on treating elements from feedback channel $IC_{W2}$ which is going to downstream all the \acrshort{awg} of all filters.
 This is because in order to build \acrshort{abt} finding all the possibles \acrshort{awgc}. This is what is doing \autoref{algo:act-3} according to definition 
 \dref{def:awgc} and \dref{def:abt}. If that can be achieved, algorithm sets $\st = \ati$ and $\ad$ can be executed.
 
@@ -534,8 +569,8 @@ $\ati \leftarrow \gs$\\
 \label{algo:act-4}
 \end{algorithm}
 
-\paragraph{Filter $\ad$} Once the execution reaches $\ad$, it is ready for processing $Q$ \acrlong{qo}. 
-Since we have a compress representation of \acrshort{bt}, which is a similar idea exposed here~\cite{Lai}, we need to enumerate incrementally all the \acrshort{bt} present in the compressed format and filter the ones that match the command.
+\paragraph{Filter-$\ad$} Once the execution reaches $\ad$, it is ready for processing $Q$ \acrlong{qo}. 
+Since we have a compressed representation of \acrshort{bt}, which is a similar idea exposed here~\cite{Lai}, we need to enumerate incrementally all the \acrshort{bt} present in the compressed format and filter the ones that match the command.
 The matches proceeds in the following manner. Given a \acrshort{abt} with the form $\la \ell, \hat{U}_l \ra$, such that $\ell = (l_1,l_2,l_3)$ and $\hat{U}_l = \la I,J,K \ra$, where $I \subseteq U, J \subseteq U, K \subseteq U$, if the \acrshort{qo} contains a command with vertices, those vertices are searched in $\ell$ and $\hat{U}_l$. 
 There are two posibilities. On the first case, if any of those vertices that belongs to $Q$ matches $\ell$, then forall $u_i \in I, u_j \in J, u_k \in K$ where $ u_i \neq u_j \neq u_k$, a \acrshort{bt} is built using a 6-cycle $(u_i, l_1, u_j, l_3, u_k, l_2, u_i)$ path.
 On the second case, if any of those vertices that belongs to $Q$ matches on some vertex in $\hat{U}_l$, build only the \acrshort{bt} in which 6-cycle $(u_i, l_1, u_j, l_3, u_k, l_2, u_i)$ path contains that vertex in $Q$.
@@ -753,7 +788,7 @@ $\ac$ accepts b as a candidate to construct an element of the set of aggregate b
         
  
 \section{\acrshort{dpbt} implementation}\label{sec:iebt:hs:imp}
-As we have seen in the previous \autoref{dp-hs}, first we need to define the \acrshort{dp} using the \acrshort{dsl}.
+As we have seen in the previous \autoref{dp-hs}, first we need to define the $\dpbt$ using the \acrshort{dsl}.
 
 \begin{listing}[htp!]
 \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={3}]{haskell}
