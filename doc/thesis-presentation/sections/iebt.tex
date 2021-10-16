@@ -1,6 +1,6 @@
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    \large We define \textbf{Compressed}~\cite{Lai} structural units that allows to \textbf{build} Bitriangles in different steps
+    \large We define \textbf{compressed}~\cite{Lai} structural units that allows to \textbf{build} Bitriangles in different steps
   \end{center}    
 \end{frame}
 
@@ -78,7 +78,8 @@
   \begin{center}
   \resizebox{1\textwidth}{!}{  
   \begin{algorithm}[H]
-    \SetKwInOut{P}{Filter Template}
+    \SetKwInOut{P}{Filter Parameter}
+    \SetKwInOut{FS}{Filter State}
     \SetKwInOut{IC}{Input Channels}
     \SetKwInOut{OC}{Output Channels}
     \SetKwFunction{actora}{actor1}
@@ -90,6 +91,7 @@
     \SetAlgorithmName{}{fil}{}
     \SetAlgoRefName{[A4]}
     \P{$l \in L$}
+    \FS{$\st = \aw + \mathcal{P}(\dw) + \mathcal{P}(\at)$}
     \IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
     \OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
     \df{\filter{}}{
@@ -253,6 +255,7 @@
   \end{theorem}
 \end{frame} 
 
+\iffalse
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{proof}[Proof. No Bitriangles are duplicated]   
   Let $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, such that $l_1 < l_2 <l_3$. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$, or $\ac$.  
@@ -287,5 +290,6 @@
     \end{itemize}    
     Therefore, the bitriangle is stored in $\mathsf{bt}$ an thus $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ can be listed by $\ad$.
   \end{proof}
-    
+  
 \end{frame} 
+\fi
