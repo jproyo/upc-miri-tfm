@@ -1,4 +1,4 @@
-\chapter[An Algorithm for Incrementally Enummerating Bitriangles]{An algorithm for incrementally enumerating Bitriangles using DP}\label{incr-algo-bt-dp}
+\chapter[An Algorithm for Incrementally Enumerating Bitriangles]{An algorithm for incrementally enumerating Bitriangles using DP}\label{incr-algo-bt-dp}
 In this chapter, we first describe the overall idea of the algorithm for incrementally enumerate 
 bitriangles. After that, we present the algorithms in pseudo-code format. Finally, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
 
@@ -81,16 +81,14 @@ A \textit{\acrfull{dwg}} in $G$ is a path of length 4 $(u_1,l_1,u_2,l_2,u_3)$ wh
 \begin{subfigure}[t]{1\textwidth}
 \centering
 \inputtikz{bipartite_bt_dw_wg_a}
-\caption[\acrshort{bt} $(u_1,l_l,u_2,l_m,u_3,l_u,u_1)$]{A \emph{bitriangle} $(u_1,l_l,u_2,l_m,u_3,l_u,u_1)$ form with \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$ and connector \emph{wedge} $(u_1,l_m,u_3)$}
+\caption[\acrshort{bt} $(u_1,l_l,u_2,l_u,u_3,l_m,u_1)$]{A \emph{bitriangle} $(u_1,l_l,u_2,l_u,u_3,l_m,u_1)$ formed by \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$ and connector \emph{wedge} $(u_1,l_m,u_3)$}
 \end{subfigure}
 \caption[{[\acrshort{iebt}] Example of connector wedge}]{Example on how to build a bitriangle from a \emph{double-wege} plus a \emph{wedge} connector}
 \label{fig:wg-dw-example}
 \end{figure}
       
-
-Note that in \autoref{fig:wg-dw-example}, if we find a \emph{wedge} $(u_1,l_m,u_3)$, that "connects" to a \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$ such that $l_m > l_l$ and $l_m < l_u$, then we can build a bitriangle.
-In such a case, the \emph{wedge} $(u_1,l_m,u_3)$, is called the \emph{connector wedge}.
-
+In \autoref{fig:wg-dw-example} the \emph{wedge} $(u_1,l_m,u_3)$, is called the \textit{connector wedge}. 
+In effect, if we assumed that $l_m > l_l$ and $l_m < l_u$, the \emph{wedge} $(u_1,l_m,u_3)$ together with the \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$ form a  a bitriangle.  
       
 \begin{definition}[\acrfull{adwg}]\label{def:adwg}
 Let $U_l = \la I, J, K\ra$ be a triplet such that $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
@@ -156,7 +154,7 @@ In this regards, we next define the \emph{query operators} to be used for that p
 
 \begin{definition}[\acrfull{qo}]\label{def:query:match} 
 a \emph{\acrlong{qo}} $Q$ is a value from the  \textit{sum type}
-$\mathbb{P}(U + L) + \mathbb{P}(E)$ producing as a result a possible set of \acrshort{bt} that include any of the vertices or edges given in $Q$.
+$\mathcal{P}(U + L) + \mathcal{P}(E)$ producing as a result a possible set of \acrshort{bt} that include any of the vertices or edges given in $Q$.
 \end{definition}
 
 In \autoref{table:notation}, we present a summary of the notation used in this chapter.
@@ -181,7 +179,7 @@ $\ati$ & Subset of $\at$, such that $\ati \subseteq \at$ \\  \hline
 $\bti$ & the \acrshort{bt} $u_1,l_1,u_2,l_3,u_3,l_2,u_1$\\  \hline
 $\bt$ & the set of all the possible \acrshort{bt} in $G$ \\  \hline
 $bt$ & Subset of $\bt$, such that $bt \subseteq \bt$ \\  \hline
-$\mathbb{P}$ & Parts of set \\  \hline
+$\mathcal{P}$ & Parts of set \\  \hline
 \end{tabular}
 \caption[{[\acrshort{iebt}] Summary of notations and their meanings}]{This table summarizes all the different object definitions that we have detailed in \autoref{sec:prem:def}. The first column describe the formal term used in the definitions on \autoref{sec:prem:def}. The second column summarize the meaning of each term}
 \label{table:notation}
@@ -542,16 +540,16 @@ $\ati \leftarrow \gs$\\
 \ForAll{$Q \in IC_Q$}{
       \ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati$}{
             \Switch{$Q$}{
-                  \Case{$\mathbb{P}(U + L)$}{
-                        \If{$\mathbb{P}(U + L) \cap \{l_l, l_m, l_u\} \neq \emptyset \lor \mathbb{P}(U + L) \cap (I \cup J \cup K) \neq \emptyset$}{
-                              $\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), \mathbb{P}(U + L))$\\
+                  \Case{$\mathcal{P}(U + L)$}{
+                        \If{$\mathcal{P}(U + L) \cap \{l_l, l_m, l_u\} \neq \emptyset \lor \mathcal{P}(U + L) \cap (I \cup J \cup K) \neq \emptyset$}{
+                              $\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), \mathcal{P}(U + L))$\\
                               \ForAll{$\bti \in \btii$}{
                                     $\p(\bti, OC_{BT})$
                               }
                         }
                   }
-                  \Case{$\mathbb{P}(E)$}{
-                        \ForEach{$(u,l) \in \mathbb{P}(E)$}{
+                  \Case{$\mathcal{P}(E)$}{
+                        \ForEach{$(u,l) \in \mathcal{P}(E)$}{
                               \If{$(l = l_l \lor l = l_m \lor l = l_u) \land u \in (I \cup J \cup K)$}{
                                     $\btii \leftarrow \butE(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), (u,l))$\\
                                     \ForAll{$\bti \in \btii$}{
@@ -577,7 +575,7 @@ On the second case, if any of those vertices that belongs to $Q$ matches on some
 Using the same construction process a \acrshort{bt} is built if \acrshort{qo} contains a command with edges and any of those edges matches with any of the possible \acrshort{bt} 6-cycle path.
 
 The following pseudo-code definitions on \autoref{algo:buildBtVertex} and \autoref{algo:buildBtEdge} are auxiliary functions that are called
-from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E)$.
+from $\ad$ if $Q$ pattern match either with $\mathcal{P}(U + L)$ or $\mathcal{P}(E)$.
 
 \begin{algorithm}[h!]
 \SetKwInOut{I}{Input}
@@ -587,11 +585,11 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
 \SetAlgorithmName{}{a1}{}
 \SetAlgoRefName{[A9]}
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
-\I{$\mathbb{P}(U + L)$}
+\I{$\mathcal{P}(U + L)$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
-\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $\mathbb{P}(U + L)$}}{
+\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $\mathcal{P}(U + L)$}}{
       $\btii \leftarrow \emptyset$\\
-      \uIf{$\mathbb{P}(U + L) \cap \{l_l, l_m, l_u\}$}{
+      \uIf{$\mathcal{P}(U + L) \cap \{l_l, l_m, l_u\}$}{
             \tcp*[h]{If it is in lower i need to build all for this lower triplet}\\
             \ForEach{$i \in I$}{
                   \ForEach{$j \in J, j \neq i$}{
@@ -604,7 +602,7 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
             \tcp*[h]{Otherwise just build those that are in the this upper $v$}\\
             \ForEach{$i \in I$}{
                   \ForEach{$j \in J, j \neq i$}{
-                        \ForEach{$k \in K, k \neq i \land k \neq j \land (\mathbb{P}(U + L) \cap \{i,j,k\} \neq \emptyset$}{
+                        \ForEach{$k \in K, k \neq i \land k \neq j \land (\mathcal{P}(U + L) \cap \{i,j,k\} \neq \emptyset$}{
                               $\btii \leftarrow \btii \cup \{BT_{(l_l, l_m,l_u)}^{(i, j, k)}\}$
                         }
                   }
@@ -612,7 +610,7 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
       }
       \Return{$\btii$}
 }
-\caption[Function \mintinline{shell}{buildBtVertex}]{Function \mintinline{shell}{buildBtVertex}: Given a Set of Vertex in $\mathbb{P}(U + L)$, if any of those vertices matches with some vertex in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bitriangles that matches that query}
+\caption[Function \mintinline{shell}{buildBtVertex}]{Function \mintinline{shell}{buildBtVertex}: Given a Set of Vertex in $\mathcal{P}(U + L)$, if any of those vertices matches with some vertex in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bitriangles that matches that query}
 \label{algo:buildBtVertex}
 \end{algorithm}
 
@@ -627,7 +625,7 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
 \I{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati, \ati \subseteq \at$}
 \I{$(u,l)$}
 \O{$\btii \subseteq \bt$ or $\emptyset$ if cannot build any $\btii$}
-\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $\mathbb{P}(U + L)$}}{
+\df{\but{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, $\mathcal{P}(U + L)$}}{
       $\btii \leftarrow \emptyset$\\
       \ForEach{$i \in I$}{
             \ForEach{$j \in J, j \neq i$}{
@@ -645,7 +643,7 @@ from $\ad$ if $Q$ pattern match either with $\mathbb{P}(U + L)$ or $\mathbb{P}(E
             \Return{False}
       }
 }
-\caption[Function \mintinline{shell}{buildBtEdge}]{Function \mintinline{shell}{buildBtEdge}: Given a Set of Edges in $\mathbb{P}(E)$, if any of those edges matches with some edge in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bitriangles that matches that query}
+\caption[Function \mintinline{shell}{buildBtEdge}]{Function \mintinline{shell}{buildBtEdge}: Given a Set of Edges in $\mathcal{P}(E)$, if any of those edges matches with some edge in the parameter of the function $\la (l_l, l_m, l_u), \la I,J,K \ra \ra$, build the set of bitriangles that matches that query}
 \label{algo:buildBtEdge}
 \end{algorithm}
 
