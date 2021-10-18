@@ -85,10 +85,8 @@ A bipartite network is a graph with two disjoint vertex sets where its edges onl
 For instance, two different object sets can be modeled with a bipartite graph, establishing the relationships between them (e.g., a network of drugs and side effects of those drugs, a network of TV Shows and its subscriptors, diseases gene association network and many more). 
 In Unipartite graph, one of the metrics that reflects strong relationships on elements is triangles.
 Although Bipartite Graphs does not have such element of measure, there exists a similar smallest unit of cohesion which is the Bitriangle. 
-This metric also allows conducting relationship analysis on Bipartite Networks.
-Some related work has been done for counting Bitriangles in Bipartite Graph lately. 
-Counting is extremely useful for calculating metrics such as clustering coefficient, social analysis, or bitriangles based-communities, there are some use cases that requires the capability to know structural information of those Bitriangles, 
-for example in disorder/disease gene association networks where it is important to know the gene causing the disease.
+Lately, there has been some related work related counting bitriangles in bipartite networks.
+Counting is extremely useful for calculating metrics such as clustering coefficient, social analysis, or bitriangles based-communities, but there are some use cases in which knowing structural information of those Bitriangles is required; i.e. for example in disorder/disease gene association networks where it is important to know the gene causing the disease.
 Moreover, depending on the size of the graph enumerating bitriangles could be a high-resource consuming task and an "all-or-nothing" computation model might not deliver any result at all. In the opposite, a \emph{pay-as-you-go} computational model approach can be provided giving the fact the user is able to conduct analysis as long as it receives some results without waiting the for rest of them.
 In that sense, an Algorithm that Enumerates Bitriangles incrementally matching a specific criteria is extremely useful and powerful for real networks and scenarios like expressed before. 
 %Streaming processing has given rise to new computation paradigms processing data effectively.
