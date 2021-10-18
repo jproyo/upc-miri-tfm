@@ -83,17 +83,19 @@
 \abstract{
 A bipartite network is a graph with two disjoint vertex sets where its edges only connect vertices from different sets. 
 For instance, two different object sets can be modeled with a bipartite graph, establishing the relationships between them (e.g., a network of drugs and side effects of those drugs, a network of TV Shows and its subscriptors, diseases gene association network and many more). 
-In Unipartite graph, one of the metrics that reflects strong relationships on elements is triangles. This minimal unit of cohesion in unipartite graph helps to analyze this type of networks, measuring different parameters such as clustering coeficient, social analysis or triangle-based communities.
-Alghouth Bipartite Graphs does not have such element of measure, there exists a similar smallest unit of cohesion which is the Bitriangle. This metrics also allows to analyze Bipartite Networks in terms of the same parameters as unipartite graph for detecting strong relationships between sets of vertices.
-Some related work has been done in for counting Bitriangles in Bipartite Graph lately. In spite counting is extremely useful for calculating previous described parameters such as clustering coeficient, there are some use cases which requires the capability to know structural information of those Bitriangles, 
+In Unipartite graph, one of the metrics that reflects strong relationships on elements is triangles.
+Although Bipartite Graphs does not have such element of measure, there exists a similar smallest unit of cohesion which is the Bitriangle. 
+This metric also allows conducting relationship analysis on Bipartite Networks.
+Some related work has been done for counting Bitriangles in Bipartite Graph lately. 
+Counting is extremely useful for calculating metrics such as clustering coefficient, social analysis, or bitriangles based-communities, there are some use cases that requires the capability to know structural information of those Bitriangles, 
 for example in disorder/disease gene association networks where it is important to know the gene causing the disease.
 Moreover, depending on the size of the graph enumerating bitriangles could be a high-resource consuming task and an "all-or-nothing" computation model might not deliver any result at all. In the opposite, a \emph{pay-as-you-go} computational model approach can be provided giving the fact the user is able to conduct analysis as long as it receives some results without waiting the for rest of them.
 In that sense, an Algorithm that Enumerates Bitriangles incrementally matching a specific criteria is extremely useful and powerful for real networks and scenarios like expressed before. 
-Streaming processing has given rise to new computation paradigms processing data effectively.
-The most important features of these paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, 
-reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce incremental results. 
-The Dynamic Pipeline Paradigm (DPP) is a naturally functional approach to deal with stream processing. 
-This fact encourages us to use Haskell, a purely functional programming language, for DPP.  
+%Streaming processing has given rise to new computation paradigms processing data effectively.
+%The most important features of these paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, 
+%reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce incremental results. 
+%The Dynamic Pipeline Paradigm (DPP) is a naturally functional approach to deal with stream processing. 
+%This fact encourages us to use Haskell, a purely functional programming language, for DPP.  
 In this work, we tackle the problem of providing an Algorithm for Incrementally Enumerating Bitriangles in large Bipartite Networks, following the next steps:
   \begin{inparaenum}[\bf i\upshape)]
       \item We validate the suitability of (parallel) Haskell to implement a Dynamic Pipeline Framework (DPF).
