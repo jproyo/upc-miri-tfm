@@ -30,16 +30,14 @@ One of the most interesting contributions of this work that we have adapted in o
 In our description of the bitriangle enumeration algorithm, described in \autoref{incr-algo-bt-dp}, we define intermediate objects such as aggregated wedges, aggregated double-wedges, and aggregated bitriangles. 
 Those intermediate structures help us to build and store bitriangles in a compressed representation in order to use less memory footprint and computation time.
 
-\paragraph{\emph{motif-paths}.} In the work of Xiaodong Li et al.~\cite{Li2019MotifPA}, the authors presents an algorithm for calculating the shortest \emph{motif-paths}.
+\paragraph{\emph{motif-paths}.} Xiaodong Li et al.~\cite{Li2019MotifPA}, present an algorithm for calculating the shortest \emph{motif-paths}.
 A \emph{motif-path} is a concatenation --a path--  of two or more \emph{motif}, where a \emph{motif} is a small graph with few nodes, considered as a fundamental unit of a graph.
-Because of the complexity of building a \emph{motif-path} to establish the shortest path, the authors propose an incremental search in an algorithm called \emph{Incremental Motif-path Search (IMS Search)}.
+In their work, authors bring light to the computation of the shortest \emph{motif-paths} between two nodes is a very useful tool to link prediction. They propose an incremental search in an algorithm called \emph{Incremental Motif-path Search (IMS Search)}.
 The idea of this algorithm starts similarly to other shortest path search algorithms. Giving a source $s$ find the shortest path to a target $t$. In this case, $s$ and $t$ are \emph{motif}s.
-The sketch of the algorithm proceeds in the following manner: after all, the \emph{motif} are discovered around some seed $s$ a \emph{motif-path} $\mathbf{P}$ can be constructed based on those instances.
-The process is repeated until a target $t$ node is discovered. According to the paper, this method has two limitations. First, it is possible to detect \emph{motif-path} that contains 
-redundant \emph{motif-instances}. Secondly, the incremental search proposed might end far from the shortest \emph{motif-path}. For solving the first limitation, the authors propose a pre-filter for the \emph{motif-instances},
-and in order to overcome the second limitation, it is proposed a bi-directional search allowing to explore different seeds. 
-We believe that this kind of problem that deals with subgraph matching are suitable to be implemented with \acrlong{dp}. 
-For example, in the case of the two limitations of this work, \acrshort{dp} can dynamically build a pipeline where each \emph{motif-instance} corresponds to one filter. 
+The sketch of the algorithm proceeds in the following manner: \emph{motif-instances} are discovered around some seed. Then, \emph{motif-paths} can be constructed based on those instances. 
+We use this approach of seeds --vertices and edges in our case-- for optimizing the representation of the building blocks and the discovering of bitriangles. 
+Additionally, we think this kind of problem that deals with subgraph matching is suitable to be implemented with \acrlong{dp}. 
+In effect, \acrshort{dp} can dynamically build a pipeline where each \emph{motif-instance} corresponds to one filter. 
 Therefore, we could eliminate repeated \emph{motif-instances} and wrong path detection by the disposition of the filters and the communication between them.
 
 \section{\acrlong{bt} Counting in \acrlong{bg}s}\label{sec:rel-work:counting}
