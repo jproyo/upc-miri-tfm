@@ -39,7 +39,7 @@ An \textit{\acrfull{awg}} is a pair $\la l, W_l \ra$, where $l \in L$, $W_l \sub
 \begin{subfigure}[t]{0.3\textwidth}
 \centering
 \inputtikz{bipartite_awg_a}
-\caption[\acrshort{awg} on $a$]{This is the \acrshort{awg} $\la a, \{1,2,7\}\ra$, the compact representation of wedges}
+\caption[\acrshort{awg} on $a$]{This is the \acrshort{awg} $\la a, \{1,3,7\}\ra$, the compact representation of wedges}
 \label{fig:awedge-example-a}
 \end{subfigure}\hfill
 \begin{subfigure}[t]{0.3\textwidth}
@@ -69,19 +69,19 @@ A \textit{\acrfull{dwg}} in $G$ is a path of length 4 $(u_1,l_1,u_2,l_2,u_3)$ wh
 \begin{figure}[htp!]
 \begin{subfigure}[t]{0.5\textwidth}
 \centering
-\inputtikz{bipartite_wg_a}
-\caption[\acrshort{wg} $(u_1,l_m,u_3)$]{A connector \emph{wedge} $(u_1,l_m,u_3)$ with middle vertex $l_m$}
+\inputtikz{bipartite_dw_a}
+\caption[\acrshort{dwg} $(u_1,l_l,u_2,l_u,u_3)$]{A \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$}
 \end{subfigure}\hfill
 \begin{subfigure}[t]{0.5\textwidth}
 \centering
-\inputtikz{bipartite_dw_a}
-\caption[\acrshort{dwg} $(u_1,l_l,u_2,l_u,u_3)$]{A \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$}
+\inputtikz{bipartite_wg_a}
+\caption[\acrshort{wg} $(u_1,l_m,u_3)$]{A connector \emph{wedge} $(u_1,l_m,u_3)$ with middle vertex $l_m$}
 \end{subfigure}\hfill
 %
 \begin{subfigure}[t]{1\textwidth}
 \centering
 \inputtikz{bipartite_bt_dw_wg_a}
-\caption[\acrshort{bt} $(u_1,l_l,u_2,l_u,u_3,l_m,u_1)$]{A \emph{bitriangle} $(u_1,l_l,u_2,l_u,u_3,l_m,u_1)$ formed by \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$ and connector \emph{wedge} $(u_1,l_m,u_3)$}
+\caption[\acrshort{bt} with connector]{A \emph{bitriangle} formed by \emph{double-wedge} $(u_1,l_l,u_2,l_u,u_3)$ and connector \emph{wedge} $(u_1,l_m,u_3)$}
 \end{subfigure}
 \caption[{[\acrshort{iebt}] Example of connector wedge}]{Example on how to build a bitriangle from a \emph{double-wege} plus a \emph{wedge} connector}
 \label{fig:wg-dw-example}
