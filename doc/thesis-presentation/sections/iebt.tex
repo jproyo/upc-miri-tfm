@@ -246,13 +246,13 @@
 
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-  \begin{theorem}[No Bitriangles are duplicated] 
-    Given a graph a bipartite graph $G = ((U\cup L),E)$ and the \acrshort{iebt} every bitriangle occurring in $G$ is stored at most once.
+  \begin{theorem}[Uniqueness] 
+    Given a bipartite graph $G = ((U\cup L),E)$, $\forall \btii\in\bt$  \acrshort{iebt} stores $\btii$ in an $\ati\in \at$ only once.
   \end{theorem}
-
-  \begin{theorem}[All Bitriangles can be enumerated] 
-    Given a bipartite graph $G$, if the bitriangle $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ such that $l_1 < l_2 <l_3$ is present in G, then $\bti$ can be enumerated.
-  \end{theorem}
+  
+  \begin{theorem}[All Bitriangles can be enumerated]
+    Given a bipartite graph $G$, if the bitriangle $\btii = (u_1,l_1,u_2,l_3,$ $u_3,l_2,u_1)\in \bt$, then $\btii$  can be enumerated.
+  \end{theorem}  
 \end{frame} 
 
 \iffalse
