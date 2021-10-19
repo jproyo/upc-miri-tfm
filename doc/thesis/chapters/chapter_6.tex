@@ -1,10 +1,10 @@
 \chapter[An Algorithm for Incrementally Enumerating Bitriangles]{An algorithm for incrementally enumerating Bitriangles using DP}\label{incr-algo-bt-dp}
-In this chapter, we first describe the overall idea of the algorithm for incrementally enumerate 
-bitriangles. After that, we present the algorithms in pseudo-code format. Finally, we provide the proof of correctness and the implementation using the \acrshort{dpfh}.  
+In this chapter, we first give the foundation to define and implement an algorithm for incrementally enumerating bitriangles in a large bipartite graph. 
+Then, we introduce an algorithm based on the \acrshort{dp}. In particular,  we present the pseudo-code of the stages of the proposed $\dpbt$. 
+Finally, we provide a proof of correctness of our proposal and the main details of the implementation of the $\dpbt$ using the \acrshort{dpbt}.
 
 \section{Preliminaries Definitions}\label{sec:prem:def}
-In order to understand how the algorithm works, we need to provide some basic definitions that are already exposed in previous work~\cite{btcount}, and
-at the same time, we define other structures that we use for giving a solution to the problem.
+In order to understand how the algorithm works, we need to provide some basic definitions, and define other small structural units that we use for giving a solution to the problem.
 Let's enumerate all those definitions in the following paragraphs.
 
 \begin{definition}[\acrlong{bg}] 
@@ -742,7 +742,7 @@ Let $\btii\in \bt$, $\btii = (u_1,l_1,u_2,l_3,u_3,l_2,u_1)$. Let us suppose that
 We proceed in a constructive way. Let $\btii = (u_1,l_1,u_2,l_3,u_3,l_2,u_1) \in \bt$. 
 When $\aaa$ running in a filter $\sfilter$ with parameter $l_1$, $F_{l_1}$, ends reading all the edges, the state of $F_{l_1} = \langle l_1,  W_{l_1}\rangle$ and  $\{u_1,u_2\} \subseteq W_{l_1}$. Similarly,  when $\aaa$ running in filter $F_{l_3}$ ends reading all the edges,  $F_{l_3} = \langle l_3,  W_{l_3}\rangle$ and $\{u_2,u_3\} \subseteq W_{l_3}$. This is, wedges $(u_1,l_1,u_2)$ and $(u_2,l_3,u_3)$ are stored in the aggregated wedges (states) of $F_{l_1}$ and $F_{l_3}$, respectively. 
 When running  $\ab$ in filter $F_{l_1}$ or in filter $F_{l_3}$, in lines 7-12 the pair 
-$(l_l, l_u) \equiv (\argmin_{l_1,l_3}, \argmax_{l_1,l_3})$ is added to $\mathsf{dw}$. This is, the double wedge $(u_1,l_l,u_2,l_u,u_3)$ is stored either, in the state $F_{l_1}$ or the state of $F_{l_3}$. When running $\ac$, in filter $F_{l_1}$ or in filter $F_{l_3}$, $\ac$ receives the connector wedge $(l_2, W_{l_2})$ from the incoming  aggregated BT-connector. In lines 7-16, if the condition in line 10 holds, i.e. non empty intersection, since edges $(u_1,l_2)$ and $(u_3,l_2)$ are in $E$, $\{u_1,u_3\} \subseteq W_{l_2}$. Therefore, $\ac$ adds  $\btii$  to the aggregated bitriangle of the filter. This is, the permutation  $(u_1,l_l,u_2,l_u,u_3,l_2,u_1)$ of the bitriangle $\btii$ is stored in $\ati$ and therefore it can be listed by $\ad$
+$(l_l, l_u) \equiv (\argmin_{l_1,l_3}, \argmax_{l_1,l_3})$ is added to $\mathsf{dw}$. This is, the double wedge $(u_1,l_l,u_2,l_u,u_3)$ is stored either, in the state $F_{l_1}$ or the state of $F_{l_3}$. When running $\ac$, in filter $F_{l_1}$ or in filter $F_{l_3}$, $\ac$ receives in $IC_{W_l2}$, line 4, the connector wedge $(l_2, W_{l_2})$ from the incoming  aggregated BT-connector. In lines 7-16, if the condition in line 10 holds, i.e. non empty intersection, since edges $(u_1,l_2)$ and $(u_3,l_2)$ are in $E$, $\{u_1,u_3\} \subseteq W_{l_2}$. Therefore, $\ac$ adds  $\btii$  to the aggregated bitriangle of the filter. This is, the permutation  $(u_1,l_l,u_2,l_u,u_3,l_2,u_1)$ of the bitriangle $\btii$ is stored in $\ati$ and therefore it can be listed by $\ad$
 \end{proof}        
  
 \section{\acrshort{dpbt} implementation}\label{sec:iebt:hs:imp}
