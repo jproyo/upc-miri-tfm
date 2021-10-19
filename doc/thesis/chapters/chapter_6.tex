@@ -25,6 +25,30 @@ Identifying the different bitriangles in the graph in \autoref{fig:bipartite-gra
 In what follows, we use this graph to illustrate the new definitions. 
 This small example allows us to realize that identifying and listing bitriangles in large graphs is a challenging task.
 
+\begin{definition}[\acrlong{bt}]\label{def:bt}
+Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
+The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{\acrfull{bt}} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
+\end{definition}      
+
+\begin{figure}[h!]
+\begin{subfigure}[b]{0.5\textwidth}
+\centering
+\inputtikz{bipartite_bt_a}
+\caption{\acrshort{bt} $(1,a,3,c,5,b,1)$}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\centering
+\inputtikz{bipartite_bt_b}
+\caption{\acrshort{bt} $(1,a,7,c,5,b,1)$}
+\end{subfigure}
+\caption[{[\acrshort{iebt}] Example of bitriangles}]{Bitriangles of the triple $(a,b,c)$ combined with vertices from $U$ $\{1,3,5,7\}$ of \autoref{fig:bipartite-graph-example}. In this case two bitriangles have been built from the \autoref{fig:agg-bt-example}}
+\label{fig:bt-a-example}
+\end{figure}
+
+A bitriangle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ admits different permutations that give rise to different traversals of it. 
+For example in the \autoref{fig:bt-a-example} the bitriangle $(1,a,3,c,5,b,1)$, can also be traverse using the permutations $(a,1,b,5,c,3,a)$, $(5,c,3,a,1,b,5)$, $\dots$, and so on.
+Notice that all these feasible permutations guarantee the bitriangle condition of vertices intercalation from $U$ and $L$.
+
 \begin{definition}[\acrfull{wg}]\label{def:wg}
 A \textit{\acrfull{wg}} in $G$ is a triple $(u_1,l,u_2)$, $\{u_1,u_2\}\subseteq U$, $l \in L$ and $\{(u_1,l),$ $(u_2,l)\} \subseteq E$. The vertex $l$ is the middle vertex of the wedge. 
 \end{definition}
@@ -119,35 +143,15 @@ where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $
 \begin{figure}[h!]
 \centering      
 \inputtikz{bipartite_abt_a}
-\caption[{[\acrshort{iebt}] Example Aggregated bitriangle}]{Aggregated bitriangle $\la (a,b,c), \la \{1\},\{1,3,7\},\{1,5\} \ra \ra$ of \autoref{fig:bipartite-graph-example}. 
-In this case as the \dref{def:abt} states, $\hat{U}_{(a,b,c)}=\{I,J,K\}$ does not contains disjoint sets, because we are using a compressing mechanism similar as described in \cite{Lai}. 
-We can appreciate in the image that we can built an \acrshort{abt} with $b$ which has incidents edges in $1,5$. Note that not all of combinations, for instance form a \acrshort{bt}.}
+\caption[{[\acrshort{iebt}] Example Aggregated bitriangle}]{%
+\acrlong{awgc} $\la b, \{1,5\}\ra$ connects to \acrlong{adwg} $\la (a,c), \la \emptyset, \{1,3,7\}, \{5,9\}\ra \ra$ of \autoref{fig:bipartite-graph-example}, constructing the \acrlong{abt} $\la (a,b,c), \la \{1\},\{1,3,7\},\{1,5\} \ra \ra$.
+Note that $\hat{U}_{(a,b,c)}=\{I,J,K\}$ does not contains disjoint sets according to \dref{def:abt}, because we are using a compressing mechanism similar as described in \cite{Lai}. 
+}
 \label{fig:agg-bt-example}
 \end{figure}
       
-As we can see in \autoref{fig:agg-bt-example}, we have all the structures at our disposal to build a \acrshort{bt}. Now we are in condition to define a \acrshort{bt}.
-
-\begin{definition}[\acrlong{bt}]\label{def:bt}
-Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
-The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{\acrfull{bt}} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
-\end{definition}      
-
-\begin{figure}[h!]
-\begin{subfigure}[b]{0.5\textwidth}
-\centering
-\inputtikz{bipartite_bt_a}
-\caption{\acrshort{bt} $(1,a,3,c,5,b,1)$}
-\end{subfigure}
-\begin{subfigure}[b]{0.5\textwidth}
-\centering
-\inputtikz{bipartite_bt_b}
-\caption{\acrshort{bt} $(1,a,7,c,5,b,1)$}
-\end{subfigure}
-\caption[{[\acrshort{iebt}] Example of bitriangles}]{Bitriangles of the triple $(a,b,c)$ combined with vertices from $U$ $\{1,3,5,7\}$ of \autoref{fig:bipartite-graph-example}. In this case two bitriangles have been built from the \autoref{fig:agg-bt-example}}
-\label{fig:bt-a-example}
-\end{figure}
-
-As we can see in \autoref{fig:bt-a-example}, the two possible \acrshort{bt} can be extracted from the \acrshort{abt} presented in \autoref{fig:agg-bt-example} are $(1,a,3,c,5,b,1)$ and $(1,a,7,c,5,b,1)$.
+As we can see in \autoref{fig:agg-bt-example}, we have all the structures at our disposal to build a \acrshort{bt}. 
+In \autoref{fig:bt-a-example}, the two possible \acrshort{bt} can be extracted from the \acrshort{abt} presented in \autoref{fig:agg-bt-example} are $(1,a,3,c,5,b,1)$ and $(1,a,7,c,5,b,1)$.
 
 Because of \acrshort{iebt} will allow to enumerate \acrshort{bt} according to some locality criteria.
 In this regards, we next define the \emph{query operators} to be used for that purpose.
@@ -562,7 +566,7 @@ $\ati \leftarrow \gs$\\
       }
 }
 }
-\caption[Actor4 ($actor_4$)]{Actor4 ($actor_4$): Receiving all the Query Commands $Q$ that arrives through Channel $IC_Q$, verify if matches with some Bitriangles that in the state $\ati \subseteq at$ of this Filter. If some bitriangle matches it will be downstream to the Channel $OC_{BT}$ to be processed by the Sink}
+\caption[Actor4 ($actor_4$)]{Actor4 ($actor_4$): Receives all the \acrlong{qo} $Q$ that arrives from channel $IC_Q$. For each \acrshort{qo} $Q$ it builds the bitriangles from $\ati \subseteq at$ according to the query, and downstream to channel $OC_{BT}$ to be processed by the Sink}
 
 \label{algo:act-4}
 \end{algorithm}
@@ -720,70 +724,26 @@ Since $|L| \times |L| \times 6|U| > |L| \times 6|U|$, we can eliminate that term
       
 \clearpage
 \section{Correctness of the Algorithm}
-Given a bitriangle  $BT_{\ell}^{\mu} = \bti$ as we defined in \dref{def:bt}, where the 6-cycle is $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$.
+Given a bipartite graph $G$ we prove the algorithm enumerates all the bitriangles in $G$  without duplicating them. 
+First, we prove that if $BT_{\{l_1,l_2,l_3\}}^{\{u_1,u_2,u_3\}} = (u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ is a bitriangle occurring in $G$, then only one of the feasible permutations of this 6-cycle is contained in an aggregated bitriangle of $\at$  (\autoref{TH-uniqueness}). Second, we prove that  all the bitriangles occuring in $G$ are contained in an aggregate bitriangles of $\at$ (\autoref{TH-all}). 
+%
+\begin{theorem}[Uniqueness] \label{TH-uniqueness} 
+Given a bipartite graph $G = ((U\cup L),E)$, $\forall \btii\in\bt$  \acrshort{iebt} stores $\btii$ in an $\ati\in \at$ only once.
 
-%A bitriangle can be described as a sequence $(C,a,A,b,B,c,C)$  where $\{ a,b,c\} \in L$  and $\{ A,B,C\} \in U\footnote{In the enumeration, L and $U$ be interchanged}$
-
-We need to prove that the algorithm can enumerate all bitriangle in the graph and also that there are no duplicates in the enumeration.
-
-Very recently, Qiao et al. proposed CrystalJoin~\cite{Lai} that aims at resolving the output crisis by compressing the intermediate results.
-We use the same technique, compressing a group of bitriangles as we define in \dref{def:abt} $\langle \ell, \hat{U}_l\rangle$, where $\ell = (l_1,l_2,l_3,)$ and $\hat{U}_l= \la I, J, K\ra$, such that $I \subseteq U, J \subseteq U, K \subseteq U$.
+\end{theorem}
+\begin{proof}
+Let $\btii\in \bt$, $\btii = (u_1,l_1,u_2,l_3,u_3,l_2,u_1)$. Let us suppose that \acrshort{iebt} stores two different feasible permutations of $\btii$, $\btii$$_1= (u_1',l_1',u_2',l_3',u_3',l_2',u_1')$ and $\btii$$_2 = (u_1'',l_1'',u_2'',l_3'',$ $u_3'',l_2'',u_1'')$ in some aggregated bitriangles. By Definition \ref{def:abt} and $\ac$ line 7, $l_1'<l_2'<l_3'$ and $l_1''<l_2''<l_3''$. The fact that $\btii$$_1 \neq \btii$$_2$ implies that $(l_1',l_2',l_3') \neq (l_1'',l_2'',l_3'')$. This means that  $(l_1',l_2',l_3')$ is a permutation of $(l_1'',l_2'',l_3'')$ (and viceversa). Thus, because of the strict order defined on $L$,  just one, either   $l_1'<l_2'<l_3'$ or $l_1''<l_2''<l_3''$ holds. Therefore, only one of the triples $(l_1',l_2',l_3')$ or $(l_1'',l_2'',l_3'')$  is used in lines 7--16 in $\ac$ to include $\btii = (u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ in an aggregated bitriangle
+\end{proof}
  
-
-First we are going to prove that if we take all the triples $(l_1,l_2,l_3)$  such $l_1<l_2$ and $l_2<l_3$  and  $\bti$ is a  bitriangle, then it is not stored twice (theorem \ref{TH-unicity}). 
-We will show that we store all the aggregate bitriangles where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $l_3$ (theorem \ref{TH-all}). 
-\begin{theorem} \label{TH-unicity} Given a graph a bipartite graph $G = ((U\cup L),E)$ and the \acrshort{iebt} every bitriangle occurring in $G$ is stored at most once.
-
-\end{theorem}
-\begin{proof}
-
-Let $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, such that $l_1 < l_2 <l_3$. For every feasible permutation  starting with a node in $U$ we are going to proof that only one will be accepted by $\ab$, or $\ac$.  
-\begin{itemize}
-      \item According to lines 7-12 of $\ab$ $(u_1,l_2,u_3,l_3,u_2,l_1,u_1)$ is  not accepted  when constructing elements of $\dw$ to be used by $\ac$  because $l_2 > l_1$ 
-      \item According to lines 7 of $\ac$ $(u_3,l_2,u_1,l_1,u_2,l_3,u_3)$ is not accepted because $l_2 > l_1$
-      \item According to lines 7-12 of $\ab$ $(u_3,l_3,u_2,l_1,u_1,l_2,u_3)$ is  not accepted  when constructing elements of $\dw$ to be used by $\ac$  because  $l_3 > l_2$
-      \item According to lines 7-12 of $\ab$ $(u_2,l_3,u_3,l_2,u_1,l_1,u_2)$ not accepted because $l_3 > l_1 $
-      \item  According to lines 7-12 of $\ab$ and line 7 in $\ac$ $(u_2,l_1,u_1,l_2,u_3,l_3,u_2)$ is accepted because $l_1 < l_3 $ and $l_1 < l_2 <l_3$ 
-      \item According to  line 7 in $\ac$ $(u_1, l_1,u_2,l_3,u_3,l_2,u_1)$ is not accepted because $l_3 > l_2$
-\end{itemize}
-
-
-Therefore the  only bitriangle  constructed by the algorithm is the one that satisfies $l_1 < l_2 < l_3$ where $u_1,u_2,u_3$  are distinct and $u_1$ is incident to $l_1$ and $l_2$, $u_2$ is incident to $l_1$ and $l_3$ and $u_3$ is incident to $l_2$ and $u_3$.
-\end{proof}
-
-
-\begin{theorem}\label{TH-all}Given a bipartite graph $G$, if the bitriangle $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ such that $l_1 < l_2 <l_3$ is present in G, then $\bti$ can be enumerated.
+\begin{theorem}\label{TH-all}Given a bipartite graph $G$, if the bitriangle $\btii = (u_1,l_1,u_2,l_3,$ $u_3,l_2,u_1)\in \bt$, then $\btii$  can be enumerated.
 \end{theorem}
 
-
 \begin{proof}
-\iffalse
-Obvious from the definition of $I,J,K$  and the algorithm of obtaining bitriangles. 
-\fi
-  Let $\bti =$  $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$, such that $l_1 < l_2 <l_3$ is present in the graph. 
-
-When $\aaa$ acting in filter $F_{l_1}$ ends reading all the edges, $\{u_1,u_2\} \subseteq W_{l_1}$. Also when $\aaa$ in filter $F_{l_3}$ ends reading all the edges, $\{u_2,u_3\} \subseteq W_{l_3}$. 
-
-As $l_1 < l_3$ in $\ab$, in lines 7-12, in filter $F_{l_1}$ or in filter $F_{l_3}$, the pair $(l_1,l_3)$  will be added to 
-$\mathsf{dw}$. When $\ac$ in lines 7-16, in filter $F_{l_1}$ or in filter $F_{l_3}$ receives $(l_2, W_{l_2})$  will construct the corresponding  $BT$ because of the condition in line 10 is satisfied (non empty intersection). Therefore, the bitriangle is stored in $\mathsf{bt}$ an thus $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$ can be listed by $\ad$.
-\end{proof}
-\iffalse
-So we are going to talk from now on about the bitriangles stored in filter $F_a$.
-
-At the end of the execution of $\ac$ $F_a$ constructs the sets where to choose $A,B,C$ $\at$
-
-Actor 1 collects in $F_a$ all the nodes in $U$ adjacent to $a$ i.e. all the candidates to choose $A$. Afterward this set will be reduced. 
-
-Actor 2 receives pairs $(c,V)$ where $V$ are all the nodes adjacent to $c$ in order to test the possibility of constructing a new double wedge.  If the conditions are fulfilled, it adds the double wedge $\la (a,c), U_{t_1} \ra$,  or $\la (c, a), U_{t_2} \ra$. 
-
-In each filter, the pair of lower vertices in the double edges are pairs constructed by $a$ and vertices that are parameters of filters that are before the filter $F_a$. Therefore, the double edges recorded are present in at most one filter.
-
-Actor 3 receives pairs $(b,M) $ where $M$ are all the nodes adjacent to $b$ and has in memory a set of double wedges $\la (a,c), l_2), U_{t_1} \ra$
-
-$\ac$ accepts b as a candidate to construct an element of the set of aggregate bitriangles if $a < b < c$. Therefore the aggregated bitriangles so constructed are recorded in a single filter due to the fact that that the pair $(a,c)$ is present in a single filter.
-\fi
-
-        
+We proceed in a constructive way. Let $\btii = (u_1,l_1,u_2,l_3,u_3,l_2,u_1) \in \bt$. 
+When $\aaa$ running in a filter $\sfilter$ with parameter $l_1$, $F_{l_1}$, ends reading all the edges, the state of $F_{l_1} = \langle l_1,  W_{l_1}\rangle$ and  $\{u_1,u_2\} \subseteq W_{l_1}$. Similarly,  when $\aaa$ running in filter $F_{l_3}$ ends reading all the edges,  $F_{l_3} = \langle l_3,  W_{l_3}\rangle$ and $\{u_2,u_3\} \subseteq W_{l_3}$. This is, wedges $(u_1,l_1,u_2)$ and $(u_2,l_3,u_3)$ are stored in the aggregated wedges (states) of $F_{l_1}$ and $F_{l_3}$, respectively. 
+When running  $\ab$ in filter $F_{l_1}$ or in filter $F_{l_3}$, in lines 7-12 the pair 
+$(l_l, l_u) \equiv (\argmin_{l_1,l_3}, \argmax_{l_1,l_3})$ is added to $\mathsf{dw}$. This is, the double wedge $(u_1,l_l,u_2,l_u,u_3)$ is stored either, in the state $F_{l_1}$ or the state of $F_{l_3}$. When running $\ac$, in filter $F_{l_1}$ or in filter $F_{l_3}$, $\ac$ receives the connector wedge $(l_2, W_{l_2})$ from the incoming  aggregated BT-connector. In lines 7-16, if the condition in line 10 holds, i.e. non empty intersection, since edges $(u_1,l_2)$ and $(u_3,l_2)$ are in $E$, $\{u_1,u_3\} \subseteq W_{l_2}$. Therefore, $\ac$ adds  $\btii$  to the aggregated bitriangle of the filter. This is, the permutation  $(u_1,l_l,u_2,l_u,u_3,l_2,u_1)$ of the bitriangle $\btii$ is stored in $\ati$ and therefore it can be listed by $\ad$
+\end{proof}        
  
 \section{\acrshort{dpbt} implementation}\label{sec:iebt:hs:imp}
 As we have seen in the previous \autoref{dp-hs}, first we need to define the $\dpbt$ using the \acrshort{dsl}.
