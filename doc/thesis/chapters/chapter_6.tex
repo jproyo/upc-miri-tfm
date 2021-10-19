@@ -411,7 +411,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
       $\p(\la l, W_l \ra, OC_{W_l1})$\\
 }\Else{$\fd$}
 }
-\caption[Actor1 ($actor_1$)]{Actor1 ($actor_1$): Build a set of aggregated wedges. This is, $W_l \subseteq U$ adjancents to $l$ Filter parameter. For each received edge $(u',l')$ which $l \neq l'$ by pass the edge to next filters. It updates the State of the filter with $W_l$ if it could build a $W_l$ with more than 1 vertex in $U$.}
+\caption[Actor1 ($actor_1$)]{Actor1 ($actor_1$): Build a set of aggregated wedges. This is, $W_l \subseteq U$ adjacent to $l$ Filter parameter. For each received edge $(u',l')$ which $l \neq l'$ by pass the edge to next filters. It updates the State of the filter with $W_l$ if it could build a $W_l$ with more than 1 vertex in $U$.}
 \label{algo:act-1}
 \end{algorithm}
 
@@ -468,7 +468,7 @@ $\la l, W_l \ra \leftarrow \gs$\\
 \paragraph{Filter-$\ab$} In \autoref{algo:act-2} \acrshort{adwg} is built. Following that idea and according to the \dref{def:adwg}, this algorithm will collect all the \acrshort{awg} 
 from previous filters if an only if the condition in \autoref{algo:act-2:1} is met. Note that the two \acrshort{awg}, $W_l$ and $W_l'$ have different vertices from the set $L$. $W_l$ intersection check is mandatory since if \acrshort{awg} are disjoint, we cannot aggregate them.
 After this checking from \autoref{algo:act-2:2} to \autoref{algo:act-2:3}, the algorithm builds three disjoint Sets to separate upper edges in three subsets; those which are incident only of 
-$l$ and $l'$ which are $I$ and $K$ and those that are shared by both lower layer vertex. This can be appreciated in \autoref{fig:agg-double-wedge-example}.
+$l$ and $l'$ which are $I$ and $K$ and those that are shared by both lower layer vertices. This can be appreciated in \autoref{fig:agg-double-wedge-example}.
 Once \acrshort{adwg} is built $\st = \dwi$ updating the state for the next $\ac$.
 
 

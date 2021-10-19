@@ -2,7 +2,7 @@
 The design and implementation of \acrfull{dpfh} is a fundamental piece of the present work, as we have described in ~\autoref{intro} and ~\autoref{prelim},
 A \acrlong{dpf} written in \acrlong{hs} which allow \acrshort{hs} users to implement any suitable algorithm in \acrlong{dp}.
 During the process of conducting this research, we have implemented \acrshort{dpfh}~\cite{dynamic-pipeline} and publishes it into \acrlong{hack}~\cite{hackage}.
-In this chapter, we are going to describe the design and implementation details of \acrshort{dpfh}.
+In this chapter, we describe the design and implementation details of \acrshort{dpfh}.
 
 \section{Framework Design}
 
@@ -10,38 +10,37 @@ In this chapter, we are going to describe the design and implementation details 
 Any suitable framework should provide the user the right level of abstraction that removes and hides underlying complexity, 
 allowing the developer to focus on the problem that needs to be solved.
 There are several design approximations to implement a framework: \begin{inparaenum}[i\upshape)]
-  \item  \emph{Configuration Based} where the user only focuses on completing a specific configuration either on a file or a database or both. Once this configuration is completed the user provides it to the framework's runtime system in order to execute the program. An example of this could be WordPress~\cite{wordpress},
-  \item  \emph{Convention over Configuration (CoC)} where the user writes his code and definition following certain patterns in naming or source code location. With this source code and content specific information, the framework interprets what is the execution flow that needs to be done on runtime. This technique have been deeply explored in the last $10$ years for different languages starting with Ruby on Rails~\cite{rubyonrails} which was the first on popularizing this design paradigm. Other examples are \cite{springboot, cakephp},
+  \item  \emph{Configuration Based} where the user only focuses on completing a specific configuration either on a file or a database or both. Once this configuration is completed, the user provides it to the framework's runtime system in order to execute the program. An example of this could be WordPress~\cite{wordpress},
+  \item  \emph{Convention over Configuration (CoC)} where the user writes his code and definition following certain patterns in naming or source code location. With this source code and content-specific information, the framework interprets what is the execution flow that needs to be done on runtime. This technique have been deeply explored in the last $10$ years for different languages starting with Ruby on Rails~\cite{rubyonrails} which was the first on popularizing this design paradigm. Other examples are \cite{springboot, cakephp},
   \item \emph{Application Programing Interface (API)} where the framework or library provides a certain amount of functionality implemented in terms of functions or interfaces, and the user needs to compose those functions or implement those abstractions to achieve the desired results. This has been the traditional design paradigm for building any library or framework, and finally
-  \item \emph{\acrfull{dsl}}~\cite{Fowler10} where the framework or library provides a new language that represents the domain problem and allows to program the solution in terms of that high-level language. An example of this type of design is Hibernate Query Language~\cite{hql}
+  \item \emph{\acrfull{dsl}}~\cite{Fowler10} where the framework or library provides a new language that represents the domain problem that allows developing the solution in terms of that high-level language. An example of this type of design is Hibernate Query Language~\cite{hql}
    \end{inparaenum}.
 
-In the \acrlong{dsl} approach~\cite{dsl} there exists two types of it: \acrlong{dsl} and \acrfull{edsl}. The purpose of \acrshort{dsl}, usually called external \acrshort{dsl}, is to create a completely new language with its own semantic, syntax, and interpreter. 
+There exists two types of \acrlong{dsl}s~\cite{dsl}: \acrlong{dsl} and \acrfull{edsl}. The purpose of \acrshort{dsl}, usually called external \acrshort{dsl}, is to create a completely new language with its own semantic, syntax, and interpreter. 
 \acrshort{dsl}s are not general-purpose languages, because as their name indicates, they are domain-specific. \acrshort{edsl} are syntactically embedded in the host language of the library, and the user writes in that host language, but restricted by the \acrshort{edsl} abstractions.
 \acrshort{dpfh} follows a \acrshort{edsl} approach taking advantage of the strong type \acrshort{hs} system giving the user correctness at type-level~\cite{curryhoward}.
 
 \subsection{Architectural Design}
-In this section we are going to focus on the architectural design of the \acrshort{dpfh} using a \acrshort{edsl} approach. We have built a framework that contains
+In this section we focus on the architectural design of the \acrshort{dpfh} using a \acrshort{edsl} approach. We have built a framework that contains
 three important components: \acrshort{dsl}, \acrshort{idl} and \acrshort{rs}. 
 
 \begin{figure}[!ht]
   \centering
    \includegraphics[width=1\textwidth, height=0.6\textheight]{dpf_haskell_v3.png}
-    \caption[{[\acrshort{dpfh}] Architectural design of \acrshort{dpfh}}]{This diagram shows the architectural design of \acrshort{dpfh}. \acrshort{dpfh} is a \acrshort{dsl} which is built on three main components: \acrshort{dsl}, \acrshort{idl} and \acrshort{rs}. In the \acrshort{dsl} we can see how the user can compose the main stages of the \acrshort{dp}. \acrshort{idl} is showing how the frameworks is helping the user to transform that definition into real function or computations. Finally \acrshort{rs} is going to execute all that definition plus functions. Execution layer indicates an example of a \acrshort{dp} running after being executed.}
+    \caption[{[\acrshort{dpfh}] Architectural design of \acrshort{dpfh}}]{This diagram shows the architectural design of \acrshort{dpfh}. \acrshort{dpfh} is a \acrshort{dsl} which is built on three main components: \acrshort{dsl}, \acrshort{idl} and \acrshort{rs}. In the \acrshort{dsl} we can see how the user can compose the main stages of the \acrshort{dp}. \acrshort{idl} is showing how the frameworks is helping the user to transform that definition into real function or computations. Finally \acrshort{rs} execute all that definition plus functions. Execution layer indicates an example of a \acrshort{dp} running after being executed.}
     \label{fig:dpfh:1}
 \end{figure}
 
 In \autoref{fig:dpfh:1} we can appreciate the different components mentioned before that are the grey boxes.
 
 \paragraph{DSL} The user interacts with the \acrshort{dsl} component where defines how the \acrshort{dp} flow
-should be. Defining the flow consist on provide an specification at type-level term about the channels that communicate each stage of the pipeline, as well as the data types those channels will carry. 
-For example, in the case of \autoref{prole} that we develop the \acrshort{wcc} algorithm, the user knows that is going to receive from an input file 
-the edges of the graph and, two channels between $\iwcc$, $\gwcc$ and $\owcc$. One of those channels is carrying the edges -- \texttt{Edge} data type -- and the other the accumulated connected components -- \texttt{ConnectedComp} data type --. 
+should be. Defining the flow consists on to provide a specification at type-level term about the channels that communicate each stage of the pipeline, as well as the data types those channels carry. 
+For example, in the case of \autoref{prole} that we develop the \acrshort{wcc} algorithm, the user knows stages $\iwcc$, $\gwcc$, and $\owcc$ need to be connected with two channels. 
+One of those channels is carrying the edges -- \texttt{Edge} data type -- and the other the accumulated connected components -- \texttt{ConnectedComp} data type --. 
 
-\paragraph{IDL} Based on the definition provided in the \acrshort{dsl}, the user interacts with the \acrshort{idl} which guides them to build the functions with the algorithms needed for each stage: $\iwcc$, $\gwcc$, $\owcc$, $\fwcc$, and actors. 
+\paragraph{IDL} Based on the definition provided in the \acrshort{dsl}, the user interacts with the \acrshort{idl} to build the functions with the algorithms needed for each stage: $\iwcc$, $\gwcc$, $\owcc$, $\fwcc$, and actors. 
 
-\paragraph{RS} Once we have the \acrshort{dp} definition and the functions provided by the user with the algorithm solution, the framework
-can be fed with these components to execute the program using the \acrshort{rs}. 
+\paragraph{RS} \acrshort{rs} is fed with the \acrshort{dp} definition and the functions implementations to finally execute the program. 
 
 \section{Implementation}
 In this section, we describe the details of all the techniques used for implementing each architectural layer described before.
@@ -49,7 +48,7 @@ As we have explained in \autoref{sec:contrib}, this library was published on Hac
 
 \subsection{DSL Grammar}\label{sub:sec:dsl-gram}
 In order to provide a Type-safe verification in compilation time, we have defined a \acrfull{cfg} that generates a \acrshort{dp} \acrshort{dsl} language. 
-This allows the user to define a \acrshort{dp} of the pipeline at type-level. 
+\acrshort{cfg} enables the user to define a \acrshort{dp} at type-level. 
 
 \begin{definition}[\acrshort{dsl} \acrshort{cfg}]\label{def:cfg:dsl}
 Lets $\gdsl = (N, \Sigma, DB, P)$ be a Context-Free Grammar, such that $N$ is the set of non-terminal symbols, $\Sigma$ the set of terminal symbols,
@@ -101,36 +100,34 @@ data FeedbackChannel (a :: Type)
 \end{listing}
   
 First, we can see in \autoref{src:dpfh:1}, some of the terminal symbols $\Sigma \in \gdsl$ encoded in \acrshort{hs} Types.
-The highlighted lines in \autoref{src:dpfh:1} shows the only terminal symbols $\Sigma$ that are not indexed types. This is because they do not carry any extra information. 
+The highlighted lines in \autoref{src:dpfh:1} shows the only terminal symbols $\Sigma$ that are not indexed, because neither \mintinline{haskell}{Sink} nor \mintinline{haskell}{Eof} are carrying extra type-level information. 
 In the case of \mintinline{haskell}{Sink}, since it is the last stage that does not connect further with any other stage, we do not need to indicate channel information. 
-\mintinline{haskell}{Eof} it is just a terminal type to disambiguate the \mintinline{haskell}{Channel (a :: Type)} subtree for the full parser tree. Since \mintinline{haskell}{Channel} can carry any type, 
-because we need to be polymorphic to support different number of channels and data types, we need a symbol that marks the end of the channel list.
-
-There are two more important symbols $e \in \Sigma$ that need to be addressed independently: \mintinline{haskell}{:=>} and \mintinline{haskell}{:<+>}.
+\mintinline{haskell}{Eof} it is just a terminal type to disambiguate the \mintinline{haskell}{Channel (a :: Type)} subtree for the full parser tree. 
+\mintinline{haskell}{Channel} can carry any type because it needs to be polymorphic to support a different number of channels and data types.
 
 \begin{listing}[htp!]
   \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={1,5}]{haskell}
-
-data chann1 :<+> chann2 = chann1 :<+> chann2
-  deriving (Typeable, Eq, Show, Functor, Traversable, Foldable, Bounded)
-infixr 5 :<+>
-   
-data a :=> b = a :=> b
-  deriving (Typeable, Eq, Show, Functor, Traversable, Foldable, Bounded)
-infixr 5 :=>
-   
+    
+    data chann1 :<+> chann2 = chann1 :<+> chann2
+    deriving (Typeable, Eq, Show, Functor, Traversable, Foldable, Bounded)
+    infixr 5 :<+>
+    
+    data a :=> b = a :=> b
+    deriving (Typeable, Eq, Show, Functor, Traversable, Foldable, Bounded)
+    infixr 5 :=>
+    
   \end{minted}
   \caption[{[\mintinline{shell}{Flow.hs}] $\Sigma$ enconding of $G_{dsl}$ - Especial non-terminals}]{Special terminal symbols $\{\text{\mintinline{haskell}{:<+>}}, \text{\mintinline{haskell}{:=>}}\} \in \Sigma$. This terminal symbols allows to index two types in order to combine several of them and build a chain of stages (\mintinline{haskell}{:=>}) and a set of channels (\mintinline{haskell}{:<+>}).}
   \label{src:dpfh:2}
 \end{listing}
 
+There are two more important terminal symbols in $\Sigma$: \mintinline{haskell}{:=>} and \mintinline{haskell}{:<+>}.
 In \autoref{src:dpfh:2}, the definition shows how \mintinline{haskell}{:=>} and \mintinline{haskell}{:<+>} can combine 2 (two) types. 
 The propose of writing \mintinline{haskell}{:=>} and \mintinline{haskell}{:<+>} as types is to have a syntactic sugar type combinator for writing the \acrshort{dsl} according to the \acrshort{cfg}. 
-Apart from that, they are different because we need two distinguishable symbols $e \in \Sigma$, to separate the encoding of the pipeline stage ($\iwcc$, $\gwcc$, $\owcc$)
+Apart from that, they are different because two distinguishable terminal symbols $\Sigma$ are needed to separate the encoding of the pipeline stage ($\iwcc$, $\gwcc$, $\owcc$)
 from the encoding of channel composition in the same stage, as we can appreciate in \dref{def:cfg:dsl}.
 
-With this few type encoding setup, we can start defining our pipelines at type-level.  
-For example as we can appreciate in \autoref{src:dpfh:3}, if we want to generate a \acrshort{dp} that eliminates duplicated elements in a stream, we know that we only need one channel connecting the stages that carries out the type of the element, in this case, \mintinline{haskell}{Int}.
+Now, we can start defining our pipelines at type-level. For example, if we want to generate a \acrshort{dp} that eliminates duplicated elements in a stream, we know that we only need one channel connecting the stages that carries out the type of the element, in this case, \mintinline{haskell}{Int} (see \autoref{src:dpfh:3}).
 
 \begin{listing}[htp!]
   \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={}]{haskell}
@@ -145,13 +142,11 @@ type DPExample = Source (Channel (Int :<+> Eof))
 \end{listing}
 
 \subsection{DSL Validation}\label{sub:sec:dsl-val}
-The language generated by the grammar needs to be validated in order to avoid the user makes mistakes and provide an incorrect \acrshort{dp} definition.
-Fortunately, \acrshort{hs} provides several Type-level techniques~\cite{type-haskell} which allows us to verify properties of our programs in the language before running it, 
-saving the users to write programs with bugs, reducing errors. This verification done by the compiler is establishing a Curry-Howard Isomorphism~\cite{curryhoward}: 
-\emph{Propositions as Types - Programs as Proof}. It is important to remark here that \acrshort{hs} is not a theorem prover System like Coq~\cite{coq}, but some verifications, as we are showing in this work, can be done with \acrshort{ghc} to obtain some proof about our programs.
-Although \acrshort{hs} provides tools to build advanced type-level verifications, all these
-techniques require the addition of \emph{Haskell Language Extensions}. We cannot forget that even though \acrshort{hs} has more than 20 years of 
-Academic Research on its core language, some of the features have been added as extensions, especially the ones that implement state of the art Type-Level Programming concepts. 
+The language generated by the grammar needs to be validated to avoid errors or provide an incorrect \acrshort{dp} definition.
+Fortunately, \acrshort{hs} provides several Type-level techniques~\cite{type-haskell} which allows to verify properties of programs before running them, 
+preventing the users to introduce bugs, reducing errors. This verification done by the compiler establish a Curry-Howard Isomorphism~\cite{curryhoward}, i.e. 
+\emph{Propositions as Types - Programs as Proof}. It is important to remark here that \acrshort{hs} is not a theorem prover System like Coq~\cite{coq}, but some verifications, as we present in this work, can be done with \acrshort{ghc} to ensure correctness on programs.
+Although \acrshort{hs} provides tools to build advanced type-level verifications, all these techniques require the addition of \emph{Haskell Language Extensions}.
 
 Once we have the encoded \acrshort{dp} problem in the \acrshort{dsl} grammar -- see \autoref{sub:sec:dsl-gram} --, we can proceed on validating that encoded grammar. 
 The implementation of the validation of the \acrshort{dsl} \acrshort{cfg} at type-level, has been done using \emph{Associated Type Families}~\cite{associated-types}.
@@ -193,13 +188,12 @@ type family ValidDP (a :: Bool) :: Constraint where
   \label{src:dpfh:4}
 \end{listing}
 
-In \autoref{src:dpfh:4}, we can see 3 Type families that helps to validate the \acrshort{dsl} \acrshort{cfg}. 
+In \autoref{src:dpfh:4}, there are 3(three) Type families that helps to validate the \acrshort{dsl} \acrshort{cfg}. 
 \mintinline{haskell}{IsDP} associated type family is checking the production rules $P$ of the grammar defined in \autoref{fig:def:dpfh:dsl}, returning a promoted data type~\cite{promoted-types} (not a boolean value) \mintinline{haskell}{'True} in case
 the production rule matches all the generated language, or \mintinline{haskell}{'False} otherwise. 
 \mintinline{haskell}{ValidDP} is taking the result of \mintinline{haskell}{IsDP} type application, associating \mintinline{haskell}{'True} promoted boolean type to empty \mintinline{haskell}{()} constraint. An empty constraint is an 
-indication of nothing to be restricted, meaning that if we use \mintinline{haskell}{ValidDP} as a constraint of some function and it is fully applied to \mintinline{haskell}{()}, it will give the compiler the evidence that there is no error at type-level.
-\mintinline{haskell}{ValidDP} is also associating \mintinline{haskell}{'False} to a custom \mintinline{haskell}{TypeError} which will appear at compilation time if the \acrshort{dp} \acrshort{dsl} definition fully applied to that.
-Now we can use these Types to constraint functions and ensure the user definition will be type-checked by the compiler.
+indication of nothing to be restricted, meaning that if \mintinline{haskell}{ValidDP} is used as a constraint, and it is fully applied to \mintinline{haskell}{()}, it will give the compiler the evidence that there is no error at type-level.
+\mintinline{haskell}{ValidDP} is also associating \mintinline{haskell}{'False} to a custom \mintinline{haskell}{TypeError} which will appear at compilation time if the \acrshort{dp} \acrshort{dsl} definition fully applies to that.
 
 \begin{listing}[htp!]
   \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={2}]{haskell}
@@ -220,17 +214,15 @@ someFunc = mkDP @DPExample ...
   \label{src:dpfh:5}
 \end{listing}
 
-Other details will be cover later in this chapter, but in \autoref{src:dpfh:5} we can appreciate how we can restrict the function using
-the type family defined. Only with that, the compiler will show an error if the \acrshort{dp} definition is not correct.
-
 \subsection{\acrfull{idl}}
 \acrshort{idl} component takes the \acrshort{dp} definition made on with \acrshort{dsl} component to interpret and generate the function definitions
 that the user needs to fill in for solving a specific problem. In \autoref{sec:dp}, we have described what the user needs to provide in a \acrshort{dp} algorithm: $\iwcc$, $\gwcc$, $\owcc$, and the $\fwcc$ with the non-empty set of Actors.
 The \acrshort{idl} generates the function definitions with an empty implementation to be completed by the user, ensuring that those functions will give "Proof" -- in terms of Curry-Howard Correspondence~\cite{curryhoward} --  of the "Propositions" defined on the \acrshort{dsl}.
 
-Similar techniques that we used on \autoref{sub:sec:dsl-val} are also used here. On the first hand, we use type-level \emph{Type-level Defunctionalization}~\cite{defunctionalization, fun-type-function-haskell} technique to 
-let the compiler generates the signatures of the required functions. On the other hand, we use \emph{Term-level Defunctionalization} to interpret that functions.
-At the same time, Indexed Types~\cite{type-index} and Heterogeneous List~\cite{hlist} are used to keep track of the dynamic number of parameters and polymorphic types of those parameters, of each generated function. 
+Similar techniques that we used on \autoref{sub:sec:dsl-val} are also used here. 
+On the first hand, \emph{Type-level Defunctionalization}~\cite{defunctionalization, fun-type-function-haskell} technique to let the compiler generates the signatures of the required functions. 
+On the other hand, \emph{Term-level Defunctionalization} to interpret those functions.
+Moreover, \emph{Indexed Types}~\cite{type-index} and \emph{Heterogeneous List}~\cite{hlist} are used to keep track of the dynamic number and polymorphic types of the functions parameters. 
 
 \begin{listing}[htp!]
   \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={2,6,10}]{haskell}
@@ -251,10 +243,10 @@ withSink = mkStage' @(WithSink dpDefinition (DP st))
   \label{src:dpfh:6}
 \end{listing}
 
-In \autoref{src:dpfh:6} we can appreciate the different combinators of the \acrshort{idl} that helps the user of the framework to interpret the \acrshort{dsl} to generate the function definitions to be completed.
-\mintinline{haskell}{Stage} data type will be cover in \autoref{src:dpfh:8}, but it is a wrapper type of a pipeline stage or a minimal unit of execution, containing the function to be execute; because of this we use \emph{Term-level Defunctionalization}.
-\mintinline{haskell}{withSource}, \mintinline{haskell}{withGenerator}, and \mintinline{haskell}{withSink} are syntactic sugar of the function \mintinline{haskell}{mkStage'} which is the combinator that is applying the Associated Type related to that stage. For example \mintinline{haskell}{withSource}, is equivalent to \mintinline{haskell}{mkStage' @(WithSource dpDefinition (DP st))}.
-On the Associated types definitions we have the same equivalent term-level definition for the same associated type definition of each stage \mintinline{haskell}{WithSource}, \mintinline{haskell}{WithGenerator}, \mintinline{haskell}{WithSink} -- notice the capital case letter "W" indicating the type and not the term --.
+In \autoref{src:dpfh:6} we can appreciate the different combinators of the \acrshort{idl} that helps the user of the framework to interpret the \acrshort{dsl} to generate the function definitions.
+\mintinline{haskell}{Stage} data type will be cover in \autoref{src:dpfh:8}, but it is a wrapper type of a pipeline stage -- minimal unit of execution --, containing the function to be executed -- here is the use \emph{Term-level Defunctionalization} --.
+\mintinline{haskell}{withSource}, \mintinline{haskell}{withGenerator}, and \mintinline{haskell}{withSink} are syntactic sugar of the function \mintinline{haskell}{mkStage'} which is the combinator that is applying the \emph{Associated Type} related to that stage. For example \mintinline{haskell}{withSource}, is equivalent to \mintinline{haskell}{mkStage' @(WithSource dpDefinition (DP st))}.
+For each \emph{Associated Type Family} defintion, there exist an equivalent term-level definition: \mintinline{haskell}{WithSource} type with \mintinline{haskell}{withSource} term , \mintinline{haskell}{WithGenerator} type with \mintinline{haskell}{withGenerator} term, and \mintinline{haskell}{WithSink} type with \mintinline{haskell}{withSink} term -- notice the capital case letter "W" indicating the type and not the term --.
 
 \begin{listing}[htp!]
   \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={7,11}]{haskell}
@@ -291,8 +283,7 @@ type family WithSource (dpDefinition :: Type) (monadicAction :: Type -> Type) ::
   \label{src:dpfh:7}
 \end{listing}
 
-In \autoref{src:dpfh:7} we can see in the highlighted lines how the \emph{Type-level Defunctionalization} is being expanded in a signature function definition of the form \mintinline{haskell}{a -> b -> ...} depending on \acrshort{dp} language definition. 
-Let's see how \mintinline{haskell}{Stage} was defined in order to read saturate this type and ask the user the proper function according to that generated type.
+In \autoref{src:dpfh:7}, in the highlighted lines, it can be seen how \emph{Type-level Defunctionalization} is being expanded in a signature function definition of the form \mintinline{haskell}{a -> b -> ...} depending on \acrshort{dp} language definition. 
 
 \begin{listing}[htp!]
   \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={12,16}]{haskell}
@@ -308,10 +299,10 @@ mkStage' = Stage (Proxy @a)
   \label{src:dpfh:8}
 \end{listing}
 
-As we can see in \autoref{src:dpfh:8}, \mintinline{haskell}{Stage} data type is using a \mintinline{haskell}{Proxy a} from \mintinline{haskell}{Data.Proxy} phantom type. 
+In \autoref{src:dpfh:8}, \mintinline{haskell}{Stage} data type uses a \mintinline{haskell}{Proxy a} phantom type. 
 This phantom type allow \mintinline{haskell}{Stage} to index the type definition generated by \mintinline{haskell}{a}.
-In the case of \mintinline{haskell}{withSource} interpreter shown in \autoref{src:dpfh:6}, polymorphic $\mintinline{haskell}{a}$ is isomorphic to \mintinline{haskell}{WithSource definition}. 
-Therefore when compiler fully applies the type it can tell the user what function that \mintinline{haskell}{Stage} should contain.
+For example, in \autoref{src:dpfh:6}, \mintinline{haskell}{withSource} interpreter is applied to \mintinline{haskell}{WithSource dpDefinition}. 
+Therefore when the compiler is provided with \mintinline{haskell}{dpDefinition} \acrshort{dsl} type, it expands the function signature belonging to that \acrshort{dp} definition inside the \mintinline{haskell}{Stage}.
 
 \paragraph{Generator and Filter}
 Generator ($\gwcc$) and Filter ($\fwcc$) should be explained together because as we have seen on \acrshort{dp} definition in \autoref{sec:dp},
@@ -333,12 +324,14 @@ newtype Filter dpDefinition filterState filterParam st =
   \label{src:dpfh:9}
 \end{listing}
 
-In \autoref{src:dpfh:9} we can see the definition of the \mintinline{haskell}{Filter} data type which contains a non-empty set of \mintinline{haskell}{Actor}.
-On the first hand, an \mintinline{haskell}{Actor} is a \mintinline{haskell}{Stage}, because by \acrshort{dp} definition in \autoref{sec:dp}, an actor is the minimal unit of execution of a filter. A \mintinline{haskell}{Filter} is a \mintinline{haskell}{NonEmpty Actor} because also by definition of \acrshort{dp} a filter is built by a sequence of actors calls. 
-Moreover \mintinline{haskell}{Actor} Stage is defunctionalized with \mintinline{haskell}{WithFilter} \emph{Associated type family} with the same concept as we have seen before for the other stages. 
-On the other hand, \mintinline{haskell}{Filter} runs in an explicit \mintinline{haskell}{StateT} monadic context. This is because the $\fwcc$ instance should have an state, by \acrshort{dp} definition in \autoref{sec:dp}.
-For example, in the case of $\dpwcc$, as we have seen in \autoref{prole} $\fwcc$ keeps an updated list of connected components that are updated as long as it receives more edges that are connected with the current list.
-As we can also appreciate in \autoref{src:dpfh:9}, \mintinline{haskell}{Actor} data type is constraint by \mintinline{haskell}{MonadState} which is shared by the whole \mintinline{haskell}{NonEmpty Actor} list of the \mintinline{haskell}{Filter}. This means the \mintinline{haskell}{StateT} is executed for the whole \mintinline{haskell}{Actor} set of that filter, sharing the same state between them. 
+In \autoref{src:dpfh:9} the definition of the \mintinline{haskell}{Filter} data type contains a non-empty set of \mintinline{haskell}{Actor}.
+An \mintinline{haskell}{Actor} is a \mintinline{haskell}{Stage}, because by \acrshort{dp} definition in \autoref{sec:dp}, an actor is the minimal unit of execution of a filter. 
+A \mintinline{haskell}{Filter} is a \mintinline{haskell}{NonEmpty Actor} -- Non-empty List -- because also by definition of \acrshort{dp} a filter is built by a sequence of actors calls. 
+Moreover, \mintinline{haskell}{Actor} Stage is defunctionalized with \mintinline{haskell}{WithFilter} \emph{Associated Type Family} with the same concept as we have explained before for the other stages. 
+\mintinline{haskell}{Filter} runs in an explicit \mintinline{haskell}{StateT} monadic context. This is because the $\fwcc$ instance should have an state, by \acrshort{dp} definition in \autoref{sec:dp}.
+For example, in the case of $\dpwcc$, as we have seen in \autoref{prole} $\fwcc$ keeps an updated list of connected components that updates as long as it receives more edges that are connected with the current list.
+\mintinline{haskell}{Actor} data type, in \autoref{src:dpfh:9}, is constrained by \mintinline{haskell}{MonadState} which is in the same execution context of the whole \mintinline{haskell}{NonEmpty Actor} list of the \mintinline{haskell}{Filter}. 
+This means the \mintinline{haskell}{StateT} is executed for each \mintinline{haskell}{Actor} of that filter, sharing the same state between them. 
 
 \begin{listing}[htp!]
   \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={}]{haskell}
@@ -371,10 +364,10 @@ infixr 5 |>>
   \label{src:dpfh:10}
 \end{listing}
 
-Finally, some combinators and smart constructors are provided in the framework to facilitate the construction of $\fwcc$ and Actors as we can see in \autoref{src:dpfh:10}.
+Finally, in \autoref{src:dpfh:10}, some combinators and smart constructors are provided in the framework to enable the construction of \mintinline{haskell}{Filter} and \mintinline{haskell}{Actor}.
 \mintinline{haskell}{mkFilter} is a smart constructor for \mintinline{haskell}{Filter} Data Constructor. \mintinline{haskell}{single} wraps one actor inside a \mintinline{haskell}{Filter}.
-\mintinline{haskell}{actor} is a smart constructor for \mintinline{haskell}{Actor} Data Constructor. \mintinline{haskell}{|>>>} is an appending combinator of an \mintinline{haskell}{Actor} to a \mintinline{haskell}{Filter}. 
-This will ensure the actor that is being added it is the last to be executed of the current list.
+\mintinline{haskell}{actor} is a smart constructor for \mintinline{haskell}{Actor} Data Constructor. \mintinline{haskell}{(|>>>)} is an appending combinator of an \mintinline{haskell}{Actor} to a \mintinline{haskell}{Filter}. 
+\mintinline{haskell}{(|>>>)} also ensures actor execution order, i.e. the latest actor added is the latest to be executed.
 
 
 \begin{listing}[htp!]
@@ -388,17 +381,17 @@ This will ensure the actor that is being added it is the last to be executed of 
   \label{src:dpfh:11}
 \end{listing}
 
-In \autoref{src:dpfh:11}, we can see $\gwcc$ containing a $\fwcc$ template that we have explained before and its own stage behavior.
-\mintinline{haskell}{Generator} data type contains the \mintinline{haskell}{Filter} template that could be spawned by the algorithm defined by the user according to the data received from its input channels.
-\mintinline{haskell}{Generator} also contains the behavior of the generator itself in the form of a \mintinline{haskell}{Stage} as the rest of the execution units of the \acrshort{dpfh}. 
+In \autoref{src:dpfh:11}, $\gwcc$ contains a $\fwcc$ template and its own stage behavior.
+\mintinline{haskell}{Generator} data type has a field with the \mintinline{haskell}{Filter} template that could be spawned by the algorithm defined by the user according to the data received from its input channels.
+\mintinline{haskell}{Generator} has also another field with the behavior of the $\gwcc$ -- a \mintinline{haskell}{Stage} --. 
 
 \subsection{\acrfull{rs}}
-The \acrshort{rs} can be divided into two parts: the combinators that allow in runtime generate stages dynamically, as long as data arrives at $\gwcc$,
+The \acrshort{rs} can be divided into two parts: the combinators generate stages dynamically in runtime, as long as data arrives at $\gwcc$,
 and the execution context of the \acrshort{dp}.
 Regarding execution context, all the stages that we have seen in previous sections are the pieces needed to build an executable \mintinline{haskell}{DP st a} monad.
 This executable monad has an existential type similar to \mintinline{haskell}{ST} monad to not escape out from the context on different stages.
 Once the dynamic pipeline starts to execute, the core of the framework dynamically generates stages between $\gwcc$ and previous stages, according to the user definition. 
-This is not more than an \emph{anamorphism}~\cite{lenses} that creates $\fwcc$ instances until some condition is met.
+This is an \emph{anamorphism}~\cite{lenses} that creates $\fwcc$ instances until some condition is met.
 
 \begin{listing}[htp!]
   \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={2,12,14,15,16,17,18}]{haskell}
@@ -429,10 +422,9 @@ where
 In \autoref{src:dpfh:12} the \mintinline{haskell}{unfoldF} receives an \mintinline{haskell}{UnFoldFilter} Data type, which contains the recipe for controlling that unfold recursive call. 
 In line 12, \mintinline{haskell}{_ufSpawnIf} field of \mintinline{haskell}{UnFoldFilter}, indicates when to stop the recursion. 
 Inside the conditional, in the first line, we create new channels for that filter because we need to connect this new filter computation with the previous and with \mintinline{haskell}{Generator}. 
-Therefore, the next stage is going to be fed with the new channels of this new filter. After that, we call \mintinline{haskell}{runFilter} in line $16$, to put the computation 
+Therefore, the next stage is fed with the new channels of this new filter. After that, we call \mintinline{haskell}{runFilter} in line $16$, to put the computation 
 to work in the pipeline -- call to \mintinline{haskell}{async} with \mintinline{haskell}{runStateT} --. Finally, we return the new channels to the $\gwcc$.
-As we can also be appreciated in the code, there is intensive use of \mintinline{haskell}{HList}~\cite{hlist}. This is because since the \acrshort{dp}
-\acrshort{dsl} definition, dynamically generates the functions for the different stages. The encoding of the dynamic number of parameters and parameters types have been done using Heterogeneous Lists~\cite{hlist}.
+\mintinline{haskell}{HList}~\cite{hlist} is used for handling the dynamic number and parameters types of the generated functions.
 
 \begin{listing}[htp!]
   \begin{minted}[fontsize=\small,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={}]{haskell}
@@ -462,22 +454,31 @@ mkUnfoldFilterForAll :: Filter dpDefinition filterState filterParam st
   \label{src:dpfh:13}
 \end{listing}
 
+Several smart constructors are also provided for building \mintinline{haskell}{UnfoldFilter} Data Type.
 In \autoref{src:dpfh:13} the first combinator is the default smart constructor. First parameter \mintinline{haskell}{(readElem -> Bool)} indicate if the a new filter should 
 be spawn or not, allowing the user to inspect the each element of the incomming channel to take that decision. Second parameter \mintinline{haskell}{(readElem -> DP st ())} is a monadic optional computation to do when received a new element, for example logging.
-Next to that is the \mintinline{haskell}{Filter} data type which is what is going to be spawned. Continuing to that, \mintinline{haskell}{(readElem -> filterState)} is initialization of the \mintinline{haskell}{Filter} State. It also allows the user to initialize the state based on the first element received. 
-Each filter is fed by a \mintinline{haskell}{(ReadChannel readElem)} from where to receive elements. Final parameter is the Heterogeneous list with the rest of the channels to connect with other stages.
+Next to that is the \mintinline{haskell}{Filter} data type which is what is spawned. Continuing to that, \mintinline{haskell}{(readElem -> filterState)} is initialization of the \mintinline{haskell}{Filter} State. 
+It also allows the user to initialize the state based on the first element received. 
+Each filter is fed by a \mintinline{haskell}{(ReadChannel readElem)}. Finally, the last parameter is the \emph{Heterogeneous List} with the rest of the channels to connect with other stages.
 The combinator \mintinline{haskell}{mkUnfoldFilterForAll} is to indicate to the framework that for each element received in the $\gwcc$, a new filter should be spawn.
 
 \section{Libraries and Tools}
 \subsection{Parallelization} 
-One of the most important components of the implementation is the selection of a concurrency libraries to support an intensive parallelization workload. Parallelization techniques and tools have been intensively studied and implemented in \acrshort{hs} \cite{monadpar}. Indeed, it is well known that green or light threads and sparks allow for spawning thousands to millions of parallel computations. These parallel computations do not penalize performance when compare with \acrfull{os} level threading \cite{parallelbook}. 
-A straightforward assumption to achieve here, is to use \texttt{monad-par} library \cite{monadparlib, monadpar}. Nevertheless, in this experimental work, we have discarded the use of sparks \cite{sparks} because we can achieve the level of required parallelism spawning green threads only. This is because of the nature of \acrshort{dp}, where pipeline parallelism and not data parallelism is a structural processing mechanism. The next obvious choice is to use \mintinline{haskell}{forkIO :: IO () -> IO ThreadId} from \texttt{base} library \cite{forkio}. 
-However, that would imply handling all the threads lifecycle, terminations, and errors programmatically without major combinators or abstractions to deal with them. 
-Therefore, we choose \texttt{async} library \cite{async}  which enables to spawn asynchronous computations \cite{parallelbook} on \acrshort{hs} and at the same time, it provides useful combinators to managing thread terminations and errors.
+One of the most important components of the implementation is the selection of concurrency libraries to support an intensive parallelization workload. Parallelization techniques and tools have been intensively studied and implemented in \acrshort{hs} \cite{monadpar}. 
+Indeed, it is well known that green threads and sparks allow spawning thousands to millions of parallel computations. 
+These parallel computations do not penalize performance when compare with \acrfull{os} level threading \cite{parallelbook}. 
+A straightforward assumption to achieve here, is to use \texttt{monad-par} library \cite{monadparlib, monadpar}. 
+Nevertheless, in this work, we have discarded the use of sparks \cite{sparks} because we can achieve the level of required parallelism spawning green threads only.
+The next obvious choice is to use \mintinline{haskell}{forkIO :: IO () -> IO ThreadId} from \texttt{base} library \cite{forkio}. 
+However, that would imply handling all the threads lifecycles and errors programmatically without any abstraction to facilitate that complex task. 
+Therefore, we choose \texttt{async} library \cite{async} which enables to spawn asynchronous computations \cite{parallelbook} on \acrshort{hs} using green threads, and at the same time, it provides useful combinators to managing thread terminations and errors.
 
 \subsection{Channels\label{section:channels}} 
-We have several techniques to our disposal to communicate between threads or sparks in \acrshort{hs} like \mintinline{haskell}{MVar} or concurrent safe mechanisms like \acrfull{stm} \cite{stm}. At the same time, in \acrshort{hs} library ecosystem, we dispose of \texttt{Channels} abstractions based on both mentioned communication techniques. In that sense, for conducting the communication between dynamic stages and data flowing in a $\DP$, we have selected \texttt{unagi-chan} library \cite{unagi} which provides the following advantages to our solution: Firstly,  \mintinline{haskell}{MVar} channel without using \acrshort{stm} reducing overhead. This allows avoiding internal locking for concurrent access. 
-In this case, we can use this advantage because in a $\DP$, one specific stage which is running in a separated thread, can only access to its \texttt{I/O} channels for reading/writing accordingly, and those operations are not concurrently shared by other threads (stages) for the same channels. Second,  non-blocking channels. \texttt{unagi-chan} library contains blocking and non-blocking channels for reading. This aspect is key to gain speed up on the implementation. Third, the library is optimized for $x86$ architectures with use of low-level \texttt{fetch-and-add} instructions. Finally, \texttt{unagi-chan} is $100x$ faster~\cite{unagi-bench} on Benchmarking compare with \acrshort{stm} and default base \mintinline{haskell}{Chan} implementations.
+We have several techniques to our disposal to communicate between threads or sparks in \acrshort{hs} like \mintinline{haskell}{MVar} or concurrent safe mechanisms like \acrfull{stm} \cite{stm}. 
+At the same time, in \acrshort{hs} library ecosystem, we dispose of \texttt{Channels} abstractions based on both mentioned communication techniques. 
+In that sense, for conducting the communication between dynamic stages and data flowing in a \acrshort{dp}, we have selected \texttt{unagi-chan} library \cite{unagi} which provides the following advantages to our solution: Firstly, \mintinline{haskell}{MVar} channel without using \acrshort{stm} reducing overhead. 
+\acrshort{stm} is not required in a \acrshort{dp} because one specific stage which is running in a separated thread, can only access to its \texttt{I/O} channels for reading/writing accordingly, and those operations are not concurrently shared by other threads (stages) for the same channels. 
+Second, non-blocking channels. \texttt{unagi-chan} library contains blocking and non-blocking channels for reading. This aspect is key to gain speed up on the implementation. Third, the library is optimized for $x86$ architectures with use of low-level \texttt{fetch-and-add} instructions. Finally, \texttt{unagi-chan} is $100x$ faster~\cite{unagi-bench} on Benchmarking compare with \acrshort{stm} and default base \mintinline{haskell}{Chan} implementations.
 
 \section{Chapter Summary}
 In this chapter, we have described with a great level of detail how \acrlong{dpfh} has been conceived from a Design point of view, 
