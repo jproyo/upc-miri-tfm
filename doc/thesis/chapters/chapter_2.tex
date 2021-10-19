@@ -11,7 +11,7 @@ We can distinguished two different parallelization streaming computational model
 A common model that has been proved successful over the last decade is \acrfull{mr}~\cite{mapreduce}. Different frameworks or tools like Hadoop~\cite{hadoop}, Spark~\cite{apachespark}, etc., support this computational model efficiently. 
 One of the main advantages of this kind of model is the ability to implement stateless algorithms. Data can be split and treated in different threads or processors without the need for contextual information. 
 On the other hand, when there is a need to be aware of the context, parallelization is penalized, each computational step should be fully calculated before proceeding with the others. 
-For example, this is the case of \mintinline{shell}{reduce} operation on many of those frameworks or tools.
+For example, this is the case of \mintinline{shell}{reduce} operation on many of the above-mentioned frameworks or tools.
 
 \paragraph{\acrfull{pip}} It break the computation in a series of sequential stage, where each stage takes the result of the previous stage as an input and downstream its results to the next. 
 Each \emph{pipeline Stage} is parallelized and, it could potentially exist one stage per data item of the stream. 
