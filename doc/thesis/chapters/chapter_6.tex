@@ -145,7 +145,7 @@ where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $
 \inputtikz{bipartite_abt_a}
 \caption[{[\acrshort{iebt}] Example Aggregated bitriangle}]{%
 \acrlong{awgc} $\la b, \{1,5\}\ra$ connects to \acrlong{adwg} $\la (a,c), \la \emptyset, \{1,3,7\}, \{5,9\}\ra \ra$ of \autoref{fig:bipartite-graph-example}, constructing the \acrlong{abt} $\la (a,b,c), \la \{1\},\{1,3,7\},\{1,5\} \ra \ra$.
-Note that $\hat{U}_{(a,b,c)}=\{I,J,K\}$ does not contains disjoint sets according to \dref{def:abt}, because we are using a compressing mechanism similar as described in \cite{Lai}. 
+Note that $\hat{U}_{(a,b,c)}=\{I,J,K\}$ does not contains disjoint sets according to \dref{def:abt}. 
 }
 \label{fig:agg-bt-example}
 \end{figure}
@@ -153,7 +153,7 @@ Note that $\hat{U}_{(a,b,c)}=\{I,J,K\}$ does not contains disjoint sets accordin
 As we can see in \autoref{fig:agg-bt-example}, we have all the structures at our disposal to build a \acrshort{bt}. 
 In \autoref{fig:bt-a-example}, the two possible \acrshort{bt} can be extracted from the \acrshort{abt} presented in \autoref{fig:agg-bt-example} are $(1,a,3,c,5,b,1)$ and $(1,a,7,c,5,b,1)$.
 
-Because of \acrshort{iebt} will allow to enumerate \acrshort{bt} according to some locality criteria.
+\acrshort{iebt} will allow to enumerate \acrshort{bt} according to some locality criteria.
 In this regards, we next define the \emph{query operators} to be used for that purpose.
 
 \begin{definition}[\acrfull{qo}]\label{def:query:match} 
@@ -971,8 +971,5 @@ from the pseudo-code presented in \autoref{algo:buildBtEdge} and \autoref{algo:b
 for-comprehension lists to take advantage of the non-strictness of the language as well as some concurrency primitives.
 
 \section{Chapter Summary}
-This chapter presents the details of the \acrshort{dpbt} algorithm. In the first part, we have introduced the sketch of the algorithm.
-Then, we have described each of the pseudo-code definitions of each component: $\ibt, \gbt, \fbt, \obt$ and actors. 
-After that, we have presented a correctness proof of the pseudo-code algorithm.
-At the end of the chapter, we have shown how we implemented this using \acrshort{dpfh} is described in \autoref{dp-hs}.
+In this chapter we first introduced some basic definitions. These definitions are the foundation to represent the graph index created from the input bipartite graph and to define the \acrshort{iebt} algorithm. Second, we presented a general view of the algorithm. Third, we deeply described the definitions of the  stages  of the $\dpbt$. Then, we provided a correctness proof  of the \acrshort{iebt} algorithm. Finally, we give the main details of the implementation of the \acrshort{iebt} algorithm using \acrshort{dpfh}. 
 
