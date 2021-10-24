@@ -1,64 +1,52 @@
-\begin{frame}[fragile]{Conclusions and Future Work}
-  \begin{block}{Conclusions}      
-    \begin{itemize}
-      \item \textbf{Dynamic Pipeline Paradigm} is a suitable computational model to build an Algorithm for Incrementally Enumerating Bitriangles in large Bipartite Networks. 
-    \end{itemize}
-  \end{block}
+\begin{frame}[fragile]{Conclusions}
+  \begin{itemize}
+    \itemcheck \underline{\color{blue}Introduce, implement and empirically evaluate} an \textbf{\acrlong{iebt}} under the \acrlong{dp}.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Conclusions and Future Work}
-  \begin{block}{Conclusions}      
-    \begin{itemize}
-      \item {\color{light}\textbf{Dynamic Pipeline Paradigm} is a suitable computational model to build an Algorithm for Incrementally Enumerating Bitriangles in large Bipartite Networks. }
-      \item \textbf{Haskell} has behaved accordingly and efficiently on implementing \textbf{Dynamic Pipeline Paradigm} and solving the Algorithm.
-    \end{itemize}
-  \end{block}
+\begin{frame}[fragile]{Conclusions}
+  \begin{itemize}
+    \setlength\itemsep{1.5em}
+    \itemcheck \underline{\color{blue}Introduce, implement and empirically evaluate} an \textbf{\acrlong{iebt}} under the \acrlong{dp}.
+    \itemcheck \underline{\color{blue}Empirically show} that the designed algorithm is \textbf{incrementally generating Bitriangles} from \underline{\color{blue}large Networks} like Dbpedia. 
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Conclusions and Future Work}
-  \begin{block}{Conclusions}      
-    \begin{itemize}
-      \item {\color{light}\textbf{Dynamic Pipeline Paradigm} is a suitable computational model to build an Algorithm for Incrementally Enumerating Bitriangles in large Bipartite Networks. }
-      \item {\color{light}\textbf{Haskell} has behaved accordingly and efficiently on implementing \textbf{Dynamic Pipeline Paradigm} and solving the Algorithm.}
-      \item In the experimental analysis we have \textbf{empirically} shown that the designed \textbf{algorithm is incrementally generating Bitriangles} from large Networks like Dbpedia. 
-    \end{itemize}
-  \end{block}
+\begin{frame}[fragile]{Conclusions}
+  \begin{itemize}
+    \setlength\itemsep{1.5em}
+    \itemcheck \underline{\color{blue}Introduce, implement and empirically evaluate} an \textbf{\acrlong{iebt}} under the \acrlong{dp}.
+    \itemcheck \underline{\color{blue}Empirically show} that the designed algorithm is \textbf{incrementally generating Bitriangles} from \underline{\color{blue}large Networks} like Dbpedia. 
+    \itemcheck Conduct a \underline{\color{blue}proof of concept to assess} the use of \textbf{\acrshort{hs}} for \acrlong{dp} solving the \acrlong{wcc} problem.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Conclusions and Future Work}
-  \begin{block}{Future Work}      
-    \begin{itemize}
-      \item Solve \textbf{memory consumption} for large graphs.
-    \end{itemize}
-  \end{block}
+\begin{frame}[fragile]{Conclusions}
+  \begin{itemize}
+    \setlength\itemsep{1.5em}
+    \itemcheck \underline{\color{blue}Introduce, implement and empirically evaluate} an \textbf{\acrlong{iebt}} under the \acrlong{dp}.
+    \itemcheck \underline{\color{blue}Empirically show} that the designed algorithm is \textbf{incrementally generating Bitriangles} from \underline{\color{blue}large Networks} like Dbpedia. 
+    \itemcheck Conduct a \underline{\color{blue}proof of concept to assess} the use of \textbf{\acrshort{hs}} for \acrlong{dp} solving the \acrlong{wcc} problem.
+    \itemcheck Develop a \textbf{Dynamic Pipeline Framework (DPF) in (parallel) Haskell} to implement \underline{\color{blue}any algorithm} using \acrlong{dp}.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Conclusions and Future Work}
-  \begin{block}{Future Work}      
+
+\begin{frame}[fragile]{Future Work (1/2)}
     \begin{itemize}
-      \item {\color{light}Solve \textbf{memory consumption} for large graphs.}
-      \item Selection of \textbf{more efficient Data Structures} to process query commands faster
+      \setlength\itemsep{1.5em}
+      \item \textbf{Complexity Analysis}: Take into consideration statistical parameters about the graphs and specific techniques for analyzing parallel algorithms.
+      \item \textbf{Related problems}: i.e. \emph{motif-path} discovering for linking data in large graphs.
+      \item \textbf{Memory Consumption}: Addressing improvements for processing larger Networks than Dbpedia.
     \end{itemize}
-  \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Conclusions and Future Work}
-  \begin{block}{Future Work}      
-    \begin{itemize}
-      \item {\color{light}Solve \textbf{memory consumption} for large graphs.}
-      \item {\color{light}Selection of \textbf{more efficient Data Structures} to process query commands faster}
-      \item Implement a \textbf{distributed model} for filters, to take advantage of a distributed memory model.
-    \end{itemize}
-  \end{block}
+\begin{frame}[fragile]{Future Work (2/2)}
+  \begin{itemize}
+    \setlength\itemsep{1.5em}
+    \item \textbf{Query Processing}: Addressing improvements for processing query faster in larger Aggregated Bitriangles.
+    \item \textbf{Distributed model}: Evaluate to separate filters in different nodes instead of threads, to take advantage of a distributed memory model.
+    \item \textbf{Improvements on Haskell Framework}: Stream processing and Memory footprint for Boxed Data Types.
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Conclusions and Future Work}
-  \begin{block}{Future Work}      
-    \begin{itemize}
-      \item {\color{light}Solve \textbf{memory consumption} for large graphs.}
-      \item {\color{light}Selection of \textbf{efficient Data Structures} to process query commands faster}
-      \item {\color{light}Implement a \textbf{distributed model} for filters, to take advantage of a distributed memory model.}
-      \item \textbf{Improvements on Haskell Framework}: Stream processing and Memory footprint for Boxed Data Types.
-    \end{itemize}
-  \end{block}
-\end{frame}

@@ -1,162 +1,69 @@
+% \begin{frame}[fragile]{Motivation}
+%   \begin{center}
+%     Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+%   \end{center}    
+%   \vspace{0.5cm}
+%   \begin{center}
+%   \huge\emph{Why?}
+%   \end{center}
+% \end{frame}
+
 \begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
+  % \begin{center}
+  %   Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
+  % \end{center}    
+  \begin{itemize}
+    \item Bipartite Graphs \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Motivation}
-  \begin{center}
-    {\color{light}Provide an Algorithm for Incrementally Enumarting Bitriangles in large} \underline{{\color{red}\textbf{Bipartite Networks}}} {\color{light}{using \textbf{Dynamic Pipeline Paradigm}}}
-  \end{center}    
-  \begin{figure}
-    \centering
-    \resizebox{0.7\textwidth}{!}{\inputtikz{bipartite}}
-  \end{figure}
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    {\color{light}Provide an Algorithm for Incrementally Enumarting} \underline{{\color{red}\textbf{Bitriangles}}} {\color{light}{in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}}}
-  \end{center}    
-  \begin{figure}
-    \centering
-    \resizebox{0.7\textwidth}{!}{\inputtikz{bitriangle}}
-  \end{figure}
-\end{frame}
-
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \vspace{0.5cm}
-  \begin{center}
-  \huge\emph{Why?}
-  \end{center}
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \begin{block}{Why?}
     \begin{itemize}
-      \item Bipartite graph model interesting relations between different set of objects, i.e. \textbf{phenotype-disease gene associations network, Netflix subscribers-TV shows, author-papers, etc.}
+      \setlength\itemsep{2em}
+      \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+      \item \textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.
     \end{itemize}
-  \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \begin{block}{Why?}
     \begin{itemize}
-      \item {\color{light}Bipartite graph model interesting relations between different set of objects, i.e. \textbf{phenotype-disease gene associations network, Netflix subscribers-TV shows, author-papers, etc.}}
-      \item Metrics for analyzing relations \textbf{Clustering coefficient, communities, social analysis}, based on Bitriangles amount.
+      \setlength\itemsep{2em}
+      \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+      \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
+      \item \textbf{Projection method} distorts properties of original BG: i.e. link prediction.
     \end{itemize}
-  \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \begin{block}{Why?}
+  \begin{itemize}
+    \setlength\itemsep{1.5em}
+    % \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+    % \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
+    % \item {\color{light}\textbf{Projection method} distorts properties of original BG: i.e. link prediction.}
+    \item \textbf{Bitriangles} as the small unit of cohesion in BG and \textbf{Bitriangles counting} to compute BG \textbf{metrics} -- \emph{clustering coefficient, communities, social analysis} --.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Motivation}
+  \begin{itemize}
+    \setlength\itemsep{1.5em}
+    % \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+    % \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
+    % \item {\color{light}\textbf{Projection method} distorts properties of original BG: i.e. link prediction.}
+    \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG and \textbf{Bitriangles counting} to compute BG \textbf{metrics} -- \emph{clustering coefficient, communities, social analysis} --.}
+    \item Counting is \textbf{not enough}. Knowing \textbf{structural components of bitriangles} is needed. 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Motivation}
     \begin{itemize}
-      \item {\color{light}Bipartite graph model interesting relations between different set of objects, i.e. \textbf{phenotype-disease gene associations network, Netflix subscribers-TV shows, author-papers, etc.}}
-      \item {\color{light}Metrics for analyzing relations \textbf{Clustering coefficient, communities, social analysis}, based on Bitriangles amount.}
-      \item Counting is \textbf{not enough}. Needs to know structural components of bitriangles, for example: in diseasome netowrk 2 disorders are connected if there is a gene implicated in both. 
+      \setlength\itemsep{1.5em}
+      % \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+      % \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
+      % \item {\color{light}\textbf{Projection method} distorts properties of original BG: i.e. link prediction.}
+      \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG and \textbf{Bitriangles counting} to compute BG \textbf{metrics} -- \emph{clustering coefficient, communities, social analysis --}.}
+      \item {\color{light}Counting is \textbf{not enough}. Knowing \textbf{structural components of bitriangles} is needed.}
+      \item \textbf{\emph{"All-or-Nothing" vs. "Pay-as-you-go"} model}. 
     \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \begin{block}{Why?}
-    \begin{itemize}
-      \item {\color{light}Bipartite graph model interesting relations between different set of objects, i.e. \textbf{phenotype-disease gene associations network, Netflix subscribers-TV shows, author-papers, etc.}}
-      \item {\color{light}Metrics for analyzing relations \textbf{Clustering coefficient, communities, social analysis}, based on Bitriangles amount.}
-      \item {\color{light}Counting is \textbf{not enough}. Needs to know structural components of bitriangles, for example: in diseasome netowrk 2 disorders are connected if there is a gene implicated in both.}
-      \item \emph{"All-or-Nothing" vs. "Pay-as-you-go"} model: Some results are enough to conduct analysis like in diseasome netowrks. 
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \vspace{0.5cm}
-  \begin{center}
-    \huge\emph{How?}
-  \end{center}  
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \begin{block}{How?}
-    \begin{itemize}
-      \item Provide a \textbf{Proof of Concept} to test \textbf{Haskell} suitability for implementing  \textbf{Dynamic Pipeline Paradigm} solving Weakly Connected Components Problem
-  \end{itemize}   
-\end{block} 
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \begin{block}{How?}
-    \begin{itemize}
-      \item {\color{light}Provide a \textbf{Proof of Concept} to test \textbf{Haskell} suitability for implementing  \textbf{Dynamic Pipeline Paradigm} solving Weakly Connected Components Problem}
-      \item Build a \textbf{Dynamic Pipeline Framework} in \textbf{Haskell} to implement any algorithm 
-  \end{itemize}   
-\end{block} 
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \begin{block}{How?}
-    \begin{itemize}
-      \item {\color{light}Provide a \textbf{Proof of Concept} to test \textbf{Haskell} suitability for implementing  \textbf{Dynamic Pipeline Paradigm} solving Weakly Connected Components Problem}
-      \item {\color{light}Build a \textbf{Dynamic Pipeline Framework} in \textbf{Haskell} to implement any algorithm }
-      \item Provide an pseudo-code algorithm definition for \textbf{Incrementally Enumerating Bitriangles in large Bipartite Networks}
-  \end{itemize}   
-\end{block} 
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \begin{block}{How?}
-    \begin{itemize}
-      \item {\color{light}Provide a \textbf{Proof of Concept} to test \textbf{Haskell} suitability for implementing  \textbf{Dynamic Pipeline Paradigm} solving Weakly Connected Components Problem}
-      \item {\color{light}Build a \textbf{Dynamic Pipeline Framework} in \textbf{Haskell} to implement any algorithm }
-      \item {\color{light}Provide an pseudo-code algorithm definition for \textbf{Incrementally Enumerating Bitriangles in large Bipartite Networks}}
-      \item Implement that Algorithm using \textbf{Dynamic Pipeline Framework in Haskell}
-  \end{itemize}   
-\end{block} 
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  \begin{center}
-    Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  \end{center}    
-  \begin{block}{How?}
-    \begin{itemize}
-      \item {\color{light}Provide a \textbf{Proof of Concept} to test \textbf{Haskell} suitability for implementing  \textbf{Dynamic Pipeline Paradigm} solving Weakly Connected Components Problem}
-      \item {\color{light}Build a \textbf{Dynamic Pipeline Framework} in \textbf{Haskell} to implement any algorithm }
-      \item {\color{light}Provide an pseudo-code algorithm definition for \textbf{Incrementally Enumerating Bitriangles in large Bipartite Networks}}
-      \item {\color{light}Implement that Algorithm using \textbf{Dynamic Pipeline Framework in Haskell}}
-      \item Subject the implementation to \textbf{exhaustive experiments} to verify our assumptions and answer our research questions.
-  \end{itemize}   
-\end{block} 
 \end{frame}
 

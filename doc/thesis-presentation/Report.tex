@@ -18,6 +18,8 @@
 \usepackage{subcaption}
 \usepackage{multimedia}
 \usepackage{tikz}
+\usepackage{varwidth}
+\usepackage[absolute,overlay]{textpos}
 \usetikzlibrary{shapes.misc,shadows}
 \usetikzlibrary{quotes,positioning,arrows,decorations.markings}
 \usetikzlibrary{positioning} 
@@ -70,6 +72,17 @@
  }
 }
 \makeatother
+\setbeamercolor{block title}{bg=blue!10, fg=black}
+\setbeamercolor{block body}{bg=white!25}
+
+\tikzset{
+    max width/.style args={#1}{
+        execute at begin node={\begin{varwidth}{#1}},
+        execute at end node={\end{varwidth}}
+    }
+}
+
+\newcommand{\itemcheck}{\item[\checkmark]}
 
 \title[Incrementally Enumerating BT in BG]{An Algorithm for incrementally Enumerating Bitriangles in large Bipartite Networks}
 \subtitle{Master Thesis\vspace{-0.5cm}}
@@ -113,55 +126,50 @@
   \end{frame}
 
   \begin{frame}{Agenda}
-    \tableofcontents
+    \tableofcontents[hidesubsections]
   \end{frame}
   
   \begin{frame}{Agenda}
-    \section{Motivation}
-    \tableofcontents[currentsection]
+    \section{Introduction}
+    \tableofcontents[currentsection,hideothersubsections]
   \end{frame}
 
+  \subsection{Goal}
+  \input{sections/goal.tex}
+
+  \subsection{Motivation}
   \input{sections/motivation.tex}
 
-  \begin{frame}{Agenda}
-    \section{Dynamic Pipeline Paradigm}
-    \tableofcontents[currentsection]
-  \end{frame}
+  \subsection{Methodology}
+  \input{sections/methodology.tex}
 
+  \subsection{Dynamic Pipeline Paradigm}
   \input{sections/dpp.tex}
   
   \begin{frame}{Agenda}
-    \section{Proof of Concept: $DP_{WCC}$}
-    \tableofcontents[currentsection]
+    \section{Work Development}
+    \tableofcontents[currentsection,hideothersubsections]
   \end{frame}
   
+  \subsection{Proof of Concept: $DP_{WCC}$}
   \input{sections/poc.tex}
 
-  \begin{frame}{Agenda}
-    \section{DP Haskell Framework}
-    \tableofcontents[currentsection]
-  \end{frame}
-
+  \subsection{DP Haskell Framework}
   \input{sections/dpf_hs.tex}
 
-  \begin{frame}{Agenda}
-    \section{Algorithm for Incrementally Enumerating BT in BG}
-    \tableofcontents[currentsection]
-  \end{frame}
-
+  \subsection{Algorithm for Incrementally Enumerating BT in BG}
   \input{sections/iebt.tex}
 
   \begin{frame}{Agenda}
     \section{Empirical Evaluation}
-    \tableofcontents[currentsection]
+    \tableofcontents[currentsection,hideothersubsections]
   \end{frame}
 
   \input{sections/empirical.tex}
 
-
   \begin{frame}{Agenda}
     \section{Conclusions and Future Work}
-    \tableofcontents[currentsection]
+    \tableofcontents[currentsection,hideothersubsections]
   \end{frame}
 
   \input{sections/conclusions.tex}

@@ -1,17 +1,28 @@
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    \large We define \textbf{compressed}~\cite{Lai} structural units that allows to \textbf{build} Bitriangles in different steps
-  \end{center}    
-\end{frame}
-
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-  \begin{center}
-    Given a Bipartite Graph
-  \end{center}    
+  \large A \textbf{Bipartite Graph} is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.
+  \end{center}          
   \begin{figure}
     \centering
     \resizebox{0.7\textwidth}{!}{\inputtikz{bipartite}}
   \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+  Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
+  The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textbf{Bitriangle} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
+  \end{center}      
+  \begin{figure}
+    \centering
+    \resizebox{0.7\textwidth}{!}{\inputtikz{bitriangle}}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \large We \textbf{introduce} a conceptual framework based on \textbf{compacted structures} that allows to specify the algorithm.
+  \end{center}    
 \end{frame}
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
@@ -36,10 +47,6 @@
 \end{frame}
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-  \begin{block}{Bitriangle}    
-    Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
-    The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textit{bitriangle} in $G$, denoted by $BT_{\ell}^{\mu} = BT_{(l_1, l_2,l_3)}^{(u_1, u_2, u_3)}$. \\
-  \end{block}
   \begin{center}
     \textbf{Finally}, \textbf{Aggregated Bitriangles}: is a pair  $\langle \ell, \hat{U}_l\rangle$, 
     where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu} \in \mathsf{BT}$.
@@ -53,21 +60,15 @@
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    \textbf{Dynamic Pipeline} initial Configuration for Enumerating BT in BG
+    \textbf{Dynamic Pipeline} Configuration for Enumerating BT in BG
   \end{center}    
   \begin{figure}
     \centering  
-    \resizebox{1\textwidth}{!}{\inputtikz{btDP}}
+    \resizebox{0.7\textwidth}{!}{\inputtikz{btDP}}
   \end{figure}
-\end{frame}
-
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-  \begin{center}
-    \textbf{Dynamic Pipeline} evolution on first filter for Enumerating BT in BG
-  \end{center}    
   \begin{figure}
     \centering  
-    \resizebox{1\textwidth}{!}{\inputtikz{btDP_actor1}}
+    \resizebox{0.7\textwidth}{!}{\inputtikz{btDP_actor1}}
   \end{figure}
 \end{frame}
 
@@ -217,15 +218,15 @@
         \ForAll{$Q \in IC_Q$}{
           \HiLi\ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati$}{
                     \Switch{$Q$}{
-                          \Case{$\mathbb{P}(U + L)$}{
-                                \If{$\mathbb{P}(U + L) \cap \{l_l, l_m, l_u\} \neq \emptyset \lor \mathbb{P}(U + L) \cap (I \cup J \cup K) \neq \emptyset$}{
-                                      \HiLi$\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), \mathbb{P}(U + L))$\\
+                          \Case{$\mathcal{P}(U + L)$}{
+                                \If{$\mathcal{P}(U + L) \cap \{l_l, l_m, l_u\} \neq \emptyset \lor \mathcal{P}(U + L) \cap (I \cup J \cup K) \neq \emptyset$}{
+                                      \HiLi$\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), \mathcal{P}(U + L))$\\
                                       \HiLi\ForAll{$\bti \in \btii$}{
                                         \HiLi$\p(\bti, OC_{BT})$
                                       }
                                 }
                           }
-                          \Case{$\mathbb{P}(E)$}{
+                          \Case{$\mathcal{P}(E)$}{
                               \tcp*[h]{SAME FOR EDGES......}\\
                           }
                     }
@@ -249,7 +250,7 @@
   \begin{theorem}[Uniqueness] 
     Given a bipartite graph $G = ((U\cup L),E)$, $\forall \btii\in\bt$  \acrshort{iebt} stores $\btii$ in an $\ati\in \at$ only once.
   \end{theorem}
-  
+  \vspace{1.5cm}
   \begin{theorem}[All Bitriangles can be enumerated]
     Given a bipartite graph $G$, if the bitriangle $\btii = (u_1,l_1,u_2,l_3,$ $u_3,l_2,u_1)\in \bt$, then $\btii$  can be enumerated.
   \end{theorem}  
