@@ -47,31 +47,6 @@
 }
 \makeatother
 
-\makeatletter
-\pgfdeclareshape{datastore}{
-  \inheritsavedanchors[from=rectangle]
-  \inheritanchorborder[from=rectangle]
-  \inheritanchor[from=rectangle]{center}
-  \inheritanchor[from=rectangle]{base}
-  \inheritanchor[from=rectangle]{north}
-  \inheritanchor[from=rectangle]{north east}
-  \inheritanchor[from=rectangle]{east}
-  \inheritanchor[from=rectangle]{south east}
-  \inheritanchor[from=rectangle]{south}
-  \inheritanchor[from=rectangle]{south west}
-  \inheritanchor[from=rectangle]{west}
-  \inheritanchor[from=rectangle]{north west}
-  \backgroundpath{
-    %  store lower right in xa/ya and upper right in xb/yb
-    \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
-    \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
-    \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
-    \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@ya}}
-    \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@yb}}
-    \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
- }
-}
-\makeatother
 \setbeamercolor{block title}{bg=blue!10, fg=black}
 \setbeamercolor{block body}{bg=white!25}
 
@@ -185,6 +160,8 @@
     \emph{Questions?}
   \end{frame}  
   
+  \iffalse
   \input{sections/appendix.tex}
+  \fi
 
   \end{document}

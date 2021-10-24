@@ -13,23 +13,23 @@
   %   Provide an Algorithm for Incrementally Enumarting Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
   % \end{center}    
   \begin{itemize}
-    \item Bipartite Graphs \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}
+    \item \textbf{Bipartite Graphs} (BG) \underline{\color{red}models} interesting \underline{\color{red}relations} between \underline{\color{red}different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Motivation}
     \begin{itemize}
       \setlength\itemsep{2em}
-      \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
-      \item \textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.
+      \item {\color{light}\textbf{Bipartite Graphs} (BG) models interesting relations between different set of objects: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+      \item \textbf{Metrics} for analyzing BG \underline{\color{red}same as Unipartite Graphs}: \emph{clustering coefficient, communities, social analysis}.
     \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Motivation}
     \begin{itemize}
       \setlength\itemsep{2em}
-      \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
-      \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
+      \item {\color{light}\textbf{Bipartite Graphs} (BG) models interesting relations between different set of objects: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+      \item {\color{light}\textbf{Metrics} for analyzing BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
       \item \textbf{Projection method} distorts properties of original BG: i.e. link prediction.
     \end{itemize}
 \end{frame}
@@ -40,7 +40,7 @@
     % \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
     % \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
     % \item {\color{light}\textbf{Projection method} distorts properties of original BG: i.e. link prediction.}
-    \item \textbf{Bitriangles} as the small unit of cohesion in BG and \textbf{Bitriangles counting} to compute BG \textbf{metrics} -- \emph{clustering coefficient, communities, social analysis} --.
+    \item \textbf{Bitriangles} as the \underline{\color{red}small unit of cohesion} in BG. \textbf{Bitriangles counting} to compute \underline{\color{red}BG metrics} -- \emph{clustering coefficient, communities, social analysis} --.
   \end{itemize}
 \end{frame}
 
@@ -50,8 +50,8 @@
     % \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
     % \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
     % \item {\color{light}\textbf{Projection method} distorts properties of original BG: i.e. link prediction.}
-    \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG and \textbf{Bitriangles counting} to compute BG \textbf{metrics} -- \emph{clustering coefficient, communities, social analysis} --.}
-    \item Counting is \textbf{not enough}. Knowing \textbf{structural components of bitriangles} is needed. 
+    \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG. \textbf{Bitriangles counting} to compute BG metrics -- \emph{clustering coefficient, communities, social analysis} --.}
+    \item Counting is \textbf{not enough}. Knowing \underline{\color{red}structural components of bitriangles} is needed: i.e.: \emph{what gene is involve in two or more diseases in diseasome networks}.
   \end{itemize}
 \end{frame}
 
@@ -61,8 +61,8 @@
       % \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
       % \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
       % \item {\color{light}\textbf{Projection method} distorts properties of original BG: i.e. link prediction.}
-      \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG and \textbf{Bitriangles counting} to compute BG \textbf{metrics} -- \emph{clustering coefficient, communities, social analysis --}.}
-      \item {\color{light}Counting is \textbf{not enough}. Knowing \textbf{structural components of bitriangles} is needed.}
+      \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG. \textbf{Bitriangles counting} to compute BG metrics -- \emph{clustering coefficient, communities, social analysis} --.}
+      \item {\color{light}Counting is \textbf{not enough}. Knowing structural components of bitriangles is needed: i.e.: \emph{what gene is involve in two or more diseases in diseasome networks}.}
       \item \textbf{\emph{"All-or-Nothing" vs. "Pay-as-you-go"} model}. 
     \end{itemize}
 \end{frame}
