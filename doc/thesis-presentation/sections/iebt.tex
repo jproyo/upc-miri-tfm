@@ -1,7 +1,10 @@
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
   \large A \textbf{Bipartite Graph} is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.
-  \end{center}          
+  \end{center}     
+  \begin{center}
+    \small \emph{w.l.g.} $U \subseteq \mathbb{N}, L \subseteq \mathbb{N}$ and $(U, <)$, $(L, <)$ are \emph{strict total orders}
+  \end{center}            
   \begin{figure}
     \centering
     \resizebox{0.7\textwidth}{!}{\inputtikz{bipartite}}
@@ -11,7 +14,7 @@
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
   Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
-  The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textbf{Bitriangle} in $G$, denoted by $BT_{\ell}^{\mu} = \bti$. 
+  The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textbf{Bitriangle} in $G$. 
   \end{center}      
   \begin{figure}
     \centering
@@ -21,8 +24,18 @@
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    \large We \textbf{introduce} a conceptual framework based on \textbf{compacted structures} that allows to specify the algorithm.
+    \large We \textbf{introduce} a conceptual framework based on abstract \textbf{compacted structures} to specify the algorithm.
   \end{center}    
+  \begin{table}[H]
+    \centering
+    \resizebox{0.8\textwidth}{!}{
+    \begin{tabular}{c c}
+     \begin{tabular}{l}\underline{\color{red}Aggregated Wedges}\end{tabular} & \begin{tabular}{l}\resizebox{5cm}{2cm}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_b}\inputtikz{bipartite_awg_c}}\end{tabular}\\
+     \begin{tabular}{l}\underline{\color{red}Aggregated Double Wedges}\end{tabular} & \begin{tabular}{l}\resizebox{4cm}{2cm}{\inputtikz{bipartite_adwg_a}}\end{tabular}\\
+     \begin{tabular}{l}\underline{\color{red}Aggregated Bitriangles}\end{tabular} & \begin{tabular}{l}\resizebox{4cm}{2cm}{\inputtikz{bipartite_abt_a}}\end{tabular}\\
+    \end{tabular}
+    }
+   \end{table}
 \end{frame}
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
@@ -108,35 +121,45 @@
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    \underline{\color{red}\textbf{\texttt{actor1}: Aggregated Wedges}}
+    \underline{\textbf{\texttt{actor1}: Aggregated Wedges}}
   \end{center}
-  \begin{center}
-  \resizebox{!}{0.4\textheight}{ 
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[xshift=-4cm,yshift=-5cm] at (current page.north east) {
+      \resizebox{5cm}{2cm}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_b}\inputtikz{bipartite_awg_c}}
+    };
+  \end{tikzpicture}
+  \resizebox{!}{0.3\textheight}{  
     \begin{algorithm}[H]
       \SetKwFunction{acta}{actor1}
       \SetKwProg{df}{def}{:}{end}
       \df{\acta{}}{
       $\la l, W_l \ra \leftarrow \gs$\\
       \ForAll{$(u',l') \in IC_E$}
-      {\HiLi\uIf{$l = l'$}{
-        \HiLi$W_l \leftarrow W_l \cup \{u'\}$
-      }\Else{\HiLi$\p((u',l'),OC_E)$}
+      {%
+      \color{red!80}
+      \uIf{$l = l'$}{
+        $W_l \leftarrow W_l \cup \{u'\}$
+      }\Else{$\p((u',l'),OC_E)$}
       }
       \If{$|W_l| > 1$}{
-          \HiLi$\us(\la l, W_l \ra)$\\ 
-          \HiLi$\p(\la l, W_l \ra, OC_{W_l1})$\\
+          \color{red!80}
+          $\us(\la l, W_l \ra)$\\ 
+          $\p(\la l, W_l \ra, OC_{W_l1})$\\
       }
       }
       \end{algorithm}
-  }  
-\end{center}
+  }
 \end{frame}
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    \underline{\color{red}\textbf{\texttt{actor2}: Aggregated Double Wedges}}
+    \underline{\textbf{\texttt{actor2}: Aggregated Double Wedges}}
   \end{center}
-  \begin{center}
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[xshift=-4cm,yshift=-5cm] at (current page.north east) {
+      \resizebox{5cm}{3cm}{\inputtikz{bipartite_adwg_a}}
+    };
+  \end{tikzpicture}
   \resizebox{!}{0.4\textheight}{  
     \begin{algorithm}[H]
       \SetKwFunction{actb}{actor2}
@@ -144,35 +167,42 @@
       \BlankLine
       \df{\actb{}}{
       $\la l, W_l \ra \leftarrow \gs$\\
-      \HiLi\ForAll{$\la l', W_l' \ra \in IC_{W_l1}$}{
-        \HiLi$\p(\la l', W_l \ra, OC_{W_l1})$\\
-            $\dwi \leftarrow \emptyset$\\
-            \If{$W_l' \cap W_l \neq \emptyset$}{ 
-                  $(l_l, l_u) \leftarrow (\argmin_{l,l'}, \argmax_{l,l'})$\\
-                  \uIf{$l < l'$}{
-                        $(W_{l_l}, W_{l_u}) \leftarrow (W_l, W_l')$
-                  }\Else{
-                        $(W_{l_l}, W_{l_u}) \leftarrow (W_l', W_l)$
-                  }
-                  $I \leftarrow W_{l_l} \setminus W_{l_u}$\\ 
-                  $J \leftarrow W_{l_l} \cap W_{l_u}$\\
-                  $K \leftarrow W_{l_u} \setminus W_{l_l}$\\
-                  $U_l \leftarrow \la I, J, K\ra$\\
-                  \HiLi$\dwi \leftarrow dw \cup \{\la (l_l, l_u), U_l \ra\}$
-            }
+      \ForAll{$\la l', W_l' \ra \in IC_{W_l1}$}{
+        \color{red!80}
+        $\p(\la l', W_l \ra, OC_{W_l1})$\\
+        \color{black}
+        $\dwi \leftarrow \emptyset$\\
+        \If{$W_l' \cap W_l \neq \emptyset$}{ 
+              \color{blue!80}
+              $(l_l, l_u) \leftarrow (\argmin_{l,l'}, \argmax_{l,l'})$\\
+              \uIf{$l < l'$}{
+                    $(W_{l_l}, W_{l_u}) \leftarrow (W_l, W_l')$
+              }\Else{
+                    $(W_{l_l}, W_{l_u}) \leftarrow (W_l', W_l)$
+              }
+              $I \leftarrow W_{l_l} \setminus W_{l_u}$\\ 
+              $J \leftarrow W_{l_l} \cap W_{l_u}$\\
+              $K \leftarrow W_{l_u} \setminus W_{l_l}$\\
+              $U_l \leftarrow \la I, J, K\ra$\\
+              \color{red!80}
+              $\dwi \leftarrow dw \cup \{\la (l_l, l_u), U_l \ra\}$
+        }
       }
-      \HiLi$\us(\dwi)$
+      \color{red!80}$\us(\dwi)$
       }
       \end{algorithm}
   }  
-\end{center}
 \end{frame}
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    \underline{\color{red}\textbf{\texttt{actor3}: Aggregated Bitriangles}}
+    \underline{\textbf{\texttt{actor3}: Aggregated Bitriangles}}
   \end{center}
-  \begin{center}
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[xshift=-3.5cm,yshift=-6.5cm] at (current page.north east) {
+      \resizebox{5cm}{3cm}{\inputtikz{bipartite_abt_a}}
+    };
+  \end{tikzpicture}
   \resizebox{!}{0.4\textheight}{  
     \begin{algorithm}[H]
       \SetKwFunction{actc}{actor3}
@@ -181,31 +211,34 @@
       \df{\actc{}}{
         $\dwi \leftarrow \gs$\\
         $\ati \leftarrow \emptyset$\\
-        \HiLi\ForAll{$\la l', W_l \ra \in IC_{W_l2}$}{
-          \HiLi$\p(\la l', W_l \ra, OC_{W_l2})$\\ 
-          \HiLi\ForEach{$\la (l_l, l_u), \la I, J, K \ra \ra \in \dwi, l_l < l' \land l_u > l'$}{
-                    $I' \leftarrow I \cup J$\\
-                    $K' \leftarrow K \cup J$\\
-                    \If{$W_l \cap I' \neq \emptyset \land W_l \cap K' \neq \emptyset$}{
-                          $I' \leftarrow I' \cap W_l$\\
-                          $K' \leftarrow K' \cap W_l$\\
-                          $\hat{U}_l  \leftarrow \la I', J, K' \ra$\\
-                          \HiLi$\ati \leftarrow \ati \cup \big\{\la (l_l, l', l_u), \hat{U}_l \ra\big\}$
-                    }
-              }
+        \ForAll{$\la l', W_l \ra \in IC_{W_l2}$}{
+          \color{red!80}
+          $\p(\la l', W_l \ra, OC_{W_l2})$\\ 
+          \ForEach{$\la (l_l, l_u), \la I, J, K \ra \ra \in \dwi, l_l < l' \land l_u > l'$}{
+            \color{blue!80}
+            $I' \leftarrow I \cup J$\\
+            $K' \leftarrow K \cup J$\\
+            \If{$W_l \cap I' \neq \emptyset \land W_l \cap K' \neq \emptyset$}{
+                  $I' \leftarrow I' \cap W_l$\\
+                  $K' \leftarrow K' \cap W_l$\\
+                  $\hat{U}_l  \leftarrow \la I', J, K' \ra$\\
+                  \color{red!80}
+                  $\ati \leftarrow \ati \cup \big\{\la (l_l, l', l_u), \hat{U}_l \ra\big\}$
+                  \color{black}
+            }
+          }
         }      
-        \HiLi$\us(\ati)$\\
-        }
-        \end{algorithm}
+        \color{red!80}
+        $\us(\ati)$\\
+      }
+    \end{algorithm}
   }  
-\end{center}
 \end{frame}
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    \underline{\color{red}\textbf{\texttt{actor4}: Process Query to Incrementally retrieve Bitriangles}}
+    \underline{\textbf{\texttt{actor4}: Process Query to Incrementally retrieve Bitriangles}}
   \end{center}
-  \begin{center}
   \resizebox{!}{0.4\textheight}{  
     \begin{algorithm}[H]
       \SetKwFunction{butV}{buildBtVertex}
@@ -216,26 +249,31 @@
       \df{\actd{}}{
         $\ati \leftarrow \gs$\\
         \ForAll{$Q \in IC_Q$}{
-          \HiLi\ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati$}{
-                    \Switch{$Q$}{
-                          \Case{$\mathcal{P}(U + L)$}{
-                                \If{$\mathcal{P}(U + L) \cap \{l_l, l_m, l_u\} \neq \emptyset \lor \mathcal{P}(U + L) \cap (I \cup J \cup K) \neq \emptyset$}{
-                                      \HiLi$\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), \mathcal{P}(U + L))$\\
-                                      \HiLi\ForAll{$\bti \in \btii$}{
-                                        \HiLi$\p(\bti, OC_{BT})$
-                                      }
-                                }
-                          }
-                          \Case{$\mathcal{P}(E)$}{
-                              \tcp*[h]{SAME FOR EDGES......}\\
-                          }
+          \ForEach{$\la (l_l, l_m, l_u), \la I,J,K \ra \ra \in \ati$}{
+            \color{blue!80}
+            \Switch{$Q$}{
+                  \color{red!80}
+                  \Case{$\mathcal{P}(U + L)$}{
+                    \color{blue!80}
+                    \If{$\mathcal{P}(U + L) \cap \{l_l, l_m, l_u\} \neq \emptyset \lor \mathcal{P}(U + L) \cap (I \cup J \cup K) \neq \emptyset$}{
+                      \color{red!80}
+                      $\btii \leftarrow \butV(\la (l_l, l_m, l_u), \la I,J,K \ra \ra), \mathcal{P}(U + L))$\\
+                      \ForAll{$\bti \in \btii$}{
+                        $\p(\bti, OC_{BT})$
+                      }
+                      \color{black}
                     }
-              }
+                  }
+                  \color{blue!80}
+                  \Case{$\mathcal{P}(E)$}{
+                      \tcp*[h]{SAME FOR EDGES......}\\
+                  }
+            }
+          }
         }
-        }
-      \end{algorithm}
+      }
+    \end{algorithm}
   }  
-\end{center}
 \end{frame}
 
 
