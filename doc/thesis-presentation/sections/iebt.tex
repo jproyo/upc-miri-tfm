@@ -30,9 +30,7 @@
     \centering
     \resizebox{0.8\textwidth}{!}{
     \begin{tabular}{c c}
-     \begin{tabular}{l}\underline{\color{red}Aggregated Wedges}\end{tabular} & \begin{tabular}{l}\resizebox{5cm}{2cm}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_b}\inputtikz{bipartite_awg_c}}\end{tabular}\\
-     \begin{tabular}{l}\underline{\color{red}Aggregated Double Wedges}\end{tabular} & \begin{tabular}{l}\resizebox{4cm}{2cm}{\inputtikz{bipartite_adwg_a}}\end{tabular}\\
-     \begin{tabular}{l}\underline{\color{red}Aggregated Bitriangles}\end{tabular} & \begin{tabular}{l}\resizebox{4cm}{2cm}{\inputtikz{bipartite_abt_a}}\end{tabular}\\
+     \begin{tabular}{c}\underline{\color{red}Aggregated Wedges}\\$\la l, W_l \ra$\end{tabular} & \begin{tabular}{l}\resizebox{5cm}{2cm}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_c}}\end{tabular}\\
     \end{tabular}
     }
    \end{table}
@@ -40,35 +38,66 @@
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    We build first \textbf{Aggregated Wedges}: a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u \in W_l$, the edge  $(u,l)\in E$
+    \large We \textbf{introduce} a conceptual framework based on abstract \textbf{compacted structures} to specify the algorithm.
   \end{center}    
-  \begin{figure}
+  \begin{table}[H]
     \centering
-    \resizebox{0.8\textwidth}{!}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_b}\inputtikz{bipartite_awg_c}}
-  \end{figure}
+    \resizebox{0.8\textwidth}{!}{
+    \begin{tabular}{c c}
+     \begin{tabular}{c}\underline{\color{red}Aggregated Wedges}\\$\la l, W_l \ra$\end{tabular} & \begin{tabular}{l}\resizebox{5cm}{2cm}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_c}}\end{tabular}\\
+     \begin{tabular}{c}\underline{\color{red}Aggregated Double Wedges} \\$\la (l_1, l_2), U_l \ra$\end{tabular} & \begin{tabular}{l}\resizebox{4cm}{2cm}{\inputtikz{bipartite_adwg_a}}\end{tabular}\\
+    \end{tabular}
+    }
+   \end{table}
 \end{frame}
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    Then, \textbf{Aggregated Double Wedges}: a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
-    $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
+    \large We \textbf{introduce} a conceptual framework based on abstract \textbf{compacted structures} to specify the algorithm.
   \end{center}    
-  \begin{figure}
+  \begin{table}[H]
     \centering
-    \resizebox{0.6\textwidth}{!}{\inputtikz{bipartite_adwg_a}}
-  \end{figure}
+    \resizebox{0.8\textwidth}{!}{
+    \begin{tabular}{c c}
+     \begin{tabular}{c}\underline{\color{red}Aggregated Wedges}\\$\la l, W_l \ra$\end{tabular} & \begin{tabular}{l}\resizebox{5cm}{2cm}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_c}}\end{tabular}\\
+     \begin{tabular}{c}\underline{\color{red}Aggregated Double Wedges} \\$\la (l_1, l_2), U_l \ra$\end{tabular} & \begin{tabular}{l}\resizebox{4cm}{2cm}{\inputtikz{bipartite_adwg_a}}\end{tabular}\\
+     \begin{tabular}{c}\underline{\color{red}Aggregated Bitriangles} \\$\langle \ell, \hat{U}_l\rangle$\end{tabular} & \begin{tabular}{l}\resizebox{4cm}{2cm}{\inputtikz{bipartite_abt_a}}\end{tabular}\\
+    \end{tabular}
+    }
+   \end{table}
 \end{frame}
 
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-  \begin{center}
-    \textbf{Finally}, \textbf{Aggregated Bitriangles}: is a pair  $\langle \ell, \hat{U}_l\rangle$, 
-    where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu} \in \mathsf{BT}$.
-  \end{center}    
-  \begin{figure}
-    \centering
-    \resizebox{0.6\textwidth}{!}{\inputtikz{bipartite_abt_a}}
-  \end{figure}
-\end{frame}
+% \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+%   \begin{center}
+%     We build first \textbf{Aggregated Wedges}: a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u \in W_l$, the edge  $(u,l)\in E$
+%   \end{center}    
+%   \begin{figure}
+%     \centering
+%     \resizebox{0.8\textwidth}{!}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_b}\inputtikz{bipartite_awg_c}}
+%   \end{figure}
+% \end{frame}
+
+% \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+%   \begin{center}
+%     Then, \textbf{Aggregated Double Wedges}: a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
+%     $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
+%   \end{center}    
+%   \begin{figure}
+%     \centering
+%     \resizebox{0.6\textwidth}{!}{\inputtikz{bipartite_adwg_a}}
+%   \end{figure}
+% \end{frame}
+
+% \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+%   \begin{center}
+%     \textbf{Finally}, \textbf{Aggregated Bitriangles}: is a pair  $\langle \ell, \hat{U}_l\rangle$, 
+%     where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu} \in \mathsf{BT}$.
+%   \end{center}    
+%   \begin{figure}
+%     \centering
+%     \resizebox{0.6\textwidth}{!}{\inputtikz{bipartite_abt_a}}
+%   \end{figure}
+% \end{frame}
 
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
@@ -85,39 +114,39 @@
   \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-  \begin{center}
-    \large Lets see how the Actors' Filter solve this
-  \end{center} 
-  \begin{center}
-  \resizebox{1\textwidth}{!}{  
-  \begin{algorithm}[H]
-    \SetKwInOut{P}{Filter Parameter}
-    \SetKwInOut{FS}{Filter State}
-    \SetKwInOut{IC}{Input Channels}
-    \SetKwInOut{OC}{Output Channels}
-    \SetKwFunction{actora}{actor1}
-    \SetKwFunction{actorb}{actor2}
-    \SetKwFunction{actorc}{actor3}
-    \SetKwFunction{actord}{actor4}
-    \SetKwFunction{filter}{filter}
-    \SetKwProg{df}{def}{:}{end}
-    \SetAlgorithmName{}{fil}{}
-    \SetAlgoRefName{[A4]}
-    \P{$l \in L$}
-    \FS{$\st = \aw + \mathcal{P}(\dw) + \mathcal{P}(\at)$}
-    \IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
-    \OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
-    \df{\filter{}}{
-          $\actora()$\\
-          $\actorb()$\\
-          $\actorc()$\\
-          $\actord()$\\
-    }
-  \end{algorithm}  
-  }  
-\end{center} 
-\end{frame}
+% \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+%   \begin{center}
+%     \large Lets see how the Actors' Filter solve this
+%   \end{center} 
+%   \begin{center}
+%   \resizebox{1\textwidth}{!}{  
+%   \begin{algorithm}[H]
+%     \SetKwInOut{P}{Filter Parameter}
+%     \SetKwInOut{FS}{Filter State}
+%     \SetKwInOut{IC}{Input Channels}
+%     \SetKwInOut{OC}{Output Channels}
+%     \SetKwFunction{actora}{actor1}
+%     \SetKwFunction{actorb}{actor2}
+%     \SetKwFunction{actorc}{actor3}
+%     \SetKwFunction{actord}{actor4}
+%     \SetKwFunction{filter}{filter}
+%     \SetKwProg{df}{def}{:}{end}
+%     \SetAlgorithmName{}{fil}{}
+%     \SetAlgoRefName{[A4]}
+%     \P{$l \in L$}
+%     \FS{$\st = \aw + \mathcal{P}(\dw) + \mathcal{P}(\at)$}
+%     \IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
+%     \OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
+%     \df{\filter{}}{
+%           $\actora()$\\
+%           $\actorb()$\\
+%           $\actorc()$\\
+%           $\actord()$\\
+%     }
+%   \end{algorithm}  
+%   }  
+% \end{center} 
+% \end{frame}
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
@@ -125,7 +154,7 @@
   \end{center}
   \begin{tikzpicture}[overlay, remember picture]
     \node[xshift=-4cm,yshift=-5cm] at (current page.north east) {
-      \resizebox{5cm}{2cm}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_b}\inputtikz{bipartite_awg_c}}
+      \resizebox{5cm}{2cm}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_c}}
     };
   \end{tikzpicture}
   \resizebox{!}{0.3\textheight}{  
@@ -237,8 +266,13 @@
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
-    \underline{\textbf{\texttt{actor4}: Process Query to Incrementally retrieve Bitriangles}}
+    \underline{\textbf{\texttt{actor4}: Process Query to incrementally enumerate Bitriangles}}
   \end{center}
+  \begin{tikzpicture}[overlay, remember picture, show background rectangle]
+    \node[xshift=-3cm,yshift=-5.5cm,label=above:{If $\mathcal{P}(U+L) = \{3\}$ then},label=below:{will be enumerated}] at (current page.north east) {
+      \resizebox{3cm}{2cm}{\inputtikz{bipartite_bt_a}}
+    };
+  \end{tikzpicture}
   \resizebox{!}{0.4\textheight}{  
     \begin{algorithm}[H]
       \SetKwFunction{butV}{buildBtVertex}
