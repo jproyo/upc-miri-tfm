@@ -26,7 +26,7 @@
   \large A \textbf{Bipartite Graph} is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.
   \end{center}     
   \begin{center}
-    \small \emph{w.l.g.} $U \subseteq \mathbb{N}, L \subseteq \mathbb{N}$ and $(U, <)$, $(L, <)$ are \emph{strict total orders}
+    \small \emph{w.l.o.g.} $U \subseteq \mathbb{N}, L \subseteq \mathbb{N}$ and $(U, <)$, $(L, <)$ are \emph{strict total orders}
   \end{center}            
   \begin{figure}
     \centering
@@ -274,7 +274,17 @@
     \underline{\textbf{\texttt{actor3}: Aggregated Bitriangles}}
   \end{center}
   \begin{tikzpicture}[overlay, remember picture]
-    \node[xshift=-3.5cm,yshift=-6.5cm] at (current page.north east) {
+    \node[xshift=-5cm,yshift=-2.8cm] at (current page.north east) {
+      \resizebox{1.5cm}{1.5cm}{\inputtikz{awg_b}}
+    };
+    \node[xshift=-3.8cm,yshift=-2.8cm,draw,fill=white,circle,text centered,minimum height=0.05mm,minimum width=0.05mm] at (current page.north east) {
+      \tiny\color{red}\textbf{+}
+    };
+    \node[xshift=-1.5cm,yshift=-2.8cm] at (current page.north east) {
+      \resizebox{3cm}{2cm}{\inputtikz{bipartite_adwg_a}}
+    };
+    \tikz[baseline] \draw [<-, line width=7pt,>=latex,red] (-9cm,0cm) -- ++(0,50pt);
+    \node[xshift=-3cm,yshift=-7cm] at (current page.north east) {
       \resizebox{5cm}{3cm}{\inputtikz{bipartite_abt_a}}
     };
   \end{tikzpicture}

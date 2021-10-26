@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+	\node[shape=circle,draw=blue,fill=red,label=above:$1$] (1) {};
+	\node[shape=circle,draw=blue,fill=yellow,label=above:$5$] (5) [right of=1] {};
+	\node[shape=circle,draw=green,fill=green,label=below:$b$] (b) [below of=5] {};
+
+	\draw (1) [line width=0.5mm, dotted, color=blue] -- (b);
+	\draw (5) [line width=0.5mm, dotted, color=blue] -- (b);
+\end{tikzpicture}
+
+ 
