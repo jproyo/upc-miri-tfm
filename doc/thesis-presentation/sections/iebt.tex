@@ -1,4 +1,27 @@
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG (IEBT)}
+  \begin{center}
+  \large The algorithm consists in \textbf{2 (two) main phases} 
+  \end{center}  
+  \vspace{2em}   
+  \begin{itemize}
+    \setlength\itemsep{2em}
+    \item \textbf{First Phase}: A \underline{\color{red}Graph Index} structure is created
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG (IEBT)}
+  \begin{center}
+  \large The algorithm consists in \textbf{2 (two) main phases} 
+  \end{center}     
+  \vspace{2em}   
+  \begin{itemize}
+    \setlength\itemsep{2em}
+    \item {\color{light}\textbf{First Phase}: A Graph Index structure is created}
+    \item \textbf{Second Phase}: Local \underline{\color{red}Queries} can be submitted to the index
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG (IEBT)}
   \begin{center}
   \large A \textbf{Bipartite Graph} is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.
   \end{center}     
@@ -11,7 +34,7 @@
   \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG (IEBT)}
   \begin{center}
   Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
   The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textbf{Bitriangle} in $G$. 
@@ -22,7 +45,7 @@
   \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+\begin{frame}[fragile]{IEBT: First Phase - Graph Index Structures}
   \begin{center}
     \large We \textbf{introduce} a conceptual framework based on abstract \textbf{compacted structures} to specify the algorithm.
   \end{center}    
@@ -36,7 +59,7 @@
    \end{table}
 \end{frame}
 
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+\begin{frame}[fragile]{IEBT: First Phase - Graph Index Structures}
   \begin{center}
     \large We \textbf{introduce} a conceptual framework based on abstract \textbf{compacted structures} to specify the algorithm.
   \end{center}    
@@ -51,7 +74,7 @@
    \end{table}
 \end{frame}
 
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+\begin{frame}[fragile]{IEBT: First Phase - Graph Index Structures}
   \begin{center}
     \large We \textbf{introduce} a conceptual framework based on abstract \textbf{compacted structures} to specify the algorithm.
   \end{center}    
@@ -65,6 +88,29 @@
     \end{tabular}
     }
    \end{table}
+\end{frame}
+
+\begin{frame}[fragile]{IEBT: Second Phase - Queries}
+  \begin{center}
+    \large We \textbf{define} a \underline{\color{red}Query Operator} for extracting bitriangles from the index which can be:
+  \end{center}  
+  \vspace{2em}
+  \begin{itemize}
+    \setlength\itemsep{2em}
+    \item \textbf{$\mathcal{P}(U+L)$}: For extracting BT \underline{\color{blue}according to vertices} from $U$ or $L$
+  \end{itemize}  
+\end{frame}
+
+\begin{frame}[fragile]{IEBT: Second Phase - Queries}
+  \begin{center}
+    \large We \textbf{define} a \underline{\color{red}Query Operator} for extracting bitriangles from the index which can be:
+  \end{center}  
+  \vspace{2em}
+  \begin{itemize}
+    \setlength\itemsep{2em}
+    \item \textbf{$\mathcal{P}(U+L)$}: For extracting BT \underline{\color{blue}according to vertices} from $U$ or $L$
+    \item \textbf{$\mathcal{P}(E)$}: For extracting BT \underline{\color{blue}according to edges} from $E$
+  \end{itemize}  
 \end{frame}
 
 % \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
