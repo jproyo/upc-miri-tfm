@@ -1,32 +1,3 @@
-%\begin{frame}[fragile]{Empirical Evaluation}
-%   \begin{block}{Research Questions}
-%     \begin{itemize}
-%         \item Does \acrshort{dpbt} generate \textbf{incremental results} regardless of the size of the graph?
-%     \end{itemize}        
-%   \end{block}
-% \end{frame}
-
-% \begin{frame}[fragile]{Empirical Evaluation}
-%   \begin{block}{Research Questions}
-%     \begin{itemize}
-%       \setlength\itemsep{2em}
-%       \item Does \acrshort{dpbt} generate \textbf{incremental results} regardless of the size of the graph?
-%       \item Does the type of query \textbf{$Q$ impact} on the execution of \acrshort{dpbt}?
-%     \end{itemize}        
-%   \end{block}
-% \end{frame}
-
-% \begin{frame}[fragile]{Empirical Evaluation}
-%   \begin{block}{Research Questions}
-%     \begin{itemize}
-%       \setlength\itemsep{2em}
-%         \item Does \acrshort{dpbt} generate \textbf{incremental results} regardless of the size of the graph?
-%         \item Does the type of query \textbf{$Q$ impact} on the execution of \acrshort{dpbt}?
-%         \item How effectively \acrshort{dpbt} implements a \textbf{\emph{pay-as-you-go} model}?
-%     \end{itemize}        
-%   \end{block}
-% \end{frame}
-
 \begin{frame}[fragile]{Research Questions}
     \begin{itemize}
       \setlength\itemsep{2em}
@@ -122,24 +93,24 @@
      \textbf{Network} & \textbf{Scenario ID} & \textbf{\acrshort{dt} Metric}  & \textbf{\acrshort{dk} Metric}\\
      \hline
      \multirow{3}{*}{Moreno Crime}
-      & \cellcolor{yellow!35}VU-H & \cellcolor{yellow!35}$6.05 \times 10^2$ & $0.00$\\
-      & \cellcolor{blue!25}VL-H & \cellcolor{blue!25}$7.95 \times 10^3$ & $0.00$\\
-      & \cellcolor{blue!25}E-H & \cellcolor{blue!25}$9.85 \times 10^3$ & $0.00$\\
+      & VU-H & $6.05 \times 10^2$ & $0.00$\\
+      & VL-H & $7.95 \times 10^3$ & $0.00$\\
+      & E-H & $9.85 \times 10^3$ & $0.00$\\
       \hline
       \multirow{3}{*}{Dbpedia}
-      & \cellcolor{yellow!35}VU-H & \cellcolor{yellow!35}$3.32 \times 10^{13}$ & $1.97 \times 10^5$\\
-      & \cellcolor{blue!25}VL-H &  \cellcolor{blue!25}$1.81 \times 10^{14}$ & $2.34 \times 10^4$\\
-      & \cellcolor{blue!25}E-H &  \cellcolor{blue!25}$1.75 \times 10^{13}$ & $3.28 \times 10^5$\\
+      & VU-H & $3.32 \times 10^{13}$ & $1.97 \times 10^5$\\
+      & VL-H &  $1.81 \times 10^{14}$ & $2.34 \times 10^4$\\
+      & E-H &  $1.75 \times 10^{13}$ & $3.28 \times 10^5$\\
       \hline
       \multirow{3}{*}{Opsahl UC Forum}
-      & \cellcolor{blue!25}VU-H &  \cellcolor{blue!25}$1.99 \times 10^{12}$ & $1.27 \times 10^5$\\
-      & \cellcolor{blue!25}VL-H &  \cellcolor{blue!25}$6.44 \times 10^{11}$ & $1.90 \times 10^5$\\
-      & \cellcolor{yellow!35}E-H &  \cellcolor{yellow!35}$1.02 \times 10^{11}$ & $2.93 \times 10^5$\\
+      & VU-H &  $1.99 \times 10^{12}$ & $1.27 \times 10^5$\\
+      & VL-H &  $6.44 \times 10^{11}$ & $1.90 \times 10^5$\\
+      & E-H &  $1.02 \times 10^{11}$ & $2.93 \times 10^5$\\
       \hline
       \multirow{3}{*}{Wang Amazon}
-      & \cellcolor{yellow!35}VU-H & \cellcolor{yellow!35}$1.50 \times 10^7$ & $43.6$\\
-      & \cellcolor{blue!25}VL-H & \cellcolor{blue!25}$2.24 \times 10^7$ & $63.1$\\
-      & \cellcolor{blue!25}E-H & \cellcolor{blue!25}$8.06 \times 10^6$  & $42.3$\\
+      & VU-H & $1.50 \times 10^7$ & $43.6$\\
+      & VL-H & $2.24 \times 10^7$ & $63.1$\\
+      & E-H & $8.06 \times 10^6$  & $42.3$\\
       \hline
     \end{tabular}
     }
@@ -166,27 +137,6 @@
    \end{figure}
   \end{frame}
 
-  % \begin{frame}[fragile]{E1: Continuous Behavior: \acrshort{dt} and \acrshort{dk}}
-  %   \begin{figure}[!htp]
-  %     \centering
-  %     \begin{subfigure}[t]{0.45\textwidth}
-  %     \includegraphics[width=1\linewidth, height=0.45\textheight]{experiments/diepfy/dbpedia_radial.png}
-  %     \end{subfigure}\hfill
-  %     \begin{subfigure}[t]{0.45\textwidth}
-  %     \includegraphics[width=1\linewidth, height=0.45\textheight]{experiments/diepfy/moreno_crime_radial.png}
-  %     \end{subfigure}
-  %     \vspace{0.5cm}
-  %     %
-  %     \begin{subfigure}[t]{0.45\textwidth}
-  %     \includegraphics[width=1\linewidth, height=0.45\textheight]{experiments/diepfy/opsahl-ucforum_radial.png}
-  %     \end{subfigure}\hfill
-  %     \begin{subfigure}[t]{0.45\textwidth}
-  %       \includegraphics[width=1\linewidth, height=0.45\textheight]{experiments/diepfy/wang-amazon_radial.png}
-  %     \end{subfigure}
-  %   \end{figure}
-  %   \end{frame}
-
-
 \begin{frame}[fragile]{E2: Average Excution Time}
   \begin{table}[H]
     \centering
@@ -197,22 +147,22 @@
      \hline
      \multirow{6}{*}{Moreno Crime} & VL-L & $656$ ms & $13.0$ ms \\
      & VL-M & $669$ ms & $18.7$ ms \\ 
-     & \cellcolor{blue!25}VL-H & \cellcolor{blue!25}$723$ ms & \cellcolor{blue!25}$72.2$ ms \\ 
+     & VL-H & $723$ ms & $72.2$ ms \\ 
      & E-L & $694$ ms & $4.7$ ms \\ 
      & E-M & $655$ ms & $14.9$ ms \\ 
-     & \cellcolor{blue!25}E-H & \cellcolor{blue!25}$655$ ms & \cellcolor{blue!25}$21.1$ ms \\ 
+     & E-H & $655$ ms & $21.1$ ms \\ 
      \hline
      \multirow{6}{*}{Opsahl UC Forum} & VL-L & $5.6$ s & $940$ ms \\
      & VL-M & $18.1$ s & $5.03$ s \\ 
-     & \cellcolor{blue!25}VL-H & \cellcolor{blue!25}$70.8$ s & \cellcolor{blue!25}$2.03$ s \\ 
-     & \cellcolor{yellow!45}E-L & \cellcolor{yellow!45}$41.9$ s & \cellcolor{yellow!45}$2.87$ s \\ 
+     & VL-H & $70.8$ s & $2.03$ s \\ 
+     & E-L & $41.9$ s & $2.87$ s \\ 
      & E-M & $26.7$ s & $5.63$ s \\ 
      & E-H & $26.2$ s & $4.05$ s \\
     \hline
     \multirow{6}{*}{Wang Amazon} & VL-L & $6.5$ s & $1.05$ s \\
     & VL-M & $5.91$ s & $994$ ms \\ 
-    & \cellcolor{blue!25}VL-H & \cellcolor{blue!25}$10.2$ s & \cellcolor{blue!25}$2.66$ s \\ 
-    & \cellcolor{yellow!45}E-L & \cellcolor{yellow!45}$6.4$ s & \cellcolor{yellow!45}$1.08$ s \\ 
+    & VL-H & $10.2$ s & $2.66$ s \\ 
+    & E-L & $6.4$ s & $1.08$ s \\ 
     & E-M & $5.71$ s & $863$ ms \\ 
     & E-H & $5.91$ s & $1.04$ s \\
    \hline
@@ -266,76 +216,10 @@
   \end{figure}
 \end{frame}
 
-% \begin{frame}[fragile]{E3: Performance Analysis - Memory Allocation}
-%   \begin{figure}[H]
-%     \begin{center}
-%       \includegraphics[width=0.8\textwidth] {experiments/mem/overview_2}
-%     \end{center}
-%   \end{figure}
-% \end{frame}
-
-% \begin{frame}[fragile]{E3: Performance Analysis - Memory Allocation}
-%   \begin{figure}[H]
-%     \begin{center}
-%       \includegraphics[width=0.8\textwidth] {experiments/mem/overview_3}
-%     \end{center}
-%   \end{figure}
-% \end{frame}
-
-% \begin{frame}[fragile]{E3: Performance Analysis - Memory Allocation}
-%   \begin{figure}[H]
-%     \begin{center}
-%       \includegraphics[width=0.8\textwidth] {experiments/mem/overview_4}
-%     \end{center}
-%   \end{figure}
-% \end{frame}
-
-% \begin{frame}[fragile]{Conclusions}
-%     \begin{itemize}
-%       \item \textbf{High values} of the metric \textbf{dief\@t} indicates continuous behavior.
-%     \end{itemize} 
-% \end{frame}
-
-% \begin{frame}[fragile]{Conclusions: Empirical Evaluation}
-%     \begin{itemize}
-%       \item {\color{light}\textbf{High values} of the metric \textbf{dief\@t} indicates continuous behavior.}
-%       \item \textbf{Lower values} of the metric \textbf{dief\@k} indicates continuous behavior.
-%     \end{itemize} 
-% \end{frame}
-
-% \begin{frame}[fragile]{Conclusions: Empirical Evaluation}
-%     \begin{itemize}
-%       \item {\color{light}\textbf{High values} of the metric \textbf{dief\@t} indicates continuous behavior.}
-%       \item {\color{light}\textbf{Lower values} of the metric \textbf{dief\@k} indicates continuous behavior.}
-%       \item \textbf{High values} of the metrics \textbf{\emph{Average Running Time}} and \textbf{\emph{Total Running Time}} for scenarios which enumerates more bitriangles, are suggesting an effective implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt}.
-%     \end{itemize} 
-% \end{frame}
-
-% \begin{frame}[fragile]{Conclusions: Empirical Evaluation}
-%     \begin{itemize}
-%       \item {\color{light}\textbf{High values} of the metric \textbf{dief\@t} indicates continuous behavior.}
-%       \item {\color{light}\textbf{Lower values} of the metric \textbf{dief\@k} indicates continuous behavior.}
-%       \item {\color{light}\textbf{High values} of the metrics \textbf{\emph{Average Running Time}} and \textbf{\emph{Total Running Time}} for scenarios which enumerates more bitriangles, are suggesting an effective implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt}.}
-%       \item Results captured by the \texttt{ThreadScope} tool indicating an even distribution of the threads among processors, showing \textbf{efficient use of the parallel model}.
-%     \end{itemize} 
-% \end{frame}
-
-% \begin{frame}[fragile]{Conclusions: Empirical Evaluation}
-%     \begin{itemize}
-%       \setlength\itemsep{1.5em}
-%       \item {\color{light}\textbf{High values} of the metric \textbf{dief\@t} indicates continuous behavior.}
-%       \item {\color{light}\textbf{Lower values} of the metric \textbf{dief\@k} indicates continuous behavior.}
-%       \item {\color{light}\textbf{High values} of the metrics \textbf{\emph{Average Running Time}} and \textbf{\emph{Total Running Time}} for scenarios which enumerates more bitriangles, are suggesting an effective implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt}.}
-%       \item {\color{light}Results captured by the \texttt{ThreadScope} tool indicating an even distribution of the threads among processors, showing \textbf{efficient use of the parallel model}.}
-%       \item Results gathered by the \texttt{eventlog2html} tool suggesting that \textbf{memory consumption is efficiently handled} in the \textbf{intermediate objects} that \acrshort{dpfh}.
-%     \end{itemize} 
-% \end{frame}
-
 \begin{frame}[fragile]{Empirical Evaluation: Conclusions}
   \begin{itemize}
     \setlength\itemsep{1.5em}
-    \item \textbf{High values} of \textbf{dief\@t} indicates continuous behavior.
-    \item \textbf{Lower values} of \textbf{dief\@k} indicates continuous behavior.
+    \item Results of \textbf{dief$@$t} and \textbf{dief$@$k} metrics indicates continuous behavior.
     \item \textbf{High values} of \textbf{\emph{Average Running Time}} and \textbf{\emph{Total Running Time}} are suggesting an effective implementation of a \emph{pay-as-you-go} model of \acrshort{dpbt}.
     \item Results in \texttt{ThreadScope} tool indicates an \textbf{efficient use of the parallel model}.
     \item Results in \texttt{eventlog2html} tool indicates \textbf{efficient memory consumption}.

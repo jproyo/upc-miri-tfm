@@ -1,69 +1,44 @@
-% \begin{frame}[fragile]{Motivation}
-%   \begin{center}
-%     Provide an Algorithm for Incrementally Enumerating Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-%   \end{center}    
-%   \vspace{0.5cm}
-%   \begin{center}
-%   \huge\emph{Why?}
-%   \end{center}
-% \end{frame}
-
-\begin{frame}[fragile]{Motivation}
-  % \begin{center}
-  %   Provide an Algorithm for Incrementally Enumerating Bitriangles in large Bipartite Networks using \textbf{Dynamic Pipeline Paradigm}
-  % \end{center}    
-  \begin{itemize}
-    \item \textbf{Bipartite Graphs} (BG) \underline{\color{red}models} interesting \underline{\color{red}relations} between \underline{\color{red}different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-    \begin{itemize}
-      \setlength\itemsep{2em}
-      \item {\color{light}\textbf{Bipartite Graphs} (BG) models interesting relations between different set of objects: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
-      \item \textbf{Metrics} for analyzing BG \underline{\color{red}same as Unipartite Graphs}: \emph{clustering coefficient, communities, social analysis}.
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Motivation}
-    \begin{itemize}
-      \setlength\itemsep{2em}
-      \item {\color{light}\textbf{Bipartite Graphs} (BG) models interesting relations between different set of objects: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
-      \item {\color{light}\textbf{Metrics} for analyzing BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
-      \item \textbf{Projection method} distorts properties of original BG: i.e. link prediction.
-    \end{itemize}
-\end{frame}
-
 \begin{frame}[fragile]{Motivation}
   \begin{itemize}
-    \setlength\itemsep{1.5em}
-    % \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
-    % \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
-    % \item {\color{light}\textbf{Projection method} distorts properties of original BG: i.e. link prediction.}
     \item \textbf{Bitriangles} as the \underline{\color{red}small unit of cohesion} in BG. \textbf{Bitriangles counting} to compute \underline{\color{red}BG metrics} -- \emph{clustering coefficient, communities, social analysis} --.
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Motivation}
   \begin{itemize}
-    \setlength\itemsep{1.5em}
-    % \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
-    % \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
-    % \item {\color{light}\textbf{Projection method} distorts properties of original BG: i.e. link prediction.}
+    \setlength\itemsep{2em}
     \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG. \textbf{Bitriangles counting} to compute BG metrics -- \emph{clustering coefficient, communities, social analysis} --.}
-    \item Counting is \textbf{not enough}. Knowing \underline{\color{red}structural components of bitriangles} is needed: i.e.: \emph{what gene is involve in two or more diseases in diseasome networks}.
+    \item \textbf{Bipartite Graphs} (BG) \underline{\color{red}models} interesting \underline{\color{red}relations} between \underline{\color{red}different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Motivation}
-    \begin{itemize}
-      \setlength\itemsep{1.5em}
-      % \item {\color{light}Bipartite Graphs (BG) \textbf{models} interesting relations between \textbf{different set of objects}: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
-      % \item {\color{light}\textbf{Metrics} for \textbf{analyzing} BG same as Unipartite Graphs: \emph{clustering coefficient, communities, social analysis}.}
-      % \item {\color{light}\textbf{Projection method} distorts properties of original BG: i.e. link prediction.}
-      \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG. \textbf{Bitriangles counting} to compute BG metrics -- \emph{clustering coefficient, communities, social analysis} --.}
-      \item {\color{light}Counting is \textbf{not enough}. Knowing structural components of bitriangles is needed: i.e.: \emph{what gene is involve in two or more diseases in diseasome networks}.}
-      \item \textbf{\emph{"All-or-Nothing" vs. "Pay-as-you-go"} model}. 
-    \end{itemize}
+  \begin{itemize}
+    \setlength\itemsep{2em}
+    \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG. \textbf{Bitriangles counting} to compute BG metrics -- \emph{clustering coefficient, communities, social analysis} --.}
+    \item {\color{light}\textbf{Bipartite Graphs} (BG) models interesting relations between different set of objects: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+    \item \underline{\color{red}Counting} is \textbf{not enough}. Knowing \underline{\color{red}structural components of bitriangles} is needed: i.e.: \emph{what gene is involve in two or more diseases in diseasome networks}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Motivation}
+  \begin{itemize}
+    \setlength\itemsep{2em}
+    \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG. \textbf{Bitriangles counting} to compute BG metrics -- \emph{clustering coefficient, communities, social analysis} --.}
+    \item {\color{light}\textbf{Bipartite Graphs} (BG) models interesting relations between different set of objects: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+    \item {\color{light}Counting is \textbf{not enough}. Knowing structural components of bitriangles is needed: i.e.: \emph{what gene is involve in two or more diseases in diseasome networks}.}
+    \item "All-or-Nothing" vs. \underline{\color{red}"Pay-as-you-go"} model. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Motivation}
+  \begin{itemize}
+    \setlength\itemsep{1.5em}
+    \item {\color{light}\textbf{Bitriangles} as the small unit of cohesion in BG. \textbf{Bitriangles counting} to compute BG metrics -- \emph{clustering coefficient, communities, social analysis} --.}
+    \item {\color{light}\textbf{Bipartite Graphs} (BG) models interesting relations between different set of objects: i.e. \emph{diseasome bipartite networks, drugs-side effects networks, subscribers-TV show network, etc.}}
+    \item {\color{light}Counting is \textbf{not enough}. Knowing structural components of bitriangles is needed: i.e.: \emph{what gene is involve in two or more diseases in diseasome networks}.}
+    \item {\color{light}"All-or-Nothing" vs. "Pay-as-you-go" model.}
+    \item \textbf{\emph{Dynamic Pipeline Paradigm}}
+\end{itemize}
 \end{frame}
 

@@ -1,4 +1,23 @@
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG (IEBT)}
+  \begin{figure}
+    \centering
+    \resizebox{0.6\textwidth}{!}{\inputtikz{bipartite}}
+  \end{figure}
+
+  \begin{tikzpicture}[overlay, remember picture]
+    \tikz[baseline] \draw [<-, line width=6.5pt,>=latex,red] (-5cm,0cm) -- ++(0,40pt);
+    \node[xshift=-6cm,yshift=-5cm] at (current page.north east) {
+      {\fontsize{15pt}{14pt}\textbf{IEBT}}
+    };
+  \end{tikzpicture}
+
+  \begin{figure}
+    \centering
+    \resizebox{0.6\textwidth}{!}{\inputtikz{bitriangle}}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG (IEBT)}
   \begin{center}
   \large The algorithm consists in \textbf{2 (two) main phases} 
   \end{center}  
@@ -19,30 +38,6 @@
     \item {\color{light}\textbf{First Phase}: A Graph Index structure is created}
     \item \textbf{Second Phase}: Local \underline{\color{red}Queries} can be submitted to the index
   \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG (IEBT)}
-  \begin{center}
-  \large A \textbf{Bipartite Graph} is an undirected graph $G=(V,E)$  such that $V=(U\cup L)$, $U\cap L=\emptyset$ and $E\subseteq U\times L$.
-  \end{center}     
-  \begin{center}
-    \small \emph{w.l.o.g.} $U \subseteq \mathbb{N}, L \subseteq \mathbb{N}$ and $(U, <)$, $(L, <)$ are \emph{strict total orders}
-  \end{center}            
-  \begin{figure}
-    \centering
-    \resizebox{0.7\textwidth}{!}{\inputtikz{bipartite}}
-  \end{figure}
-\end{frame}
-
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG (IEBT)}
-  \begin{center}
-  Let the triples $\mu=(u_1, u_2, u_3)$ and $\ell=(l_1, l_2,l_3)$ on $U$ and $L$, respectively, i.e.  $\{u_1, u_2, u_3\} \subseteq U$, $\{l_1, l_2,l_3\} \subseteq L$. 
-  The 6-cycle $(u_1,l_1,u_2,l_3,u_3,l_2,u_1)$  is a \textbf{Bitriangle} in $G$. 
-  \end{center}      
-  \begin{figure}
-    \centering
-    \resizebox{0.7\textwidth}{!}{\inputtikz{bitriangle}}
-  \end{figure}
 \end{frame}
 
 \begin{frame}[fragile]{IEBT: First Phase - Graph Index Structures}
@@ -113,39 +108,6 @@
   \end{itemize}  
 \end{frame}
 
-% \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-%   \begin{center}
-%     We build first \textbf{Aggregated Wedges}: a pair $\la l, W_l \ra$, where $l \in L$, $W_l \subseteq U$ and for all $u \in W_l$, the edge  $(u,l)\in E$
-%   \end{center}    
-%   \begin{figure}
-%     \centering
-%     \resizebox{0.8\textwidth}{!}{\inputtikz{bipartite_awg_a}\inputtikz{bipartite_awg_b}\inputtikz{bipartite_awg_c}}
-%   \end{figure}
-% \end{frame}
-
-% \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-%   \begin{center}
-%     Then, \textbf{Aggregated Double Wedges}: a pair  $\la (l_1, l_2), U_l \ra$, where $\{l_1,l_2\}\subseteq L$ and  for all $u_i \in I, u_j \in J$ and $u_k \in K$, $\{(u_i, l_1), (u_j, l_1), (u_j, l_2), (u_k, l_2)\} \in E$.
-%     $I \subseteq U, J \subseteq U$ and $K \subseteq U$, where $I, J$ and $K$ are disjoint sets. 
-%   \end{center}    
-%   \begin{figure}
-%     \centering
-%     \resizebox{0.6\textwidth}{!}{\inputtikz{bipartite_adwg_a}}
-%   \end{figure}
-% \end{frame}
-
-% \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-%   \begin{center}
-%     \textbf{Finally}, \textbf{Aggregated Bitriangles}: is a pair  $\langle \ell, \hat{U}_l\rangle$, 
-%     where $\ell=(l_1, l_2, l_3)$ is a triple on $L$, $l_1 < l_2 < l_3$ and for all $\la I, J, K\ra$ and for all $\mu=(u_i, u_j, u_k)$ such that $u_i \in I, u_j \in J, u_k \in K$, $BT_{\ell}^{\mu} \in \mathsf{BT}$.
-%   \end{center}    
-%   \begin{figure}
-%     \centering
-%     \resizebox{0.6\textwidth}{!}{\inputtikz{bipartite_abt_a}}
-%   \end{figure}
-% \end{frame}
-
-
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
     \textbf{Dynamic Pipeline} Configuration for Enumerating BT in BG
@@ -159,40 +121,6 @@
     \resizebox{0.7\textwidth}{!}{\inputtikz{btDP_actor1}}
   \end{figure}
 \end{frame}
-
-% \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-%   \begin{center}
-%     \large Lets see how the Actors' Filter solve this
-%   \end{center} 
-%   \begin{center}
-%   \resizebox{1\textwidth}{!}{  
-%   \begin{algorithm}[H]
-%     \SetKwInOut{P}{Filter Parameter}
-%     \SetKwInOut{FS}{Filter State}
-%     \SetKwInOut{IC}{Input Channels}
-%     \SetKwInOut{OC}{Output Channels}
-%     \SetKwFunction{actora}{actor1}
-%     \SetKwFunction{actorb}{actor2}
-%     \SetKwFunction{actorc}{actor3}
-%     \SetKwFunction{actord}{actor4}
-%     \SetKwFunction{filter}{filter}
-%     \SetKwProg{df}{def}{:}{end}
-%     \SetAlgorithmName{}{fil}{}
-%     \SetAlgoRefName{[A4]}
-%     \P{$l \in L$}
-%     \FS{$\st = \aw + \mathcal{P}(\dw) + \mathcal{P}(\at)$}
-%     \IC{$ IC = \la IC_E, IC_{W_l1}, IC_{W_l2}, IC_Q, IC_{BT} \ra $}
-%     \OC{$ OC = \la OC_E, OC_{W_l1}, OC_{W_l2}, OC_Q, OC_{BT} \ra $}
-%     \df{\filter{}}{
-%           $\actora()$\\
-%           $\actorb()$\\
-%           $\actorc()$\\
-%           $\actord()$\\
-%     }
-%   \end{algorithm}  
-%   }  
-% \end{center} 
-% \end{frame}
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
@@ -283,6 +211,53 @@
     \node[xshift=-1.5cm,yshift=-2.8cm] at (current page.north east) {
       \resizebox{3cm}{2cm}{\inputtikz{bipartite_adwg_a}}
     };
+  \end{tikzpicture}
+  \resizebox{!}{0.4\textheight}{  
+    \begin{algorithm}[H]
+      \SetKwFunction{actc}{actor3}
+      \SetKwProg{df}{def}{:}{end}
+      \BlankLine
+      \df{\actc{}}{
+        $\dwi \leftarrow \gs$\\
+        $\ati \leftarrow \emptyset$\\
+        \ForAll{$\la l', W_l \ra \in IC_{W_l2}$}{
+          \color{red!80}
+          $\p(\la l', W_l \ra, OC_{W_l2})$\\ 
+          \ForEach{$\la (l_l, l_u), \la I, J, K \ra \ra \in \dwi, l_l < l' \land l_u > l'$}{
+            \color{blue!80}
+            $I' \leftarrow I \cup J$\\
+            $K' \leftarrow K \cup J$\\
+            \If{$W_l \cap I' \neq \emptyset \land W_l \cap K' \neq \emptyset$}{
+                  $I' \leftarrow I' \cap W_l$\\
+                  $K' \leftarrow K' \cap W_l$\\
+                  $\hat{U}_l  \leftarrow \la I', J, K' \ra$\\
+                  \color{red!80}
+                  $\ati \leftarrow \ati \cup \big\{\la (l_l, l', l_u), \hat{U}_l \ra\big\}$
+                  \color{black}
+            }
+          }
+        }      
+        \color{red!80}
+        $\us(\ati)$\\
+      }
+    \end{algorithm}
+  }  
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
+  \begin{center}
+    \underline{\textbf{\texttt{actor3}: Aggregated Bitriangles}}
+  \end{center}
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[xshift=-5cm,yshift=-2.8cm] at (current page.north east) {
+      \resizebox{1.5cm}{1.5cm}{\inputtikz{awg_b}}
+    };
+    \node[xshift=-3.8cm,yshift=-2.8cm,draw,fill=white,circle,text centered,minimum height=0.05mm,minimum width=0.05mm] at (current page.north east) {
+      \tiny\color{red}\textbf{+}
+    };
+    \node[xshift=-1.5cm,yshift=-2.8cm] at (current page.north east) {
+      \resizebox{3cm}{2cm}{\inputtikz{bipartite_adwg_a}}
+    };
     \tikz[baseline] \draw [<-, line width=7pt,>=latex,red] (-9cm,0cm) -- ++(0,50pt);
     \node[xshift=-3cm,yshift=-7cm] at (current page.north east) {
       \resizebox{5cm}{3cm}{\inputtikz{bipartite_abt_a}}
@@ -319,6 +294,7 @@
     \end{algorithm}
   }  
 \end{frame}
+
 
 \begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
   \begin{center}
@@ -364,13 +340,6 @@
       }
     \end{algorithm}
   }  
-\end{frame}
-
-
-\begin{frame}[fragile]{Algorithm for Incrementally Enumerating BT in BG}
-  \begin{block}{Correctness of the Algorithm}
-    We need to prove that the algorithm \textbf{can enumerate all bitriangles} in the graph and also that there are \textbf{no duplicates in the enumeration}.
-  \end{block}
 \end{frame}
 
 
