@@ -3,8 +3,6 @@ cabal-version: 1.12
 -- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: b631ff80c7ec4f10b125ad288b1958525d99f467fbd9a18ababe763da1e8d839
 
 name:           connected-comp
 version:        0.1.0.0
@@ -27,7 +25,10 @@ library
       ConnComp.Internal
       Data.ConnComp
       Dynamic.Pipeline
+      Graph.ConnComp
+      Graph.ConnectedComp
       Utils.Trace
+      Paths_connected_comp
   hs-source-dirs:
       src
   default-extensions:
@@ -68,6 +69,7 @@ library
     , base >=4.7 && <5
     , bytestring
     , containers
+    , dynamic-pipeline
     , exceptions
     , relude >=1.0.0.0
     , time
@@ -122,6 +124,7 @@ executable benchmark
     , containers
     , criterion
     , directory
+    , dynamic-pipeline
     , exceptions
     , relude >=1.0.0.0
     , time
@@ -174,6 +177,7 @@ executable compare-graph
     , bytestring
     , connected-comp
     , containers
+    , dynamic-pipeline
     , exceptions
     , relude >=1.0.0.0
     , time
@@ -226,6 +230,7 @@ executable conn-comp
     , bytestring
     , connected-comp
     , containers
+    , dynamic-pipeline
     , exceptions
     , relude >=1.0.0.0
     , time
@@ -284,6 +289,7 @@ test-suite conn-comp-tests
     , bytestring
     , connected-comp
     , containers
+    , dynamic-pipeline
     , exceptions
     , hspec ==2.*
     , relude >=1.0.0.0

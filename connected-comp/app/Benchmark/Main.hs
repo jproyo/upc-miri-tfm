@@ -24,9 +24,9 @@ runBench = do
        , bench "web-Google" $ whnfIO (calculate "data/web-Google.txt")
        ],
        bgroup "connectedComponents - DP in Haskell"
-       [ bench "ca-AstroPh" $ whnfIO (runDPConnectedComp "data/ca-AstroPh.txt")
-       , bench "email-Enron" $ whnfIO (runDPConnectedComp "data/email-Enron.txt")
-       , bench "web-Google" $ whnfIO (runDPConnectedComp "data/web-Google.txt")
+       [ bench "ca-AstroPh" $ whnfIO (program "data/ca-AstroPh.txt")
+       , bench "email-Enron" $ whnfIO (program "data/email-Enron.txt")
+       , bench "web-Google" $ whnfIO (program "data/web-Google.txt")
        ]
     ]
 

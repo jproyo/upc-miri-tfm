@@ -1,11 +1,13 @@
 module ConnComp
-  ( module ConnComp.Internal
+  ( module Graph.ConnectedComp
   , module ConnComp.Base
-  , module Data.ConnComp
+  --   module ConnComp.Internal
+  -- , module Data.ConnComp
   ) where
 
-import           ConnComp.Internal
+-- import           ConnComp.Internal
+-- import           Data.ConnComp
 import           ConnComp.Base
-import           Data.ConnComp
+import           Graph.ConnectedComp
 
 

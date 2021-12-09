@@ -3,10 +3,22 @@ cradle:
     - path: "./src"
       component: "connected-comp:lib"
 
-    - path: "./app/Main.hs"
+    - path: "./app/Benchmark/Main.hs"
+      component: "connected-comp:exe:benchmark"
+
+    - path: "./app/Benchmark/Paths_connected_comp.hs"
+      component: "connected-comp:exe:benchmark"
+
+    - path: "./app/Compare/Main.hs"
+      component: "connected-comp:exe:compare-graph"
+
+    - path: "./app/Compare/Paths_connected_comp.hs"
+      component: "connected-comp:exe:compare-graph"
+
+    - path: "./app/DP/Main.hs"
       component: "connected-comp:exe:conn-comp"
 
-    - path: "./app/Paths_connected_comp.hs"
+    - path: "./app/DP/Paths_connected_comp.hs"
       component: "connected-comp:exe:conn-comp"
 
     - path: "./test"

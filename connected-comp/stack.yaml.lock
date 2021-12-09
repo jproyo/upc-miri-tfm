@@ -10,7 +10,21 @@ packages:
       size: 4282
       sha256: ead687d39d06c841de36fc214402ad4389e8837284485cfe52d975f51b274e81
   original:
-    hackage: relude-1.0.0.1@sha256:35bcdaf14018e79f11e712b0e2314c1aac79976f28f4adc179985457493557d5,11569
+    hackage: relude-1.0.0.1
+- completed:
+    hackage: dynamic-pipeline-0.3.2.0@sha256:d19b147ba5cad598501c8dff3be61ccf6e6c9dcb25fe107c65fea2d3dd73b979,7690
+    pantry-tree:
+      size: 870
+      sha256: cb857bae1e7f6a3ba5a26f24d11225b2b9cf40ac0ef498ae3b8d0b080499bd55
+  original:
+    hackage: dynamic-pipeline-0.3.2.0
+- completed:
+    hackage: HList-0.5.1.0@sha256:3ecb2d10ad2b3d36ad28e2f08505f9c3d7143ca737ef13b3e64db503635966c2,7525
+    pantry-tree:
+      size: 5800
+      sha256: fe9d53555847bd16ffd46e3fb6013751c23f375a95d05b4d4c8de0bb22911e72
+  original:
+    hackage: HList-0.5.1.0
 snapshots:
 - completed:
     size: 565720
