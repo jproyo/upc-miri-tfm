@@ -39,3 +39,4 @@ bt-graph-dp/diepfy/experiments/
 *.cb2
 .*.lb
 *.synctex.gz
+*.fdb_latexmk
