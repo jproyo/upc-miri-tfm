@@ -25,3 +25,17 @@ cabal.project.local~
 bt-graph-dp/data/
 data/
 bt-graph-dp/diepfy/experiments/
+
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
+*.synctex.gz
