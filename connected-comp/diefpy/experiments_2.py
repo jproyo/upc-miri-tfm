@@ -15,7 +15,6 @@ def plot_experiments():
 def dief_t_k():
   root_path = '/Users/juan/Projects/mios/upc-miri-tfm/connected-comp/results/diefpy'
   folders = ["ca-AstroPh", "email-Enron", "web-Google"]
-  colors = ["#ECC30B","#D56062"]
   for f in folders:
     traces = diefpy.load_trace(f'{root_path}/{f}/results.csv')
     print("dief@t", f)
