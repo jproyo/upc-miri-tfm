@@ -44,7 +44,7 @@ One of those channels is carrying the edges -- \texttt{Edge} data type -- and th
 
 \subsection{Implementation}
 In this section, we describe the implementation details of each architectural layer: \acrshort{dsl}, \acrshort{idl} and \acrshort{rs}.
-As we have explained in \autoref{sec:contrib}, this library was published on Hackage~\cite{dynamic-pipeline}, the source code is open and can be found on this Github Repository~\cite{dynamic-pipeline-git}.
+This library was published on Hackage~\cite{dynamic-pipeline}, the source code is open and can be found on this Github Repository~\cite{dynamic-pipeline-git}.
 
 \subsubsection{DSL Grammar}\label{sub:sec:dsl-gram}
 In order to provide correctness verification at compilation level, we define a \acrfull{cfg} that generates a \acrshort{dp} \acrshort{dsl} language. 
@@ -213,7 +213,7 @@ someFunc = mkDP @DPExample ...
   \label{src:dpfh:5}
 \end{listing}
 
-\subsubsection{\acrfull{idl}}
+\subsubsection{\texorpdfstring{\acrfull{idl}}{Lg}}
 \acrshort{idl} component takes the \acrshort{dp} definition made on with \acrshort{dsl} component to interpret and generate the function definitions
 that the user needs to fill in for solving a specific problem. In \autoref{sec:dp}, we have described what the user needs to provide in a \acrshort{dp} algorithm: $\iwcc$, $\gwcc$, $\owcc$, and the $\fwcc$ with the non-empty set of Actors.
 The \acrshort{idl} generates the function definitions with an empty implementation to be completed by the user, ensuring that those functions will give "Proof" -- in terms of Curry-Howard Correspondence~\cite{curryhoward} --  of the "Propositions" defined on the \acrshort{dsl}.
@@ -381,7 +381,7 @@ In \autoref{src:dpfh:11}, $\gwcc$ contains a $\fwcc$ template and its own stage 
 \mintinline{haskell}{Generator} data type has a field with the \mintinline{haskell}{Filter} template that could be spawned by the algorithm defined by the user according to the data received from its input channels.
 \mintinline{haskell}{Generator} has also another field with the behavior of the $\gwcc$ -- a \mintinline{haskell}{Stage} --. 
 
-\subsubsection{\acrfull{rs}}
+\subsubsection{\texorpdfstring{\acrfull{rs}}{Lg}}
 The \acrshort{rs} can be divided into two parts: the mechanism to generate stages dynamically in runtime, and the execution entry point of the \acrshort{dp}.
 Regarding execution entry point, all the stages that we have seen in previous sections are the pieces needed to build an executable \mintinline{haskell}{DP st a} monad.
 This executable monad has an existential type similar to \mintinline{haskell}{ST} monad to not escape out from the context on different stages.
