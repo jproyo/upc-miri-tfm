@@ -41,4 +41,6 @@ bt-graph-dp/diepfy/experiments/
 *.synctex.gz
 *.fdb_latexmk
 *.spl
+*.bbl
+*.blg
 _minted*/

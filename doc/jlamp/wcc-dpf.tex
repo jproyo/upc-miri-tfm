@@ -1,8 +1,9 @@
 \section{Enumerating Weakly Connected Component on the DPF}\label{sec:wcc-dpf}
 
-Esta es la nueva seccion donde se presenta la implementacion y el estudio del rendimiento del $\dpwcc$ en el DPF.
+Having the \acrshort{dpfh} in place as we describe in the previous \autoref{dp-hs}, we implement the algorithm for enumerating weakly components of a graph using the \acrshort{dpfh}.
+We describe first the general algorithm in the context of \acrshort{dp}. Secondly we show the implementation details of that algorithm in the context of the \acrshort{dpfh} and finally we
+show the experiments and results conducted over that implementation.
 
-   
 \subsection{$\dpwcc$ Algorithm}
   Let us consider the problem of computing/enumerating the (weak) connected components of a graph $G$ using \acrshort{dp}. 
   A connected component of a graph is a subgraph in which any two vertices are connected by paths.  
