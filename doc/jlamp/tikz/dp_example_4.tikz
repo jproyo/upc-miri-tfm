@@ -1,0 +1,21 @@
+\begin{tikzpicture}
+	%Nodes
+	\node[indata]      (stream)                  {{\small $eof$}};
+	\node[ionode]      (in)                     [right= of stream]        {$\iwc$};
+	\node[filternode,label=below:$F_{\{1,2\}}$]  (filter1)               [right=of in] {\small $\{1,2\}$};
+	\node[filternode,label=below:$F_{\{3,6\}}$]  (filter2)               [right=of filter1] {\small $\{3,6\}$};
+	\node[gennode]   (gen)                 [right=of filter2] {$\gwc$};
+	\node[paramnode]  (param)          [above= 0.2mm of gen] {$\fwc$};
+	\node[ionode]      (out)                  [right=of gen] {$\owc$};
+	\node[outdata]     (x)     [right=of out]                    {};
+	%Lines
+	\draw[ioedge] (stream) to (in);
+	\draw[edge] (in.14) to ["{\small$(3,4)$}"] (filter1.165);
+	\draw[edge] (in.-14) to (filter1.195);
+	\draw[edge] (filter1.15) to ["{\small$(4,5)$}"] (filter2.165);
+	\draw[edge] (filter1.-15) to (filter2.195);
+	\draw[edge] (filter2.15) to  (gen.165);
+	\draw[edge] (filter2.-15) to (gen.195);
+	\draw[edge] (gen) to (out);
+	\draw[ioedge] (out) to (x);
+	\end{tikzpicture}

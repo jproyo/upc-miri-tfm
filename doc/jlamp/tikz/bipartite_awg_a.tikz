@@ -1,0 +1,12 @@
+	 \begin{tikzpicture}
+		\node[shape=circle,draw=blue,fill=blue,label=above:$1$] (1) {};
+		\node[shape=circle,draw=blue,fill=blue,label=above:$3$] (3) [right of=1] {};
+		\node[shape=circle,draw=blue,fill=blue,label=above:$7$] (7) [right of=3] {};
+		\node[shape=circle,draw=green,fill=green,label=below:a] (a) [below of=3] {};
+
+		\draw (a) [line width=0.5mm] -- (1);
+		\draw (a) [line width=0.5mm] -- (3);
+		\draw (a) [line width=0.5mm] -- (7);
+	\end{tikzpicture}
+
+ 

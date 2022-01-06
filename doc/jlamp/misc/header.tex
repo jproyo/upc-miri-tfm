@@ -1,0 +1,203 @@
+\usetikzlibrary{external,quotes,positioning,calc,arrows,decorations.markings,positioning,fit,shapes.misc,shadows}
+\tikzstyle{bag} = [align=center]
+
+\usemintedstyle{default}
+%\newminted{haskell}{frame=lines,framerule=2pt}
+%\newminted{R}{frame=lines,framerule=2pt}
+
+\graphicspath{{./images/}}
+
+\newcommand{\dw}{\mathbb{DW}}
+\newcommand{\aw}{\mathbb{AW}}
+\newcommand{\bt}{\mathbb{BT}}
+\newcommand{\bti}{BT_{(l_1, l_2,l_3)}^{(u_1, u_2, u_3)}}
+\newcommand{\at}{\mathbb{AT}}
+\newcommand{\dwi}{\mathsf{dw}}
+\newcommand{\ati}{\mathsf{at}}
+\newcommand{\btii}{\mathsf{bt}}
+\newcommand{\st}{ST}
+\newcommand{\sw}{\mathtt{spawn}}
+\newcommand{\fd}{\mathtt{killFilter}}
+\newcommand{\fid}{\mathtt{filterIsDead}}
+\newcommand{\us}{\mathtt{updateState}}
+\newcommand{\gs}{\mathtt{getState}}
+\newcommand{\p}{\mathtt{push}}
+\newcommand{\mt}{\mathtt{matchQ}}
+\newcommand{\io}{\mathtt{indexOf}}
+\newcommand{\la}{\left\langle}
+\newcommand{\ra}{\right\rangle}
+\newcommand{\DP}{\mathsf{DP}}
+\newcommand{\dpbt}{\mathsf{DP_{BT}}}
+\newcommand{\ibt}{\mathsf{Sr_{BT}}}
+\newcommand{\obt}{\mathsf{Sk_{BT}}}
+\newcommand{\fbt}{\mathsf{F_{BT}}} 
+\newcommand{\gbt}{\mathsf{G_{BT}}}
+\newcommand{\dpwcc}{\mathsf{DP_{WCC}}}
+\newcommand{\iwcc}{\mathsf{Sr}}
+\newcommand{\iwc}{\mathsf{Sr_{WCC}}}
+\newcommand{\owcc}{\mathsf{Sk}}
+\newcommand{\owc}{\mathsf{Sk_{WCC}}}
+\newcommand{\fwcc}{\mathsf{F}} 
+\newcommand{\fwc}{\mathsf{F_{WCC}}} 
+\newcommand{\gwcc}{\mathsf{G}}
+\newcommand{\gwc}{\mathsf{G_{WCC}}}
+\newcommand{\ice}{\mathsf{IC_E}}
+\newcommand{\csofv}{\mathsf{IC_{set(V)}}}
+\newcommand{\sgen}{\mathsf{S_G}}
+\newcommand{\sfilter}{\mathsf{S_F}}
+\newcommand{\sinp}{\mathsf{S_I}}
+\newcommand{\sout}{\mathsf{S_O}}
+\newcommand{\istream}{\mathsf{D}}
+\newcommand{\wccout}{\mathsf{R}}
+\newcommand{\fmem}{\mathsf{M_F}}
+\newcommand{\eof}{\mathsf{eof}}
+\newcommand{\Act}{\mathsf{actor_1}}
+\newcommand{\Actt}{\mathsf{actor_2}}
+\newcommand{\gdsl}{G_{dsl}}
+\newcommand{\aaa}{\mathsf{actor_1}}
+\newcommand{\ab}{\mathsf{actor_2}}
+\newcommand{\ac}{\mathsf{actor_3}}
+\newcommand{\ad}{\mathsf{actor_4}}
+
+
+
+
+%\renewcommand*{\listlistingname}{List of Source Code}
+
+\renewcommand\listingscaption{Source Code}
+\providecommand*{\listingautorefname}{Source Code}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\newacronym{bt}{BT}{Bitriangle}
+\newacronym{bg}{BG}{Bipartite Graph}
+\newacronym{iebt}{IEBT}{Algorithm for Incrementally Enumerating Bitriangles in Large Bipartite Network}
+\newacronym{ug}{UG}{Unipartite Graph}
+\newacronym{dp}{DPP}{Dynamic Pipeline Paradigm}
+\newacronym{dpf}{DPF}{Dynamic Pipeline Framework}
+\newacronym{wg}{WG}{Wedge}
+\newacronym{awg}{AW}{Aggregated Wedge}
+\newacronym{dwg}{DW}{Double-wedge}
+\newacronym{adwg}{ADW}{Aggregated double-wedge}
+\newacronym{abt}{ABT}{Aggregated Bitriangle}
+\newacronym{qo}{QO}{Query Operator}
+\newacronym{awgc}{AW-BT}{Aggregated wedge BT-Connector}
+\newacronym{dpfh}{DPF-Haskell}{Haskell Dynamic Pipeline Framework}
+\newacronym{ds}{DS}{Data Streaming}
+\newacronym{dap}{DAP}{Data Parallelism}
+\newacronym{pip}{PP}{Pipeline Parallelism}
+\newacronym{mr}{MR}{MapReduce}
+\newacronym{hack}{Hackage}{The Haskell Package Repository}
+\newacronym{dpbt}{DP-BT-Haskell}{$DP_{BT}$ in Haskell}
+\newacronym{dpwcc}{DP-WCC-Haskell}{$DP_{WCC}$ in Haskell}
+\newacronym{wcc}{WCC}{Weak Connected Components}
+\newacronym{cfg}{CFG}{Context-Free Grammar}
+\newacronym{hs}{Haskell}{Haskell Programming Language}
+\newacronym{dbpedia}{Dbpedia}{Dbpedia Network}
+\newacronym{stm}{STM}{Software Transactional Memory}
+\newacronym{os}{OS}{Operative System}
+\newacronym{dm}{Dm}{Diefficency Metrics}
+\newacronym{dt}{\texttt{dief$@$t}}{Diefficiency Metric \texttt{dief$@$t}}
+\newacronym{dk}{\texttt{dief$@$k}}{Diefficiency Metric \texttt{dief$@$k}}
+\newacronym{dtkp}{\texttt{diefpy}}{\texttt{diefpy} Tool}
+\newacronym{tfft}{TFFT}{Time for the first tuple}
+\newacronym{et}{ET}{Execution Time}
+\newacronym{comp}{Comp}{Completeness}
+\newacronym{tt}{T}{Throughput}
+\newacronym{snap}{SNAP}{Stanford Network Data Set Collection}
+\newacronym{ghc}{GHC}{Glasgow Haskell Compiler}
+\newacronym{dsl}{DSL}{Domain-specific Language}
+\newacronym{edsl}{EDSL}{Embedded Domain-specific Language}
+\newacronym{idl}{IDL}{Interpreter of DSL}
+\newacronym{rs}{RS}{Runtime System}
+\newacronym{mut}{MUT}{Mutator}
+\newacronym{gc}{GC}{Garbage Collection}
+\newacronym{fp}{FP}{Functional Programming}
+\newacronym{rl}{R}{R Language}
+\newacronym{go}{Go}{Go Programming Language}
+
+\glsdisablehyper
+
+\newtheorem{hyp}{Hypothesis}
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newdefinition{prob}{Problem}
+\newdefinition{defin}{Definition}
+\newdefinition{rmk}{Remark}
+\newproof{pf}{Proof}
+\newproof{pot}{Proof of Theorem \autoref{thm2}}
+\theoremstyle{plain}
+\newtheorem{example}{Example}
+\newtheorem{complexity}{Complexity}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{axiom}[theorem]{Axiom}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\fref}[1]{Figure~\ref{#1}}
+\newcommand{\tref}[1]{Table~\ref{#1}}
+\newcommand{\eref}[1]{Equation~\ref{#1}}
+\newcommand{\cref}[1]{Chapter~\ref{#1}}
+\newcommand{\sref}[1]{Section~\ref{#1}}
+\newcommand{\aref}[1]{Appendix~\ref{#1}}
+\newcommand{\lref}[1]{Source Code~\ref{#1}}
+\newcommand{\dref}[1]{Definition~\ref{#1}}
+\newcommand{\pref}[1]{Proposition~\ref{#1}}
+\newcommand{\qref}[1]{Research Questions~\ref{#1}}
+
+
+\newcommand{\inputtikz}[1]{%
+  \tikzsetnextfilename{#1}%
+  \input{tikz/#1.tikz}
+}
+
+\makeatletter
+\pgfdeclareshape{datastore}{
+  \inheritsavedanchors[from=rectangle]
+  \inheritanchorborder[from=rectangle]
+  \inheritanchor[from=rectangle]{center}
+  \inheritanchor[from=rectangle]{base}
+  \inheritanchor[from=rectangle]{north}
+  \inheritanchor[from=rectangle]{north east}
+  \inheritanchor[from=rectangle]{east}
+  \inheritanchor[from=rectangle]{south east}
+  \inheritanchor[from=rectangle]{south}
+  \inheritanchor[from=rectangle]{south west}
+  \inheritanchor[from=rectangle]{west}
+  \inheritanchor[from=rectangle]{north west}
+  \backgroundpath{
+    %  store lower right in xa/ya and upper right in xb/yb
+    \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+    \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+    \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+    \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@ya}}
+    \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@yb}}
+    \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}
+ }
+}
+\makeatother
+
+\tikzset{square arrow/.style={to path={-- ++(0,-0.5) |- (\tikztotarget)}}}
+\tikzset{source/.style={shape=rectangle, minimum size=8mm}}
+\tikzset{ionode/.style={shape=rectangle, draw=blue!50, fill=blue!5, very thick, minimum size=8mm, drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{ionode/.style={shape= rectangle, draw=blue!50, fill=blue!5, very thick, minimum size=8mm,drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{gennode/.style={shape= rectangle, draw=gray!50, fill=gray!5, very thick, minimum size=8mm, drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{filternode/.style={shape=rectangle, draw=cyan!50, fill=white, very thick, minimum size=8mm,drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{paramnode/.style={shape=rectangle, draw=cyan!50, fill=white, very thick, minimum size=8mm, 
+drop shadow={opacity=.5,shadow xshift=0pt}}}
+\tikzset{edge/.style = {->,> = latex}}
+\tikzstyle{ioedge} = [thick, decoration={markings,mark=at position
+   1 with {\arrow[semithick]{open triangle 60}}},
+   double distance=1.4pt, shorten >= 5.5pt,
+   preaction = {decorate},
+   postaction = {draw,line width=1.4pt, white,shorten >= 4.5pt}]
+\tikzset{indata/.style={draw,very thick, dotted,shape=datastore,inner sep=.3cm}}
+\tikzset{outdata/.style={draw,very thick,shape=datastore,inner sep=.3cm}}
+
+

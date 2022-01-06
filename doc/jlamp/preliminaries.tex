@@ -1,0 +1,86 @@
+\section{Preliminaries}\label{prelim}
+Before moving forward with the core of the research, we describe the fundamental concepts that support the different parts of our study. That is, stream processing in general, Dynamic Pipeline Paradigm, streaming processing in the context of \acrshort{hs} and the metrics we use in the conducted experiments.
+
+\subsection{Streaming Processing}
+%The rise of massive data processing for data mining algorithms and big data analysis could not have been possible without proper Streaming Processing techniques. 
+The development of streaming processing techniques  have potentiated areas as massive data processing for data mining algorithms, big data analysis, IoT applications, etc.  
+\acrfull{ds} has been studied using different approaches~\cite{enumeratingsg, exploiting, onthefly} allowing to process a large amount of data efficiently with an intensive level of parallelization.
+We can distinguished two different parallelization streaming computational models: \acrfull{dap} and \acrfull{pip}. 
+
+\paragraph{\acrfull{dap}} The data is split and processed in parallel and, the computations that perform some action over that subset of data do not have any dependency with other parallel computation. 
+A common model that has been proved successful over the last decade is \acrfull{mr}~\cite{mapreduce}. Different frameworks or tools like Hadoop~\cite{hadoop}, Spark~\cite{apachespark}, etc., support this computational model efficiently. 
+One of the main advantages of this kind of model is the ability to implement stateless algorithms. Data can be split and treated in different threads or processors without the need for contextual information. 
+On the other hand, when there is a need to be aware of the context, parallelization is penalized, each computational step should be fully calculated before proceeding with the others. 
+For example, this is the case of \mintinline{shell}{reduce} operation on many of the above-mentioned frameworks or tools.
+
+\paragraph{\acrfull{pip}} It break the computation in a series of sequential stage, where each stage takes the result of the previous stage as an input and downstream its results to the next. 
+Each \emph{pipeline Stage} is parallelized and, it could potentially exist one stage per data item of the stream. 
+The communication between stages takes place through some means, typically channels. One of the main advantages of this model is that the stages are non-blocking, meaning that there is no need to wait to process all data to run the next stage. 
+This kind of paradigm enables computational algorithms that can generate incremental results, preventing the user waits until the end of the whole data stream processing to get a result. 
+On the other hand, the disadvantage over \acrshort{dap} is that although pipeline stages are parallelized, some intensive computation in one stage might delay processing the next stage because of its sequential dependency nature. Therefore, the user must be sure each stage runs extremely fast computations on it.
+
+%Due to the nature of our problem where we need to incrementally generate \acrlong{bt}s and the data needs to be aware of the context to compute those \acrshort{bt}, the stream processing model of our choice is \acrshort{pip}.
+The nature of our problem requieres that results are  output incrementally, i.e.   \acrlong{bt}s are emitted incrementally. Additionally, data need to be aware of the context to compute the  \acrshort{bt}s. Considering the stream processing models presented above, we have chosen  \acrshort{pip}. We think it is the model that better fits the requirements of the enumerating incrementally bitriangles problem. 
+We are going to see in the next section what is the specific \acrshort{pip} computation model used for that purpose.
+
+\subsection{Dynamic Pipeline Paradigm}\label{sec:dp}
+The \textit{Dynamic Pipeline Paradigm} (DPP) \cite{dpdef} is a \acrshort{pip} computational model based on a one-dimensional and unidirectional chain of stages connected by means of channels synchronized by data availability. 
+This chain of stages is a computational structure called \textit{Dynamic Pipeline} ($\DP$). A $\DP$ stretches and shrinks depending on the spawning and the lifetime of its stages, respectively. Modeling an algorithmic 
+solution as a $\DP$ corresponds to define a dynamic computational structure in terms of four kinds of stages: \textit{Source} ($\iwcc$), \textit{Generator} ($\gwcc$), \textit{Sink} ($\owcc$) and \textit{Filter} ($\fwcc$) stages. 
+In particular, the specific behavior of each stage to solve a particular problem must be defined as well as the number and the type of channels connecting them. Channels are unidirectional according to the flow of the data. 
+The \textit{Generator} stage is in charge of spawning \textit{Filter} stage instances. This particular behavior of the \textit{Generator} gives the elastic capacity to DPs. \textit{Filter} stage instances are stateful operators in the 
+sense described in \cite{hr19}. This is, \textit{Filter} instances have a state.  
+The deployment of a $\DP$ consists in setting up the initial configuration depicted in \autoref{fig:initialDP}. 
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+\inputtikz{genericDP-Initial}
+\end{center}
+\caption[{[Pre] Inital DP Configuration}]{Initial configuration of a Dynamic Pipeline. An initial DP consists of three stages: $\iwcc$, $\gwcc$ together its filter parameter $\fwcc$, and $\owcc$. These stages are connected through its channels --represented by right arrows-- as shown in this figure.}
+\label{fig:initialDP}
+\end{wrapfigure}
+The activation of a $\DP$ starts when a stream of data items arrives at the initial configuration of the $\DP$. 
+In particular, when a data stream arrives to the \textit{Source} stage. During the execution, the \textit{Generator} stage spawns \textit{Filter} stage instances according to incoming data and the \textit{Generator} defined behavior. 
+This evolution is illustrated in  \autoref{fig:activeDP}. 
+If the data stream is bounded, the computation finishes when the lifetime of all the stages of $\DP$ has finished. Otherwise, if the stream data is unbounded, 
+the $\DP$ remains active and incremental results are output. 
+
+
+\begin{figure}[h]
+ \centering
+ \inputtikz{genericDP-Evol}
+ \caption[{[Pre] Evolution of DP}]{Evolution of a DP. After creating some filter instances (shadow Filter squares) of the filter parameter (light Filter square) in the Generator, the DP has stretched.}
+\label{fig:activeDP}
+\end{figure}
+
+
+\subsection{Streaming in Haskell Language}
+Streaming computational models have been implemented in \acrlong{hs} during the last $10$ years. One of the first libraries in the ecosystem was \mintinline{shell}{conduit}~\cite{conduit} in 2011.
+After that, several efforts on improving streaming processing on the language has been made not only at abstraction level for the user but as well as performance execution 
+improvements like \mintinline{shell}{pipes}~\cite{pipes} and \mintinline{shell}{streamly}~\cite{streamly} lately.
+Moreover, there is an empirical comparison between those three, where a benchmark analysis has been conducted~\cite{benchstreamhs}.
+
+Although most of those libraries offer the ability to implement \acrshort{dap} and \acrshort{pip}, none of them provide clear abstractions to create \acrshort{dp} models because
+the setup of the stages should be provided beforehand. In the context of this work, we have done a proof of concept at the beginning, 
+but it was not possible to adapt any of those libraries to implement properly \acrshort{dp}. 
+The closest we have been to implement \acrshort{dp} with some of those libraries was when we explored \mintinline{shell}{streamly}.
+In this case, there is a \mintinline{haskell}{foldrS} combinator that could have been proper to the purpose of generating a dynamic pipeline of stages based on the data flow, but it was not possible to manipulate the channels between the stages to control the flow of the data. It is important to remark that, even though, the  library  \mintinline{shell}{streamly} implements channels, they are hidden from the end-user and, there is not a  clear way to manipulate them.
+
+To the best of our knowledge no similar library under the  \acrshort{dp} approach has been written in \acrlong{hs}. 
+One important motivation to develop our own framework is that  we not only  wanted to satisfy our research needs but, as a novel contribution, we wanted to deliver a \acrshort{dpf} to the \acrshort{hs} community as well. We hope this contribution encourages and helps writing algorithms under the Dynamic Pipeline Paradigm. 
+
+\subsection{Diefficiency Metrics}\label{prem:dief}
+In proof of concept in \autoref{prole} and in this work on the empirical analysis \autoref{experiments}, we use two important metrics to measure the diefficiency, i.e. continuous efficiency of a program to generate incremental results.
+The metrics to measure diefficiency are \acrfull{dt} and \acrfull{dk}~\cite{diefpaper}.
+The metric \acrshort{dt} measures the continuous efficiency during the first $t$ time units of execution regarding the results generated by the program. 
+The higher value of the \acrshort{dt} metric, the better the continuous behavior.
+The metric \acrshort{dk} measures the continuous efficiency while producing the first $k$ answers regarding the results generated by \acrshort{dpbt}. The lower the value of the \acrshort{dk} metric, the better the continuous behavior.
+Both metrics have been measured using \acrfull{dtkp}~\cite{diefpy} and traces obtained by the execution of the experiment scenarios (Traces examples are provided in \autoref{apx:traces}).
+Apart from this, \acrshort{dtkp} generates two different kind of plots. On the one hand, a bi-dimensional plot containing all the $(x,y)$ points taken from traces like \autoref{apx:results:csv}, where each $x$ is the $t$ time where the answer was generated and the $y$ is the generated answer number.
+This plot is useful to have a visual view of the continuous behavior. On the other hand, a radial plot contains the visual comparison of \acrshort{dt} metric with respects to other non-continuos metrics such as 
+\begin{inparaenum}[\bf i\upshape)]
+  \item \acrfull{comp} which is the total number of answers produced by the scenario, 
+  \item \acrfull{tfft} which measure the elapsed time spent by the scenario to produce the first answer, 
+  \item \acrfull{et} which measures the elapsed time spent by the scenario to complete the execution of a query and, 
+  \item \acrfull{tt} which measure the number of total answers produced by the scenario after evaluating a query divided by its execution time \acrshort{et}
+\end{inparaenum}.
+

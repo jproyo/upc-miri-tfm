@@ -1,0 +1,8 @@
+ \begin{tikzpicture}
+\node[ionode]      (in)                              {$\iwcc$};
+\node[gennode]   (gen)                [right=of in] {$\gwcc$};
+\node[ionode]      (out)                 [right=of gen] {$\owcc$};
+\node[paramnode]  (filter)                [above= 0.2mm of gen] {$\fwcc$};
+\draw[ultra thick,->] (in)to (gen);
+\draw[ultra thick,->] (gen) to (out);
+\end{tikzpicture}
