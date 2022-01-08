@@ -18,12 +18,12 @@ runBench = do
   createDirectoryIfMissing True "output/"
   let conf = defaultConfig { reportFile = Just $ "results/report_benchmark_" <> time' <> ".html" }
   runMode (Run conf Glob ["*/*"])
-    [ bgroup "connectedComponents - Data.Graph on containers"
-       [ bench "ca-AstroPh" $ whnfIO (calculate "data/ca-AstroPh.txt")
-       , bench "email-Enron" $ whnfIO (calculate "data/email-Enron.txt")
-       , bench "web-Google" $ whnfIO (calculate "data/web-Google.txt")
-       ],
-       bgroup "connectedComponents - DP in Haskell"
+    -- [ bgroup "connectedComponents - Data.Graph on containers"
+    --    [ bench "ca-AstroPh" $ whnfIO (calculate "data/ca-AstroPh.txt")
+    --    , bench "email-Enron" $ whnfIO (calculate "data/email-Enron.txt")
+    --    , bench "web-Google" $ whnfIO (calculate "data/web-Google.txt")
+    --    ],
+    [ bgroup "connectedComponents - DP in Haskell"
        [ bench "ca-AstroPh" $ whnfIO (program "data/ca-AstroPh.txt")
        , bench "email-Enron" $ whnfIO (program "data/email-Enron.txt")
        , bench "web-Google" $ whnfIO (program "data/web-Google.txt")

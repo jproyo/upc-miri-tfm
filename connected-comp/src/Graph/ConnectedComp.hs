@@ -56,7 +56,7 @@ actor1 _ readEdge _ writeEdge _ =
   foldM_ readEdge $ \e -> get >>= doActor e
  where
   doActor v conn
-    | toConnectedComp v `intersect` conn = modify (toConnectedComp v <>)
+    | toConnectedComp v `intersect` conn = modify' (toConnectedComp v <>)
     | otherwise = push v writeEdge
 
 actor2 :: Edge
@@ -72,7 +72,7 @@ actor2 _ _ readCC _ writeCC = do
    pushMemory = get >>= flip push writeCC
 
    doActor cc conn
-    | cc `intersect` conn = modify (cc <>)
+    | cc `intersect` conn = modify' (cc <>)
     | otherwise = push cc writeCC
 
 
