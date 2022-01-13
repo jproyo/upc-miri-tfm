@@ -46,6 +46,7 @@
 \input{header.tex}
 
 %
+\begin{document}
 
 \title{A Dynamic Pipeline Framework implemented in Haskell\tnoteref{t1}}
 
@@ -54,8 +55,9 @@
 \author[1]{Juan Pablo Royo Sales}
 \ead{juan.pablo.royo@estudiantat.upc.edu}
 
-\author[1]{Edelmira Pasarella}
+\author[1]{Edelmira Pasarella\corref{cor1}}
 \ead{edelmira@cs.upc.edu}
+\cortext[cor1]{Corresponding author}
 
 \author[1]{Cristina Zoltan}
 \ead{zoltan@cs.upc.edu}
@@ -63,7 +65,7 @@
 \author[2]{Maria-Esther Vidal}
 \ead{maria.vidal@tib.eu}
 
-\affiliation[1]{organization={Universitat Politècnica de Catalunya},
+\affiliation[1]{organization={Computer Science Department, Universitat Politècnica de Catalunya, C/Jordi Girona, 1-3},
 postcode={08034},
 city={Barcelona},
 country={Spain}}
@@ -72,26 +74,9 @@ country={Spain}}
 city={Hannover},
 country={Germany}}
 
-\begin{document}
-
 \begin{abstract}
 Streaming processing has given rise to new computation paradigms to provide effective and efficient data stream processing. 
-The Dynamic Pipeline Paradigm is a computational model for stream processing. In particular, this paradigm is suitable to solving problems where the incremental emission of results is a critical  issue. In the implementation of a Dynamic Pipeline Framework computations  must correspond to natural primary entities. This fact suggests that a proper im\-ple\-men\-ta\-tion language  must allow for manipulating functions  as first citizens as implementation language.  Haskell accomplishes this requirement. It is a pure functional programming language relaying on solid theoretical foundations that provides the possibility of manipulating computations as primary entities. Moreover, from a practical point of view, it has a robust set of tools for writing multithreading and parallel computations with optimal performance.  In this work we tackle the problem of specifying and developing a general and algorithm-parametric Dynamic Pipeline Paradigm using Haskell as development language. Additionally, we conduct, analyze and report experiments to measure the performance of computing the weakly connected components of large networks using the Dynamic Pipeline Framework.  To assess the incremental delivery of results we measure the Diefficiency metrics, i.e. the continuous efficiency of the implementation of an algorithm for generating incremental results. Obtained results satisfy our expectations and encourage us to keep using the Dynamic Pipeline Framework for solving some graph stream processing problems 
-where is critical not to have to wait until the whole results are emitted. 
-%The most important features of these new paradigms are the exploitation of parallelism, the capacity to adapt execution schedulers, reconfigure computational structures, adjust the use of resources according to the characteristics of the input stream and produce  results incrementally. 
-%This is a relevant feature of functional programming languages. 
-%We think that a pure functional programming language like Haskell  is suitable for solving stream processing problems using the DPP approach.  The justification of this choice is twofold. From a formal point of view, Haskell has solid theoretical foundations providing the possibility of manipulating computations as primary entities and  formally prove the correctnes of implementations. From a practical perspective,  it has a robust set of tools for writing multithreading and parallel computations with optimal performance.  
-
-%Based on the encouraging results obtained in a a proof of concept to assess the suitability of using Haskell to implement a Dynamic Pipeline solution for the problem of  compute incrementally the weakly connected components of a graph parallel
-
-%In this work, we firstly  conduct a proof of concept to assess the suitability of using Haskell to implement a Dynamic Pipeline Framework. to be concrete, we implement a dynamic pipeline to compute incrementally the weakly connected components of a graph parallel Haskell and  empirically evaluated and compared it performance with a solution provided by a Haskell library. The results of the experiment  are competitive with the baseline solution available in a graph algorithm Haskell library.
-
-%As proof of concept, we present an implementation of a dynamic pipeline to compute the weakly connected components of a graph (WCC) in Haskell (a.k.a. $\dpwcc$). The  $\dpwcc$ behavior is empirically evaluated and compared with a solution provided by a Haskell library. The evaluation is assessed in three networks of different sizes and topology. Performance is measured in terms of the time of the first emitted result, continuous generation of results, total time, and consumed memory. The results suggest that $\dpwcc$, even naive, is competitive with the baseline solution available in a Haskell library. In particular, $\dpwcc$ exhibits a higher continuous behavior and can produce the first result faster than the baseline. Once the proof of concept put in perspective the suitability of Haskell's abstractions for the implementation of DPF, we tackle the problem of specifying and developing a general and parametric DPF. 
-%Additionally, we conduct, analyze and report experiments to measure the performance of computing the weakly connected components of large networks using the Dynamic Pipeline Framework. %having up to X millions of weakly connected components.
-%Obtained results satisfy our expectations. To assess the incremental delivery of results we measure the Diefficiency metrics, i.e. the continuous efficiency of the implementation of an algorithm for generating incremental results.
-
-%Finally, we conduct experiments to measure the performance of computing the weakly connected components of a graph implemented on the DPF. The obtained results of these experiments encourage us to use the DPF for benchmarking some important graph stream processing problems requiring results are produced incrementally. This is the case of hard problems as mining small patterns of graphs in which is critical not to have to wait until the whole results are emitted.
-
+The Dynamic Pipeline Paradigm is a computational model for stream processing suitable to solving problems where the incremental emission of results is a critical  issue. In this paradigm computations are primary entities. Haskell is a pure functional programming language based on solid theoretical foundations. From a practical point of view, it has a robust set of tools for writing multithreading and parallel computations with optimal performance. In this work we tackle the problem of specifying a Dynamic Pipeline  and implement it using Haskell. We first conduct and empirically assess a proof of concept to evaluate the suitability of (parallel) Haskell to compute and emit results incrementally. In particular, an \textit{ad hoc} Dynamic Pipeline solution for computing weakly connected components incrementally is implemented. The results of the experiments are competitive with the baseline solution available in a graph algorithm Haskell library. Once established Haskell is suitable for implementing a Dynamic Pipeline Framework, it is implemented. Then, we conduct, analyze and report experiments to evaluate the performance of using this framework to compute weakly connected components incrementally w.r.t. the \textit{ad hoc}  Dynamic Pipeline solution. To assess the continuous generation of results, we measure the Diefficiency metrics, i.e., the continuous efficiency of the implementation of an algorithm for generating incremental results. The observed results satisfy our expectations. Moreover, they put in perspective the suitability of the Dynamic Pipeline Framework for implementing graph stream processing problems where it is critical that results are produced continuously. 
 \end{abstract}
 
 %Research highlights
@@ -109,15 +94,15 @@ Stream Processing Frameworks \sep Dynamic Pipeline \sep Parallelism \sep Concurr
 \tableofcontents
 %
 \input{introduction}
+\input{related-work}
 \input{preliminaries}
-\input{wcc}
 \input{dpf}
 \input{wcc-dpf}
-\input{related-work}
+\input{ExperimentalStudy}
 \input{conclusions}
 %
 \bibliography{jlamp2022}
 %
-%\input{appendix}
+\input{appendix}
 \end{document}
 
