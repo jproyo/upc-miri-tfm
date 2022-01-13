@@ -13,15 +13,15 @@ calculate :: FilePath -> IO ()
 calculate file = do
   bs <- B.readFile file
   let x = P.parseByteString (runStateT parseEdges (maxInt, minInt)) mempty bs
-  now <- nanoSecs
+  now <- takeTime
   case x of
     Success (es, b) -> do
       let g  = G.buildG b es
       let cc = components g
       putBSLn "test,approach,answer,time"
-      now2 <- nanoSecs
+      now2 <- takeTime
       void
-        $ R.foldlM (\c _ -> printCC "Haskell-WCC" c now now2 >> return (c + 1)) 1
+        $ R.foldlM (\c _ -> printCC "BLH-WCC" c now now2 >> return (c + 1)) 1
         $ R.filter (\(Node _ xs) -> not $ R.null xs) cc
     Failure ex -> error $ "Parsing" <> show ex
 

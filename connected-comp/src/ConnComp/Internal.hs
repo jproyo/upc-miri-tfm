@@ -2,6 +2,7 @@ module ConnComp.Internal
   ( runDPConnectedComp
   , runParallelDP
   , runParallelDP'
+  , program
   , DP.fromText
   ) where
 
@@ -21,29 +22,29 @@ type ConnCompDP = DP.Stream Edge ConnectedComponents
 
 runParallelDP :: Handle -> IO ()
 runParallelDP h = do
-  now <- nanoSecs
+  now <- takeTime
   input h >>= generator now >>= output now
 
 input :: Handle -> IO (DP.Stream Edge ConnectedComponents)
 input h = fromInput h >>= (|>> parseEdges)
 
-output :: Double -> ConnCompDP -> IO ()
+output :: Integer -> ConnCompDP -> IO ()
 --output = (print . getSum) <=< DP.foldMap (const $ Sum (1::Int))
 output now cc = do
   putBSLn "test,approach,answer,time"
   DP.mapCount printNext 1 cc
   where 
-    printNext c = printCC "DP-WCC" c now =<< nanoSecs 
+    printNext c = printCC "DP-WCC" c now =<< takeTime 
 
 runParallelDP' :: DP.Stream ByteString ConnectedComponents
                -> IO [ConnectedComponents]
 runParallelDP' sInput = do
-  now <- nanoSecs 
+  now <- takeTime 
   parseInput <- sInput |>> parseEdges
   out        <- generator now parseInput
   DP.foldMap (: []) out
 
-generator :: Double -> ConnCompDP -> IO ConnCompDP
+generator :: Integer -> ConnCompDP -> IO ConnCompDP
 generator now = DP.foldrS createNewFilter
  where
   createNewFilter c v = do
@@ -52,15 +53,12 @@ generator now = DP.foldrS createNewFilter
     DP.Stream newInput newOutput
       <$> async (newFilter now (toConnectedComp v) c newInput newOutput)
 
-newFilter :: Double -> ConnectedComponents
+newFilter :: Integer -> ConnectedComponents
           -> ConnCompDP
           -> DP.Channel Edge
           -> DP.Channel ConnectedComponents
           -> IO ()
-newFilter _ conn inCh toInCh outCh = --do
-  -- tid <- myThreadId
-  -- nano <- nanoSecs 
-  -- putLBSLn $ "[" <> show tid <> "] - Time: "<> showFullPrecision (nano - now) <> " - Executing action for conn " <> show conn 
+newFilter _ conn inCh toInCh outCh = 
   actor1 conn inCh toInCh >>= actor2 inCh toInCh outCh
 
 actor1 :: ConnectedComponents
@@ -93,6 +91,9 @@ actor2 inCh toInCh outCh conn = maybe finishActor doActor =<< DP.pullOut inCh
 
 runDPConnectedComp :: FilePath -> IO ()
 runDPConnectedComp file = R.withFile file ReadMode runParallelDP
+
+program :: FilePath -> IO ()
+program = runDPConnectedComp
 
 parseEdges :: ByteString -> IO Edge
 parseEdges = toEdge . decodeUtf8

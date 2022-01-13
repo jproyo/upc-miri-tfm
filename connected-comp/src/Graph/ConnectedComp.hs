@@ -24,7 +24,7 @@ source' :: FilePath
 source' filePath = withSource @DPConnComp
   $ \edgeOut _ -> unfoldFile filePath edgeOut (toEdge . decodeUtf8)
 
-sink' :: Double -> Stage (ReadChannel Edge -> ReadChannel ConnectedComponents -> DP st ())
+sink' :: Integer -> Stage (ReadChannel Edge -> ReadChannel ConnectedComponents -> DP st ())
 sink' initialTime = 
   withSink @DPConnComp $ \_ cc -> withDP $ do 
     c  <- newIORef 1
@@ -33,7 +33,7 @@ sink' initialTime =
   where
     treatElement c initialTime' = do 
       c' <- readIORef c
-      printCC "DP-WCC" c' initialTime' =<< nanoSecs
+      printCC "DPFH-WCC" c' initialTime' =<< takeTime
       modifyIORef c (+ 1)
 
 
@@ -90,5 +90,5 @@ genAction filter' readEdge readCC _ writeCC = do
 
 program :: FilePath -> IO ()
 program file = do 
-  now <- nanoSecs
+  now <- takeTime
   runDP $ mkDP @DPConnComp (source' file) generator' (sink' now)

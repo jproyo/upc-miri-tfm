@@ -72,10 +72,22 @@ library:
   source-dirs: src
   exposed-modules:
     - ConnComp
+    - ConnCompDPF
 
 executables:
   conn-comp:
     source-dirs:      app/DP
+    main:             Main.hs
+    dependencies:
+      - connected-comp
+    ghc-options:
+      - -threaded
+      - -O3
+      - -rtsopts
+      - -with-rtsopts=-N
+
+  conn-comp-dpf:
+    source-dirs:      app/DP-DPF
     main:             Main.hs
     dependencies:
       - connected-comp
