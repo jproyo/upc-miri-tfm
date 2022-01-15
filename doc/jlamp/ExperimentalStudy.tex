@@ -97,7 +97,7 @@ This experiment measures \acrlong{dm} described in \autoref{prem:dief}, and will
 \paragraph{E4: Performance Analysis}
 In this experiment, we measure internal parallelism in \acrshort{ghc} and memory usage during the execution of one of the example networks. 
 The motivation of this is to verify empirically how \acrshort{dpwcc} is handling parallelization and memory usage. 
-This experiment is conducted using two tools, \textit{ThreadScope} \cite{threadscope} for conducting multithreading analysis and \textit{eventlog2html} \cite{eventlog2html} to conduct memory usage analysis. 
+This experiment is conducted using two tools, \textit{ThreadScope} Tool\footnote{\url{https://wiki.haskell.org/ThreadScope}} for conducting multithreading analysis and \textit{eventlog2html} Tool\footnote{\url{https://mpickering.github.io/eventlog2html/}} to conduct memory usage analysis. 
 Regarding multithreading analysis the metrics that we measure are the distribution of threads among processors over execution time which is how many processors are executing running threads over the whole execution; and the mean number of running threads per time slot which is calculated by zooming in $8$ time slots and taking the mean number of threads per processor to see if it is equally distributed among them. 
 In regards to memory management, the metric that we measure is the amount of memory in $MB$ consumed per data type during the whole execution time. 
 The experiment helps to answer the research questions [RQ1,RQ3].
@@ -157,7 +157,7 @@ According to these results we can partially answer [RQ1], because the implementa
 
 \paragraph{Experiment: E2}\label{sub:new:exp:2}
 \paragraph{Criterion Benchmark}
-In \autoref{fig:1}, orange bars report the time taken by \mintinline{haskell}{Data.Graph} in $DP_{WCC}$ in Haskell \texttt{containers} library \cite{containers}. Blue light bars represent the time taken by $DP_{WCC}$ in Haskell.
+In \autoref{fig:1}, orange bars report the time taken by \mintinline{haskell}{Data.Graph} in $DP_{WCC}$ in Haskell \texttt{containers} library\footnote{\url{https://hackage.haskell.org/package/containers}}. Blue light bars represent the time taken by $DP_{WCC}$ in Haskell.
 
 \begin{minipage}[t]{\linewidth}
   \includegraphics[width=\textwidth]{bench_1.png}
@@ -237,14 +237,14 @@ In those cases, we are going to see a straight vertical line.
     \hline
    \textbf{Network} & \textbf{Implementation} & \textbf{dief@t Metric}  & \textbf{dief@k Metric}\\
    \hline
-   \multirow{2}{*}{ca-AstroPh} & \acrshort{dpwcc} & $55.7$ & $0.09$\\
+   \multirow{2}{*}{ca-AstroPh} & \acrshort{dpwcc} & $1.27 \times 10^8$ & $1.99 \times 10^5$\\
    & \acrshort{blwcc} & $0$ & $0$\\
    \hline
-   \multirow{2}{*}{email-Enron} & \acrshort{dpwcc} & $94.8$ & $1.25$\\
+   \multirow{2}{*}{email-Enron} & \acrshort{dpwcc} & $1.97 \times 10^8$ & $2.51 \times 10^6$\\
    & \acrshort{blwcc} & $0$ & $0$\\
    \hline
-   \multirow{2}{*}{web-Google} & \acrshort{dpwcc} & $0.04$ & $0.04$ \\
-   & \acrshort{blwcc} & $6.92 \times 10^3$ & $0$\\
+   \multirow{2}{*}{web-Google} & \acrshort{dpwcc} & $1.10 \times 10^7$ & $1.10 \times 10^7$ \\
+   & \acrshort{blwcc} & $8.75 \times 10^{11}$ & $0$\\
   \hline
   \end{tabular}
   \caption{This tables shows the \acrshort{dt} and \acrshort{dk} values gather for  $\dpwcc$ in \acrshort{dpfh}. We can appreciate that in all cases $\dpwcc$ has a higher value of \acrshort{dt} and a lower value of \acrshort{dk} showing continuos behavior}
@@ -253,6 +253,33 @@ In those cases, we are going to see a straight vertical line.
 
 Having said that, we can see the results of \acrshort{dm} which are presented in two types of plots. 
 The first one is regular line graphs in where the $x$ axis shows the time escalated when the result was generated and the $y$ axis is showing the component number that was generated at that time. The second type of plot is a radar plot in which shows how the solution is behaving on the dimensions of  \acrfull{tfft}, \acrfull{et}, \acrfull{tt}, \acrfull{comp} and \acrfull{dt} and how are the tension between them; all these metrics are higher is better. All the details about these metrics are explained here \cite{diefpaper}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% begin-Old_plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Escala nano-sec/ln
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
+\begin{figure}[!htp]
+  \centering
+  \begin{subfigure}[t]{0.3\textwidth}
+   \includegraphics[width=1\linewidth, height=0.2\textheight]{email_enron0}
+   \caption{email-Enron \acrlong{dm} \acrshort{dpwcc} vs. \acrshort{blwcc} Line Plot}
+    \label{fig:dief:1}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.3\textwidth}
+   \includegraphics[width=1\linewidth, height=0.2\textheight]{ca_astroph0}
+   \caption{ca-AstroPh \acrlong{dm} \acrshort{dpwcc} vs. \acrshort{blwcc} Line Plot}
+    \label{fig:dief:2}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.3\textwidth}
+   \includegraphics[width=1\linewidth, height=0.2\textheight]{web_google0}
+   \caption{web-Google \acrlong{dm} \acrshort{dpwcc} vs. \acrshort{blwcc} Line Plot}
+    \label{fig:dief:3}
+  \end{subfigure}\hfill
+   \caption{These figures show \acrshort{dt} observed results after running all the scenarios for each network with \acrshort{dpwcc} vs. \acrshort{blwcc}. $y$ axis represents the number of Answers produced and $x$ axis is the $t$ time of the \acrshort{dt} metric describe in \autoref{prem:dief}. The more data points distributed throughout the $x$ axis, the higher, the continuous behavior. The scale in axis $x$ which represents \textit{Time} is $t$, where $t$ is the microsecond difference between the start of the program and the result delivered by it.}
+   \label{fig:dief:old:all}
+ \end{figure}
+\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% end-Old_plots %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}[!htp]
   \centering
@@ -271,7 +298,7 @@ The first one is regular line graphs in where the $x$ axis shows the time escala
    \caption{web-Google \acrlong{dm} \acrshort{dpwcc} vs. \acrshort{blwcc} Line Plot}
     \label{fig:dief:3}
   \end{subfigure}\hfill
-   \caption{These figures show \acrshort{dt} observed results after running all the scenarios for each network with \acrshort{dpwcc} vs. \acrshort{blwcc}. $y$ axis represents the number of Answers produced and $x$ axis is the $t$ time of the \acrshort{dt} metric describe in \autoref{prem:dief}. The more data points distributed throughout the $x$ axis, the higher, the continuous behavior. The scale in axis $x$ which represents \textit{Time} is $\log_{2}(t)$, where $t$ is the microsecond difference between the start of the program and the result delivered by it.}
+   \caption{These figures show \acrshort{dt} observed results after running all the scenarios for each network with \acrshort{dpwcc} vs. \acrshort{blwcc}. $y$ axis represents the number of Answers produced and $x$ axis is the $t$ time of the \acrshort{dt} metric describe in \autoref{prem:dief}. The more data points distributed throughout the $x$ axis, the higher, the continuous behavior. The scale in axis $x$ which represents \textit{Time} $t$, where $t$ is the microsecond difference between the start of the program and the result delivered by it.}
    \label{fig:dief:old:all}
  \end{figure}
 
@@ -315,14 +342,14 @@ Moreover, we have run a comparison analysis between \acrshort{dpwcc} and \acrsho
     \hline
    \textbf{Network} & \textbf{Implementation} & \textbf{dief@t Metric}  & \textbf{dief@k Metric}\\
    \hline
-   \multirow{2}{*}{ca-AstroPh} & \acrshort{dpfhwcc} & $63.4$ & $0.1$\\
-   & \acrshort{dpwcc} & $0.41$ & $0.41$\\
+   \multirow{2}{*}{ca-AstroPh} & \acrshort{dpfhwcc} & $1.27 \times 10^8$ & $1.80 \times 10^5$\\
+   & \acrshort{dpwcc} & $8.77 \times 10^5$ & $8.77 \times 10^5$\\
    \hline
-   \multirow{2}{*}{email-Enron} & \acrshort{dpfhwcc} & $421$ & $0.9$\\
-   & \acrshort{dpwcc} & $0.98$ & $0.98$\\
+   \multirow{2}{*}{email-Enron} & \acrshort{dpfhwcc} & $7.42 \times 10^8$ & $1.38 \times 10^6$\\
+   & \acrshort{dpwcc} & $1.98 \times 10^6$ & $1.98 \times 10^6$\\
    \hline
-   \multirow{2}{*}{web-Google} & \acrshort{dpfhwcc} & $0.04$ & $0.04$ \\
-   & \acrshort{dpwcc} & $82.6$ & $0.04$\\
+   \multirow{2}{*}{web-Google} & \acrshort{dpfhwcc} & $1.29 \times 10^7$ & $1.29 \times 10^7$ \\
+   & \acrshort{dpwcc} & $2.35 \times 10^{10}$ & $1.17 \times 10^7$\\
   \hline
   \end{tabular}
   \caption{This tables shows the \acrshort{dt} and \acrshort{dk} values gather for  $\dpwcc$ in \acrshort{dpfh}. We can appreciate that in all cases $\dpwcc$ has a higher value of \acrshort{dt} and a lower value of \acrshort{dk} showing continuos behavior}
@@ -346,7 +373,7 @@ Moreover, we have run a comparison analysis between \acrshort{dpwcc} and \acrsho
    \caption{web-Google \acrlong{dm} \acrshort{dpfhwcc} vs. \acrshort{dpwcc} Line Plot}
     \label{fig:dief:new:3}
   \end{subfigure}\hfill
-   \caption{These figures show \acrshort{dt} observed results after running all the scenarios for each network with \acrshort{dpfhwcc} vs. \acrshort{dpwcc}. $y$ axis represents the number of Answers produced and $x$ axis is the $t$ time of the \acrshort{dt} metric describe in \autoref{prem:dief}. The more data points distributed throughout the $x$ axis, the higher, the continuous behavior. The scale in axis $x$ which represents \textit{Time} is $\log_{2}(t)$, where $t$ is the microsecond difference between the start of the program and the result delivered by it.}
+   \caption{These figures show \acrshort{dt} observed results after running all the scenarios for each network with \acrshort{dpfhwcc} vs. \acrshort{dpwcc}. $y$ axis represents the number of Answers produced and $x$ axis is the $t$ time of the \acrshort{dt} metric describe in \autoref{prem:dief}. The more data points distributed throughout the $x$ axis, the higher, the continuous behavior. The scale in axis $x$ which represents \textit{Time} $t$, where $t$ is the microsecond difference between the start of the program and the result delivered by it.}
    \label{fig:dief:all}
  \end{figure}
 
@@ -382,7 +409,7 @@ In conclusion, we can say that regarding [RQ2] (\autoref{res:question}) although
 For this type of analysis, our experiment focuses on \emph{email-Enron} network  only because profiling data generated by \acrshort{ghc} is big enough to conduct the analysis and on the other, and enabling profiling penalize execution time.
 Moreover, it is important to remark that the analysis was conducted on \acrshort{dpwcc} and \acrshort{dpfhwcc} but since the results are similar in terms of plots and behavior, we show only the results obtained for \acrshort{dpwcc} measurements.
 
-\paragraph{Multithreading} For analyzing parallelization and multithreading we have used \textit{ThreadScope} \cite{threadscope} which allows us to see how the parallelization is taking place on \acrshort{ghc} at a fine grained level and how the threads are distributed throughout the different cores requested with the \mintinline{bash}{-N} execution \texttt{ghc-option} flag.
+\paragraph{Multithreading} For analyzing parallelization and multithreading we have used \textit{ThreadScope} Tool  which allows us to see how the parallelization is taking place on \acrshort{ghc} at a fine grained level and how the threads are distributed throughout the different cores requested with the \mintinline{bash}{-N} execution \texttt{ghc-option} flag.
 
 \begin{minipage}[t!]{\linewidth}
 
@@ -428,7 +455,7 @@ Having said that, it can be appreciated in \autoref{fig:4} our first assumption 
 
 \paragraph{Memory allocation} Another important aspect in our case is how the memory is being managed to avoid memory leaks or other non-desired behavior that increases memory allocation during the execution time. This is even more important in the particular implementation of \acrshort{wcc} using \acrshort{dp} model because it requires to maintain the set of connected components in memory throughout the execution of the program or at least until we can output the calculated \acrshort{wcc} if we reach to the last \textit{Filter} and we know that this \acrshort{wcc} cannot be enlarged anymore. 
 
-In order to verify this, we measure memory allocation with \textit{eventlog2html} \cite{eventlog2html} which converts generated profiling memory eventlog files into graphical HTML representation. 
+In order to verify this, we measure memory allocation with \textit{eventlog2html} which converts generated profiling memory eventlog files into graphical HTML representation. 
 
 \begin{wrapfigure}{r}{0.5\textwidth}
   \begin{center}
@@ -454,7 +481,7 @@ As we can see in \autoref{fig:5}, \acrshort{dpwcc} does an efficient work on all
 On the other hand, if we analyze how the memory is allocated during the execution of the program, it can also be appreciated that most of the memory is allocated at the beginning of the program and steadily decrease over time with a small peak at the end that does not overpass even half of the initial peak of $57$ MB. The explanation for this behavior is quite straightforward because at the beginning we are reading from the file and transforming a \mintinline{haskell}{ByteString} buffer to \mintinline{haskell}{(Int, Int)} edges. This is seen in the image in which the dark blue that is on top of the area is \mintinline{haskell}{ByteString} allocation. Light blue is allocation of \mintinline{haskell}{Maybe a} type which is the type that is returned by the \textit{Channels} because it can contain a value or not. Data value \mintinline{haskell}{Nothing} is indicating end of the \textit{Channel}.  
 %as we can see in \autoref{src:haskell:f3}.
 
-Another important aspect is the green area which represents \mintinline{haskell}{IntSet} allocation, which in the case of our program is the data structure that we use to gather the set of vertices that represents a \acrshort{wcc}. This means that the amount of memory used for gathering the \acrshort{wcc} itself is minimum, and it is decreasing over time, which is another empirical indication that we are incrementally releasing results to the user. It can be seen as well that as long the green area reduces the lighter blue (\mintinline{haskell}{MUT_ARR_PTRS_CLEAN}\footnote{\url{https://downloads.haskell.org/~ghc/8.10.4/docs/html/libraries/ghc-heap-8.10.4/GHC-Exts-Heap-ClosureTypes.html}}) increases at the same time indicating that the computations for the output (releasing results) is taking place. 
+Another important aspect is the green area which represents \mintinline{haskell}{IntSet} allocation, which in the case of our program is the data structure that we use to gather the set of vertices that represents a \acrshort{wcc}. This means that the amount of memory used for gathering the \acrshort{wcc} itself is minimum, and it is decreasing over time, which is another empirical indication that we are incrementally releasing results to the user. It can be seen as well that as long the green area reduces the lighter blue (\mintinline{haskell}{MUT_ARR_PTRS_CLEAN}\footnote{\href{https://downloads.haskell.org/~ghc/8.10.4/docs/html/libraries/ghc-heap-8.10.4/GHC-Exts-Heap-ClosureTypes.html}{GHC-Exts-Heap-ClosureTypes.html}}) increases at the same time indicating that the computations for the output (releasing results) is taking place. 
 
 Finally, according to what we have stated above, we can answer the question [Q3] (\autoref{res:question}) showing that not only memory management was efficient, but at the same time, the memory was not leaking or increasing across the running execution program.
 

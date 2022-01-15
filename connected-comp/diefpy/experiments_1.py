@@ -27,6 +27,6 @@ def dief_t_k():
     for (_, s, n) in diefpy.diefk(traces, f):
       print('&', s, '&', '$'+"{:.2E}".format(round(n,2))+'$', '\\\\')
 
-#dief_t_k()
-plot_experiments()
+dief_t_k()
+#plot_experiments()
 
