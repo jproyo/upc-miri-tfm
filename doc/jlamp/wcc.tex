@@ -1,19 +1,16 @@
-\subsection{Weakly Connected Components of a Graph}\label{prole}
-
+\subsection{The $\dpwcc$ Algorithm- Weakly Connected Components of a Graph in the Dynamic Pipeline Paradigm}\label{prole}
 One of the biggest challenges of implementing a Dynamic Pipeline is to find  a programming language with a proper set of tools supporting both of the  primary features of the \acrshort{dp}: \begin{inparaenum}[i\upshape)]
 \item  \emph{parallel} processing and 
 \item  \emph{strong theoretical} foundations to manage computations as first-class citizens.
  \end{inparaenum}
- In this section, we introduce the DP for enumerating weakly connected components using, \acrshort{hs} as well as the results obtained in the empirical evaluation of its implementation. More details of the empirical evaluation can be found in \cite{prole}. 
+We present and illustrate with an example, an implementation for the problem of enumerating weakly connected components using the dynamic pipeline paradigm previously described. More details in \cite{prole}. 
  
-\subsection{$\dpwcc$ Algorithm}
 Let us consider the problem of computing/enumerating the (weak) connected components of a graph $G$ using \acrshort{dp}. 
 A connected component of a graph is a subgraph in which any two vertices are connected by paths.  
 Thus, finding connected components of an undirected graph implies obtaining the minimal partition of the set of nodes induced by the relationship \textit{connected}, i.e., there is a path between each pair of nodes. An example of that graph can be seen in \autoref{fig:example_dp_graph}.
 The input of the Dynamic Pipeline for computing the WCC of a graph, $\dpwcc$, is a sequence of edges ending with $\eof$. In the source graph, there are neither isolated vertices nor loops. The connected components are output as soon as they are computed, i.e., they are produced incrementally. 
 Roughly speaking, the idea of the algorithm is that the weakly connected components are built in two phases. In the first phase, filter instance stages receive the edges of the input graph and create sets of connected vertices. 
-During the second phase, these filter instances construct maximal subsets of connected vertices, i.e., the vertices corresponding to (weakly) connected components.
-%
+During the second phase, each filter instance receives sets of connected nodes. When in a filter the incoming set of nodes intersects with its set of connected nodes, the set of incoming nodes is joined to the latter and no output is produced. Otherwise, the incoming set of connected nodes is passed to the next stage. 
 $\dpwcc$ is defined in terms of the behavior of its four kinds of stages: \textit{Source} ($\iwc$),  \textit{Generator} ($\gwc$),  \textit{Sink} ($\owc$), and \textit{Filter}($\fwc$) stages. Additionally,  the channels connecting these stages must be defined. 
 In $\dpwcc$, stages are connected linearly and unidirectionally through the channels $\ice$ and  $\csofv$. Channel $\ice$ carries edges, while channel  $\csofv$ conveys sets of connected vertices. Both channels end by the $\eof$ mark. 
 The behavior of $\fwc$ is given by a sequence of two actors (scripts). Each actor corresponds to a phase of the algorithm. In what follows, we denote these actors by $\Act$ and $\Actt$, respectively. 
@@ -34,8 +31,6 @@ Then, $\iwc$ dies.
 \end{figure}
 %\end{wrapfigure}
 
-Let us describe this behavior with the example of the graph shown in \autoref{fig:example_dp_graph}.
-
 \begin{figure}[h!]
   \centering
 \inputtikz{dp_example_0}
@@ -43,10 +38,11 @@ Let us describe this behavior with the example of the graph shown in \autoref{fi
 \label{fig:dp_example_0}
 \end{figure}
 
+Let us describe this behavior with the example of the graph shown in \autoref{fig:example_dp_graph}.
 \autoref{fig:dp_example_0} depicts the initial configuration of $\dpwcc$. 
 The interaction of $\dpwcc$ with the "external" world is done through the stages $\iwc$ and $\owc$. 
 Indeed, once activated the initial $\dpwcc$, the input stream -- consisting of a sequence containing all the edges in the graph in \autoref{fig:example_dp_graph} -- feeds $\iwc$ while  $\owc$ emits incrementally the resulting weakly connected components.  
-In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \autoref{fig:dp_example_5_6}, \autoref{fig:dp_example_7_8} and \autoref{fig:dp_example_9_10} depict the evolution of the $\dpwcc$.
+In what follows, figures \ref{fig:dp_example_1_2}, \ref{fig:dp_example_3_4}, \ref{fig:dp_example_5_6}, \ref{fig:dp_example_7_8} and \ref{fig:dp_example_9_10} depict the evolution of the $\dpwcc$.
  
 \begin{figure}[h!]
 \centering
@@ -167,8 +163,7 @@ In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \aut
 \caption[{[PoC] $\dpwcc$ Evolving last state}]{Last states in the evolution of the $\dpwcc$}
 \label{fig:dp_example_9_10}
 \end{figure}
-
-It is important to highlight that during the states shown in \autoref{fig:dp_example_1_2a},  \autoref{fig:dp_example_1_2b},  \autoref{fig:dp_example_3_4a},  \autoref{fig:dp_example_3_4b} and  \autoref{fig:dp_example_5_6a} the only actor executed in any filter instance is $\Act$ (constructing sets of connected vertices). Afterwards, although $\Act$ can continue being executed in some filter instances, there are some instances that start executing $\Actt$ (constructing sets of maximal connected vertices). This is shown from \autoref{fig:dp_example_5_6a}  to \autoref{fig:dp_example_9_10a}.
+It is important to highlight that during the states shown in figures \ref{fig:dp_example_1_2a},  \ref{fig:dp_example_1_2b},  \ref{fig:dp_example_3_4a},  \ref{fig:dp_example_3_4b} and  \ref{fig:dp_example_5_6a} the only actor executed in any filter instance is $\Act$ (constructing sets of connected vertices). In \autoref{fig:dp_example_5_6a}  to \autoref{fig:dp_example_7_8a} although $\Act$ is still being executed in some filter instances, there are other ones starting the execution of $\Actt$ (joining sets of connected vertices, when it applies).
 %
 \clearpage
 

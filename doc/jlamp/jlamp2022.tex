@@ -34,7 +34,6 @@
 \usemintedstyle{default}
 \newminted{haskell}{frame=lines,framerule=2pt}
 \newminted{R}{frame=lines,framerule=2pt}
-
 %
 
 \graphicspath{{./images/}}
@@ -50,10 +49,10 @@
 
 \title{A Dynamic Pipeline Framework implemented in Haskell\tnoteref{t1}}
 
-\tnotetext[t1]{This work was partially supported by  MCIN/ AEI /10.13039/501100011033 [grant number PID2020-112581GB-C21].}
+\tnotetext[t1]{Edelmira Pasarella is partially supported by  MCIN/ AEI /10.13039/501100011033 under grant PID2020-112581GB-C21. Maria-Esther Vidal is partially supported by Leibniz Best Minds: Programme for Women Professors project TrustKG-Transforming Data in Trustable Insights with grant P99/2020. }
 %
 \author[1]{Juan Pablo Royo Sales}
-\ead{juan.pablo.royo@estudiantat.upc.edu}
+\ead{juan.pablo.royo@upc.edu}
 
 \author[1]{Edelmira Pasarella\corref{cor1}}
 \ead{edelmira@cs.upc.edu}
@@ -62,7 +61,7 @@
 \author[1]{Cristina Zoltan}
 \ead{zoltan@cs.upc.edu}
 
-\author[2]{Maria-Esther Vidal}
+\author[2,3,4]{Maria-Esther Vidal}
 \ead{maria.vidal@tib.eu}
 
 \affiliation[1]{organization={Computer Science Department, Universitat Politècnica de Catalunya, C/Jordi Girona, 1-3},
@@ -70,13 +69,25 @@ postcode={08034},
 city={Barcelona},
 country={Spain}}
 
-\affiliation[2]{organization={TIB/L3S Research Centre at the University of Hannover},
+\affiliation[2]{organization={TIB-Leibniz Information Centre of Science and Technology},
 city={Hannover},
 country={Germany}}
 
+\affiliation[3]{organization={ Leibniz University of Hannover},
+city={Hannover},
+country={Germany}}
+
+\affiliation[4]{organization={L3S Research Centre},
+city={Hannover},
+country={Germany}}
+
+
 \begin{abstract}
 Streaming processing has given rise to new computation paradigms to provide effective and efficient data stream processing. 
-The Dynamic Pipeline Paradigm is a computational model for stream processing suitable to solving problems where the incremental emission of results is a critical  issue. In this paradigm computations are primary entities. Haskell is a pure functional programming language based on solid theoretical foundations. From a practical point of view, it has a robust set of tools for writing multithreading and parallel computations with optimal performance. In this work we tackle the problem of specifying a Dynamic Pipeline  and implement it using Haskell. We first conduct and empirically assess a proof of concept to evaluate the suitability of (parallel) Haskell to compute and emit results incrementally. In particular, an \textit{ad hoc} Dynamic Pipeline solution for computing weakly connected components incrementally is implemented. The results of the experiments are competitive with the baseline solution available in a graph algorithm Haskell library. Once established Haskell is suitable for implementing a Dynamic Pipeline Framework, it is implemented. Then, we conduct, analyze and report experiments to evaluate the performance of using this framework to compute weakly connected components incrementally w.r.t. the \textit{ad hoc}  Dynamic Pipeline solution. To assess the continuous generation of results, we measure the Diefficiency metrics, i.e., the continuous efficiency of the implementation of an algorithm for generating incremental results. The observed results satisfy our expectations. Moreover, they put in perspective the suitability of the Dynamic Pipeline Framework for implementing graph stream processing problems where it is critical that results are produced continuously. 
+The Dynamic Pipeline paradigm is a computational model for stream processing suitable for solving problems where the incremental results' generation is critical. In this paradigm, computations are primary entities. Haskell is a purely functional programming language based on solid theoretical foundations. From a practical point of view, it has a robust set of tools for writing multithreading and parallel computations with optimal performance. In this work, we present a Dynamic Pipeline Framework and its implementation in Haskell. 
+As a proof of concept, we implement a solution to the problem of enumerating the weakly connected components of a graph in the proposed Dynamic Pipeline Framework. Moreover, we provide two baseline implementations of the same problem to put in perspective the computational power of the Dynamic Pipeline Framework and its continuous behavior. One baseline is implemented using a graph algorithm Haskell library, while the other one is an \textit{ad hoc} implementation of the problem following the Dynamic Pipeline paradigm.
+The experimental study is conducted over a benchmark of graphs of various sizes. 
+Two diefficiency metrics measure the continuous behavior of the three approaches, i.e., how good these approaches are while enumerating weakly connected components incrementally. The observed results provide evidence of the suitability of the Dynamic Pipeline Framework for implementing graph stream processing problems where results must be produced continuously. 
 \end{abstract}
 
 %Research highlights
@@ -91,7 +102,7 @@ Stream Processing Frameworks \sep Dynamic Pipeline \sep Parallelism \sep Concurr
 
 \maketitle
 %
-\tableofcontents
+%\tableofcontents
 %
 \input{introduction}
 \input{related-work}
@@ -100,6 +111,7 @@ Stream Processing Frameworks \sep Dynamic Pipeline \sep Parallelism \sep Concurr
 \input{wcc-dpf}
 \input{ExperimentalStudy}
 \input{conclusions}
+\input{implementation}
 %
 \bibliography{jlamp2022}
 %

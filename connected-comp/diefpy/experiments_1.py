@@ -24,7 +24,7 @@ def dief_t_k():
   for f in folders:
     traces = diefpy.load_trace(f'{root_path}/{f}/results.csv')
     print("dief@k", f)
-    for (_, s, n) in diefpy.diefk(traces, f):
+    for (_, s, n) in diefpy.diefk2(traces, f, 0.5):
       print('&', s, '&', '$'+"{:.2E}".format(round(n,2))+'$', '\\\\')
 
 dief_t_k()

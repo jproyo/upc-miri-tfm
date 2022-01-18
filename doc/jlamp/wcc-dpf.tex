@@ -1,7 +1,3 @@
-\section{Enumerating Weakly Connected Component on the DPF}\label{sec:wcc-dpf}
-
-In this section we present the most relevant details of the implementation of the $\dpwcc$ using DPF-Haskell. In addition, we describe the experiments and discuss the results of the empirical evaluation that we have conducted to analyze the performance of this implementation. 
-
 \iffalse
 \subsection{\texorpdfstring{$\dpwcc$}{Lg} Algorithm}\label{sub:sec:wcc:algo}
 Let us consider the problem of computing/enumerating the (weak) connected components of a graph $G$ using \acrshort{dp}. 
@@ -171,14 +167,12 @@ In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \aut
 It is importat to highlight that during the states shown in \autoref{fig:dp_example_1_2a},  \autoref{fig:dp_example_1_2b},  \autoref{fig:dp_example_3_4a},  \autoref{fig:dp_example_3_4b} and  \autoref{fig:dp_example_5_6a} the only actor executed in any filter instance is $\Act$ (constructing sets of connected vertices). Afterwards, although $\Act$ can continue being executed in some filter instances, there are some instances that start executing $\Actt$ (constructing sets of maximal connected vertices). This is shown from \autoref{fig:dp_example_5_6a}  to \autoref{fig:dp_example_9_10a}.
 \fi
 %
-\clearpage
-%
-\subsection{\texorpdfstring{$\dpwcc$}{Lg} Implementation}
-%
-As we said before, the $\dpwcc$ implementation has been made as a proof of concept to understand and explore the limitations and challenges that we could find in the development of a future \acrshort{dpf} in \acrshort{hs}. 
-In Section \ref{dp-hs} we emphasize that the focus of \acrshort{dpf} in \acrshort{hs} is on the \acrshort{idl} component. 
-Hence, the development of the $\dpwcc$ is as general as possible using most of the constructs and abstractions required by the \acrshort{idl}. 
-Lets introduce the minimal code needed for encoding any \acrshort{dp} using \acrshort{dpfh}. \footnote{All the code that we expose here can be accessed publicly in \url{https://github.com/jproyo/dynamic-pipeline/tree/main/examples/Graph}}
+\section{Enumerating Weakly Connected Component on the DPF}\label{sec:wcc-dpf}
+This section presents the most relevant details of the implementation of the $\dpwcc$ using DPF-Haskell. 
+The $\dpwcc$ implementation has been made as a proof of concept to understand and explore the limitations and challenges that we could find in the development of a future \acrshort{dpf} in \acrshort{hs}. 
+In Section \ref{dp-hs}, we emphasize that the focus of \acrshort{dpf} in \acrshort{hs} is on the \acrshort{idl} component. 
+Hence, the development of the $\dpwcc$ is as general as possible, using most of the constructs and abstractions required by the \acrshort{idl}. 
+Next, we present the minimal code needed for encoding any \acrshort{dp} using \acrshort{dpfh}. \footnote{All the code that we expose here can be accessed publicly in \url{https://github.com/jproyo/dynamic-pipeline/tree/main/examples/Graph}}
 
 \begin{listing}[H]
   \begin{minted}[fontsize=\fontsize{10}{11}\selectfont,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={1-3,6}]{haskell}
@@ -195,8 +189,8 @@ Lets introduce the minimal code needed for encoding any \acrshort{dp} using \acr
   \label{src:dpwcc:1}
 \end{listing}
 
-In \autoref{src:dpwcc:1} there are two important declarations. First, the \textit{Type Level} declaration of the $\dpwcc$ to indicate \acrshort{dpfh} how our stages are going be connected, and
-using that \textit{Type Level} construct, we use the \acrshort{idl} to allow the framework interpret the type representation of our \acrshort{dp} and ensuring at compilation time that we provide the correct stages,  \textit{Source} ($\iwc$), \textit{Generator} ($\gwc$) and \textit{Sink} ($\owc$), that matches those declaration.
+In \autoref{src:dpwcc:1}, there are two important declarations. First, the \textit{Type Level} declaration of the $\dpwcc$ to indicate \acrshort{dpfh} how our stages are going be connected, and
+using that \textit{Type Level} construct, we use the \acrshort{idl} to allow the framework interpret the type representation of our \acrshort{dp} and ensuring at compilation time that we provide the correct stages,  \textit{Source} ($\iwc$), \textit{Generator} ($\gwc$) and \textit{Sink} ($\owc$), that matches those declaration. As we can see in \autoref{src:dpwcc:1}, highlighted lines $1$-$3$ matches one to one the definition in \autoref{fig:dp_example_0}, although in the case of the framework it is not required to provide \textit{Filter} ($\fwc$) definition because \acrshort{dpfh} will deducted from \mintinline[breaklines]{haskell}{Generator}.
 According to this declaration what we need to provide is the correct implementation of \mintinline{haskell}{source'}, \mintinline{haskell}{generator'} and \mintinline{haskell}{sink'}
 which \textit{Type checked} the \acrshort{dp} type definition\footnote{The names of the functions are completely choosen by the user of the framework and it should not be confused with the internal framework combinators.}.
 
@@ -253,6 +247,7 @@ Then, there are two important functions to describe: \mintinline{haskell}{genAct
 In line $10$, we can appreciate how after expanding the filters, the generator will downstream to the \textit{Sink}, the received Connected Components calculated from previous filters.
 
 \begin{listing}[H]
+ \scriptsize{
   \begin{minted}[fontsize=\fontsize{10}{11}\selectfont,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={2,11-15,24-31}]{haskell}
     
     filterTemplate :: Filter DPConnComp ConnectedComponents Edge st
@@ -288,11 +283,12 @@ In line $10$, we can appreciate how after expanding the filters, the generator w
         | otherwise = push cc writeCC
     
   \end{minted}
+  }
   \caption[{[\mintinline{shell}{ConnectedComp.hs}] Filter Template Code}]{Filter template code composed by 2 Sequential Actors that will calculate the Connected Components and downstream them.}
   \label{src:dpwcc:4}
 \end{listing}
 
-Finally, in \autoref{src:dpwcc:4} the \textit{Filter} template code is defined. 
+Finally, the \textit{Filter} template code is defined in \autoref{src:dpwcc:4}. 
 As we have seen in \autoref{prole}, $\dpwcc$ \textit{Filter} is composed of 2 Actors. The first actor collect all the possible vertices that are incidence to some vertices edge that was instantiated with.
 Once it does not receive any more edges, it starts downstream it set of vertices to the following filters in order to build a maximal connected component, this is \mintinline{haskell}{actor2}. At the end of processing, \mintinline{haskell}{actor2} will downstream its connected component to the following stages.
 As we show, with the help of the \acrlong{dpfh}, building a \acrshort{dp} algorithm like \acrshort{wcc} enumeration consist in few lines of codes with the \textit{Type Safety} that \acrshort{hs} provides.

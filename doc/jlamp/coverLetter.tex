@@ -1,0 +1,50 @@
+\documentclass[english]{letter}
+\usepackage{paralist}
+\usepackage{listings}
+
+% language option ``german'', `english`, or 'british' MUST be specified!
+% (delete the .aux file if you *change* this option for a letter)
+
+
+\usepackage{babel} 
+
+\begin{document}
+
+%% begin personal settings for all letters
+%\address{Universitat Politècnica de Catalunya, C/Jordi Girona, 1-3. 08034, Spain.}
+\signature{Prof. Edelmira Pasarella}      
+%% end personal settings for all letters
+
+
+\begin{letter}{
+    Editors of the Journal of Logical and Algebraic Methods in Programming\\
+    Special Issue PROLE 2021
+}
+
+\opening{Dear Editors}
+
+On behalf of my co-authors, I am submitting the enclosed manuscript
+entitled: "A Dynamic Pipeline Framework implemented in Haskell" by Juan Pablo Royo Sales, Edelmira Pasarella, Cristina Zoltan, and Maria-Esther Vidal
+for possible publication in the Journal of Logical and Algebraic Methods in Programming, Special Issue on PROLE 2021.
+
+The submitted work represents a novel contribution to the problem of parallel pipeline design, implementation, and processing. We present a Dynamic Pipeline Framework and its implementation in Haskell. Additionally, we illustrate the computational power of Dynamic Pipeline Framework by solving the problem of enumerating weakly connected components. 
+An initial version of this work is presented in the paper entitled "Towards a Dynamic Pipeline Framework implemented in (parallel) Haskell" by 
+the same authors. This paper has been presented in "Las Jornadas de PROgramación y LEnguajes (PROLE) 2021"; it presents a solution to the problem of enumerating the weakly connected components of a graph as a dynamic pipeline implemented in Haskell. 
+In the paper that we are now submitting, we go further and devise the 
+following novel contributions in this paper:
+\begin{inparaenum}[i\upshape)]
+\item the Dynamic Pipeline Framework (DPF-Haskell) implemented in Haskell. 
+\item A program for enumerating weakly connected component implemented on top of the Dynamic Pipeline Framework.
+\item An empirical evaluation, comparing the performance of various implementations of the problem of weakly connected components. 
+\end{inparaenum}
+
+I attest that all authors listed on the title page have read the manuscript, attest to the validity and legitimacy of the data and its interpretation, and agree to its submission to the Journal of Logical and Algebraic Methods in Programming.
+
+Possible conflicts of interest, sources of financial support, corporate involvement, patent holdings, etc., for each author, are disclosed in the manuscript. Copyright transfer and the signatures of all authors will be requested prior to the publication of accepted manuscripts.
+
+\closing{Sincerely,} 
+
+\end{letter}
+
+
+\end{document}
