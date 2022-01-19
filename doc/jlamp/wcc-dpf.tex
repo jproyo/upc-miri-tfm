@@ -1,178 +1,7 @@
-\iffalse
-\subsection{\texorpdfstring{$\dpwcc$}{Lg} Algorithm}\label{sub:sec:wcc:algo}
-Let us consider the problem of computing/enumerating the (weak) connected components of a graph $G$ using \acrshort{dp}. 
-A connected component of a graph is a subgraph in which any two vertices are connected by paths.  
-Thus, finding connected components of an undirected graph implies obtaining the minimal partition of the set of nodes induced by the relationship \textit{connected}, i.e., there is a path between each pair of nodes. 
-An example of that graph can be seen in \autoref{fig:example_dp_graph}.
-The input of the Dynamic Pipeline for computing the WCC of a graph, $\dpwcc$, is a sequence of edges ending with $\eof$\footnote{Note that there are neither isolated vertices nor loops in the source graph $G$.}. 
-The connected components are output as soon as they are computed, i.e., they are produced incrementally. 
-Roughly speaking the idea of the algorithm is that the weakly connected components are built in two phases. 
-In the first phase filter instance stages receive the edges of the input graph and create sets of connected vertices. 
-During the second phase, these filter instances construct maximal subsets of connected vertices, i.e. the vertices corresponding to (weakly) connected components.
-%
-$\dpwcc$ is defined in terms of the behavior of its four kinds stages: \textit{Source} ($\iwc$),  \textit{Generator} ($\gwc$),  \textit{Sink} ($\owc$), and \textit{Filter}($\fwc$) stages. Additionally,  the channels connecting these stages must be defined. 
-In $\dpwcc$, stages are connected linearly and unidirectionally through the channels $\ice$ and  $\csofv$. Channel $\ice$ carries edges while channel  $\csofv$ conveys sets of connected vertices. Both channels end by the $\eof$ mark. 
-The behavior of $\fwc$ is given by a sequence of two actors (scripts). Each actor corresponds to a phase of the algorithm. In what follows, we denote these actors by $\Act$ and $\Actt$, respectively. 
-The script $\Act$ keeps a set of connected vertices ($CV$) in the state of the $\fwc$ instance. When an edge $e$ arrives, if an endpoint of $e$ is present in the state, then the other endpoint of $e$ is added to $CV$. 
-Edges without incident endpoints are passed to the next stage. When $\eof$ arrives at channel $\ice$, it is passed to the next stage, and the script $\Actt$ starts its execution. 
-If script $\Actt$ receives a set of connected vertices $CV$ in $\csofv$, it determines if the intersection between $CV$ and the nodes in its state is not empty. If so, it adds the nodes in $CV$  to its state. 
-Otherwise, the $CV$ is passed to the next stage. Whenever $\eof$ is received, $\Actt$ passes--through $\csofv$-- the set of vertices in its state and the $\eof$ mark to the next stage; then, it dies.
-The behavior of $\iwc$ corresponds to the identity transformation over the data stream of edges.  As edges arrive, they are passed through  $\ice$ to the next stage. When receiving $\eof$ on $\ice$, this mark is put on both channels. 
-Then, $\iwc$ dies. 
-
-%\begin{wrapfigure}{r}{0.4\textwidth}
-\begin{figure}
- \begin{center}
-\inputtikz{graph_example_wcc}
-\end{center}
-\caption[{[PoC] Graph WCC Example}]{Example of a graph with two weakly connected components: $\{1,2\}$ and $\{3,4,5,6\}$}
-\label{fig:example_dp_graph}
-\end{figure}
-%\end{wrapfigure}
-
-Let us describe this behavior with the example of the graph shown in \autoref{fig:example_dp_graph}.
-
-\begin{figure}[h!]
-  \centering
-\inputtikz{dp_example_0}
-\caption[{[PoC] $\dpwcc$ Initial Setup}]{$\dpwcc$ Initial setup. Stages Source, Generator, and Sink are represented by the squares labeled by $\mathsf{Sr_{WCC}}$, $\mathsf{G_{WCC}}$ and $\mathsf{Sk_{WCC}}$, respectively.  The square $\fwc$ corresponding to the Filter stage template is the parameter of $\gwc$. Arrows $\rightrightarrows$ between represents the connection of stages through two channels, $\ice$, and $\csofv$. The arrow  $\rightarrow$ represents the channel $\csofv$ connecting the stages $\mathsf{G_{WCC}}$ and $\mathsf{Sk_{WCC}}$. The arrow $\Longrightarrow$ stands for I/O data flow. Finally, the input stream comes between the dotted lines on the left and the WCC computed incrementally will be placed between the solid lines on the right.}
-\label{fig:dp_example_0}
-\end{figure}
-
-\autoref{fig:dp_example_0} depicts the initial configuration of $\dpwcc$. 
-The interaction of $\dpwcc$ with the "external" world is done through the stages $\iwc$ and $\owc$. 
-Indeed, once activated the initial $\dpwcc$, the input stream -- consisting of a sequence containing all the edges in the graph in \autoref{fig:example_dp_graph} -- feeds $\iwc$ while  $\owc$ emits incrementally the resulting weakly connected components.  
-In what follows \autoref{fig:dp_example_1_2}, \autoref{fig:dp_example_3_4}, \autoref{fig:dp_example_5_6}, \autoref{fig:dp_example_7_8} and \autoref{fig:dp_example_9_10} depict the evolution of the $\dpwcc$.
- 
-\begin{figure}[h!]
-\centering
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_1}
-  \caption{The edge $(1,2)$ is arriving to $\gwc$.}
-  \label{fig:dp_example_1_2a}
-\end{subfigure}
-\vspace{.3cm}
-
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_2}
-  \caption{When the edge $(1,2)$ arrives to $\gwc$, it  spawns a new instance of $\fwc$ before $\gwc$. Filter instance $F_{\{1,2\}}$ is connected to  $\gwc$ through channels $\ice$ and  $\csofv$. The state of the new filter instance $F_{\{1,2\}}$ is initialized with the set of vertices $\{1,2\}$. The edge $(3,6)$ arrives to the new filter instance $F_{\{1,2\}}$.}
-  \label{fig:dp_example_1_2b}
-\end{subfigure}
-\caption[{[PoC] $\dpwcc$ Evolving first state}]{Evolution of the $\dpwcc$: First state}
-\label{fig:dp_example_1_2}
-\end{figure}
-\vspace{.5cm}
-
-\begin{figure}[h!]
-\centering
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_3}
-  \caption{None of the vertices in the edge $(3,6)$ is in the set of vertices $\{1,2\}$ in the state of $F_{\{1,2\}}$, hence it is passed through $\ice$ to $\gwc$.}
-  \label{fig:dp_example_3_4a}
-\end{subfigure}
-\vspace{.3cm}
-
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_4}
-  \caption{When the edge $(3,6)$ arrives to $\gwc$, it spawns the filter instance $F_{\{3,6\}}$  between $F_{\{1,2\}}$ and $\gwc$. Filter instance $F_{\{1,2\}}$ is connected to the new filter instance $F_{\{3,6\}}$ and this one is connected to  $\gwc$ through channels $\ice$ and  $\csofv$. The state of the new filter instance $F_{\{3,6\}}$ is initialized with the set of vertices $\{3,6\}$. The edge $(3,4)$ arrives to $F_{\{1,2\}}$  and $\mathsf{Sr_{WCC}}$ is fed with the mark $\eof$. Edges $(3,4)$ and $(4,5)$ remain passing through $\ice$.}
-  \label{fig:dp_example_3_4b}
-\end{subfigure}
-\caption[{[PoC] $\dpwcc$ Evolving second state}]{Evolution of the $\dpwcc$: Second state}
-\label{fig:dp_example_3_4}
-\end{figure}
-\vspace{.5cm}
-
-\begin{figure}[h!]
-\centering
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_5}
-  \caption{$\mathsf{Sr_{WCC}}$  fed both, $\ice$ and $\csofv$, channels with the mark $\eof$ received from the input stream in previous state and then, it died. The edge $(4,5)$ is arriving to $\gwc$ and the edge $(3,4)$ is arriving to $F_{\{3,6\}}$. }
-  \label{fig:dp_example_5_6a}
-\end{subfigure}
-\vspace{.3cm}
-
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_6}
-  \caption{When the edge $(4,5)$ arrives to $\gwc$, it spawns the filter instance $F_{\{4,5\}}$  between $F_{\{3,6\}}$ and $\gwc$. Filter instance $F_{\{3,6\}}$ is connected to the new filter instance $F_{\{4,5\}}$ and this one is connected to  $\gwc$ through channels $\ice$ and  $\csofv$.  Since the edge $(3,4)$ arrived to $F_{\{3,6\}}$ at the same time and  vertex $3$ belongs to the set of connected vertices of the filter $F_{\{3,6\}}$,  the vertex $4$ is added to the state of $F_{\{3,6\}}$. Now, the state of $F_{\{3,6\}}$ is the connected set of vertices $\{3,4,6\}$. When the mark $\eof$ arrives to the first filter instance, $F_{\{1,2\}}$, through  $\csofv$, this stage passes  its partial set of connected vertices,  $\{1,2\}$, through $\csofv$ and dies.  This action will activate $\Actt$ in next  filter instances to start building  maximal connected components. In this example, the state in  $F_{\{3,6\}}$, $\{3,4,6\}$, and the arriving set $\{1,2\}$ do not intersect and, hence, both sets of vertices, $\{1,2\}$ and $\{3,4,6\}$ will be passed  to the next filter instance through $\csofv$.}
-  \label{fig:dp_example_5_6b}
-\end{subfigure}
-\caption[{[PoC] $\dpwcc$ Evolving third state}]{Evolution of the $\dpwcc$: Third state}
-\label{fig:dp_example_5_6}
-\end{figure}
-\vspace{.5cm}
-
-\begin{figure}[h!]
-\centering
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_7}
-  \caption{The set of connected vertices  $\{3,4,6\}$ is arriving to $F_{\{4,5\}}$. The mark $\eof$ continues passing to next stages through the channel $\ice$.}
-  \label{fig:dp_example_7_8a}
-\end{subfigure}
-\vspace{.3cm}
-
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_8}
-  \caption{Since the intersection of the set of connected vertices $\{3,4,6\}$ arrived to  $F_{\{4,5\}}$ and its state is not empty, this state is enlarged to be $\{3,4,5,6\}$. The set of connected vertices $\{1,2\}$ is arriving to  $F_{\{4,5\}}$}
-  \label{fig:dp_example_7_8b}
-\end{subfigure}
-\caption[{[PoC] $\dpwcc$ Evolving fourth state}]{Evolution of the $\dpwcc$:  Fourth state}
-\label{fig:dp_example_7_8}
-\end{figure}
-\vspace{.5cm}
-
-\begin{figure}[h!]
-\centering
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_9}
-  \caption{$F_{\{4,5\}}$ has passed the set of connected vertices  $\{1,2\}$ and it is arriving to $\mathsf{Sk_{WCC}}$. The mark $\eof$ is arriving to  $F_{\{4,5\}}$ through $\csofv$.}
-  \label{fig:dp_example_9_10a}
-\end{subfigure}
-\vspace{.3cm}
-
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_10}
-  \caption{Since the mark $\eof$ arrived to $F_{\{4,5\}}$ through $\csofv$, it passes its state, the set $\{3,4,5,6\}$ through $\csofv$ to next stages and died. The set of connected vertices  $\{1,2\}$ arrived to $\mathsf{Sk_{WCC}}$ and this implies  that $\{1,2\}$ is a maximal set of connected vertices, i.e. a connected component of the input graph. Hence,  $\mathsf{Sk_{WCC}}$ output this first weakly connected component.}
- \label{fig:dp_example_9_10b}
-\end{subfigure}
-\vspace{.5cm}
-
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_11}
-  \caption{Finally, the set of connected vertices  $\{3,4,5,6\}$ arrived to $\mathsf{Sk_{WCC}}$ and was output as a new weakly connected component. Besides, the mark $\eof$ also arrived to $\mathsf{Sk_{WCC}}$ through $\csofv$ and thus, it dies.}
-  \label{fig:dp_example_9_10c}
-\end{subfigure}
-\vspace{.3cm}
-
-\begin{subfigure}[b]{\textwidth}
- \centering
-  \inputtikz{dp_example_12}
-  \caption{The weakly connected component of in the graph \autoref{fig:example_dp_graph} such as they have been emitted by $\dpwcc$.}
-  \label{fig:dp_example_9_10d}
-\end{subfigure}
-\caption[{[PoC] $\dpwcc$ Evolving last state}]{Last states in the evolution of the $\dpwcc$}
-\label{fig:dp_example_9_10}
-\end{figure}
-
-It is importat to highlight that during the states shown in \autoref{fig:dp_example_1_2a},  \autoref{fig:dp_example_1_2b},  \autoref{fig:dp_example_3_4a},  \autoref{fig:dp_example_3_4b} and  \autoref{fig:dp_example_5_6a} the only actor executed in any filter instance is $\Act$ (constructing sets of connected vertices). Afterwards, although $\Act$ can continue being executed in some filter instances, there are some instances that start executing $\Actt$ (constructing sets of maximal connected vertices). This is shown from \autoref{fig:dp_example_5_6a}  to \autoref{fig:dp_example_9_10a}.
-\fi
 %
 \section{Enumerating Weakly Connected Component on the DPF}\label{sec:wcc-dpf}
-This section presents the most relevant details of the implementation of the $\dpwcc$ using DPF-Haskell. 
-The $\dpwcc$ implementation has been made as a proof of concept to understand and explore the limitations and challenges that we could find in the development of a future \acrshort{dpf} in \acrshort{hs}. 
-In Section \ref{dp-hs}, we emphasize that the focus of \acrshort{dpf} in \acrshort{hs} is on the \acrshort{idl} component. 
-Hence, the development of the $\dpwcc$ is as general as possible, using most of the constructs and abstractions required by the \acrshort{idl}. 
-Next, we present the minimal code needed for encoding any \acrshort{dp} using \acrshort{dpfh}. \footnote{All the code that we expose here can be accessed publicly in \url{https://github.com/jproyo/dynamic-pipeline/tree/main/examples/Graph}}
+This section presents the most relevant details of the implementation of the $\dpwcc$ using DPF-Haskell. The $\dpwcc$ implementation has been made as a proof of concept to understand and explore
+the limitations and challenges that could be found in the development of a \acrshort{dpf} in \acrshort{hs}.  Indeed, the development of the $\dpwcc$ is as general as possible and it uses most of the constructs and abstractions required by the component \acrshort{idl}. In Section 4, we emphasize that the focus of \acrshort{dpf} in Haskell is on the \acrshort{idl} component. Next, we present the minimal code needed for encoding any \acrshort{dp} using \acrshort{dpfh}. \footnote{All the code that we expose here can be accessed publicly in \url{https://github.com/jproyo/dynamic-pipeline/tree/main/examples/Graph}}
 
 \begin{listing}[H]
   \begin{minted}[fontsize=\fontsize{10}{11}\selectfont,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={1-3,6}]{haskell}
@@ -192,7 +21,7 @@ Next, we present the minimal code needed for encoding any \acrshort{dp} using \a
 In \autoref{src:dpwcc:1}, there are two important declarations. First, the \textit{Type Level} declaration of the $\dpwcc$ to indicate \acrshort{dpfh} how our stages are going be connected, and
 using that \textit{Type Level} construct, we use the \acrshort{idl} to allow the framework interpret the type representation of our \acrshort{dp} and ensuring at compilation time that we provide the correct stages,  \textit{Source} ($\iwc$), \textit{Generator} ($\gwc$) and \textit{Sink} ($\owc$), that matches those declaration. As we can see in \autoref{src:dpwcc:1}, highlighted lines $1$-$3$ matches one to one the definition in \autoref{fig:dp_example_0}, although in the case of the framework it is not required to provide \textit{Filter} ($\fwc$) definition because \acrshort{dpfh} will deducted from \mintinline[breaklines]{haskell}{Generator}.
 According to this declaration what we need to provide is the correct implementation of \mintinline{haskell}{source'}, \mintinline{haskell}{generator'} and \mintinline{haskell}{sink'}
-which \textit{Type checked} the \acrshort{dp} type definition\footnote{The names of the functions are completely choosen by the user of the framework and it should not be confused with the internal framework combinators.}.
+which \textit{Type checked} the \acrshort{dp} type definition\footnote{The names of the functions are completely chosen by the user of the framework and it should not be confused with the internal framework combinators.}.
 
 \begin{listing}[H]
   \begin{minted}[fontsize=\fontsize{10}{11}\selectfont,numbers=left,breaklines,frame=lines,framerule=2pt,framesep=2mm,baselinestretch=1.2,highlightlines={4-5,8}]{haskell}
@@ -284,12 +113,12 @@ In line $10$, we can appreciate how after expanding the filters, the generator w
     
   \end{minted}
   }
-  \caption[{[\mintinline{shell}{ConnectedComp.hs}] Filter Template Code}]{Filter template code composed by 2 Sequential Actors that will calculate the Connected Components and downstream them.}
+  \caption[{[\mintinline{shell}{ConnectedComp.hs}] Filter Template Code}]{Filter template code composed by the two (sequential) actors corresponding to the two phases of the $\dpwcc$ algorithm.}
   \label{src:dpwcc:4}
 \end{listing}
 
 Finally, the \textit{Filter} template code is defined in \autoref{src:dpwcc:4}. 
-As we have seen in \autoref{prole}, $\dpwcc$ \textit{Filter} is composed of 2 Actors. The first actor collect all the possible vertices that are incidence to some vertices edge that was instantiated with.
-Once it does not receive any more edges, it starts downstream it set of vertices to the following filters in order to build a maximal connected component, this is \mintinline{haskell}{actor2}. At the end of processing, \mintinline{haskell}{actor2} will downstream its connected component to the following stages.
-As we show, with the help of the \acrlong{dpfh}, building a \acrshort{dp} algorithm like \acrshort{wcc} enumeration consist in few lines of codes with the \textit{Type Safety} that \acrshort{hs} provides.
+As we have seen in \autoref{prole}, $\dpwcc$ \textit{Filter} is composed of two actors. The first actor collects all the possible vertices that are connected to some vertex in the filter's set of connected vertices. Once the filter does not receive any more edges, this actor starts downstream the filter's set of vertices to the following stages. \mintinline{haskell}{actor2} -- according to algorithm in \autoref{prole} -- passes sets of connected vertices  to the following stage. As we show in \autoref{src:dpwcc:4} with the help of the \acrlong{dpfh}, building a \acrshort{dp} algorithm like \acrshort{wcc} enumeration consist in few lines of codes with the \textit{Type Safety} that \acrshort{hs} provides.
+
+
 

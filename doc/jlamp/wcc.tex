@@ -1,12 +1,13 @@
 \subsection{The $\dpwcc$ Algorithm- Weakly Connected Components of a Graph in the Dynamic Pipeline Paradigm}\label{prole}
+\iffalse
 One of the biggest challenges of implementing a Dynamic Pipeline is to find  a programming language with a proper set of tools supporting both of the  primary features of the \acrshort{dp}: \begin{inparaenum}[i\upshape)]
 \item  \emph{parallel} processing and 
 \item  \emph{strong theoretical} foundations to manage computations as first-class citizens.
  \end{inparaenum}
 We present and illustrate with an example, an implementation for the problem of enumerating weakly connected components using the dynamic pipeline paradigm previously described. More details in \cite{prole}. 
- 
-Let us consider the problem of computing/enumerating the (weak) connected components of a graph $G$ using \acrshort{dp}. 
-A connected component of a graph is a subgraph in which any two vertices are connected by paths.  
+\fi
+Let us consider the problem of computing/enumerating the weakly connected components (WCC) of a graph $G$ using \acrshort{dp}. 
+A weak connected component of a graph is a subgraph in which all vertices are connected to each other by some path. 
 Thus, finding connected components of an undirected graph implies obtaining the minimal partition of the set of nodes induced by the relationship \textit{connected}, i.e., there is a path between each pair of nodes. An example of that graph can be seen in \autoref{fig:example_dp_graph}.
 The input of the Dynamic Pipeline for computing the WCC of a graph, $\dpwcc$, is a sequence of edges ending with $\eof$. In the source graph, there are neither isolated vertices nor loops. The connected components are output as soon as they are computed, i.e., they are produced incrementally. 
 Roughly speaking, the idea of the algorithm is that the weakly connected components are built in two phases. In the first phase, filter instance stages receive the edges of the input graph and create sets of connected vertices. 
@@ -42,7 +43,9 @@ Let us describe this behavior with the example of the graph shown in \autoref{fi
 \autoref{fig:dp_example_0} depicts the initial configuration of $\dpwcc$. 
 The interaction of $\dpwcc$ with the "external" world is done through the stages $\iwc$ and $\owc$. 
 Indeed, once activated the initial $\dpwcc$, the input stream -- consisting of a sequence containing all the edges in the graph in \autoref{fig:example_dp_graph} -- feeds $\iwc$ while  $\owc$ emits incrementally the resulting weakly connected components.  
-In what follows, figures \ref{fig:dp_example_1_2}, \ref{fig:dp_example_3_4}, \ref{fig:dp_example_5_6}, \ref{fig:dp_example_7_8} and \ref{fig:dp_example_9_10} depict the evolution of the $\dpwcc$.
+Figures \ref{fig:dp_example_1_2}, \ref{fig:dp_example_3_4}, \ref{fig:dp_example_5_6}, \ref{fig:dp_example_7_8} and \ref{fig:dp_example_9_10} depict the evolution of the $\dpwcc$.
+
+It is important to highlight that during the states shown in figures \ref{fig:dp_example_1_2a},  \ref{fig:dp_example_1_2b},  \ref{fig:dp_example_3_4a},  \ref{fig:dp_example_3_4b} and  \ref{fig:dp_example_5_6a} the only actor executed in any filter instance is $\Act$ (constructing sets of connected vertices). However, in \autoref{fig:dp_example_5_6a}  to \autoref{fig:dp_example_7_8a} although $\Act$ is still being executed in some filter instances, there are other filters starting the execution of $\Actt$ (either updating the filter's sets of connected vertices, when  its intersection with the incoming set of vertices is not empty or, otherwise,  passing it to next stage.).
  
 \begin{figure}[h!]
 \centering
@@ -163,7 +166,6 @@ In what follows, figures \ref{fig:dp_example_1_2}, \ref{fig:dp_example_3_4}, \re
 \caption[{[PoC] $\dpwcc$ Evolving last state}]{Last states in the evolution of the $\dpwcc$}
 \label{fig:dp_example_9_10}
 \end{figure}
-It is important to highlight that during the states shown in figures \ref{fig:dp_example_1_2a},  \ref{fig:dp_example_1_2b},  \ref{fig:dp_example_3_4a},  \ref{fig:dp_example_3_4b} and  \ref{fig:dp_example_5_6a} the only actor executed in any filter instance is $\Act$ (constructing sets of connected vertices). In \autoref{fig:dp_example_5_6a}  to \autoref{fig:dp_example_7_8a} although $\Act$ is still being executed in some filter instances, there are other ones starting the execution of $\Actt$ (joining sets of connected vertices, when it applies).
 %
 \clearpage
 

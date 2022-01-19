@@ -13,7 +13,7 @@ There are several design approaches to implement a framework: \begin{inparaenum}
    \end{inparaenum}.
 \fi
 %
-We follow a \acrfull{dsl} approach~\cite{Fowler10} to develop the Dynamic Pipeline Framework in Haskell; it  provides users with a language to write their solutions. There exists two types of \acrlong{dsl}s~\cite{dsl}: External \acrfull{dsl} and \acrfull{edsl} \cite{dsel}. The external Domain-Specific Languages (\acrshort{dsl})  are completely new languages requiring the development of an interpreter. On the contrary, the Embedded Domain-Specific Languages (\acrshort{edsl}) are languages syntactically embedded in a host language.
+We follow a \acrfull{dsl} approach~\cite{Fowler10} to develop the Dynamic Pipeline Framework in Haskell; it  provides users with a language to write their solutions. There exists two types of \acrlong{dsl}s \cite{dsl}: External \acrfull{dsl} and \acrfull{edsl} \cite{dsel}. The external Domain-Specific Languages (\acrshort{dsl})  are completely new languages requiring the de\-ve\-lop\-ment of an interpreter. On the contrary, the Embedded Domain Specific Languages (\acrshort{edsl}) are languages syntactically embedded in a host language.
 Accordingly, actually users write their codes in the host language restricted to the \acrshort{edsl} abstractions. In particular, \acrshort{dpfh} follows an \acrshort{edsl} approach where Haskell is the host language. This approach allows for to take  advantage of the strong type \acrshort{hs}  system to providing correctness at type-level~\cite{curryhoward}. In next definition the Dynamic Pipeline Domain Specific Language (DP-\acrshort{edsl}) is  formally defined.
 
 \begin{definition}\label{def:cfg:dsl}
@@ -77,15 +77,6 @@ is a parameter of the Generator stage, its specification is obtained when Genera
 %
 \paragraph{RS component} This is the Run System component. It receives a Haskell dynamic pipeline definition, compiles it and launch its execution. 
 %
-\iffalse
-\begin{figure}[!ht]
-  \centering
-   \includegraphics[width=1\textwidth, height=0.6\textheight]{dpf_haskell_v4.png}
-    \caption[{[\acrshort{dpfh}] System Architecture of the \acrshort{dpfh}}]{This diagram shows the system architecture of \acrshort{dpfh}. \acrshort{dpfh} is a \acrshort{dsl} which is built on three main components: \acrshort{dsl}, \acrshort{idl} and \acrshort{rs}. In the \acrshort{dsl} we can see how users can compose the main stages of the \acrshort{dp}. \acrshort{idl} is showing how the frameworks is helping users to transform that definition into real function or computations. Finally, \acrshort{rs} execute all that definition plus functions. Execution layer indicates an example of a \acrshort{dp} running after being executed.}
-    \label{fig:dpfh:1}
-\end{figure}
-%
-\fi
 \subsection{Implementation}
 This section presents 
 implementation details of each system component: \acrshort{edsl}, \acrshort{idl} and \acrshort{rs}. 
@@ -165,18 +156,18 @@ type family ValidDP (a :: Bool) :: Constraint where
                     )
   \end{minted}
   }
-  \caption[{[\mintinline{shell}{Stage.hs}] Validating DP-\acrshort{edsl} code - FCF}]{Type Families \mintinline{haskell}{And}, \mintinline{haskell}{IsDP} and \mintinline{haskell}{ValidDP} which allows to perform a type-level validation over a DP-\acrshort{edsl} \acrshort{cfg} definition.}
+  \caption[{[\mintinline{shell}{Stage.hs}] Validating DP-\acrshort{edsl} code - FCF}]{Type Families \mintinline{haskell}{And}, \mintinline{haskell}{IsDP} and \mintinline{haskell}{ValidDP} that allow to perform a type-level validation over a DP-\acrshort{edsl} \acrshort{cfg} definition.}
   \label{src:dpfh:4}
 \end{listing}
 
 The implementation of the validation is done using \emph{Associated Type Families}~\cite{associated-types}. 
-In \autoref{src:dpfh:4}, there are three Type families that helps to validate the DP-\acrshort{edsl} code. 
+In \autoref{src:dpfh:4}, there are three Type families that help to validate the DP-\acrshort{edsl} code. 
 \mintinline{haskell}{IsDP} associated type family is checking the production rules $P$ of the grammar defined in \dref{grammar:eq}, returning a promoted data type~\cite{promoted-types} (not a boolean value) \mintinline{haskell}{'True} in case the production rule matches all the generated language, or \mintinline{haskell}{'False} otherwise. 
 \mintinline{haskell}{ValidDP} is taking the result of \mintinline{haskell}{IsDP} type application, associating \mintinline{haskell}{'True} promoted boolean type to empty \mintinline{haskell}{()} constraint. An empty constraint is an indication of no restriction, i.e., if \mintinline{haskell}{ValidDP} is used as a constraint. It is fully applied to \mintinline{haskell}{()} and gives the compiler the evidence that there is no error at type-level.
 \mintinline{haskell}{ValidDP} is also associating \mintinline{haskell}{'False} with a custom \mintinline{haskell}{TypeError}; it will appear at compilation time if the DP-\acrshort{edsl} definition fully applies to that -- a type checked error --.
 
 \iffalse
-In \autoref{src:dpfh:4}, there are three Type families that helps to validate the DP-\acrshort{edsl} code. 
+In \autoref{src:dpfh:4}, there are three Type families that help to validate the DP-\acrshort{edsl} code. 
 \mintinline{haskell}{IsDP} associated type family is checking the production rules $P$ of the grammar defined in \dref{grammar:eq}, returning a promoted data type~\cite{promoted-types} (not a boolean value) \mintinline{haskell}{'True} in case the production rule matches all the generated language, or \mintinline{haskell}{'False} otherwise. 
 \mintinline{haskell}{ValidDP} is taking the result of \mintinline{haskell}{IsDP} type application, associating \mintinline{haskell}{'True} promoted boolean type to empty \mintinline{haskell}{()} constraint. An empty constraint is an indication of no restriction, i.e., if \mintinline{haskell}{ValidDP} is used as a constraint. It is fully applied to \mintinline{haskell}{()} and gives the compiler the evidence that there is no error at type-level.
 \mintinline{haskell}{ValidDP} is also associating \mintinline{haskell}{'False} with a custom \mintinline{haskell}{TypeError}; it will appear at compilation time if the DP-\acrshort{edsl} definition fully applies to that -- a type checked error --.
@@ -226,7 +217,7 @@ withSink = mkStage' @(WithSink dpDefinition (DP st))
   \label{src:dpfh:6}
 \end{listing}
 
-In \autoref{src:dpfh:6}, we can appreciate the different combinators of the \acrshort{idl} that helps to interpret the \acrshort{dsl} and generates the function definitions.
+In \autoref{src:dpfh:6}, we can appreciate the different combinators of the \acrshort{idl} that help to interpret the DP-\acrshort{edsl} and generates the function definitions.
 \mintinline[breaklines]{haskell}{Stage} data type will be cover in \autoref{src:dpfh:8}, but it is a wrapper type of a pipeline stage -- minimal unit of execution --, containing the function to be executed -- here is the use \emph{Term-level Defunctionalization} --.
 \mintinline[breaklines]{haskell}{withSource}, \mintinline[breaklines]{haskell}{withGenerator}, and \mintinline[breaklines]{haskell}{withSink} are aliases of the function \mintinline[breaklines]{haskell}{mkStage'} which is the combinator that is applying the \emph{Associated Type} related to that stage. For example \mintinline[breaklines]{haskell}{withSource}, is equivalent to \mintinline[breaklines]{haskell}{mkStage' @(WithSource dpDefinition (DP st))}.
 For each \emph{Associated Type Family} definition, there is an equivalent term-level definition: \mintinline[breaklines]{haskell}{WithSource} type with \mintinline[breaklines]{haskell}{withSource} term , \mintinline[breaklines]{haskell}{WithGenerator} type with \mintinline[breaklines]{haskell}{withGenerator} term, and \mintinline[breaklines]{haskell}{WithSink} type with \mintinline[breaklines]{haskell}{withSink} term -- notice the capital case letter "W" indicating the type and not the term --.

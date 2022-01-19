@@ -24,14 +24,14 @@ This is,  we determine the particular features (i.e., versions and libraries) of
 
 
 \textbf{Contributions:} 
-This paper is an extension to our work previously reported by Royo et al. \cite{prole}; we present a solution (a.k.a. \acrshort{dpwcc}) to the problem of enumerating the weakly connected components of a graph as a dynamic pipeline implemented in \acrshort{hs}. We also empirically show the behavior of \acrshort{dpwcc} concerning a solution for enumerating the weakly connected components using \acrshort{hs} libraries; we name this solution \acrfull{blwcc}. 
+This paper is an extension to our work previously reported by Royo-Sales et al. \cite{prole}; we present a solution (a.k.a. \acrshort{dpwcc}) to the problem of enumerating the weakly connected components of a graph as a dynamic pipeline implemented in \acrshort{hs}. We also empirically show the behavior of \acrshort{dpwcc} concerning a solution for enumerating the weakly connected components using \acrshort{hs} libraries; we name this solution \acrfull{blwcc}. 
 Additionally,  we present the following novel contributions in this paper:
 \begin{inparaenum}[i\upshape)]
 \item the Dynamic Pipeline Framework (DPF-Haskell) implemented in Haskell. 
 \item A program for enumerating weakly connected component implemented on top of the Dynamic Pipeline Framework (\acrshort{dpfh}).
 \item An empirical evaluation, comparing the performance of 
 \acrfull{dpfhwcc} with respect to \acrshort{blwcc} and \acrfull{dpwcc}. 
-The continuous  performance of these implementations is measured in terms of the diefficiency metric dief\@t \cite{diefpaper}. The results of this study suggests that  \acrshort{hs} is a suitable language for implementing \acrshort{dp} and the programming basis for implementing DP solutions is settled. Lastly, it has been shown that implementing \acrshort{dpfhwcc} performs well with respect to \acrshort{dpwcc}. 
+The continuous  performance of these im\-ple\-men\-ta\-tions is measured in terms of the diefficiency metric dief\@t \cite{diefpaper}. The results of this study suggests that  \acrshort{hs} is a suitable language for implementing \acrshort{dp} and the programming basis for implementing DP solutions is settled. Lastly, it has been shown that implementing \acrshort{dpfhwcc} performs well with respect to \acrshort{dpwcc}. 
 Hence, we envision that the overhead of \acrshort{dpfh} does not degrade the performance of dynamic pipelines implemented on the framework. 
 \end{inparaenum}
 

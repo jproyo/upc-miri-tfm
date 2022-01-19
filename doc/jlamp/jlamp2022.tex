@@ -85,7 +85,7 @@ country={Germany}}
 \begin{abstract}
 Streaming processing has given rise to new computation paradigms to provide effective and efficient data stream processing. 
 The Dynamic Pipeline paradigm is a computational model for stream processing suitable for solving problems where the incremental results' generation is critical. In this paradigm, computations are primary entities. Haskell is a purely functional programming language based on solid theoretical foundations. From a practical point of view, it has a robust set of tools for writing multithreading and parallel computations with optimal performance. In this work, we present a Dynamic Pipeline Framework and its implementation in Haskell. 
-As a proof of concept, we implement a solution to the problem of enumerating the weakly connected components of a graph in the proposed Dynamic Pipeline Framework. Moreover, we provide two baseline implementations of the same problem to put in perspective the computational power of the Dynamic Pipeline Framework and its continuous behavior. One baseline is implemented using a graph algorithm Haskell library, while the other one is an \textit{ad hoc} implementation of the problem following the Dynamic Pipeline paradigm.
+We implement a solution to the problem of enumerating the weakly connected components of a graph in the proposed Dynamic Pipeline Framework. Moreover, we provide two baseline implementations of the same problem to put in perspective the computational power of the Dynamic Pipeline Framework and its continuous behavior. One baseline is implemented using a graph algorithm Haskell library, while the other one is an \textit{ad hoc} implementation of the problem following the Dynamic Pipeline paradigm.
 The experimental study is conducted over a benchmark of graphs of various sizes. 
 Two diefficiency metrics measure the continuous behavior of the three approaches, i.e., how good these approaches are while enumerating weakly connected components incrementally. The observed results provide evidence of the suitability of the Dynamic Pipeline Framework for implementing graph stream processing problems where results must be produced continuously. 
 \end{abstract}
@@ -111,7 +111,6 @@ Stream Processing Frameworks \sep Dynamic Pipeline \sep Parallelism \sep Concurr
 \input{wcc-dpf}
 \input{ExperimentalStudy}
 \input{conclusions}
-\input{implementation}
 %
 \bibliography{jlamp2022}
 %
